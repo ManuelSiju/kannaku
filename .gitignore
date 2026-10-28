@@ -1,0 +1,36 @@
+# secrets / local config
+.env
+.env.*
+!.env.example
+!.env.meta.example
+
+# data
+*.db
+*.db-journal
+*.sqlite
+
+# models
+models/
+*.gguf
+*.bin
+*.safetensors
+
+# python
+__pycache__/
+*.pyc
+.venv/
+.pytest_cache/
+.ruff_cache/
+*.egg-info/
+
+# build outputs
+build/
+dist/
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+
+# editors / OS
+.idea/
+.vscode/
+.DS_Store
