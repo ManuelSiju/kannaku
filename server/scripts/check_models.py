@@ -80,6 +80,21 @@ async def check_ocr() -> str:
     return f"langs={r.langs} conf={r.mean_confidence} text={r.text[:60]!r}"
 
 
+def hint(name: str, error: str) -> str:
+    """One next step for the most common failures, so a newcomer knows what to type."""
+    s = get_settings()
+    if name.startswith("llm"):
+        if "Connection error" in error or "ConnectError" in error:
+            return "LLM server not running: make llm-up (Ollama) or start llama-server"
+        if "not found" in error and "model" in error:
+            return f"model missing: make llm-pull  (pulls {s.llm_model})"
+    if name == "ocr" and "tesseract is not installed" in error:
+        return "make setup-system"
+    if name == "stt" and "ffmpeg" in error.lower():
+        return "make setup-system"
+    return ""
+
+
 async def run(name: str, fn: Callable[[], Awaitable[str]], verbose: bool) -> bool:
     t0 = time.perf_counter()
     try:
@@ -87,6 +102,9 @@ async def run(name: str, fn: Callable[[], Awaitable[str]], verbose: bool) -> boo
         ok = True
     except Exception as e:
         detail = f"{type(e).__name__}: {e}"
+        tip = hint(name, str(e))
+        if tip:
+            detail += f"\n        -> {tip}"
         ok = False
         if verbose:
             traceback.print_exc()

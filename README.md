@@ -24,6 +24,30 @@ make test
 
 Run `make` to see every target.
 
+## Test on your laptop (server) and phone
+
+```bash
+# laptop — once
+make setup && make setup-system && make llm-up && make llm-pull
+make smoke              # tests + lint + model check + /health, all in one
+
+# laptop — every time
+make llm-up
+make run-server         # prints the URL your phone should use
+
+# phone on the same Wi-Fi
+make lan-url            # open the printed /health URL in the phone browser
+make firewall-open      # only if the phone cannot connect (ufw)
+
+# phone over USB instead (no Wi-Fi needed; enable USB debugging)
+make phone-devices      # phone must be listed
+make phone-usb          # tunnel phone 127.0.0.1:8000 -> laptop
+
+# the app (from phase 5)
+make run-app            # Wi-Fi: app talks to http://<laptop-ip>:8000
+make run-app USB=1      # USB tunnel: app talks to http://127.0.0.1:8000
+```
+
 ## Models
 
 All models sit behind provider interfaces chosen by `.env`:

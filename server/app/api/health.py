@@ -28,9 +28,15 @@ async def llm_status() -> dict[str, Any]:
                 f"{s.llm_base_url.rstrip('/')}/models", headers={"Authorization": f"Bearer {s.llm_api_key}"}
             )
         out["reachable"] = r.status_code < 500
+        if r.status_code == 200 and "data" in r.json():
+            # The server is up; also say whether the configured model is actually there.
+            ids = {m.get("id") for m in r.json()["data"]}
+            out["model_available"] = s.llm_model in ids
+            if not out["model_available"]:
+                out["error"] = "model not pulled: make llm-pull"
     except httpx.HTTPError as e:
         out["reachable"] = False
-        out["error"] = type(e).__name__
+        out["error"] = f"{type(e).__name__}: start it with make llm-up"
     return out
 
 

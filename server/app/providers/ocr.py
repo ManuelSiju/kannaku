@@ -38,9 +38,7 @@ def available_langs() -> frozenset[str]:
     try:
         return frozenset(pytesseract.get_languages(config=""))
     except pytesseract.TesseractNotFoundError as e:
-        raise OcrUnavailable(
-            "tesseract is not installed (Ubuntu: sudo apt install tesseract-ocr)"
-        ) from e
+        raise OcrUnavailable("tesseract is not installed (Ubuntu: sudo apt install tesseract-ocr)") from e
 
 
 def resolve_langs(requested: str) -> str:
