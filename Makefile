@@ -33,8 +33,8 @@ setup: env ## Create .venv (Python 3.11) and install server + dev deps
 env: ## Copy .env.example to .env if .env does not exist
 	@test -f .env || { cp .env.example .env; echo "✔ created .env from .env.example"; }
 
-setup-system: ## Install OS packages: tesseract (+Malayalam), ffmpeg (needs sudo)
-	sudo apt-get update && sudo apt-get install -y tesseract-ocr tesseract-ocr-eng tesseract-ocr-mal ffmpeg
+setup-system: ## Install OS packages: tesseract (English), ffmpeg (needs sudo)
+	sudo apt-get update && sudo apt-get install -y tesseract-ocr tesseract-ocr-eng ffmpeg
 
 doctor: ## Show which tools are installed
 	@for t in uv python3 tesseract ffmpeg ollama llama-server flutter; do \

@@ -38,7 +38,7 @@ class STTProvider(ABC):
 
 
 class FasterWhisperSTT(STTProvider):
-    """Local faster-whisper. Language auto-detected (Malayalam / English / Hindi all supported)."""
+    """Local faster-whisper. Language fixed by STT_LANGUAGE (en for now); empty = auto-detect."""
 
     name = "faster_whisper"
 
@@ -84,7 +84,8 @@ class FasterWhisperSTT(STTProvider):
         with tempfile.NamedTemporaryFile(suffix=suffix) as f:
             f.write(audio_bytes)
             f.flush()
-            segments, info = self._load().transcribe(f.name, vad_filter=True)
+            language = self.settings.stt_language or None
+            segments, info = self._load().transcribe(f.name, language=language, vad_filter=True)
             segs = [Segment(start=s.start, end=s.end, text=s.text.strip()) for s in segments]
         return Transcript(text=" ".join(s.text for s in segs).strip(), language=info.language, segments=segs)
 

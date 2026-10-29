@@ -19,18 +19,19 @@ async def test_meta_stt_stub_raises_clearly():
 
 async def test_faster_whisper_with_mocked_model(settings):
     class FakeModel:
-        def transcribe(self, path, vad_filter):
+        def transcribe(self, path, language, vad_filter):
+            assert language == "en"
             segs = [
-                SimpleNamespace(start=0.0, end=1.2, text=" ഒന്നര ലക്ഷം "),
+                SimpleNamespace(start=0.0, end=1.2, text=" one and a half lakh "),
                 SimpleNamespace(start=1.2, end=2.0, text="premium"),
             ]
-            return iter(segs), SimpleNamespace(language="ml")
+            return iter(segs), SimpleNamespace(language="en")
 
     provider = FasterWhisperSTT(settings)
     provider._model = FakeModel()
     t = await provider.transcribe(b"RIFF....", "audio/wav")
-    assert t.language == "ml"
-    assert t.text == "ഒന്നര ലക്ഷം premium"
+    assert t.language == "en"
+    assert t.text == "one and a half lakh premium"
     assert t.segments[0].speaker is None
     assert stt_mod.Transcript.model_validate(t.model_dump()) == t
 

@@ -57,5 +57,5 @@ def test_ocr_image_with_mocked_tesseract(monkeypatch, settings):
     r = ocr.ocr_image(png_bytes(), settings)
     assert r.text == "Premium 50000"
     assert r.mean_confidence == 85.0
-    assert r.langs == "eng+mal"
+    assert r.langs == "eng"
     assert [w.text for w in r.words] == ["Premium", "50000"]

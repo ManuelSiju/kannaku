@@ -24,10 +24,12 @@ class Settings(BaseSettings):
     stt_provider: Literal["faster_whisper", "meta"] = "faster_whisper"
     whisper_model: str = "medium"
     whisper_device: str = "auto"
+    # English only while testing; empty = auto-detect (multilingual comes later).
+    stt_language: str = "en"
 
     tts_provider: Literal["device", "none"] = "device"
 
-    ocr_langs: str = "eng+mal"
+    ocr_langs: str = "eng"
 
     db_path: Path = SERVER_ROOT / "kanakku.db"
     meta_api_key: str = ""

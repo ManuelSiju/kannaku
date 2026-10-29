@@ -13,7 +13,7 @@ Built for the Meta AI Developer Hackathon (Oct 27 – Nov 4 2026).
 
 ```bash
 make setup          # .venv (Python 3.11) + deps + .env
-make setup-system   # tesseract (+Malayalam), ffmpeg — needs sudo
+make setup-system   # tesseract (English), ffmpeg — needs sudo
 make llm-up         # start Ollama
 make llm-pull       # pull the model in .env (default qwen2.5:7b-instruct)
 make check-models   # PASS/FAIL per provider
@@ -33,7 +33,7 @@ All models sit behind provider interfaces chosen by `.env`:
 | LLM (text + vision) | Ollama / llama.cpp, OpenAI-compatible `/v1` | Meta Model API (`https://api.meta.ai/v1`, `muse-spark-1.3`) |
 | Speech-to-text | faster-whisper | Muse Voice Transcribe |
 | Text-to-speech | on-device (flutter_tts) | — |
-| OCR | Tesseract eng + mal | — |
+| OCR | Tesseract eng (Malayalam later) | — |
 
 Switching LLM = editing `LLM_BASE_URL`, `LLM_MODEL`, `LLM_API_KEY` in `.env`. No code changes.
 

@@ -7,7 +7,8 @@ def test_defaults():
     assert s.llm_max_calls_per_ask == 4
     assert s.llm_timeout_s == 20
     assert s.stt_provider == "faster_whisper"
-    assert s.ocr_langs == "eng+mal"
+    assert s.ocr_langs == "eng"
+    assert s.stt_language == "en"
     assert s.db_path == REPO_ROOT / "server" / "kanakku.db"
 
 
