@@ -25,7 +25,16 @@ __pycache__/
 
 # build outputs
 build/
-dist/
+dist/*
+!dist/RELEASES.md
+
+# runtime (pids, logs)
+run/
+
+# signing — never commit
+key.properties
+*.jks
+*.keystore
 .dart_tool/
 .flutter-plugins
 .flutter-plugins-dependencies

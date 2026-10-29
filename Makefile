@@ -6,8 +6,9 @@ SHELL := /bin/bash
 VENV    := .venv
 PY      := $(abspath $(VENV)/bin/python)
 SERVER  := server
-HOST    ?= 0.0.0.0
-PORT    ?= 8000
+ENV_GET  = $(shell grep -E '^$(1)=' .env 2>/dev/null | tail -n1 | cut -d= -f2- | sed -E 's/[[:space:]]+\#.*$$//; s/[[:space:]]+$$//')
+HOST    ?= $(or $(call ENV_GET,HOST),0.0.0.0)
+PORT    ?= $(or $(call ENV_GET,PORT),8013)
 LAN_IP  := $(shell ip -4 route get 1.1.1.1 2>/dev/null | awk '{for(i=1;i<=NF;i++) if($$i=="src") print $$(i+1)}')
 # Where the app reaches the server. Default: this laptop on Wi-Fi. USB=1 -> phone uses adb reverse tunnel.
 ifeq ($(USB),1)
@@ -24,7 +25,7 @@ endif
 
 .PHONY: help setup setup-system env doctor run-server health llm-up llm-down llm-pull llm-list \
         check-models test test-fast smoke lint fmt clean run-mcp seed-demo reset-demo run-app demo commit-phase \
-        lan-url firewall-open phone-devices phone-usb phone-usb-off
+        lan-url firewall-open phone-devices phone-usb phone-usb-off up down status logs app-release app-ios
 
 help: ## Show this list
 	@grep -hE '^[a-zA-Z_-]+:.*?## ' $(MAKEFILE_LIST) | \
@@ -52,7 +53,19 @@ doctor: ## Show which tools are installed
 	@command -v tesseract >/dev/null && echo "  tesseract langs: $$(tesseract --list-langs 2>/dev/null | tail -n +2 | tr '\n' ' ')" || true
 
 # ---------------------------------------------------------------- run
-run-server: ## Start the API on :8000 (reachable from phone on same Wi-Fi), auto-reload
+up: ## Start LLM backend (if needed) + API server in background; prints phone URL
+	@scripts/up.sh
+
+down: ## Stop the server, and the LLM backend only if make up started it
+	@scripts/down.sh
+
+status: ## What is running, ports, health
+	@scripts/status.sh
+
+logs: ## Follow the background server log (Ctrl-C to quit)
+	@test -f run/server.log && tail -n 50 -f run/server.log || echo "no run/server.log yet — make up"
+
+run-server: ## Start the API in the foreground on PORT (reachable from phone on same Wi-Fi), auto-reload
 	@echo "Server for phone: http://$(LAN_IP):$(PORT)   (health: http://$(LAN_IP):$(PORT)/health)"
 	cd $(SERVER) && $(PY) -m uvicorn app.main:app --reload --host $(HOST) --port $(PORT)
 
@@ -83,15 +96,18 @@ test: ## Run all server tests
 test-fast: ## Run tests, stop at first failure
 	cd $(SERVER) && $(PY) -m pytest -x -q
 
-smoke: ## Full local check: tests + lint + model check + start server, hit /health, stop
+smoke: ## Full local check: tests + lint + model check + make up, /health, make down
 	$(MAKE) --no-print-directory test-fast
 	$(MAKE) --no-print-directory lint
 	$(MAKE) --no-print-directory check-models
-	@cd $(SERVER) && { $(PY) -m uvicorn app.main:app --port $(PORT) >/tmp/kanakku-smoke.log 2>&1 & echo $$! > /tmp/kanakku-smoke.pid; }
-	@for i in $$(seq 1 30); do curl -fs localhost:$(PORT)/health >/dev/null && break; sleep 0.5; done
-	@curl -fsS localhost:$(PORT)/health | $(PY) -c 'import json,sys; d=json.load(sys.stdin)["providers"]; \
-	  [print("  %s %-4s %s  %s" % ("✔" if v["reachable"] else "✘", k, v["provider"], v.get("error",""))) for k,v in d.items()]' \
-	  && echo "✔ smoke done" ; kill $$(cat /tmp/kanakku-smoke.pid) 2>/dev/null; rm -f /tmp/kanakku-smoke.pid
+	@if [ -f run/server.pid ] && kill -0 $$(cat run/server.pid) 2>/dev/null; then \
+	  echo "server already up — smoke checks it and leaves it running"; scripts/status.sh; \
+	else \
+	  had_llm=$$(test -f run/llm.pid && echo 1); \
+	  scripts/up.sh; rc=$$?; \
+	  if [ -z "$$had_llm" ]; then scripts/down.sh; else scripts/down.sh --server-only; fi; \
+	  [ $$rc -eq 0 ] && echo "✔ smoke done" || { echo "✘ smoke failed"; exit 1; }; \
+	fi
 
 lint: ## Ruff lint
 	cd $(SERVER) && $(PY) -m ruff check .
@@ -120,6 +136,13 @@ phone-usb: ## USB phone: tunnel phone's localhost:8000 to this laptop (no Wi-Fi/
 
 phone-usb-off: ## Remove the USB tunnel
 	adb reverse --remove tcp:$(PORT)
+
+# ---------------------------------------------------------------- app builds
+app-release: ## Bump build no., build release APK -> dist/, install if phone connected (BUMP=patch|minor, API_URL=)
+	@scripts/app_release.sh android
+
+app-ios: ## Same as app-release for iOS (needs macOS + Xcode)
+	@scripts/app_release.sh ios
 
 # ---------------------------------------------------------------- later phases
 run-mcp: ## [phase 3] Start the MCP server (stdio)
