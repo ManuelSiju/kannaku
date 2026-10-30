@@ -1,0 +1,26 @@
+{
+  "CaseDraft": {
+    "case_type": "loan_offer",
+    "terms": [
+      {"name": "loan_amount", "value_text": "1,00,000", "evidence_quote": "a loan of 1,00,000", "source": "transcript"},
+      {"name": "flat_rate", "value_text": "12%", "evidence_quote": "at 12% flat", "source": "transcript"},
+      {"name": "tenure_months", "value_text": "24 months", "evidence_quote": "for 24 months", "source": "transcript"}
+    ]
+  },
+  "CouncilOutput": {
+    "opinions": [
+      {"agent": "sankz", "stance": "against", "strength": 0.8,
+       "arguments": [
+         {"text": "The 12% flat rate really costs about 21.6% a year on the reducing balance.", "cited_ids": ["loan_effective_rate"]},
+         {"text": "You would pay 24,000 in interest over 24 months.", "cited_ids": ["loan_total_interest"]}
+       ],
+       "questions_for_seller": ["What is the reducing-balance interest rate?"]}
+    ]
+  },
+  "ExplainerOutput": {
+    "opener": {"speaker": "alfii", "text": "I asked Sankz to check this loan."},
+    "agent_lines": [{"speaker": "sankz", "text": "This flat-rate loan really costs about 21.6% a year.", "cited_ids": ["loan_effective_rate"]}],
+    "verdict_sentence": {"speaker": "alfii", "text": "Do not take this loan as offered; ask for the reducing-balance rate first."},
+    "questions": ["What is the reducing-balance interest rate?", "Are there processing fees or other charges?"]
+  }
+}

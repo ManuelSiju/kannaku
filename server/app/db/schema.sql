@@ -53,6 +53,7 @@ CREATE TABLE IF NOT EXISTS cases (
     transcript   TEXT,
     language     TEXT,
     privacy_mode TEXT NOT NULL DEFAULT 'discreet' CHECK (privacy_mode IN ('full', 'discreet')),
+    result_json  TEXT,
     created_at   TEXT NOT NULL DEFAULT (datetime('now'))
 );
 

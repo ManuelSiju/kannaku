@@ -8,7 +8,7 @@ from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 
-from app.api import health
+from app.api import alerts, cases, families, health, items
 from app.config import get_settings
 
 
@@ -24,3 +24,5 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
 
 app = FastAPI(title="Kanakku", version="0.1.0", lifespan=lifespan)
 app.include_router(health.router)
+for r in (cases.router, families.router, items.router, alerts.router):
+    app.include_router(r)
