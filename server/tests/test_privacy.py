@@ -3,7 +3,10 @@ import pytest
 from app.engines.finance import affordability, endowment_return
 from app.pipeline.privacy import Allowed, Blocked, decide_mode, speech_allowed
 
-FACTS = [endowment_return(50_000, 15, 10_20_000, 15), *affordability(45_000, 28_000, 1_60_000, 2_400, 4_167)]
+FACTS = [
+    endowment_return(50_000, 15, 10_20_000, 15),
+    *affordability(45_000, 28_000, 1_60_000, 2_400, 4_167, regular_commitments=1_000),
+]
 
 
 def test_discreet_blocks_citing_personal_fact():

@@ -36,9 +36,9 @@ def test_demo_assets_exist():
 
     assets = SERVER_ROOT / "demo_assets"
     for name in [
-        "suraksha_brochure.pdf",
-        "suraksha_brochure_p1.png",
-        "suraksha_brochure_p3.png",
+        "kanakavalli_brochure.pdf",
+        "kanakavalli_brochure_p1.png",
+        "kanakavalli_brochure_p3.png",
         "zephyrx_tip.txt",
         "zephyrx_tip.png",
     ]:
@@ -51,7 +51,7 @@ def test_brochure_pdf_has_the_key_sentence():
 
     from app.config import SERVER_ROOT
 
-    with pdfplumber.open(SERVER_ROOT / "demo_assets" / "suraksha_brochure.pdf") as pdf:
+    with pdfplumber.open(SERVER_ROOT / "demo_assets" / "kanakavalli_brochure.pdf") as pdf:
         assert len(pdf.pages) == 3
         assert "Bonus rates are not guaranteed and may change every year." in pdf.pages[2].extract_text()
         assert "Rs. 10,20,000" in pdf.pages[1].extract_text()

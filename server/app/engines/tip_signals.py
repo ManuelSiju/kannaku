@@ -14,10 +14,14 @@ from pydantic import BaseModel
 from app.engines.fact import Fact, known, unknown
 
 # ---- thresholds (documented; tune here only) ----
+# All windows count TRADING days (rows), not calendar days.
+RUN_WINDOW = 30  # run_up_30d and upper_circuit_hits_30d use the same last-30-trading-day window
+SPIKE_RECENT, SPIKE_BASE = 5, 60  # volume_spike: last 5 trading days vs the 60 trading days before
+DRAWDOWN_WINDOW = 90
 UPPER_CIRCUIT_PCT = 4.9  # a day's close up >= this % from previous close counts as an upper-circuit hit
-RUN_UP_HIGH = 0.50  # 30-day price rise
+RUN_UP_HIGH = 0.50  # price rise over RUN_WINDOW trading days
 RUN_UP_MEDIUM = 0.25
-VOLUME_SPIKE_HIGH = 3.0  # last-5-day avg volume / previous-60-day avg volume
+VOLUME_SPIKE_HIGH = 3.0  # recent avg volume / base avg volume
 VOLUME_SPIKE_MEDIUM = 2.0
 CIRCUIT_HITS_HIGH = 5
 CIRCUIT_HITS_MEDIUM = 2
@@ -42,17 +46,26 @@ def _rows(rows: Iterable[PriceRow | Mapping[str, Any]]) -> list[PriceRow]:
 def tip_signals(
     rows: Iterable[PriceRow | Mapping[str, Any]], *, symbol: str = "", circuit_pct: float = UPPER_CIRCUIT_PCT
 ) -> list[Fact]:
-    """Rows are trading days (date, close, volume), any order. Windows count trading days."""
+    """Rows are trading days (date, close, volume), any order. Every window counts trading days (rows)."""
     data = _rows(rows)
     closes = [r.close for r in data]
     vols = [r.volume for r in data]
     who = f" of {symbol}" if symbol else ""
     facts: list[Fact] = []
 
-    label = f"Price rise{who} over the last 30 trading days"
-    formula = "close[-1] / close[-31] - 1"
-    if len(closes) >= 31 and closes[-31] > 0:
-        run_up = closes[-1] / closes[-31] - 1
+    # run_up_30d and upper_circuit_hits_30d share ONE window: the last RUN_WINDOW trading days, i.e. the
+    # RUN_WINDOW day-to-day moves from the close RUN_WINDOW trading days ago to the latest close.
+    win = closes[-(RUN_WINDOW + 1) :]
+    win_dates = [r.date.isoformat() for r in data[-(RUN_WINDOW + 1) :]]
+    window_inputs: dict[str, Any] = {"window_trading_days": RUN_WINDOW}
+    if len(win) == RUN_WINDOW + 1:
+        window_inputs |= {"window_from": win_dates[0], "window_to": win_dates[-1]}
+    have_window = len(win) == RUN_WINDOW + 1
+
+    label = f"Price rise{who} over the last {RUN_WINDOW} trading days"
+    formula = f"close[latest] / close[{RUN_WINDOW} trading days earlier] - 1"
+    if have_window and win[0] > 0:
+        run_up = win[-1] / win[0] - 1
         facts.append(
             known(
                 "run_up_30d",
@@ -62,41 +75,84 @@ def tip_signals(
                 "offer",
                 formula,
                 symbol=symbol,
-                close_then=closes[-31],
-                close_now=closes[-1],
+                close_then=win[0],
+                close_now=win[-1],
+                **window_inputs,
             )
         )
     else:
         run_up = None
-        facts.append(unknown("run_up_30d", label, "fraction", "offer", formula, ["31 days of prices"], symbol=symbol))
+        facts.append(
+            unknown(
+                "run_up_30d",
+                label,
+                "fraction",
+                "offer",
+                formula,
+                [f"{RUN_WINDOW + 1} trading days of prices"],
+                symbol=symbol,
+                **window_inputs,
+            )
+        )
 
-    label = f"Trading volume{who} in the last 5 days compared with the 60 days before (times)"
-    formula = "mean(volume[-5:]) / mean(volume[-65:-5])"
-    base = vols[-65:-5]
-    if len(vols) >= 65 and sum(base) > 0:
-        spike = (sum(vols[-5:]) / 5) / (sum(base) / len(base))
-        facts.append(known("volume_spike", label, round(spike, 2), "times", "offer", formula, symbol=symbol))
-    else:
-        spike = None
-        facts.append(unknown("volume_spike", label, "times", "offer", formula, ["65 days of volume"], symbol=symbol))
-
-    label = f"Days{who} in the last 30 trading days the price jumped {circuit_pct}% or more"
-    formula = f"count(close[d] / close[d-1] - 1 >= {circuit_pct}%) over last 30 days"
-    if len(closes) >= 31:
-        window = closes[-31:]
-        hits = sum(1 for a, b in zip(window, window[1:], strict=False) if a > 0 and (b / a - 1) * 100 >= circuit_pct)
+    label = f"Days{who} in the last {RUN_WINDOW} trading days the price jumped {circuit_pct}% or more"
+    formula = f"count of day-to-day rises >= {circuit_pct}% over the same {RUN_WINDOW} trading days as run_up_30d"
+    if have_window:
+        hits = sum(1 for a, b in zip(win, win[1:], strict=False) if a > 0 and (b / a - 1) * 100 >= circuit_pct)
         facts.append(
             known(
-                "upper_circuit_hits_30d", label, hits, "count", "offer", formula, symbol=symbol, circuit_pct=circuit_pct
+                "upper_circuit_hits_30d",
+                label,
+                hits,
+                "count",
+                "offer",
+                formula,
+                symbol=symbol,
+                circuit_pct=circuit_pct,
+                **window_inputs,
             )
         )
     else:
         hits = None
-        facts.append(unknown("upper_circuit_hits_30d", label, "count", "offer", formula, ["31 days"], symbol=symbol))
+        facts.append(
+            unknown(
+                "upper_circuit_hits_30d",
+                label,
+                "count",
+                "offer",
+                formula,
+                [f"{RUN_WINDOW + 1} trading days"],
+                symbol=symbol,
+                **window_inputs,
+            )
+        )
 
-    label = f"Biggest fall{who} from a high in the last 90 trading days"
-    formula = "max over days of (1 - close / running peak) within last 90 days"
-    window = closes[-90:]
+    label = (
+        f"Trading volume{who} in the last {SPIKE_RECENT} trading days compared with the {SPIKE_BASE} trading days "
+        "before (times)"
+    )
+    formula = f"mean(volume, last {SPIKE_RECENT} trading days) / mean(volume, previous {SPIKE_BASE} trading days)"
+    recent, base = vols[-SPIKE_RECENT:], vols[-(SPIKE_RECENT + SPIKE_BASE) : -SPIKE_RECENT]
+    if len(vols) >= SPIKE_RECENT + SPIKE_BASE and sum(base) > 0:
+        spike = (sum(recent) / SPIKE_RECENT) / (sum(base) / len(base))
+        facts.append(known("volume_spike", label, round(spike, 2), "times", "offer", formula, symbol=symbol))
+    else:
+        spike = None
+        facts.append(
+            unknown(
+                "volume_spike",
+                label,
+                "times",
+                "offer",
+                formula,
+                [f"{SPIKE_RECENT + SPIKE_BASE} trading days of volume"],
+                symbol=symbol,
+            )
+        )
+
+    label = f"Biggest fall{who} from a high in the last {DRAWDOWN_WINDOW} trading days"
+    formula = f"max over days of (1 - close / running peak) within the last {DRAWDOWN_WINDOW} trading days"
+    window = closes[-DRAWDOWN_WINDOW:]
     if len(window) >= 2:
         peak, worst = window[0], 0.0
         for c in window:
@@ -105,7 +161,9 @@ def tip_signals(
                 worst = max(worst, 1 - c / peak)
         facts.append(known("max_drawdown_90d", label, round(worst, 4), "fraction", "offer", formula, symbol=symbol))
     else:
-        facts.append(unknown("max_drawdown_90d", label, "fraction", "offer", formula, ["2 days"], symbol=symbol))
+        facts.append(
+            unknown("max_drawdown_90d", label, "fraction", "offer", formula, ["2 trading days"], symbol=symbol)
+        )
 
     level = pump_level(run_up, spike, hits)
     label = f"Pump-and-dump warning level{who}"

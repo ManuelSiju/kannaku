@@ -95,3 +95,12 @@ def test_circuit_threshold_configurable():
 )
 def test_pump_level_thresholds(run_up, spike, hits, level):
     assert pump_level(run_up, spike, hits) == level
+
+
+def test_run_up_and_circuit_hits_share_one_trading_day_window():
+    f = by_id(tip_signals(pump_pattern()))
+    ru, ch = f["run_up_30d"].inputs, f["upper_circuit_hits_30d"].inputs
+    assert ru["window_trading_days"] == ch["window_trading_days"] == 30
+    assert (ru["window_from"], ru["window_to"]) == (ch["window_from"], ch["window_to"])
+    assert "trading days" in f["run_up_30d"].label and "trading days" in f["upper_circuit_hits_30d"].label
+    assert "trading days" in f["volume_spike"].label and "trading days" in f["max_drawdown_90d"].label

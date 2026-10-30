@@ -4,7 +4,7 @@ from app.pipeline.evidence import Dropped, Kept, check_argument
 FACTS = [
     endowment_return(50_000, 15, 10_20_000, 15),  # ~0.0379
     fd_value(50_000, 15, 0.07),  # ~13,44,400
-    *affordability(45_000, 28_000, 1_60_000, 2_400, 50_000 / 12),
+    *affordability(45_000, 28_000, 1_60_000, 2_400, 50_000 / 12, regular_commitments=1_000),
 ]
 QUOTES = {
     "q1": "Bonus rates are not guaranteed and may change every year.",
@@ -50,7 +50,7 @@ def test_text_without_numbers_and_valid_citation_kept():
 
 
 def test_kind_filter_ignores_other_kinds():
-    text = "You would have ₹10,433 left each month."
+    text = "You would have ₹9,433 left each month."
     assert check_argument(text, ["surplus_after"], FACTS, QUOTES).kept
     assert not check_argument(text, ["surplus_after"], FACTS, QUOTES, kind_filter="offer").kept
 

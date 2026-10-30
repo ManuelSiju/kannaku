@@ -39,7 +39,7 @@ def test_golden_flat_to_effective():
 
 
 def test_golden_affordability_missing_expenses_is_unknown_not_zero():
-    f = by_id(affordability(45_000, None, 1_60_000, 2_400, 4_167))
+    f = by_id(affordability(45_000, None, 1_60_000, 2_400, 4_167, regular_commitments=1_000))
     assert f["buffer_months_after"].status == "unknown"
     assert f["buffer_months_after"].value is None
     assert "monthly_expenses" in f["buffer_months_after"].inputs["missing"]
@@ -51,14 +51,14 @@ def test_golden_affordability_missing_expenses_is_unknown_not_zero():
 
 
 def test_affordability_demo_family():
-    f = by_id(affordability(45_000, 28_000, 1_60_000, 2_400, 50_000 / 12))
+    f = by_id(affordability(45_000, 28_000, 1_60_000, 2_400, 50_000 / 12, regular_commitments=1_000))
     assert all(x.kind == "personal" for x in f.values())
-    assert f["surplus_after"].value == pytest.approx(45_000 - 28_000 - 2_400 - 50_000 / 12, abs=0.01)
-    assert f["buffer_months_after"].value == pytest.approx(1_60_000 / (28_000 + 2_400 + 50_000 / 12), abs=0.01)
+    assert f["surplus_after"].value == pytest.approx(45_000 - 28_000 - 2_400 - 1_000 - 50_000 / 12, abs=0.01)
+    assert f["buffer_months_after"].value == pytest.approx(1_60_000 / (28_000 + 2_400 + 1_000 + 50_000 / 12), abs=0.01)
 
 
 def test_affordability_zero_income_is_unknown():
-    assert by_id(affordability(0, 1, 1, 0, 1))["emi_share"].status == "unknown"
+    assert by_id(affordability(0, 1, 1, 0, 1, regular_commitments=0))["emi_share"].status == "unknown"
 
 
 def test_irr_simple_and_no_sign_change():
@@ -96,3 +96,17 @@ def test_display():
     assert format_inr(1344400) == "₹13,44,400"
     assert format_inr(5166.67) == "₹5,166.67"
     assert format_inr(999) == "₹999"
+
+
+def test_regular_commitments_count_in_buffer_and_surplus_not_emi_share():
+    f = by_id(affordability(45_000, 28_000, 1_60_000, 2_400, 4_000, regular_commitments=1_000))
+    assert f["surplus_after"].value == pytest.approx(45_000 - 28_000 - 2_400 - 1_000 - 4_000)
+    assert f["buffer_months_after"].value == pytest.approx(1_60_000 / 35_400, abs=0.01)
+    assert f["emi_share"].value == pytest.approx(6_400 / 45_000, abs=1e-4)
+
+
+def test_regular_commitments_unknown_makes_buffer_unknown():
+    f = by_id(affordability(45_000, 28_000, 1_60_000, 2_400, 4_000, regular_commitments=None))
+    assert f["buffer_months_after"].status == "unknown"
+    assert "regular_commitments" in f["surplus_after"].inputs["missing"]
+    assert f["emi_share"].status == "known"

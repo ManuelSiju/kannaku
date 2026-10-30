@@ -203,7 +203,7 @@ class Repo:
         privacy_mode: str = "discreet",
     ) -> int:
         return self._insert(
-            "case",
+            "cases",
             family_id=family_id,
             case_type=case_type,
             transcript=strip_ids(transcript),
@@ -215,11 +215,11 @@ class Repo:
         if "transcript" in cols:
             cols["transcript"] = strip_ids(cols["transcript"])
         sets = ", ".join(f'"{k}" = ?' for k in cols)
-        self.conn.execute(f'UPDATE "case" SET {sets} WHERE id = ?', (*cols.values(), case_id))
+        self.conn.execute(f"UPDATE cases SET {sets} WHERE id = ?", (*cols.values(), case_id))
         self.conn.commit()
 
     def get_case(self, case_id: int) -> dict[str, Any] | None:
-        rows = self._rows('SELECT * FROM "case" WHERE id = ?', case_id)
+        rows = self._rows("SELECT * FROM cases WHERE id = ?", case_id)
         return rows[0] if rows else None
 
     def add_evidence(self, case_id: int, source: str, text: str) -> str:

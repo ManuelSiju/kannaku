@@ -81,7 +81,8 @@ def calc_flat_to_effective(principal: float, flat_rate_annual: float, months: in
 
 @mcp.tool(
     name="calc.affordability",
-    description="EMI share, savings buffer (months), monthly surplus after a new monthly cost. "
+    description="EMI share, savings buffer (months), monthly surplus after a new monthly cost (counts EMIs and "
+    "regular commitments such as yearly premiums / 12). "
     "Give family_id to fill missing values from the confirmed profile. Missing stays unknown.",
 )
 def calc_affordability(
@@ -91,9 +92,16 @@ def calc_affordability(
     monthly_expenses: float | None = None,
     savings: float | None = None,
     existing_emi: float | None = None,
+    regular_commitments: float | None = None,
 ) -> dict[str, Any]:
     return tools.calc_affordability(
-        monthly_income, monthly_expenses, savings, existing_emi, new_monthly_cost, family_id
+        monthly_income,
+        monthly_expenses,
+        savings,
+        existing_emi,
+        new_monthly_cost,
+        family_id,
+        regular_commitments=regular_commitments,
     )
 
 

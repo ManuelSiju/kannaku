@@ -6,7 +6,8 @@ are kind "offer". Unknown values are facts with status "unknown" and value None,
 
 Fact ids:
   profile.monthly_income | profile.monthly_expenses | profile.savings    (monthly_expenses excludes loan EMIs)
-  existing_emi        sum of active confirmed monthly loan items
+  existing_emi        sum of active confirmed loan items, per month
+  regular_commitments other active confirmed recurring items per month (yearly premiums / 12), not EMIs
   item.<id>.amount    one family item
   ref.fd_rate | ref.inflation | ref.index_long_run_return
   engine ids as in app.engines (irr, endowment_return, fd_value, sip_value, loan_*, emi_share, ...)
@@ -89,6 +90,22 @@ def existing_emi_fact(family_id: int, repo: Repo | None = None, today: date | No
     )
 
 
+def regular_commitments_fact(family_id: int, repo: Repo | None = None, today: date | None = None) -> Fact:
+    day = today or date.today()
+    items = [i for i in _repo(repo).list_items(family_id) if i.kind != "loan" and i.frequency != "once"]
+    items = [i for i in items if i.active_on(day)]
+    total = sum(i.monthly_amount() for i in items)
+    return known(
+        "regular_commitments",
+        "Other regular payments each month, such as policy premiums (not loan EMIs)",
+        round(total, 2),
+        "INR",
+        "personal",
+        "sum of active confirmed non-loan items, per month (yearly / 12)",
+        items=[i.id for i in items],
+    )
+
+
 def family_get_profile(family_id: int, repo: Repo | None = None) -> dict[str, Any]:
     facts = profile_facts(family_id, repo)
     return {
@@ -102,7 +119,7 @@ def family_get_profile(family_id: int, repo: Repo | None = None) -> dict[str, An
             }
             for f in facts
         ],
-        "facts": _dump(facts + [existing_emi_fact(family_id, repo)]),
+        "facts": _dump(facts + [existing_emi_fact(family_id, repo), regular_commitments_fact(family_id, repo)]),
     }
 
 
@@ -230,8 +247,9 @@ def calc_affordability(
     new_monthly_cost: float | None = None,
     family_id: int | None = None,
     repo: Repo | None = None,
+    regular_commitments: float | None = None,
 ) -> dict[str, Any]:
-    """Explicit values win; with family_id, missing ones are filled from the confirmed profile and loan items."""
+    """Explicit values win; with family_id, missing ones are filled from the confirmed profile and items."""
     if family_id is not None:
         prof = {f.id.removeprefix("profile."): f.value for f in profile_facts(family_id, repo)}
         monthly_income = monthly_income if monthly_income is not None else prof["monthly_income"]
@@ -239,5 +257,14 @@ def calc_affordability(
         savings = savings if savings is not None else prof["savings"]
         if existing_emi is None:
             existing_emi = existing_emi_fact(family_id, repo).value
-    facts = finance.affordability(monthly_income, monthly_expenses, savings, existing_emi, new_monthly_cost)
+        if regular_commitments is None:
+            regular_commitments = regular_commitments_fact(family_id, repo).value
+    facts = finance.affordability(
+        monthly_income,
+        monthly_expenses,
+        savings,
+        existing_emi,
+        new_monthly_cost,
+        regular_commitments=regular_commitments,
+    )
     return {"facts": _dump(facts)}

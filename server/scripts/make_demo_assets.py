@@ -22,7 +22,7 @@ from app.config import SERVER_ROOT  # noqa: E402
 
 OUT = SERVER_ROOT / "demo_assets"
 INSURER = "Kanakavalli Life Assurance (fictional)"
-PLAN = "Suraksha Life Endowment Plan"
+PLAN = "Kanakavalli Sthira Endowment Plan"
 FOOTER = "FICTIONAL DOCUMENT - FOR THE KANAKKU DEMO ONLY - NOT A REAL PRODUCT"
 
 PAGES: list[tuple[str, list[str]]] = [
@@ -154,10 +154,10 @@ def tip_png(path: Path) -> None:
 def main() -> None:
     OUT.mkdir(parents=True, exist_ok=True)
     (OUT / "stocks").mkdir(exist_ok=True)
-    brochure_pdf(OUT / "suraksha_brochure.pdf")
+    brochure_pdf(OUT / "kanakavalli_brochure.pdf")
     for i, (title, lines) in enumerate(PAGES, start=1):
-        page_png(OUT / f"suraksha_brochure_p{i}.png", title, lines)
-    shutil.copy(OUT / "suraksha_brochure_p1.png", OUT / "sample_brochure.png")  # used by make check-models
+        page_png(OUT / f"kanakavalli_brochure_p{i}.png", title, lines)
+    shutil.copy(OUT / "kanakavalli_brochure_p1.png", OUT / "sample_brochure.png")  # used by make check-models
     zephyrx_csv(OUT / "stocks" / "ZEPHYRX.csv")
     (OUT / "zephyrx_tip.txt").write_text(TIP_TEXT + "\n")
     tip_png(OUT / "zephyrx_tip.png")

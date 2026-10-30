@@ -15,6 +15,7 @@ def test_profile_known_and_unknown(demo_repo):
     assert f["profile.monthly_income"]["value"] == 45_000 and f["profile.monthly_income"]["inputs"]["source"] == "voice"
     assert f["profile.savings"]["inputs"]["source"] == "document"
     assert f["existing_emi"]["value"] == 2_400  # scooter loan only; policy premium is not an EMI
+    assert f["regular_commitments"]["value"] == 1_000  # money-back policy 12,000 a year / 12
     assert all(x["kind"] == "personal" for x in out["facts"])
     # facts are unchanged Fact dumps
     assert all(Fact.model_validate(x).model_dump() == x for x in out["facts"])
@@ -85,7 +86,7 @@ def test_calculators_match_phase2_golden():
 
 def test_affordability_from_family(demo_repo):
     f = ids(tools.calc_affordability(new_monthly_cost=50_000 / 12, family_id=1, repo=demo_repo))
-    outgo = 28_000 + 2_400 + 50_000 / 12
+    outgo = 28_000 + 2_400 + 1_000 + 50_000 / 12  # expenses + scooter EMI + policy 12,000/12 + new premium
     assert f["buffer_months_after"]["value"] == pytest.approx(1_60_000 / outgo, abs=0.01)
     assert f["surplus_after"]["value"] == pytest.approx(45_000 - outgo, abs=0.01)
     assert f["emi_share"]["value"] == pytest.approx((2_400 + 50_000 / 12) / 45_000, abs=1e-4)

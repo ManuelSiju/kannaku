@@ -92,9 +92,9 @@ def test_no_overrides_when_values_fine_or_unknown():
 
 
 def test_override_inputs_from_facts():
-    facts = affordability(45_000, 28_000, 10_000, 2_400, 4_167, prefix="new")
+    facts = affordability(45_000, 28_000, 10_000, 2_400, 4_167, regular_commitments=0, prefix="new")
     o = override_inputs_from_facts(facts, scam=False)
     assert o.buffer_months_after == pytest.approx(10_000 / (28_000 + 2_400 + 4_167), abs=0.01)
     assert run_consensus("insurance_offer", GREEN, o).verdict == "red"  # < 1 month buffer
-    missing = override_inputs_from_facts(affordability(45_000, None, None, 0, 4_167))
+    missing = override_inputs_from_facts(affordability(45_000, None, None, 0, 4_167, regular_commitments=0))
     assert missing.buffer_months_after is None and missing.surplus_after is None

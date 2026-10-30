@@ -176,23 +176,31 @@ def affordability(
     existing_emi: Number | None,
     new_monthly_cost: Number | None,
     *,
+    regular_commitments: Number | None,
     prefix: str = "",
 ) -> list[Fact]:
     """Family affordability after a new monthly commitment. Returns [emi_share, buffer_months_after,
-    surplus_after], all kind "personal". `monthly_expenses` excludes loan EMIs. Any missing input makes the
-    facts that need it "unknown" (None), never zero.
+    surplus_after], all kind "personal". Any missing input makes the facts that need it "unknown" (None),
+    never zero; pass 0 only when the family really has none.
+
+    monthly_expenses     household spending, EXCLUDING loan EMIs and regular commitments
+    existing_emi         loan EMIs already paid each month
+    regular_commitments  other recurring payments per month, e.g. yearly policy premiums / 12 (not EMIs)
+    new_monthly_cost     the new offer's cost per month (an EMI, or a yearly premium / 12)
 
     emi_share           = (existing_emi + new_monthly_cost) / monthly_income          (FOIR, fraction)
-    buffer_months_after = savings / (monthly_expenses + existing_emi + new_monthly_cost)
-    surplus_after       = monthly_income - monthly_expenses - existing_emi - new_monthly_cost
+    buffer_months_after = savings / (monthly_expenses + existing_emi + regular_commitments + new_monthly_cost)
+    surplus_after       = monthly_income - monthly_expenses - existing_emi - regular_commitments - new_monthly_cost
     """
     vals = dict(
         monthly_income=monthly_income,
         monthly_expenses=monthly_expenses,
         savings=savings,
         existing_emi=existing_emi,
+        regular_commitments=regular_commitments,
         new_monthly_cost=new_monthly_cost,
     )
+    outgo_names = ("monthly_expenses", "existing_emi", "regular_commitments", "new_monthly_cost")
 
     def need(*names: str) -> list[str]:
         return [n for n in names if vals[n] is None]
@@ -216,9 +224,9 @@ def affordability(
         out.append(known(_id(prefix, "emi_share"), label, round(share, 4), "fraction", "personal", formula, **vals))
 
     label = "Months your savings would cover all monthly costs after this"
-    formula = "savings / (monthly_expenses + existing_emi + new_monthly_cost)"
-    missing = need("savings", "monthly_expenses", "existing_emi", "new_monthly_cost")
-    outgo = 0.0 if missing else f("monthly_expenses") + f("existing_emi") + f("new_monthly_cost")
+    formula = "savings / (monthly_expenses + existing_emi + regular_commitments + new_monthly_cost)"
+    missing = need("savings", *outgo_names)
+    outgo = 0.0 if missing else sum(f(n) for n in outgo_names)
     if missing or outgo <= 0:
         out.append(
             unknown(
@@ -245,11 +253,11 @@ def affordability(
         )
 
     label = "Money left each month after all costs and this"
-    formula = "monthly_income - monthly_expenses - existing_emi - new_monthly_cost"
-    missing = need("monthly_income", "monthly_expenses", "existing_emi", "new_monthly_cost")
+    formula = "monthly_income - monthly_expenses - existing_emi - regular_commitments - new_monthly_cost"
+    missing = need("monthly_income", *outgo_names)
     if missing:
         out.append(unknown(_id(prefix, "surplus_after"), label, "INR", "personal", formula, missing, **vals))
     else:
-        surplus = f("monthly_income") - f("monthly_expenses") - f("existing_emi") - f("new_monthly_cost")
+        surplus = f("monthly_income") - sum(f(n) for n in outgo_names)
         out.append(known(_id(prefix, "surplus_after"), label, round(surplus, 2), "INR", "personal", formula, **vals))
     return out

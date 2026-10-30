@@ -45,7 +45,7 @@ CREATE TABLE IF NOT EXISTS family_item (
     confirmed  INTEGER NOT NULL DEFAULT 0
 );
 
-CREATE TABLE IF NOT EXISTS "case" (
+CREATE TABLE IF NOT EXISTS cases (
     id           INTEGER PRIMARY KEY,
     family_id    INTEGER NOT NULL REFERENCES family(id) ON DELETE CASCADE,
     case_type    TEXT,
@@ -59,14 +59,14 @@ CREATE TABLE IF NOT EXISTS "case" (
 -- quote_id = 'q' || evidence.id  (see repo.quote_id)
 CREATE TABLE IF NOT EXISTS evidence (
     id      INTEGER PRIMARY KEY,
-    case_id INTEGER NOT NULL REFERENCES "case"(id) ON DELETE CASCADE,
+    case_id INTEGER NOT NULL REFERENCES cases(id) ON DELETE CASCADE,
     source  TEXT NOT NULL,          -- 'transcript' | 'page_N'
     text    TEXT NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS term (
     id          INTEGER PRIMARY KEY,
-    case_id     INTEGER NOT NULL REFERENCES "case"(id) ON DELETE CASCADE,
+    case_id     INTEGER NOT NULL REFERENCES cases(id) ON DELETE CASCADE,
     name        TEXT NOT NULL,
     value       REAL,
     unit        TEXT,
@@ -77,7 +77,7 @@ CREATE TABLE IF NOT EXISTS term (
 
 CREATE TABLE IF NOT EXISTS fact (
     id          INTEGER PRIMARY KEY,
-    case_id     INTEGER NOT NULL REFERENCES "case"(id) ON DELETE CASCADE,
+    case_id     INTEGER NOT NULL REFERENCES cases(id) ON DELETE CASCADE,
     fact_id     TEXT NOT NULL,
     label       TEXT NOT NULL,
     value       REAL,
@@ -92,7 +92,7 @@ CREATE TABLE IF NOT EXISTS fact (
 
 CREATE TABLE IF NOT EXISTS position (
     id       INTEGER PRIMARY KEY,
-    case_id  INTEGER NOT NULL REFERENCES "case"(id) ON DELETE CASCADE,
+    case_id  INTEGER NOT NULL REFERENCES cases(id) ON DELETE CASCADE,
     agent    TEXT NOT NULL,
     round    INTEGER NOT NULL DEFAULT 1,
     stance   TEXT NOT NULL CHECK (stance IN ('for', 'against', 'unsure')),
@@ -101,7 +101,7 @@ CREATE TABLE IF NOT EXISTS position (
 
 CREATE TABLE IF NOT EXISTS argument (
     id             INTEGER PRIMARY KEY,
-    case_id        INTEGER NOT NULL REFERENCES "case"(id) ON DELETE CASCADE,
+    case_id        INTEGER NOT NULL REFERENCES cases(id) ON DELETE CASCADE,
     agent          TEXT NOT NULL,
     round          INTEGER NOT NULL DEFAULT 1,
     text           TEXT NOT NULL,
@@ -112,7 +112,7 @@ CREATE TABLE IF NOT EXISTS argument (
 
 CREATE TABLE IF NOT EXISTS verdict (
     id             INTEGER PRIMARY KEY,
-    case_id        INTEGER NOT NULL REFERENCES "case"(id) ON DELETE CASCADE,
+    case_id        INTEGER NOT NULL REFERENCES cases(id) ON DELETE CASCADE,
     colour         TEXT NOT NULL CHECK (colour IN ('red', 'yellow', 'green')),
     score          REAL,
     disagreement   REAL,
@@ -124,7 +124,7 @@ CREATE TABLE IF NOT EXISTS verdict (
 
 CREATE TABLE IF NOT EXISTS spoken_line (
     id             INTEGER PRIMARY KEY,
-    case_id        INTEGER NOT NULL REFERENCES "case"(id) ON DELETE CASCADE,
+    case_id        INTEGER NOT NULL REFERENCES cases(id) ON DELETE CASCADE,
     speaker        TEXT NOT NULL,
     "order"        INTEGER NOT NULL,
     text           TEXT NOT NULL,
@@ -134,7 +134,7 @@ CREATE TABLE IF NOT EXISTS spoken_line (
 
 CREATE TABLE IF NOT EXISTS alert (
     id        INTEGER PRIMARY KEY,
-    case_id   INTEGER NOT NULL REFERENCES "case"(id) ON DELETE CASCADE,
+    case_id   INTEGER NOT NULL REFERENCES cases(id) ON DELETE CASCADE,
     family_id INTEGER NOT NULL REFERENCES family(id) ON DELETE CASCADE,
     status    TEXT NOT NULL DEFAULT 'new' CHECK (status IN ('new', 'handled')),
     note      TEXT
@@ -142,7 +142,7 @@ CREATE TABLE IF NOT EXISTS alert (
 
 CREATE TABLE IF NOT EXISTS trace (
     id          INTEGER PRIMARY KEY,
-    case_id     INTEGER NOT NULL REFERENCES "case"(id) ON DELETE CASCADE,
+    case_id     INTEGER NOT NULL REFERENCES cases(id) ON DELETE CASCADE,
     step        TEXT NOT NULL,
     ms          REAL,
     outcome     TEXT,

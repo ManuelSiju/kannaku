@@ -88,6 +88,6 @@ def test_facts_round_trip_unchanged(repo):
 
     fam = repo.create_family()
     cid = repo.create_case(fam)
-    facts = affordability(45_000, None, 1_60_000, 2_400, 4_000)
+    facts = affordability(45_000, None, 1_60_000, 2_400, 4_000, regular_commitments=1_000)
     repo.save_facts(cid, facts)
     assert repo.get_facts(cid) == facts
