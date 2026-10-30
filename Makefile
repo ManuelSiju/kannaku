@@ -24,7 +24,7 @@ LLM_MODEL := qwen2.5:7b-instruct
 endif
 
 .PHONY: help setup setup-system env doctor run-server health llm-up llm-down llm-pull llm-list \
-        check-models test test-fast smoke lint fmt clean run-mcp seed-demo reset-demo run-app demo commit-phase \
+        check-models test test-fast smoke lint fmt clean run-mcp seed-demo reset-demo demo-assets run-app demo commit-phase \
         lan-url firewall-open phone-devices phone-usb phone-usb-off up down status logs app-release app-ios
 
 help: ## Show this list
@@ -96,15 +96,15 @@ test: ## Run all server tests
 test-fast: ## Run tests, stop at first failure
 	cd $(SERVER) && $(PY) -m pytest -x -q
 
-smoke: ## Full local check: tests + lint + model check + make up, /health, make down
+smoke: ## Full local check: tests + lint + make up + model check + /health + make down
 	$(MAKE) --no-print-directory test-fast
 	$(MAKE) --no-print-directory lint
-	$(MAKE) --no-print-directory check-models
 	@if [ -f run/server.pid ] && kill -0 $$(cat run/server.pid) 2>/dev/null; then \
-	  echo "server already up — smoke checks it and leaves it running"; scripts/status.sh; \
+	  echo "server already up — smoke checks it and leaves it running"; \
+	  $(MAKE) --no-print-directory check-models && scripts/status.sh; \
 	else \
 	  had_llm=$$(test -f run/llm.pid && echo 1); \
-	  scripts/up.sh; rc=$$?; \
+	  scripts/up.sh && $(MAKE) --no-print-directory check-models; rc=$$?; \
 	  if [ -z "$$had_llm" ]; then scripts/down.sh; else scripts/down.sh --server-only; fi; \
 	  [ $$rc -eq 0 ] && echo "✔ smoke done" || { echo "✘ smoke failed"; exit 1; }; \
 	fi
@@ -145,14 +145,17 @@ app-ios: ## Same as app-release for iOS (needs macOS + Xcode)
 	@scripts/app_release.sh ios
 
 # ---------------------------------------------------------------- later phases
-run-mcp: ## [phase 3] Start the MCP server (stdio)
-	@echo "run-mcp: arrives in phase 3"
+run-mcp: ## Start the MCP server on stdio (for MCP clients; Ctrl-C to stop)
+	cd $(SERVER) && $(PY) -m app.mcp_server.server
 
-seed-demo: ## [phase 3] Seed the fictional demo family
-	@echo "seed-demo: arrives in phase 3"
+seed-demo: ## Add the fictional demo family (safe to repeat)
+	cd $(SERVER) && $(PY) -m app.db.seed_demo
 
-reset-demo: ## [phase 3] Wipe DB and re-seed the demo family
-	@echo "reset-demo: arrives in phase 3"
+reset-demo: ## Wipe the database and re-seed the demo family
+	cd $(SERVER) && $(PY) -m app.db.seed_demo --reset
+
+demo-assets: ## Regenerate fictional brochure PDF/PNGs, ZEPHYRX tip + price CSV
+	cd $(SERVER) && $(PY) scripts/make_demo_assets.py
 
 run-app: ## [phase 5] Run app on connected phone (Wi-Fi URL; USB=1 for usb tunnel; DEVICE=id)
 	@test -f app/pubspec.yaml || { echo "run-app: Flutter app arrives in phase 5"; exit 0; }; \
