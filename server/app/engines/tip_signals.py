@@ -186,6 +186,7 @@ def tip_signals(
             )
         )
         facts[-1].value_text = level
+        facts[-1].phrase = f"a {level} pump-and-dump risk"
     return facts
 
 

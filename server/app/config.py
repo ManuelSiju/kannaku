@@ -20,6 +20,10 @@ class Settings(BaseSettings):
     llm_vision_enabled: bool = False
     llm_vision_model: str = ""  # optional separate model for calls that carry images (e.g. qwen2.5vl:7b)
     llm_temperature: float = 0.2
+    llm_vision_timeout_s: float = 60.0  # local vision models are slow; text calls keep llm_timeout_s
+    llm_image_max_side: int = (
+        1024  # pages are shrunk to this long side before they go to the model (OCR uses full size)
+    )
     llm_timeout_s: float = 20.0
     llm_max_calls_per_ask: int = 4
 

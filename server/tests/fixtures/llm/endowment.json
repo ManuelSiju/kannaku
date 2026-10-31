@@ -98,7 +98,7 @@
     "agent_lines": [
       {
         "speaker": "dani",
-        "text": "This plan grows your money by only about {endowment_return} a year, which is {cmp_return_low_vs_fd} than a fixed deposit.",
+        "text": "This plan grows only about {endowment_return} a year, {cmp_return_low_vs_fd} a fixed deposit.",
         "cited_ids": []
       },
       {

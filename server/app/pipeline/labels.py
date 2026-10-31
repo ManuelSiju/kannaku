@@ -33,7 +33,9 @@ def where(source: str, case_type: str) -> str:
 def source_label(fact: Fact, case_type: str) -> str:
     inp = fact.inputs
     if fact.id.startswith("term."):
-        return f"{where(str(inp.get('source', '')), case_type)} · {'read twice' if inp.get('photo') else 'checked'}"
+        reading = inp.get("reading") or ("twice" if inp.get("photo") else "checked")
+        how = {"twice": "read twice", "once": "read once"}.get(reading, "checked")
+        return f"{where(str(inp.get('source', '')), case_type)} · {how}"
     if fact.id.startswith("ref."):
         return f"Assumption · as of {_pretty_date(inp.get('as_of'))}"
     if fact.id.startswith(("profile.", "item.")):

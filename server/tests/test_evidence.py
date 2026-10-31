@@ -133,9 +133,7 @@ def test_false_comparison_line_dropped():
 
 def test_comparison_backed_by_agreeing_cmp_fact_kept():
     assert check_argument("This plan earns less than a fixed deposit.", ["cmp_return_low_vs_fd"], CFACTS, QUOTES).kept
-    r = check_argument(
-        "At the higher bonus it would be {cmp_return_high_vs_fd} than a fixed deposit.", [], CFACTS, QUOTES
-    )
+    r = check_argument("At the higher bonus it would be {cmp_return_high_vs_fd} a fixed deposit.", [], CFACTS, QUOTES)
     assert r.kept and r.rendered == "At the higher bonus it would be higher than a fixed deposit."
 
 

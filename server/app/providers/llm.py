@@ -93,6 +93,24 @@ def extract_json(text: str) -> str:
     return text[start : end + 1] if start != -1 and end > start else text
 
 
+def shrink_image(data: bytes, max_side: int) -> bytes:
+    """Downscale so the long side is at most max_side (PNG out). Unreadable data is returned unchanged."""
+    try:
+        import io
+
+        from PIL import Image
+
+        im = Image.open(io.BytesIO(data))
+        if max(im.size) <= max_side:
+            return data
+        im.thumbnail((max_side, max_side))
+        out = io.BytesIO()
+        im.convert("RGB").save(out, format="PNG")
+        return out.getvalue()
+    except Exception:
+        return data
+
+
 def _sniff_mime(data: bytes) -> str:
     if data.startswith(b"\x89PNG"):
         return "image/png"
@@ -136,7 +154,7 @@ class OpenAICompatibleLLM(LLMProvider):
         if images and self.settings.llm_vision_enabled:
             parts: list[dict[str, Any]] = [{"type": "text", "text": user}]
             for img in images:
-                b64 = base64.b64encode(img).decode()
+                b64 = base64.b64encode(shrink_image(img, self.settings.llm_image_max_side)).decode()
                 parts.append({"type": "image_url", "image_url": {"url": f"data:{_sniff_mime(img)};base64,{b64}"}})
             content = parts
         return [{"role": "system", "content": system}, {"role": "user", "content": content}]
@@ -153,10 +171,9 @@ class OpenAICompatibleLLM(LLMProvider):
             }
         return {"type": "json_object"}
 
-    async def _create(self, kwargs: dict[str, Any]) -> Any:
-        return await asyncio.wait_for(
-            self.client.chat.completions.create(**kwargs), timeout=self.settings.llm_timeout_s
-        )
+    async def _create(self, kwargs: dict[str, Any], timeout: float | None = None) -> Any:
+        timeout = timeout or self.settings.llm_timeout_s
+        return await asyncio.wait_for(self.client.chat.completions.create(**kwargs, timeout=timeout), timeout=timeout)
 
     async def _call(
         self, messages: list[dict[str, Any]], schema: type[BaseModel] | None, usage: LLMUsage, *, vision: bool
@@ -180,7 +197,7 @@ class OpenAICompatibleLLM(LLMProvider):
                 else:
                     kwargs["response_format"] = rf
                 try:
-                    resp = await self._create(kwargs)
+                    resp = await self._create(kwargs, self.settings.llm_vision_timeout_s if vision else None)
                     break
                 except BadRequestError as e:
                     if rf is None or self._format >= len(_FORMATS) - 1:
@@ -191,7 +208,8 @@ class OpenAICompatibleLLM(LLMProvider):
                     self._format += 1
         except TimeoutError as e:
             self.stats.transport_failures += 1
-            raise LLMStepFailed(f"LLM call timed out after {self.settings.llm_timeout_s}s") from e
+            limit = self.settings.llm_vision_timeout_s if vision else self.settings.llm_timeout_s
+            raise LLMStepFailed(f"LLM call timed out after {limit:g}s") from e
         except Exception as e:  # transport errors, connection refused, rejected request, ...
             self.stats.transport_failures += 1
             raise LLMStepFailed(f"LLM call failed: {type(e).__name__}: {e}") from e

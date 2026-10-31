@@ -3,5 +3,6 @@
   "fd_rate": 0.07,
   "inflation": 0.05,
   "index_long_run_return": 0.11,
-  "note": "Assumptions for demo; label as assumptions in the UI"
+  "note": "Assumptions for demo; label as assumptions in the UI",
+  "typical_personal_loan_rate": 0.14
 }

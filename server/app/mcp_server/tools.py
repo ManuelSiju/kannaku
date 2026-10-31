@@ -177,6 +177,8 @@ def rates_get_reference(path: Path | None = None) -> dict[str, Any]:
         "fd_rate": "Typical fixed deposit interest rate (assumption)",
         "inflation": "Yearly price rise / inflation (assumption)",
         "index_long_run_return": "Long-run yearly return of a stock-market index fund (assumption)",
+        "typical_personal_loan_rate": "Typical yearly interest rate of a normal bank personal loan (assumption)",
+        "index_return_30d": "Stock-market index rise over the last 30 trading days (assumption)",
     }
     facts = [
         known(
@@ -190,6 +192,7 @@ def rates_get_reference(path: Path | None = None) -> dict[str, Any]:
             assumption=True,
         )
         for k, label in labels.items()
+        if k in r  # optional assumptions (e.g. index_return_30d) only when the snapshot has them
     ]
     return {"as_of": as_of, "note": r.get("note", ""), "facts": _dump(facts)}
 

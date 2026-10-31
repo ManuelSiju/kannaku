@@ -42,7 +42,8 @@ _FLIP = re.compile(r"\s*than\s+(?:this|the|your|that)\s+(?:plan|policy|offer|loa
 
 class Kept(BaseModel):
     kept: Literal[True] = True
-    rendered: str  # placeholders replaced by Fact.display
+    rendered: str  # placeholders replaced by Fact.display (screen form)
+    spoken: str = ""  # placeholders replaced by Fact.spoken(lang) (speech form)
     cited: list[str] = []  # cited ids plus placeholder ids
     fixes: list[str] = []  # auto_placeholder / short-id repairs made before checking
 
@@ -161,9 +162,17 @@ def comparison_problem(rendered: str, cited: Iterable[str], fact_map: Mapping[st
     return None
 
 
-def render(text: str, facts: Facts) -> str:
+def render(text: str, facts: Facts, lang: str | None = None) -> str:
+    """Fill placeholders: screen form (digits) by default, speech form (Indian number words) when lang is given."""
     fact_map = as_fact_map(facts)
-    return PLACEHOLDER.sub(lambda m: fact_map[m.group(1)].display if m.group(1) in fact_map else m.group(0), text)
+
+    def fill(m: re.Match[str]) -> str:
+        f = fact_map.get(m.group(1))
+        if f is None:
+            return m.group(0)
+        return f.display if lang is None else f.spoken(lang)
+
+    return PLACEHOLDER.sub(fill, text)
 
 
 def raw_number(text: str) -> str | None:
@@ -183,6 +192,7 @@ def check_argument(
     kind_filter: FactKind | None = None,
     *,
     comparisons: bool = True,
+    lang: str = "en",
 ) -> Kept | Dropped:
     """kind_filter: if set, every placeholder must be a fact of that kind. comparisons: run the comparison-word
     check (off for questions to the seller)."""
@@ -209,4 +219,4 @@ def check_argument(
     rendered = render(argument_text, fact_map)
     if comparisons and (problem := comparison_problem(rendered, cited, fact_map)):
         return Dropped(reason=problem, fixes=fixes)
-    return Kept(rendered=rendered, cited=cited, fixes=fixes)
+    return Kept(rendered=rendered, spoken=render(argument_text, fact_map, lang), cited=cited, fixes=fixes)

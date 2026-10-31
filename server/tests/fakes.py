@@ -5,6 +5,7 @@ from __future__ import annotations
 import json
 import re
 from pathlib import Path
+from types import SimpleNamespace
 from typing import Any
 
 from pydantic import BaseModel
@@ -28,16 +29,25 @@ class FakeLLM(LLMProvider):
 
     name = "fake"
 
-    def __init__(self, script: dict[str, Any] | None = None) -> None:
+    def __init__(
+        self, script: dict[str, Any] | None = None, *, vision: bool = False, vision_fails: bool = False
+    ) -> None:
         self.script = {k: list(v) if isinstance(v, list) else [v] for k, v in (script or {}).items()}
         self.calls: list[str] = []
         self.inputs: list[dict[str, Any]] = []
+        self.image_calls = 0
+        self.vision_fails = vision_fails
+        self.settings = SimpleNamespace(llm_vision_enabled=vision)
 
     async def chat_json(self, system: str, user: str, schema: type[BaseModel], images: list[bytes] | None = None):
         budget = current_budget()
         if budget is not None:
             budget.consume()
         self.calls.append(schema.__name__)
+        if images:
+            self.image_calls += 1
+            if self.vision_fails:
+                raise LLMStepFailed("LLM call timed out after 60s")
         payload = json.loads(user)
         self.inputs.append(payload)
         queue = self.script.get(schema.__name__)

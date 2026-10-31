@@ -9,7 +9,7 @@ TOLERANCE_PP = 0.5  # within ±0.5 percentage points counts as "about the same"
 
 def compare_rates(id: str, label: str, a: Fact, b: Fact, *, tolerance_pp: float = TOLERANCE_PP) -> Fact:
     """Compare two fraction facts (a vs b). value = difference in percentage points; value_text = the direction,
-    which is what a {cmp_...} placeholder speaks."""
+    phrase reads in a sentence: "this plan's return is {cmp_x} a fixed deposit" -> "... lower than a fixed deposit"."""
     formula = f"{a.id} - {b.id} in percentage points; within ±{tolerance_pp:g} = about the same"
     inputs = {a.id: a.value, b.id: b.value, "tolerance_pp": tolerance_pp}
     if a.value is None or b.value is None:
@@ -25,6 +25,7 @@ def compare_rates(id: str, label: str, a: Fact, b: Fact, *, tolerance_pp: float 
         )
     diff = (a.value - b.value) * 100
     word = "higher" if diff > tolerance_pp else "lower" if diff < -tolerance_pp else "about the same"
+    phrase = {"higher": "higher than", "lower": "lower than", "about the same": "about the same as"}[word]
     return Fact(
         id=id,
         label=label,
@@ -34,4 +35,5 @@ def compare_rates(id: str, label: str, a: Fact, b: Fact, *, tolerance_pp: float 
         formula=formula,
         inputs=inputs,
         value_text=word,
+        phrase=phrase,
     )

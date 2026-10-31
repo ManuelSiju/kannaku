@@ -6,6 +6,7 @@ decide_mode(...) -> "full" | "discreet". Default is discreet.
 
 from __future__ import annotations
 
+import re
 from collections.abc import Iterable
 from typing import Literal
 
@@ -28,9 +29,22 @@ class Blocked(BaseModel):
     reason: str
 
 
+# Words that point at the family's own money. In discreet mode a spoken line may not use them even without a number
+# ("Given your monthly income and high expenses..." tells a listener plenty).
+PERSONAL_WORDS = re.compile(
+    r"(?<![A-Za-z])(?:income|salary|salaries|savings?|saved|expenses?|expenditure|spending|EMIs?|your\s+loans?|"
+    r"your\s+budget|budget|afford\w*|pension)(?![A-Za-z])"
+    r"|വരുമാന\w*|ശമ്പള\w*|സമ്പാദ്യ\w*|ചെലവ്\w*|ചിലവ്\w*|ഇഎംഐ|ബജറ്റ്\w*"
+    r"|आय|आमदनी|वेतन|तनख़्वाह|तनख्वाह|बचत|ख़र्च\w*|खर्च\w*|ईएमआई|बजट",
+    re.I,
+)
+
+
 def speech_allowed(line_text: str, cited_ids: Iterable[str], facts: Facts, mode: PrivacyMode) -> Allowed | Blocked:
     if mode == "full":
         return Allowed()
+    if m := PERSONAL_WORDS.search(line_text):
+        return Blocked(reason=f"personal word '{m.group(0)}' in discreet mode")
     fact_map = as_fact_map(facts)
     for cid in cited_ids:
         f = fact_map.get(cid)

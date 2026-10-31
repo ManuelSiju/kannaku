@@ -33,6 +33,7 @@ class VerifiedTerm(BaseModel):
     verified: bool
     reason: str | None = None
     photo: bool = False  # confirmed by a second, independent reading (OCR of the photo)
+    reading: str = "checked"  # "twice" (vision model + OCR agree) | "once" (photo, OCR only) | "checked" (text/speech)
 
     @property
     def display(self) -> str:
@@ -75,7 +76,8 @@ def _number_in(value: float, unit: str, text: str) -> bool:
     return any(abs(float(a.value) - value) <= max(0.005, 1e-6 * abs(value)) for a in find_amounts(text))
 
 
-def verify_term(term: ExtractedTerm, evidence: list[EvidenceText]) -> VerifiedTerm:
+def verify_term(term: ExtractedTerm, evidence: list[EvidenceText], *, vision_read: bool = False) -> VerifiedTerm:
+    """vision_read: the model looked at the photo itself, so OCR agreeing is a second, independent reading."""
     unit = term_unit(term.name)
     raw = parse_percent(term.value_text) if unit == "fraction" else parse_amount(term.value_text)
     value = None if raw is None else float(raw) / 100 if unit == "fraction" else float(raw)
@@ -96,13 +98,21 @@ def verify_term(term: ExtractedTerm, evidence: list[EvidenceText]) -> VerifiedTe
         return fail("the number is not in the quoted words", match.quote_id)
     if match.ocr_text is not None and not _number_in(value, unit, match.ocr_text):
         return fail("photo reading did not confirm the number", match.quote_id)
+    is_photo = match.ocr_text is not None
+    reading = ("twice" if vision_read else "once") if is_photo else "checked"
     return VerifiedTerm(
-        **base | {"source": match.source}, quote_id=match.quote_id, verified=True, photo=match.ocr_text is not None
+        **base | {"source": match.source},
+        quote_id=match.quote_id,
+        verified=True,
+        photo=is_photo and vision_read,
+        reading=reading,
     )
 
 
-def verify_terms(terms: list[ExtractedTerm], evidence: list[EvidenceText]) -> list[VerifiedTerm]:
-    return [verify_term(t, evidence) for t in terms]
+def verify_terms(
+    terms: list[ExtractedTerm], evidence: list[EvidenceText], *, vision_read: bool = False
+) -> list[VerifiedTerm]:
+    return [verify_term(t, evidence, vision_read=vision_read) for t in terms]
 
 
 def term_question(term_name: str) -> str:
@@ -120,5 +130,5 @@ def term_fact(t: VerifiedTerm) -> Fact | None:
         unit=t.unit,
         kind="offer",
         formula="read from the document and checked twice",
-        inputs={"quote_id": t.quote_id, "source": t.source, "photo": t.photo},
+        inputs={"quote_id": t.quote_id, "source": t.source, "photo": t.photo, "reading": t.reading},
     )

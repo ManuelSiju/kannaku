@@ -10,12 +10,12 @@ FACTS = [
 
 
 def test_discreet_blocks_citing_personal_fact():
-    r = speech_allowed("This would stretch your budget.", ["surplus_after"], FACTS, "discreet")
+    r = speech_allowed("This would stretch things a lot.", ["surplus_after"], FACTS, "discreet")
     assert isinstance(r, Blocked) and "surplus_after" in r.reason
 
 
 def test_discreet_blocks_personal_amount_even_uncited():
-    r = speech_allowed("With 1,60,000 saved you should be careful.", ["endowment_return"], FACTS, "discreet")
+    r = speech_allowed("With 1,60,000 in the bank you should be careful.", ["endowment_return"], FACTS, "discreet")
     assert isinstance(r, Blocked) and "savings" in r.reason
 
 
@@ -52,5 +52,23 @@ def test_offer_cost_is_not_a_personal_amount():
         *flat_to_effective(1_00_000, 0.12, 24),
         *affordability(45_000, 28_000, 1_60_000, 2_400, 5_166.67, regular_commitments=1_000),
     ]
-    assert speech_allowed("The EMI would be ₹5,167.", ["loan_emi"], facts, "discreet").allowed
-    assert not speech_allowed("Your income is ₹45,000.", [], facts, "discreet").allowed
+    assert speech_allowed("Each instalment would be ₹5,167.", ["loan_emi"], facts, "discreet").allowed
+    assert not speech_allowed("That is ₹45,000 a month.", [], facts, "discreet").allowed
+
+
+@pytest.mark.parametrize(
+    "text",
+    [
+        "Given your monthly income and high expenses, this investment is risky.",
+        "This would eat into your savings.",
+        "Your EMI load is already heavy.",
+        "Can you afford this?",
+        "It does not fit your budget.",
+        "നിങ്ങളുടെ വരുമാനം കുറവാണ്.",
+        "आपकी बचत कम हो जाएगी।",
+    ],
+)
+def test_discreet_blocks_personal_words_without_numbers(text):
+    r = speech_allowed(text, [], FACTS, "discreet")
+    assert isinstance(r, Blocked) and "personal word" in r.reason
+    assert speech_allowed(text, [], FACTS, "full").allowed

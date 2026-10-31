@@ -126,6 +126,24 @@ class ScreenDetail(BaseModel):
     source: str
 
 
+class ShortAnswer(BaseModel):
+    text: str  # one Alfii sentence, at most 20 words (the default reply)
+    colour: Colour | None
+
+
+class CouncilLine(BaseModel):
+    speaker: str
+    text: str  # spoken form (Indian number words)
+    kind: Literal["opener", "agent", "rebuttal", "note", "claim", "conclusion"]
+
+
+class ClaimOut(BaseModel):
+    claim: str
+    status: Literal["supported", "contradicted", "cant_verify"]
+    evidence_ids: list[str] = []
+    evidence: str = ""
+
+
 class CaseResult(BaseModel):
     case_id: int
     case_type: str
@@ -137,3 +155,10 @@ class CaseResult(BaseModel):
     degraded: bool
     degraded_steps: list[str]
     llm_calls: int
+    language: str = "en"
+    short_answer: ShortAnswer | None = None
+    council: list[CouncilLine] = []  # opener, each called agent once, rebuttals, notes, claims, Alfii's conclusion
+    council_words: int = 0
+    council_seconds: float = 0.0  # at 150 words a minute
+    suggested_followups: list[str] = []
+    claims: list[ClaimOut] = []

@@ -27,10 +27,13 @@ class Fact(BaseModel):
     inputs: dict[str, Any] = Field(default_factory=dict)
     status: Literal["known", "unknown"] = "known"
     value_text: str | None = None  # for categorical facts, e.g. pump_risk "high"
+    phrase: str | None = None  # how a categorical fact reads in a sentence, e.g. "a high pump-and-dump risk"
 
     @property
     def display(self) -> str:
-        """Plain, speakable form; this is what replaces a {fact_id} placeholder in model text."""
+        """Screen form (digits): what replaces a {fact_id} placeholder on screen. Categorical facts use their phrase."""
+        if self.phrase is not None:
+            return self.phrase
         if self.value_text is not None:
             return self.value_text
         if self.value is None:
@@ -49,6 +52,41 @@ class Fact(BaseModel):
         if self.unit in ("count", "level"):
             return _trim(round(v, 1))
         return f"{_trim(round(v, 2))} {self.unit}".strip()
+
+    def spoken(self, lang: str = "en") -> str:
+        """Speech form with Indian number words: "7.5 lakh rupees", "3.8 percent" (Malayalam / Hindi words too).
+        Categorical facts speak their phrase (translated phrases are not available, so they stay as written)."""
+        if self.phrase is not None or self.value_text is not None or self.value is None:
+            return self.display
+        w = SPOKEN_WORDS.get(lang, SPOKEN_WORDS["en"])
+        v = self.value
+        if self.unit == "fraction":
+            pct = v * 100
+            n = f"{round(pct)}" if abs(pct) >= 100 else _trim(round(pct, 1))
+            return f"{n} {w['percent']}"
+        if self.unit == "INR":
+            a, sign = abs(v), "minus " if v < 0 else ""
+            if a >= 1e7:
+                return f"{sign}{_trim(round(a / 1e7, 2))} {w['crore']} {w['rupees']}"
+            if a >= 1e5:
+                return f"{sign}{_trim(round(a / 1e5, 2))} {w['lakh']} {w['rupees']}"
+            return f"{sign}{round(a):,} {w['rupees']}"
+        if self.unit in ("months", "years"):
+            n = _trim(round(v, 1))
+            return f"{n} {w[self.unit] if n != '1' else w[self.unit[:-1]]}"
+        if self.unit == "times":
+            return f"{_trim(round(v, 1))} {w['times']}"
+        return self.display
+
+
+SPOKEN_WORDS: dict[str, dict[str, str]] = {
+    "en": {"percent": "percent", "rupees": "rupees", "lakh": "lakh", "crore": "crore", "months": "months",
+           "month": "month", "years": "years", "year": "year", "times": "times"},
+    "ml": {"percent": "ശതമാനം", "rupees": "രൂപ", "lakh": "ലക്ഷം", "crore": "കോടി", "months": "മാസം",
+           "month": "മാസം", "years": "വർഷം", "year": "വർഷം", "times": "മടങ്ങ്"},
+    "hi": {"percent": "प्रतिशत", "rupees": "रुपये", "lakh": "लाख", "crore": "करोड़", "months": "महीने",
+           "month": "महीना", "years": "साल", "year": "साल", "times": "गुना"},
+}  # fmt: skip
 
 
 def _trim(x: float) -> str:

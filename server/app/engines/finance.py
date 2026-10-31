@@ -14,6 +14,7 @@ from app.engines.fact import Fact, FactKind, known, unknown
 
 __all__ = [
     "Fact",
+    "share_of",
     "affordability",
     "endowment_return",
     "fd_value",
@@ -261,3 +262,14 @@ def affordability(
         surplus = f("monthly_income") - sum(f(n) for n in outgo_names)
         out.append(known(_id(prefix, "surplus_after"), label, round(surplus, 2), "INR", "personal", formula, **vals))
     return out
+
+
+def share_of(
+    id: str, label: str, part: Number | None, whole: Number | None, *, kind: FactKind, formula: str, **inputs: object
+) -> Fact:
+    """part / whole as a fraction; unknown if either is missing or whole is not positive."""
+    if part is None or whole is None or float(whole) <= 0:
+        missing = [n for n, v in (("part", part), ("whole", whole)) if v is None] or ["positive whole"]
+        return unknown(id, label, "fraction", kind, formula, missing, part=part, whole=whole, **inputs)
+    return known(id, label, round(float(part) / float(whole), 4), "fraction", kind, formula, part=part, whole=whole,
+                 **inputs)  # fmt: skip

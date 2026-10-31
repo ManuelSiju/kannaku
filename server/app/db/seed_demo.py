@@ -2,7 +2,7 @@
 
 Lakshmi (primary) and guardian Arun. All names and products are fictional.
 monthly_expenses EXCLUDES loan EMIs; EMIs are family_item rows (kind "loan").
-Language is English while the project is tested English-only.
+Family 1 speaks English; family 2 (Saraswathi, guardian Meera) speaks Malayalam for language tests.
 """
 
 from __future__ import annotations
@@ -14,10 +14,12 @@ from app.config import get_settings
 from app.db.repo import FamilyItem, Repo
 
 DEMO_FAMILY_ID = 1
+DEMO_FAMILY_ML_ID = 2  # Malayalam-speaking demo family (for language tests)
 
 
 def seed(repo: Repo) -> bool:
     """Returns False if the demo family already exists (nothing changed)."""
+    seed_ml(repo)
     if repo.get_family(DEMO_FAMILY_ID) is not None:
         return False
     repo.create_family(language="en", guardian_code="DEMO-ARUN", id=DEMO_FAMILY_ID)
@@ -52,6 +54,19 @@ def seed(repo: Repo) -> bool:
         ),
         confirmed=True,
     )
+    return True
+
+
+def seed_ml(repo: Repo) -> bool:
+    """Saraswathi (primary, Malayalam) and guardian Meera. Fictional."""
+    if repo.get_family(DEMO_FAMILY_ML_ID) is not None:
+        return False
+    repo.create_family(language="ml", guardian_code="DEMO-MEERA", id=DEMO_FAMILY_ML_ID)
+    sara = repo.add_member(DEMO_FAMILY_ML_ID, "Saraswathi", "primary")
+    repo.add_member(DEMO_FAMILY_ML_ID, "Meera", "guardian")
+    repo.set_profile_value(sara, "monthly_income", 30_000, "voice", confirmed=True)
+    repo.set_profile_value(sara, "monthly_expenses", 20_000, "typed", confirmed=True)
+    repo.set_profile_value(sara, "savings", 90_000, "document", source_ref="passbook photo", confirmed=True)
     return True
 
 

@@ -34,6 +34,7 @@ from app.engines.fact import Fact
 from app.mcp_server import tools
 from app.pipeline import council as council_mod
 from app.pipeline import explainer as explainer_mod
+from app.pipeline.claims import ClaimCheck, check_claims, mentioned
 from app.pipeline.compute import Computed, compute_facts
 from app.pipeline.consensus import ConsensusResult, override_inputs_from_facts, run_consensus
 from app.pipeline.events import BUS, DONE, EventBus
@@ -43,22 +44,34 @@ from app.pipeline.labels import source_label, unverified_label
 from app.pipeline.privacy import decide_mode
 from app.pipeline.router import route
 from app.pipeline.scam_rules import ScamSignal, detect
-from app.pipeline.schemas import CaseDraft, CaseResult, ScreenDetail, SpokenLineOut, VerdictOut
+from app.pipeline.schemas import (
+    CaseDraft,
+    CaseResult,
+    ClaimOut,
+    CouncilLine,
+    ScreenDetail,
+    ShortAnswer,
+    SpokenLineOut,
+    VerdictOut,
+)
+from app.pipeline.templates import NOTES, SCAM_SHORT, followups, lang_of, opener, t
 from app.pipeline.verify_terms import EvidenceText, VerifiedTerm, term_question, verify_terms
 from app.prompts import prompts
-from app.providers.llm import AskBudget, LLMProvider, use_budget
+from app.providers.llm import AskBudget, LLMProvider, LLMStepFailed, use_budget
 from app.providers.stt import STTProvider
 
 log = logging.getLogger(__name__)
 
 ALERT_YELLOW_MIN_COMMITMENT = 25_000
+COUNCIL_WORD_BUDGET = 110  # about 45 s of speech at 150 words a minute
+WORDS_PER_MINUTE = 150
+ACTION_CUES = re.compile(r"\b(ask|wait|talk to|show me|call|do not sign|don't sign|before you)\b", re.I)
 CONTEXT_CUES = re.compile(
     r"\b(?:he|she|they) (?:says|said|is saying|is asking|wants)\b|\bthe agent is here\b|\b(?:agent|man|lady|he|she)"
     r" is (?:here|sitting|with me)\b|\bsitting (?:here )?with me\b|\bwith me now\b",
     re.I,
 )
-SCAM_SENTENCE = "This looks like a scam. Do not share any code, do not install anything, and do not pay anyone."
-CLARIFY = "Is this about a loan, a policy, an investment or a payment?"
+CLARIFY = "Is this about a loan, a policy, an investment or a payment?"  # English form of templates "clarify"
 OUT_OF_SCOPE = (
     "I help with money questions like loans, insurance, savings and stock tips. What would you like to check?"
 )
@@ -106,15 +119,15 @@ def _screen_details(facts: list[Fact], terms: list[VerifiedTerm], case_type: str
         ScreenDetail(id=f.id, label=f.label, value=f.display, kind=f.kind, source=source_label(f, case_type))
         for f in facts
     ]
-    for t in terms:
-        if not t.verified:
+    for tm in terms:
+        if not tm.verified:
             out.append(
                 ScreenDetail(
-                    id=f"term.{t.name}",
-                    label=f"Could not check: {t.name.replace('_', ' ')}",
-                    value=t.value_text,
+                    id=f"term.{tm.name}",
+                    label=f"Could not check: {tm.name.replace('_', ' ')}",
+                    value=tm.value_text,
                     kind="offer",
-                    source=unverified_label(t.source, t.reason, case_type),
+                    source=unverified_label(tm.source, tm.reason, case_type),
                 )
             )
     return out
@@ -169,6 +182,9 @@ async def run_pipeline(
 async def _pipeline(run: _Run, inp: AskInput, *, repo: Repo, llm: LLMProvider, stt: STTProvider | None) -> CaseResult:
     case_id = run.case_id
     prior = repo.get_case(case_id) or {}
+    family = repo.get_family(inp.family_id) or {}
+    lang = lang_of(family.get("language"))
+    guardian = next((m["name"] for m in repo.members(inp.family_id) if m["role"] == "guardian"), None)
 
     # 1 ingest -------------------------------------------------------------------------------------------
     ing = Ingested(transcript=inp.text or "", language=None, pages=[])
@@ -198,7 +214,7 @@ async def _pipeline(run: _Run, inp: AskInput, *, repo: Repo, llm: LLMProvider, s
     quote_text = {k: v["text"] for k, v in quotes.items()}
     context_cue = bool(CONTEXT_CUES.search(transcript))
     mode = decide_mode(inp.earphones, inp.user_says_alone, None, context_cue)
-    repo.update_case(case_id, privacy_mode=mode)
+    repo.update_case(case_id, privacy_mode=mode, language=lang)
 
     # 2 scam rules (fast path) -------------------------------------------------------------------------------
     signals: list[ScamSignal] = []
@@ -206,37 +222,54 @@ async def _pipeline(run: _Run, inp: AskInput, *, repo: Repo, llm: LLMProvider, s
         signals = detect(transcript, ing.doc_text)
         info["signals"] = [s.model_dump() for s in signals]
     if signals:
-        return _scam_result(run, signals, mode, repo, inp.family_id)
+        return _scam_result(run, signals, mode, repo, inp.family_id, lang)
 
-    # 3 case builder (LLM 1) ------------------------------------------------------------------------------
+    # 3 case builder (LLM 1; a failed vision call falls back to the OCR text) --------------------------------
     draft = CaseDraft(case_type="unknown")
+    vision_read = False
     async with run.step("case_builder") as info:
-        user = {"question": transcript, "pages": [{"source": p.source, "text": p.text} for p in ing.pages]}
-        draft, usage = await llm.chat_json(prompts.CASE_BUILDER, _json(user), CaseDraft, images=ing.images)
+        user = _json({"question": transcript, "pages": [{"source": p.source, "text": p.text} for p in ing.pages]})
+        images = ing.images if getattr(getattr(llm, "settings", None), "llm_vision_enabled", False) else []
+        if images:
+            try:
+                draft, usage = await llm.chat_json(prompts.CASE_BUILDER, user, CaseDraft, images=images)
+                vision_read = True
+            except LLMStepFailed as e:
+                info["vision_failed"] = str(e)
+                info["degraded"] = True  # photos read once (OCR only)
+                draft, usage = await llm.chat_json(prompts.CASE_BUILDER, user, CaseDraft)
+        else:
+            draft, usage = await llm.chat_json(prompts.CASE_BUILDER, user, CaseDraft)
         info.update(
             case_type=draft.case_type,
             terms=len(draft.terms),
+            vision_read=vision_read,
             ms_llm=usage.ms,
             tokens=[usage.prompt_tokens, usage.completion_tokens],
         )
     flags, case_type, flag_why = routing_flags(draft, evidence)  # market_linked only with document support
-    repo.update_case(case_id, case_type=case_type, language=draft.language)
+    repo.update_case(case_id, case_type=case_type)
 
-    if case_type == "unknown":  # Alfii asks one clarifying question; no extra LLM call
-        return _simple_result(run, case_type, None, CLARIFY, mode, repo)
+    if case_type == "unknown":  # Alfii asks one clarifying question; no council, no extra LLM call
+        return _simple_result(run, case_type, t(lang, "clarify"), mode, repo, lang)
     if case_type == "out_of_scope":
-        return _simple_result(run, case_type, None, OUT_OF_SCOPE, mode, repo)
+        return _simple_result(
+            run, case_type, t(lang, "out_of_scope"), mode, repo, lang, suggested=followups("out_of_scope", lang)
+        )
     if case_type == "scam_or_payment_request":
-        return _scam_result(run, [], mode, repo, inp.family_id)
+        return _scam_result(run, [], mode, repo, inp.family_id, lang)
 
     # 4 verify terms -----------------------------------------------------------------------------------------
     terms: list[VerifiedTerm] = []
     async with run.step("verify_terms") as info:
-        terms = verify_terms(draft.terms, evidence)
-        for t in terms:
-            ev_id = int(t.quote_id[1:]) if t.quote_id else None
-            repo.add_term(case_id, t.name, t.value, t.unit, evidence_id=ev_id, verified=t.verified, reason=t.reason)
-        info["unverified"] = [t.name for t in terms if not t.verified]
+        terms = verify_terms(draft.terms, evidence, vision_read=vision_read)
+        for tm in terms:
+            ev_id = int(tm.quote_id[1:]) if tm.quote_id else None
+            repo.add_term(
+                case_id, tm.name, tm.value, tm.unit, evidence_id=ev_id, verified=tm.verified, reason=tm.reason
+            )
+        info["unverified"] = [tm.name for tm in terms if not tm.verified]
+        info["readings"] = {tm.name: tm.reading for tm in terms if tm.verified}
 
     # 5 compute facts ------------------------------------------------------------------------------------------
     computed = Computed(facts=[], missing_required=[], flags=[], commitment=None)
@@ -246,31 +279,43 @@ async def _pipeline(run: _Run, inp: AskInput, *, repo: Repo, llm: LLMProvider, s
         info.update(facts=[f.id for f in computed.facts], missing_required=computed.missing_required)
     facts = computed.facts
     repo.save_facts(case_id, facts)
+    claims: list[ClaimCheck] = check_claims(draft.seller_claims, facts, quotes, case_type)
 
     # 6 router ---------------------------------------------------------------------------------------------------
     agents = route(case_type, computed.flags)
     async with run.step("router") as info:
-        info.update(case_type=case_type, flags=computed.flags, agents=agents, market_linked=flag_why)
-    opening = explainer_mod.CheckedLine(speaker="alfii", text=explainer_mod.opener(agents))
+        info.update(
+            case_type=case_type,
+            flags=computed.flags,
+            agents=agents,
+            market_linked=flag_why,
+            claims=[c.model_dump() for c in claims],
+        )
+    opening = explainer_mod.CheckedLine(speaker="alfii", text=opener(agents, lang), kind="opener")
     run.bus.publish(case_id, "alfii_opener", text=opening.text)  # spoken while the council works; no LLM
     for a in agents:
         run.bus.publish(case_id, "agent_called", agent=a)
 
-    unverified = sorted({*computed.missing_required, *(t.name for t in terms if not t.verified)})
+    unverified = sorted({*computed.missing_required, *(tm.name for tm in terms if not tm.verified)})
     summary = {
         "case_type": case_type,
         "question": transcript,
-        "verified_terms": [{"name": t.name, "value": t.display, "quote_id": t.quote_id} for t in terms if t.verified],
+        "verified_terms": [
+            {"name": tm.name, "value": tm.display, "quote_id": tm.quote_id} for tm in terms if tm.verified
+        ],
         "unverified_terms": unverified,
         "seller_claims": [c.model_dump() for c in draft.seller_claims],
+        "claim_checks": [c.model_dump(include={"claim", "status", "evidence_ids", "evidence"}) for c in claims],
     }
+    # discreet: the council and the explainer never see the family's own figures
+    shared_facts = facts if mode == "full" else [f for f in facts if f.kind != "personal"]
 
     # 7-9 council, evidence, debate ------------------------------------------------------------------------------
     rounds: list[council_mod.CouncilRound] = []
     if agents:
-        payload = council_mod.council_input(summary, facts, quotes, agents)
+        payload = council_mod.council_input(summary, shared_facts, quotes, agents)
         async with run.step("council", agents=agents) as info:
-            first, _ = await council_mod.run_council(llm, payload, agents, facts, quote_text)
+            first, _ = await council_mod.run_council(llm, payload, agents, shared_facts, quote_text)
             rounds.append(first)
             info.update(
                 dropped=[a.drop_reason for a in first.arguments if not a.kept],
@@ -287,7 +332,7 @@ async def _pipeline(run: _Run, inp: AskInput, *, repo: Repo, llm: LLMProvider, s
             _, disagreement = _vote(case_type, rounds[0])
             if disagreement > 0.4:
                 async with run.step("debate", disagreement=disagreement) as info:
-                    second, _ = await council_mod.run_debate(llm, payload, rounds[0], agents, facts, quote_text)
+                    second, _ = await council_mod.run_debate(llm, payload, rounds[0], agents, shared_facts, quote_text)
                     rounds.append(second)
                     info.update(
                         dropped=[a.drop_reason for a in second.arguments if not a.kept],
@@ -295,8 +340,8 @@ async def _pipeline(run: _Run, inp: AskInput, *, repo: Repo, llm: LLMProvider, s
                     )
     final = rounds[-1] if rounds else None
     for r in rounds:
-        for p in r.positions:
-            repo.add_position(case_id, p.agent, p.stance, p.strength, round=r.round)
+        for pos in r.positions:
+            repo.add_position(case_id, pos.agent, pos.stance, pos.strength, round=r.round)
         for a in r.arguments:
             repo.add_argument(
                 case_id, a.agent, a.rendered or a.text, a.cited_ids, a.kept, drop_reason=a.drop_reason, round=r.round
@@ -315,53 +360,86 @@ async def _pipeline(run: _Run, inp: AskInput, *, repo: Repo, llm: LLMProvider, s
         info.update(mode=mode, earphones=inp.earphones, user_says_alone=inp.user_says_alone, context_cue=context_cue)
 
     # 12 explainer ---------------------------------------------------------------------------------------------------
-    kept_args = [a.model_dump(include={"agent", "text", "cited_ids"}) for r in rounds for a in r.arguments if a.kept]
-    candidate_qs = [term_question(n) for n in unverified] + (final.questions if final else [])
-    lines: list[explainer_mod.CheckedLine] = []
-    questions: list[str] = []
+    kept_args = [
+        a.model_dump(include={"agent", "text", "cited_ids"}) for a in (final.arguments if final else []) if a.kept
+    ]
+    if len(rounds) > 1:  # agents the debate did not answer keep their round-1 arguments
+        kept_args += [
+            a.model_dump(include={"agent", "text", "cited_ids"})
+            for a in rounds[0].arguments
+            if a.kept and a.agent not in {k["agent"] for k in kept_args}
+        ]
+    candidate_qs = computed.questions + [term_question(n) for n in unverified] + (final.questions if final else [])
+    agent_lines: list[explainer_mod.CheckedLine] = []
+    notes: list[explainer_mod.CheckedLine] = []
+    conclusion: explainer_mod.CheckedLine | None = None
+    model_questions: list[str] = []
+    explained = False
     async with run.step("explainer") as info:
         payload = explainer_mod.explainer_input(
             consensus.verdict,
             summary,
             agents,
             kept_args,
-            # discreet: the explainer never even sees personal facts, so it cannot speak them
-            council_mod.facts_table(facts, include_personal=mode == "full"),
+            council_mod.facts_table(shared_facts),
             [{"id": k, **v} for k, v in quotes.items()],
             mode,
-            draft.language,
+            lang,
             candidate_qs,
+            claims=summary["claim_checks"],
         )
-        out, lines, rewrite_used, fixes = await explainer_mod.explain(llm, payload, facts, quote_text, mode)
-        questions = out.questions
+        ex = await explainer_mod.explain(
+            llm, payload, facts, quote_text, mode, agents=agents, kept_args=kept_args, lang=lang
+        )
+        agent_lines, notes, conclusion, model_questions = ex.agent_lines, ex.notes, ex.verdict, ex.questions
+        explained = True
         info.update(
-            rewrite_used=rewrite_used,
-            blocked=[ln.blocked_reason for ln in lines if not ln.allowed],
-            auto_placeholder=fixes,
+            rewrite_used=ex.rewrite_used,
+            auto_placeholder=ex.fixes,
+            lint=ex.lint_rejections,
+            dropped_turns=ex.dropped_turns,
+            notes=[n.text for n in ex.notes],
         )
-    if not lines:
-        lines = explainer_mod.template_lines(consensus.verdict, agents, kept_args, facts, quote_text, mode)
-    if not lines[-1].allowed:  # the verdict sentence must always be heard
-        lines[-1] = explainer_mod.CheckedLine(
-            speaker="alfii",
-            text=explainer_mod.VERDICT_TEMPLATES[consensus.verdict],
-            blocked_reason=lines[-1].blocked_reason,
-        )
-    pool = [r for q in [*questions, *candidate_qs] if (r := explainer_mod.render_question(q, facts, quote_text, mode))]
+    if not explained:
+        agent_lines, notes = explainer_mod.fallback_turns(agents, kept_args, facts, quote_text, mode, lang)
+
+    # questions to ask the seller (said aloud: under 12 words) ---------------------------------------------------
+    pool = [
+        r
+        for q in [*computed.questions, *model_questions, *candidate_qs]
+        if (r := explainer_mod.render_question(q, facts, quote_text, mode, lang))
+    ]
     final_questions = list(dict.fromkeys(pool))[:3]
 
+    # Alfii's conclusion always ends with one next step ------------------------------------------------------------
+    verdict_text = conclusion.text if conclusion else t(lang, consensus.verdict)
+    if not ACTION_CUES.search(verdict_text):
+        verdict_text = f"{verdict_text} {_next_step(consensus.verdict, final_questions, guardian, lang)}"
+    closing = explainer_mod.CheckedLine(speaker="alfii", text=verdict_text, kind="conclusion")
+
+    # contradicted claims must be mentioned (code line if the agents did not) -----------------------------------
+    said = [ln.text for ln in agent_lines] + [verdict_text]
+    claim_lines = [
+        explainer_mod.CheckedLine(speaker="alfii", text=_claim_line(c, case_type, lang), kind="claim")
+        for c in claims
+        if c.status == "contradicted" and not mentioned(c, said)
+    ]
+
+    # rebuttals (only if the debate ran), then the word budget ------------------------------------------------------
+    rebuttals = _rebuttals(rounds, agent_lines, facts, quote_text, mode, lang)
+    council = _fit_budget([opening, *agent_lines, *rebuttals, *notes, *claim_lines, closing])
+    words = sum(len(ln.text.split()) for ln in council)
+
     # 13 save -----------------------------------------------------------------------------------------------------
-    lines = [opening, *lines]
-    for i, ln in enumerate(lines, start=1):
+    for i, ln in enumerate(council, start=1):
         repo.add_spoken_line(case_id, ln.speaker, i, ln.text, allowed=ln.allowed, blocked_reason=ln.blocked_reason)
-    sentence = lines[-1].text
     repo.save_verdict(
         case_id,
         consensus.verdict,
         score=consensus.score,
         disagreement=consensus.disagreement,
         overrides=[o.model_dump() for o in consensus.overrides],
-        sentence=sentence,
+        sentence=verdict_text,
         questions=final_questions,
         degraded=bool(run.degraded_steps),
     )
@@ -369,20 +447,120 @@ async def _pipeline(run: _Run, inp: AskInput, *, repo: Repo, llm: LLMProvider, s
         consensus.verdict == "yellow" and (computed.commitment or 0) >= ALERT_YELLOW_MIN_COMMITMENT
     ):
         repo.create_alert(
-            case_id, inp.family_id, f"{consensus.verdict.upper()}: {case_type.replace('_', ' ')}: {sentence}"
+            case_id, inp.family_id, f"{consensus.verdict.upper()}: {case_type.replace('_', ' ')}: {verdict_text}"
         )
     return CaseResult(
         case_id=case_id,
         case_type=case_type,
-        verdict=VerdictOut(colour=consensus.verdict, sentence=sentence, questions=final_questions),
+        verdict=VerdictOut(colour=consensus.verdict, sentence=verdict_text, questions=final_questions),
         called_agents=agents,
-        spoken_lines=[SpokenLineOut(speaker=ln.speaker, text=ln.text) for ln in lines],
-        screen_details=_screen_details(facts, terms, case_type),
+        spoken_lines=[SpokenLineOut(speaker=ln.speaker, text=ln.text) for ln in council],
+        screen_details=_personal_notes(case_type, facts, lang) + _screen_details(facts, terms, case_type),
         privacy_mode=mode,
         degraded=bool(run.degraded_steps),
         degraded_steps=list(run.degraded_steps),
         llm_calls=0,
+        language=lang,
+        short_answer=ShortAnswer(
+            text=_short(conclusion.text if conclusion else "", consensus.verdict, lang), colour=consensus.verdict
+        ),
+        council=[CouncilLine(speaker=ln.speaker, text=ln.text, kind=ln.kind) for ln in council],  # type: ignore[arg-type]
+        council_words=words,
+        council_seconds=round(words / WORDS_PER_MINUTE * 60, 1),
+        suggested_followups=followups(case_type, lang),
+        claims=[ClaimOut(**c.model_dump(include={"claim", "status", "evidence_ids", "evidence"})) for c in claims],
     )
+
+
+def _next_step(colour: str, questions: list[str], guardian: str | None, lang: str) -> str:
+    if colour == "red":
+        return t(lang, "next_guardian", guardian=guardian) if guardian else t(lang, "next_wait")
+    if questions:
+        return t(lang, "next_ask", question=questions[0])
+    return t(lang, "next_paper") if colour == "yellow" else t(lang, "next_wait")
+
+
+def _clip(text: str, n: int) -> str:
+    words = text.split()
+    return " ".join(words[:n]) + ("…" if len(words) > n else "")
+
+
+def _claim_line(c: ClaimCheck, case_type: str, lang: str) -> str:
+    source = t(lang, "claim_source_brochure" if case_type in ("insurance_offer", "ulip") else "claim_source_doc")
+    return t(lang, "claim", claim=_clip(c.claim, 8), source=source, evidence=_clip(c.evidence, 12))
+
+
+def _rebuttals(
+    rounds: list[council_mod.CouncilRound],
+    agent_lines: list[explainer_mod.CheckedLine],
+    facts: list[Fact],
+    quote_text: dict[str, str],
+    mode: str,
+    lang: str,
+) -> list[explainer_mod.CheckedLine]:
+    """If the debate ran: one round-2 point per agent that says something new, held to every spoken-line check."""
+    if len(rounds) < 2:
+        return []
+    from app.pipeline.schemas import Line
+
+    said = {ln.speaker: ln.screen_text for ln in agent_lines}
+    out = []
+    for a in dict.fromkeys(x.agent for x in rounds[1].arguments if x.kept):
+        arg = next(x for x in rounds[1].arguments if x.kept and x.agent == a)
+        if arg.rendered == said.get(a):
+            continue
+        c = explainer_mod.check_line(
+            Line(speaker=a, text=arg.text, cited_ids=arg.cited_ids), facts, quote_text, mode, lang=lang
+        )  # type: ignore[arg-type]
+        if c.problem is None:
+            out.append(explainer_mod.CheckedLine(speaker=a, text=c.spoken, screen_text=c.screen, kind="rebuttal"))
+    return out
+
+
+def _fit_budget(lines: list[explainer_mod.CheckedLine]) -> list[explainer_mod.CheckedLine]:
+    """Keep the council under COUNCIL_WORD_BUDGET words: drop rebuttals first, then cut agent lines to one sentence.
+    The opener, notes, claim corrections and the conclusion always stay."""
+    from app.pipeline.lint import sentences
+
+    def words(ls: list[explainer_mod.CheckedLine]) -> int:
+        return sum(len(x.text.split()) for x in ls)
+
+    lines = list(lines)
+    while words(lines) > COUNCIL_WORD_BUDGET and any(x.kind == "rebuttal" for x in lines):
+        idx = max(i for i, x in enumerate(lines) if x.kind == "rebuttal")
+        lines.pop(idx)
+    if words(lines) > COUNCIL_WORD_BUDGET:
+        lines = [x.model_copy(update={"text": sentences(x.text)[0]}) if x.kind == "agent" else x for x in lines]
+    return lines
+
+
+def _short(conclusion: str, colour: str | None, lang: str) -> str:
+    from app.pipeline.lint import sentences
+
+    first = sentences(conclusion)[0] if conclusion.strip() else ""
+    if first and len(first.split()) <= 20:
+        return first
+    return t(lang, f"short_{colour}") if colour else t(lang, "clarify")
+
+
+def _personal_notes(case_type: str, facts: list[Fact], lang: str) -> list[ScreenDetail]:
+    """Code-written on-screen notes about the family's own money (never spoken in discreet mode)."""
+    by_id = {f.id: f for f in facts}
+    out = []
+    for key, fid in NOTES.get(case_type, []):
+        f = by_id.get(fid)
+        if f is None or f.value is None:
+            continue
+        out.append(
+            ScreenDetail(
+                id=f"note.{fid}",
+                label=t(lang, key, **{fid: f.display}),
+                value=f.display,
+                kind="personal",
+                source="Kanakku note · only on your screen",
+            )
+        )
+    return out
 
 
 def _stock_symbol(draft: CaseDraft, transcript: str, doc_text: str) -> str | None:
@@ -403,34 +581,39 @@ def _json(obj: Any) -> str:
     return json.dumps(obj, separators=(",", ":"), ensure_ascii=False)
 
 
-def _scam_result(run: _Run, signals: list[ScamSignal], mode: str, repo: Repo, family_id: int) -> CaseResult:
+def _scam_result(
+    run: _Run, signals: list[ScamSignal], mode: str, repo: Repo, family_id: int, lang: str = "en"
+) -> CaseResult:
+    """Calm, three short lines: you did right, why it is a trick, what to do."""
     repo.update_case(run.case_id, case_type="scam_or_payment_request")
-    lines = [("alfii", "Stop. Please do not do what this person is asking.")]
-    lines += [("alfii", s.explanation) for s in signals[:2]]
-    lines.append(("alfii", SCAM_SENTENCE))
-    for i, (speaker, text) in enumerate(lines, start=1):
-        repo.add_spoken_line(run.case_id, speaker, i, text)
+    why = SCAM_SHORT[lang_of(lang)].get(signals[0].rule) if signals else None
+    texts = [t(lang, "scam_right"), why or t(lang, "scam_generic"), t(lang, "scam_action")]
+    for i, text in enumerate(texts, start=1):
+        repo.add_spoken_line(run.case_id, "alfii", i, text)
     consensus = run_consensus("scam_or_payment_request", [], override_inputs_from_facts([], scam=True))
-    questions = ["Hang up and call the number printed on your bank card or passbook."]
+    sentence = texts[-1]
     repo.save_verdict(
         run.case_id,
         consensus.verdict,
         score=0,
         disagreement=0,
         overrides=[o.model_dump() for o in consensus.overrides],
-        sentence=SCAM_SENTENCE,
-        questions=questions,
+        sentence=sentence,
+        questions=[],
         degraded=bool(run.degraded_steps),
     )
     repo.create_alert(
         run.case_id, family_id, f"RED: scam warning: {', '.join(s.rule for s in signals) or 'payment request'}"
     )
+    kinds = ["opener", "agent", "conclusion"]
+    council = [CouncilLine(speaker="alfii", text=x, kind=k) for x, k in zip(texts, kinds, strict=True)]  # type: ignore[arg-type]
+    words = sum(len(x.split()) for x in texts)
     return CaseResult(
         case_id=run.case_id,
         case_type="scam_or_payment_request",
-        verdict=VerdictOut(colour="red", sentence=SCAM_SENTENCE, questions=questions),
+        verdict=VerdictOut(colour="red", sentence=sentence, questions=[]),
         called_agents=[],
-        spoken_lines=[SpokenLineOut(speaker=s, text=t) for s, t in lines],
+        spoken_lines=[SpokenLineOut(speaker="alfii", text=x) for x in texts],
         screen_details=[
             ScreenDetail(
                 id=f"scam.{s.rule}",
@@ -441,24 +624,45 @@ def _scam_result(run: _Run, signals: list[ScamSignal], mode: str, repo: Repo, fa
             )
             for s in signals
         ],
-        privacy_mode=mode,
+        privacy_mode=mode,  # type: ignore[arg-type]
         degraded=bool(run.degraded_steps),
         degraded_steps=list(run.degraded_steps),
         llm_calls=0,
-    )  # type: ignore[arg-type]
+        language=lang,
+        short_answer=ShortAnswer(text=texts[1], colour="red"),
+        council=council,
+        council_words=words,
+        council_seconds=round(words / WORDS_PER_MINUTE * 60, 1),
+        suggested_followups=followups("scam_or_payment_request", lang),
+    )
 
 
-def _simple_result(run: _Run, case_type: str, colour: Any, sentence: str, mode: str, repo: Repo) -> CaseResult:
+def _simple_result(
+    run: _Run,
+    case_type: str,
+    sentence: str,
+    mode: str,
+    repo: Repo,
+    lang: str = "en",
+    suggested: list[str] | None = None,
+) -> CaseResult:
     repo.add_spoken_line(run.case_id, "alfii", 1, sentence)
+    words = len(sentence.split())
     return CaseResult(
         case_id=run.case_id,
         case_type=case_type,
-        verdict=VerdictOut(colour=colour, sentence=sentence),
+        verdict=VerdictOut(colour=None, sentence=sentence),
         called_agents=[],
         spoken_lines=[SpokenLineOut(speaker="alfii", text=sentence)],
         screen_details=[],
-        privacy_mode=mode,
+        privacy_mode=mode,  # type: ignore[arg-type]
         degraded=bool(run.degraded_steps),
         degraded_steps=list(run.degraded_steps),
         llm_calls=0,
-    )  # type: ignore[arg-type]
+        language=lang,
+        short_answer=ShortAnswer(text=sentence, colour=None),
+        council=[CouncilLine(speaker="alfii", text=sentence, kind="conclusion")],
+        council_words=words,
+        council_seconds=round(words / WORDS_PER_MINUTE * 60, 1),
+        suggested_followups=suggested or [],
+    )
