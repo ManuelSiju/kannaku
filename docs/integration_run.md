@@ -26,7 +26,4 @@ Command: `make app-integration` · 2026-10-31 20:30 · video: [demo_run.mp4](dem
 02:06 +1: All tests passed!
 ```
 
-```
-
-real	3m29.543s
-```
+Both tests passed; total 3 min 30 s including the build and install.
