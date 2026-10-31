@@ -1,0 +1,103 @@
+{
+ "groups": {
+  "endowment_photos": [
+   {
+    "colour": null,
+    "case_type": "unknown",
+    "agents": [],
+    "llm_calls": 1,
+    "degraded_steps": [
+     "case_builder"
+    ],
+    "kept": 0,
+    "dropped": 0,
+    "drop_reasons": [],
+    "blocked_lines": [],
+    "stances": {},
+    "terms": [],
+    "photo_confirmed": [],
+    "spoken": [
+     "alfii: Is this about a loan, a policy, an investment or a payment?"
+    ],
+    "step_ms": {
+     "ingest": 1224.8,
+     "scam_rules": 0.2,
+     "case_builder": 20010.5
+    },
+    "fixes": [],
+    "step_errors": {
+     "case_builder": "LLMStepFailed: LLM call failed: APITimeoutError: Request timed out."
+    },
+    "total_s": 21.2
+   },
+   {
+    "colour": null,
+    "case_type": "unknown",
+    "agents": [],
+    "llm_calls": 1,
+    "degraded_steps": [
+     "case_builder"
+    ],
+    "kept": 0,
+    "dropped": 0,
+    "drop_reasons": [],
+    "blocked_lines": [],
+    "stances": {},
+    "terms": [],
+    "photo_confirmed": [],
+    "spoken": [
+     "alfii: Is this about a loan, a policy, an investment or a payment?"
+    ],
+    "step_ms": {
+     "ingest": 1191.1,
+     "scam_rules": 0.3,
+     "case_builder": 20022.8
+    },
+    "fixes": [],
+    "step_errors": {
+     "case_builder": "LLMStepFailed: LLM call failed: APITimeoutError: Request timed out."
+    },
+    "total_s": 21.2
+   },
+   {
+    "colour": null,
+    "case_type": "unknown",
+    "agents": [],
+    "llm_calls": 1,
+    "degraded_steps": [
+     "case_builder"
+    ],
+    "kept": 0,
+    "dropped": 0,
+    "drop_reasons": [],
+    "blocked_lines": [],
+    "stances": {},
+    "terms": [],
+    "photo_confirmed": [],
+    "spoken": [
+     "alfii: Is this about a loan, a policy, an investment or a payment?"
+    ],
+    "step_ms": {
+     "ingest": 1183.8,
+     "scam_rules": 0.2,
+     "case_builder": 20015.9
+    },
+    "fixes": [],
+    "step_errors": {
+     "case_builder": "LLMStepFailed: LLM call failed: APITimeoutError: Request timed out."
+    },
+    "total_s": 21.2
+   }
+  ]
+ },
+ "llm_stats": {
+  "endowment_photos": {
+   "steps": 3,
+   "attempts": 3,
+   "valid_first_try": 0,
+   "valid_after_retry": 0,
+   "invalid_twice": 0,
+   "transport_failures": 3
+  }
+ }
+}
