@@ -1,5 +1,6 @@
-"""Step 12: Alfii's spoken lines. Every line passes the evidence check AND the privacy check; failing lines are
-rewritten once (if the LLM budget allows), then replaced by ON_SCREEN. Deterministic templates when the LLM fails."""
+"""Step 12: Alfii's spoken lines. Numbers appear only as {fact_id} placeholders, filled in by code. Every line
+passes the evidence check (no raw digits, known ids) and then the privacy check on the filled-in text; failing
+lines are rewritten once (if the LLM budget allows), then replaced by ON_SCREEN. Templates if the LLM fails."""
 
 from __future__ import annotations
 
@@ -10,7 +11,7 @@ from pydantic import BaseModel
 
 from app.engines.fact import Fact
 from app.pipeline.consensus import Colour
-from app.pipeline.evidence import check_argument, numbers_in
+from app.pipeline.evidence import Dropped, Kept, check_argument, placeholders, raw_number
 from app.pipeline.privacy import PrivacyMode, speech_allowed
 from app.pipeline.schemas import ExplainerOutput, Line, RewriteOutput
 from app.prompts import prompts
@@ -27,30 +28,30 @@ VERDICT_TEMPLATES: dict[str, str] = {
 
 class CheckedLine(BaseModel):
     speaker: str
-    text: str
+    text: str  # what is spoken: placeholders filled in, or ON_SCREEN
     cited_ids: list[str] = []
     allowed: bool = True
     blocked_reason: str | None = None
 
 
-def line_problem(line: Line, facts: list[Fact], quotes: dict[str, str], mode: PrivacyMode) -> str | None:
-    if numbers_in(line.text):
+def check_line(line: Line, facts: list[Fact], quotes: dict[str, str], mode: PrivacyMode) -> tuple[str | None, str]:
+    """(problem or None, rendered text). Lines without numbers need no citation (e.g. Alfii's opener)."""
+    rendered, cited = line.text, list(line.cited_ids)
+    if placeholders(line.text) or raw_number(line.text) or line.cited_ids:
         res = check_argument(line.text, line.cited_ids, facts, quotes)
-        if not res.kept:
-            return f"evidence: {res.reason}"  # type: ignore[union-attr]
-    elif any(c not in quotes and c not in {f.id for f in facts} for c in line.cited_ids):
-        return "evidence: unknown citation id"
-    priv = speech_allowed(line.text, line.cited_ids, facts, mode)
-    return None if priv.allowed else f"privacy: {priv.reason}"  # type: ignore[union-attr]
+        if isinstance(res, Dropped):
+            if res.reason != "no evidence cited":
+                return f"evidence: {res.reason}", line.text
+        elif isinstance(res, Kept):
+            rendered, cited = res.rendered, res.cited
+    priv = speech_allowed(rendered, cited, facts, mode)
+    return (None if priv.allowed else f"privacy: {priv.reason}"), rendered  # type: ignore[union-attr]
 
 
-def question_ok(q: str, facts: list[Fact], quotes: dict[str, str], mode: PrivacyMode) -> bool:
-    """Questions are read aloud: any number must exist in some fact or quote, and nothing personal in discreet."""
-    line = Line(speaker="alfii", text=q, cited_ids=[f.id for f in facts] + list(quotes))
-    if numbers_in(q) and not check_argument(q, line.cited_ids, facts, quotes).kept:
-        return False
-    personal_only = Line(speaker="alfii", text=q)
-    return speech_allowed(personal_only.text, [], facts, mode).allowed
+def render_question(q: str, facts: list[Fact], quotes: dict[str, str], mode: PrivacyMode) -> str | None:
+    """Questions are read aloud too: same rules as lines. The rendered question, or None if it fails."""
+    problem, rendered = check_line(Line(speaker="alfii", text=q), facts, quotes, mode)
+    return None if problem else rendered
 
 
 def explainer_input(
@@ -83,7 +84,12 @@ async def explain(
     """Returns (raw output, checked lines in order [opener, agents..., verdict], rewrite_used)."""
     out, _ = await llm.chat_json(prompts.EXPLAINER, json.dumps(payload, separators=(",", ":")), ExplainerOutput)
     lines = [out.opener, *out.agent_lines, out.verdict_sentence]
-    problems = {i: p for i, ln in enumerate(lines) if (p := line_problem(ln, facts, quotes, mode))}
+    rendered: dict[int, str] = {}
+    problems: dict[int, str] = {}
+    for i, ln in enumerate(lines):
+        p, rendered[i] = check_line(ln, facts, quotes, mode)
+        if p:
+            problems[i] = p
     rewrite_used = False
     budget = current_budget()
     if problems and (budget is None or budget.used < budget.max_calls):
@@ -98,8 +104,9 @@ async def explain(
             fixed, _ = await llm.chat_json(prompts.REWRITE, json.dumps(req, separators=(",", ":")), RewriteOutput)
             for i, new in zip(list(problems), fixed.lines, strict=False):
                 new = new.model_copy(update={"speaker": lines[i].speaker})
-                if (p := line_problem(new, facts, quotes, mode)) is None:
-                    lines[i] = new
+                p, text = check_line(new, facts, quotes, mode)
+                if p is None:
+                    lines[i], rendered[i] = new, text
                     problems.pop(i)
                 else:
                     problems[i] = p
@@ -110,7 +117,7 @@ async def explain(
         if i in problems:
             checked.append(CheckedLine(speaker=ln.speaker, text=ON_SCREEN, allowed=False, blocked_reason=problems[i]))
         else:
-            checked.append(CheckedLine(speaker=ln.speaker, text=ln.text, cited_ids=ln.cited_ids))
+            checked.append(CheckedLine(speaker=ln.speaker, text=rendered[i], cited_ids=ln.cited_ids))
     return out, checked, rewrite_used
 
 
@@ -130,10 +137,10 @@ def template_lines(
         if arg is None:
             continue
         ln = Line(speaker=a, text=arg["text"], cited_ids=arg["cited_ids"])
-        p = line_problem(ln, facts, quotes, mode)
+        p, text = check_line(ln, facts, quotes, mode)
         lines.append(
             CheckedLine(
-                speaker=a, text=ON_SCREEN if p else ln.text, cited_ids=ln.cited_ids, allowed=p is None, blocked_reason=p
+                speaker=a, text=ON_SCREEN if p else text, cited_ids=ln.cited_ids, allowed=p is None, blocked_reason=p
             )
         )
     lines.append(

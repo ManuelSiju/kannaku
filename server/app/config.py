@@ -18,6 +18,8 @@ class Settings(BaseSettings):
     llm_api_key: str = "local"
     llm_model: str = "local-model"
     llm_vision_enabled: bool = False
+    llm_vision_model: str = ""  # optional separate model for calls that carry images (e.g. qwen2.5vl:7b)
+    llm_temperature: float = 0.2
     llm_timeout_s: float = 20.0
     llm_max_calls_per_ask: int = 4
 

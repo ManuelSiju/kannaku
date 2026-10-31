@@ -31,6 +31,8 @@ TERM_NAMES = {
     "sum_assured": "guaranteed sum assured",
     "maturity_low": "lowest illustrated maturity amount",
     "maturity_high": "highest illustrated maturity amount",
+    "bonus_rate_low": "lower illustrated bonus rate",
+    "bonus_rate_high": "higher illustrated bonus rate",
     "loan_amount": "loan amount",
     "flat_rate": "flat interest rate",
     "tenure_months": "loan period in months",

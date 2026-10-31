@@ -49,7 +49,11 @@ async def test_chat_json_success(settings):
     out, usage = await llm.chat_json("sys", "user", Answer)
     assert out == Answer(verdict="red", score=3)
     assert usage.calls == 1 and usage.prompt_tokens == 10
-    assert fake.calls[0]["response_format"] == {"type": "json_object"}
+    rf = fake.calls[0]["response_format"]
+    assert rf["type"] == "json_schema" and rf["json_schema"]["name"] == "Answer"
+    assert rf["json_schema"]["schema"]["properties"]["score"]["type"] == "integer"
+    assert fake.calls[0]["temperature"] == 0.2
+    assert llm.stats.valid_first_try == 1
     assert '"verdict"' in fake.calls[0]["messages"][0]["content"]  # schema in system prompt
 
 
@@ -112,3 +116,32 @@ async def test_images_only_sent_when_vision_enabled(settings):
 def test_extract_json():
     assert extract_json('Sure! {"a": 1} hope that helps') == '{"a": 1}'
     assert extract_json('```json\n{"a": 1}\n```') == '{"a": 1}'
+
+
+def _bad_request():
+    import httpx
+    from openai import BadRequestError
+
+    req = httpx.Request("POST", "http://x/v1/chat/completions")
+    return BadRequestError("unsupported response_format", response=httpx.Response(400, request=req), body=None)
+
+
+async def test_structured_output_falls_back_schema_then_object_then_none(settings):
+    llm, fake = make_llm(settings, [_bad_request(), _bad_request(), '{"verdict": "red", "score": 1}'])
+    out, _ = await llm.chat_json("sys", "user", Answer)
+    assert out.score == 1
+    assert [c.get("response_format", {}).get("type") for c in fake.calls] == ["json_schema", "json_object", None]
+
+
+async def test_retry_counted_in_stats(settings):
+    llm, _ = make_llm(settings, ['{"verdict": "red"}', '{"verdict": "red", "score": 1}'])
+    await llm.chat_json("sys", "user", Answer)
+    assert llm.stats.valid_after_retry == 1 and llm.stats.attempts == 2
+
+
+async def test_vision_model_used_only_for_image_calls(settings):
+    vision = settings.model_copy(update={"llm_vision_enabled": True, "llm_vision_model": "qwen2.5vl:7b"})
+    llm, fake = make_llm(vision, ['{"verdict": "red", "score": 1}', '{"verdict": "red", "score": 1}'])
+    await llm.chat_json("s", "u", Answer, images=[b"\x89PNGx"])
+    await llm.chat_json("s", "u", Answer)
+    assert [c["model"] for c in fake.calls] == ["qwen2.5vl:7b", settings.llm_model]

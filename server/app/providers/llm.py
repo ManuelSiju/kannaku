@@ -101,19 +101,35 @@ def _sniff_mime(data: bytes) -> str:
     return "image/jpeg"
 
 
+class LLMStats(BaseModel):
+    """Counters for reliability reports (per provider instance)."""
+
+    steps: int = 0  # chat_json calls
+    attempts: int = 0  # requests sent
+    valid_first_try: int = 0
+    valid_after_retry: int = 0
+    invalid_twice: int = 0
+    transport_failures: int = 0
+
+
+_FORMATS = ("json_schema", "json_object", "none")
+
+
 class OpenAICompatibleLLM(LLMProvider):
     name = "openai_compatible"
 
     def __init__(self, settings: Settings | None = None, client: AsyncOpenAI | None = None) -> None:
         self.settings = settings or get_settings()
         self.model = self.settings.llm_model
+        self.vision_model = self.settings.llm_vision_model or self.model
         self.client = client or AsyncOpenAI(
             base_url=self.settings.llm_base_url,
             api_key=self.settings.llm_api_key or "none",
             timeout=self.settings.llm_timeout_s,
             max_retries=0,
         )
-        self._json_mode_supported = True
+        self._format = 0  # index into _FORMATS; drops a level when the server rejects one
+        self.stats = LLMStats()
 
     def _messages(self, system: str, user: str, images: list[bytes] | None) -> list[dict[str, Any]]:
         content: str | list[dict[str, Any]] = user
@@ -125,34 +141,59 @@ class OpenAICompatibleLLM(LLMProvider):
             content = parts
         return [{"role": "system", "content": system}, {"role": "user", "content": content}]
 
+    def _response_format(self, schema: type[BaseModel] | None) -> dict[str, Any] | None:
+        fmt = _FORMATS[self._format]
+        if schema is None or fmt == "none":
+            return None
+        if fmt == "json_schema":
+            # Server-side constrained decoding (Ollama `format` / llama-server json_schema) via the OpenAI API.
+            return {
+                "type": "json_schema",
+                "json_schema": {"name": schema.__name__, "schema": schema.model_json_schema()},
+            }
+        return {"type": "json_object"}
+
     async def _create(self, kwargs: dict[str, Any]) -> Any:
         return await asyncio.wait_for(
             self.client.chat.completions.create(**kwargs), timeout=self.settings.llm_timeout_s
         )
 
-    async def _call(self, messages: list[dict[str, Any]], json_mode: bool, usage: LLMUsage) -> str:
+    async def _call(
+        self, messages: list[dict[str, Any]], schema: type[BaseModel] | None, usage: LLMUsage, *, vision: bool
+    ) -> str:
         budget = current_budget()
         if budget is not None:
             budget.consume()
-        kwargs: dict[str, Any] = {"model": self.model, "messages": messages}
-        if json_mode and self._json_mode_supported:
-            kwargs["response_format"] = {"type": "json_object"}
+        self.stats.attempts += 1
+        kwargs: dict[str, Any] = {
+            "model": self.vision_model if vision else self.model,
+            "messages": messages,
+            "temperature": self.settings.llm_temperature,
+        }
         loop = asyncio.get_running_loop()
         t0 = loop.time()
         try:
-            try:
-                resp = await self._create(kwargs)
-            except BadRequestError:
-                if "response_format" not in kwargs:
-                    raise
-                # Server does not support JSON mode; the schema in the prompt still applies.
-                log.warning("LLM server rejected response_format; continuing without JSON mode")
-                self._json_mode_supported = False
-                kwargs.pop("response_format")
-                resp = await self._create(kwargs)
+            while True:
+                rf = self._response_format(schema)
+                if rf is None:
+                    kwargs.pop("response_format", None)
+                else:
+                    kwargs["response_format"] = rf
+                try:
+                    resp = await self._create(kwargs)
+                    break
+                except BadRequestError as e:
+                    if rf is None or self._format >= len(_FORMATS) - 1:
+                        raise
+                    # The server does not support this structured-output mode; the schema in the prompt still applies.
+                    log.warning("LLM server rejected response_format %s (%s); trying %s", _FORMATS[self._format], e,
+                                _FORMATS[self._format + 1])  # fmt: skip
+                    self._format += 1
         except TimeoutError as e:
+            self.stats.transport_failures += 1
             raise LLMStepFailed(f"LLM call timed out after {self.settings.llm_timeout_s}s") from e
         except Exception as e:  # transport errors, connection refused, rejected request, ...
+            self.stats.transport_failures += 1
             raise LLMStepFailed(f"LLM call failed: {type(e).__name__}: {e}") from e
         finally:
             usage.ms += (loop.time() - t0) * 1000
@@ -165,17 +206,19 @@ class OpenAICompatibleLLM(LLMProvider):
     async def chat_json(
         self, system: str, user: str, schema: type[T], images: list[bytes] | None = None
     ) -> tuple[T, LLMUsage]:
+        self.stats.steps += 1
         schema_text = json.dumps(schema.model_json_schema(), separators=(",", ":"))
         full_system = (
             f"{system}\n\nReply with ONE JSON object only, no prose, matching this JSON schema:\n{schema_text}"
         )
+        vision = bool(images) and self.settings.llm_vision_enabled
         messages = self._messages(full_system, user, images)
         usage = LLMUsage()
         error = ""
         for attempt in range(2):
-            raw = await self._call(messages, json_mode=True, usage=usage)
+            raw = await self._call(messages, schema, usage, vision=vision)
             try:
-                return schema.model_validate_json(extract_json(raw)), usage
+                parsed = schema.model_validate_json(extract_json(raw))
             except ValidationError as e:
                 error = str(e)
                 log.info("LLM JSON invalid (attempt %d): %s", attempt + 1, error)
@@ -186,11 +229,19 @@ class OpenAICompatibleLLM(LLMProvider):
                         "content": f"That JSON was invalid:\n{error}\nReply again with corrected JSON only.",
                     },
                 ]
+                continue
+            if attempt == 0:
+                self.stats.valid_first_try += 1
+            else:
+                self.stats.valid_after_retry += 1
+            return parsed, usage
+        self.stats.invalid_twice += 1
         raise LLMStepFailed(f"LLM returned invalid JSON twice: {error}")
 
     async def chat_text(self, system: str, user: str, images: list[bytes] | None = None) -> tuple[str, LLMUsage]:
         usage = LLMUsage()
-        text = await self._call(self._messages(system, user, images), json_mode=False, usage=usage)
+        vision = bool(images) and self.settings.llm_vision_enabled
+        text = await self._call(self._messages(system, user, images), None, usage, vision=vision)
         return text, usage
 
 

@@ -2,28 +2,76 @@
   "CaseDraft": {
     "case_type": "stock_tip",
     "stock_symbol": "ZEPHYRX",
-    "terms": [{"name": "invest_amount", "value_text": "1 lakh", "evidence_quote": "put 1 lakh in it", "source": "transcript"}],
-    "seller_claims": [{"text": "Upper circuit guaranteed", "quote": "Upper circuit guaranteed"}]
+    "terms": [
+      {
+        "name": "invest_amount",
+        "value_text": "1 lakh",
+        "evidence_quote": "put 1 lakh in it",
+        "source": "transcript"
+      }
+    ],
+    "seller_claims": [
+      {
+        "text": "Upper circuit guaranteed",
+        "quote": "Upper circuit guaranteed"
+      }
+    ]
   },
   "CouncilOutput": {
     "opinions": [
-      {"agent": "vick", "stance": "against", "strength": 1.0,
-       "arguments": [
-         {"text": "ZEPHYRX rose about 222% in 30 trading days, with 22 days of big jumps.", "cited_ids": ["run_up_30d", "upper_circuit_hits_30d"]},
-         {"text": "Trading volume is about 4 times its usual level, a classic pump-and-dump sign.", "cited_ids": ["volume_spike"]}
-       ],
-       "questions_for_seller": ["Who sent this message, and do they own this share?"]},
-      {"agent": "sankz", "stance": "against", "strength": 0.6,
-       "arguments": [{"text": "Putting 1 lakh into one tip is a big risk for your savings.", "cited_ids": ["term.invest_amount"]}]}
+      {
+        "agent": "vick",
+        "stance": "against",
+        "strength": 1.0,
+        "arguments": [
+          {
+            "text": "ZEPHYRX rose about {run_up_30d} in the last month of trading, with {upper_circuit_hits_30d} days of big jumps.",
+            "cited_ids": []
+          },
+          {
+            "text": "Trading volume is about {volume_spike} its usual level, a classic pump-and-dump sign.",
+            "cited_ids": []
+          }
+        ],
+        "questions_for_seller": [
+          "Who sent this message, and do they own this share?"
+        ]
+      },
+      {
+        "agent": "sankz",
+        "stance": "against",
+        "strength": 0.6,
+        "arguments": [
+          {
+            "text": "Putting {term.invest_amount} into one tip is a big risk for your savings.",
+            "cited_ids": []
+          }
+        ]
+      }
     ]
   },
   "ExplainerOutput": {
-    "opener": {"speaker": "alfii", "text": "I asked Vick and Sankz about this tip."},
+    "opener": {
+      "speaker": "alfii",
+      "text": "I asked Vick and Sankz about this tip."
+    },
     "agent_lines": [
-      {"speaker": "vick", "text": "This share jumped about 222% in a few weeks on huge volume, which is how pump-and-dump schemes look.", "cited_ids": ["run_up_30d"]},
-      {"speaker": "sankz", "text": "Please do not put your savings into a tip like this."}
+      {
+        "speaker": "vick",
+        "text": "This share jumped about {run_up_30d} in a few weeks on huge volume, which is how pump-and-dump schemes look.",
+        "cited_ids": []
+      },
+      {
+        "speaker": "sankz",
+        "text": "Please do not put your savings into a tip like this."
+      }
     ],
-    "verdict_sentence": {"speaker": "alfii", "text": "Do not buy on this tip; it shows strong pump-and-dump signs."},
-    "questions": ["Who sent this message, and do they own this share?"]
+    "verdict_sentence": {
+      "speaker": "alfii",
+      "text": "Do not buy on this tip; it shows strong pump-and-dump signs."
+    },
+    "questions": [
+      "Who sent this message, and do they own this share?"
+    ]
   }
 }

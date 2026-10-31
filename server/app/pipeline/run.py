@@ -5,7 +5,7 @@
  3 case_builder      LLM call 1 -> case type, terms, seller claims
  4 verify_terms      code; unverified terms excluded from maths, become questions
  5 compute           code; facts via app.mcp_server.tools (same functions as the MCP server)
- 6 router            code; "unknown" case type falls back to general_money (no extra LLM call)
+ 6 router            code; an "unknown" case type ends here: Alfii asks one clarifying question (no LLM call)
  7 council           LLM call 2, batched for all called agents
  8 evidence          code; on every argument
  9 debate            LLM call 3, only if disagreement > 0.4
@@ -36,6 +36,7 @@ from app.pipeline.compute import Computed, compute_facts
 from app.pipeline.consensus import ConsensusResult, override_inputs_from_facts, run_consensus
 from app.pipeline.events import BUS, DONE, EventBus
 from app.pipeline.ingest import Ingested, Upload, ingest
+from app.pipeline.labels import source_label, unverified_label
 from app.pipeline.privacy import decide_mode
 from app.pipeline.router import route
 from app.pipeline.scam_rules import ScamSignal, detect
@@ -54,6 +55,7 @@ CONTEXT_CUES = re.compile(
     re.I,
 )
 SCAM_SENTENCE = "This looks like a scam. Do not share any code, do not install anything, and do not pay anyone."
+CLARIFY = "I want to be sure I understand. Is this about a loan, an insurance plan, a savings plan, or a stock tip?"
 OUT_OF_SCOPE = (
     "I help with money questions like loans, insurance, savings and stock tips. What would you like to check?"
 )
@@ -96,18 +98,11 @@ class _Run:
             self.bus.publish(self.case_id, "step_finished", step=name, outcome=outcome, ms=ms)
 
 
-def _screen_details(facts: list[Fact], terms: list[VerifiedTerm]) -> list[ScreenDetail]:
-    out = []
-    for f in facts:
-        if f.id.startswith("term."):
-            src = f"{f.inputs.get('source', 'document')} (read twice)"
-        elif f.id.startswith("ref."):
-            src = f"assumption as of {f.inputs.get('as_of')}"
-        elif f.id.startswith(("profile.", "item.")):
-            src = f"you told us ({f.inputs.get('source')})" if f.status == "known" else "not told yet"
-        else:
-            src = "calculated by Kanakku"
-        out.append(ScreenDetail(id=f.id, label=f.label, value=f.display, kind=f.kind, source=src))
+def _screen_details(facts: list[Fact], terms: list[VerifiedTerm], case_type: str) -> list[ScreenDetail]:
+    out = [
+        ScreenDetail(id=f.id, label=f.label, value=f.display, kind=f.kind, source=source_label(f, case_type))
+        for f in facts
+    ]
     for t in terms:
         if not t.verified:
             out.append(
@@ -116,7 +111,7 @@ def _screen_details(facts: list[Fact], terms: list[VerifiedTerm]) -> list[Screen
                     label=f"Could not check: {t.name.replace('_', ' ')}",
                     value=t.value_text,
                     kind="offer",
-                    source=t.reason or "unverified",
+                    source=unverified_label(t.source, t.reason, case_type),
                 )
             )
     return out
@@ -221,9 +216,11 @@ async def _pipeline(run: _Run, inp: AskInput, *, repo: Repo, llm: LLMProvider, s
             ms_llm=usage.ms,
             tokens=[usage.prompt_tokens, usage.completion_tokens],
         )
-    case_type = draft.case_type if draft.case_type != "unknown" else "general_money"
+    case_type = draft.case_type
     repo.update_case(case_id, case_type=case_type, language=draft.language)
 
+    if case_type == "unknown":  # Alfii asks one clarifying question; no extra LLM call
+        return _simple_result(run, case_type, None, CLARIFY, mode, repo)
     if case_type == "out_of_scope":
         return _simple_result(run, case_type, None, OUT_OF_SCOPE, mode, repo)
     if case_type == "scam_or_payment_request":
@@ -251,7 +248,7 @@ async def _pipeline(run: _Run, inp: AskInput, *, repo: Repo, llm: LLMProvider, s
     # 6 router ---------------------------------------------------------------------------------------------------
     agents = route(case_type, computed.flags)
     async with run.step("router") as info:
-        info.update(case_type=case_type, flags=computed.flags, agents=agents, fallback=draft.case_type == "unknown")
+        info.update(case_type=case_type, flags=computed.flags, agents=agents)
     for a in agents:
         run.bus.publish(case_id, "agent_called", agent=a)
 
@@ -293,7 +290,9 @@ async def _pipeline(run: _Run, inp: AskInput, *, repo: Repo, llm: LLMProvider, s
         for p in r.positions:
             repo.add_position(case_id, p.agent, p.stance, p.strength, round=r.round)
         for a in r.arguments:
-            repo.add_argument(case_id, a.agent, a.text, a.cited_ids, a.kept, drop_reason=a.drop_reason, round=r.round)
+            repo.add_argument(
+                case_id, a.agent, a.rendered or a.text, a.cited_ids, a.kept, drop_reason=a.drop_reason, round=r.round
+            )
 
     # 10 consensus + overrides ---------------------------------------------------------------------------------------
     overrides = override_inputs_from_facts(
@@ -318,7 +317,8 @@ async def _pipeline(run: _Run, inp: AskInput, *, repo: Repo, llm: LLMProvider, s
             summary,
             agents,
             kept_args,
-            council_mod.facts_table(facts),
+            # discreet: the explainer never even sees personal facts, so it cannot speak them
+            council_mod.facts_table(facts, include_personal=mode == "full"),
             [{"id": k, **v} for k, v in quotes.items()],
             mode,
             draft.language,
@@ -335,7 +335,7 @@ async def _pipeline(run: _Run, inp: AskInput, *, repo: Repo, llm: LLMProvider, s
             text=explainer_mod.VERDICT_TEMPLATES[consensus.verdict],
             blocked_reason=lines[-1].blocked_reason,
         )
-    pool = [q for q in [*questions, *candidate_qs] if explainer_mod.question_ok(q, facts, quote_text, mode)]
+    pool = [r for q in [*questions, *candidate_qs] if (r := explainer_mod.render_question(q, facts, quote_text, mode))]
     final_questions = list(dict.fromkeys(pool))[:3]
 
     # 13 save -----------------------------------------------------------------------------------------------------
@@ -364,7 +364,7 @@ async def _pipeline(run: _Run, inp: AskInput, *, repo: Repo, llm: LLMProvider, s
         verdict=VerdictOut(colour=consensus.verdict, sentence=sentence, questions=final_questions),
         called_agents=agents,
         spoken_lines=[SpokenLineOut(speaker=ln.speaker, text=ln.text) for ln in lines],
-        screen_details=_screen_details(facts, terms),
+        screen_details=_screen_details(facts, terms, case_type),
         privacy_mode=mode,
         degraded=bool(run.degraded_steps),
         degraded_steps=list(run.degraded_steps),
@@ -412,7 +412,13 @@ def _scam_result(run: _Run, signals: list[ScamSignal], mode: str, repo: Repo, fa
         called_agents=[],
         spoken_lines=[SpokenLineOut(speaker=s, text=t) for s, t in lines],
         screen_details=[
-            ScreenDetail(id=f"scam.{s.rule}", label=s.explanation, value=s.matched_text, kind="offer", source=s.source)
+            ScreenDetail(
+                id=f"scam.{s.rule}",
+                label=s.explanation,
+                value=s.matched_text,
+                kind="offer",
+                source="Warning sign in " + ("what you said" if s.source == "transcript" else "the document"),
+            )
             for s in signals
         ],
         privacy_mode=mode,

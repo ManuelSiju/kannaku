@@ -67,23 +67,24 @@ def test_endowment_brochure_is_red(harness):
     # numbers match the phase-2 golden values
     details = {d["id"]: d for d in res["screen_details"]}
     assert details["endowment_return"]["value"] == "3.8%"
-    assert details["fd_value"]["value"] == "₹13,44,402.68"
+    assert details["fd_value"]["value"] == "₹13.44 lakh"
     assert details["surplus_after"]["kind"] == "personal"
-    assert details["term.premium"]["source"] == "page_1 (read twice)"
+    assert details["term.premium"]["source"] == "Brochure page 1 · checked"
+    assert details["profile.savings"]["source"] == "From your passbook photo"
+    assert details["ref.fd_rate"]["source"] == "Assumption · as of 1 Oct 2026"
 
     # the personal amount never reaches a spoken line in discreet mode
     lines = res["spoken_lines"]
     assert [ln["speaker"] for ln in lines] == ["alfii", "dani", "sankz", "alfii"]
     assert lines[2]["text"] == ON_SCREEN
     assert all("9,433" not in ln["text"] for ln in lines)
-    assert "3.8%" in lines[1]["text"]
+    assert lines[1]["text"] == "This plan grows your money by only about 3.8% a year; a fixed deposit would do better."
+    assert "₹15 lakh is not guaranteed" in lines[3]["text"]
     assert 1 <= len(res["verdict"]["questions"]) <= 3
 
     bundle = client.get(f"/cases/{res['case_id']}").json()
     dropped = [a for a in bundle["arguments"] if not a["kept"]]
-    assert (
-        len(dropped) == 1 and "8%" in dropped[0]["drop_reason"] and "high.endowment_return" in dropped[0]["drop_reason"]
-    )
+    assert len(dropped) == 1 and "raw number" in dropped[0]["drop_reason"] and "8%" in dropped[0]["drop_reason"]
     assert [o["rule"] for o in bundle["verdict"]["overrides"]] == ["unbacked_guarantee"]
     blocked = [ln for ln in bundle["spoken_lines"] if not ln["allowed"]]
     assert len(blocked) == 1 and blocked[0]["blocked_reason"].startswith("privacy")
@@ -110,8 +111,8 @@ def test_flat_rate_loan_is_red_or_yellow(harness):
     assert res["verdict"]["colour"] in ("red", "yellow")
     assert res["called_agents"] == ["sankz"]
     details = {d["id"]: d["value"] for d in res["screen_details"]}
-    assert details["loan_emi"] == "₹5,166.67" and details["loan_effective_rate"] == "21.6%"
-    assert details["surplus_after"] == "₹8,433.33"  # 45,000 - 28,000 - 2,400 EMI - 1,000 policy - 5,166.67
+    assert details["loan_emi"] == "₹5,167" and details["loan_effective_rate"] == "21.6%"
+    assert details["surplus_after"] == "₹8,433"  # 45,000 - 28,000 - 2,400 EMI - 1,000 policy - 5,166.67
     assert llm.calls == ["CaseDraft", "CouncilOutput", "ExplainerOutput"]
     assert "21.6%" in res["spoken_lines"][1]["text"]
 
@@ -137,6 +138,15 @@ def test_otp_scam_fast_path(harness):
     assert {d["id"] for d in res["screen_details"]} >= {"scam.otp_pin_request", "scam.kyc_urgency"}
     assert all(ln["speaker"] == "alfii" for ln in res["spoken_lines"])
     assert repo.list_alerts(1)[0]["note"].startswith("RED: scam warning")
+
+
+def test_unknown_case_type_asks_one_clarifying_question(harness):
+    client, state, _ = harness
+    state["llm"] = llm = FakeLLM(load_fixture("unknown"))
+    res = ask(client, "What about this one?")
+    assert res["case_type"] == "unknown" and res["called_agents"] == [] and res["verdict"]["colour"] is None
+    assert res["spoken_lines"][0]["text"].endswith("or a stock tip?")
+    assert llm.calls == ["CaseDraft"]
 
 
 def test_out_of_scope_is_alfii_only(harness):
@@ -272,4 +282,5 @@ def test_endowment_from_brochure_photos_uses_ocr(harness):
     assert res["verdict"]["colour"] == "red" and not res["degraded"], res["degraded_steps"]
     details = {d["id"]: d for d in res["screen_details"]}
     assert details["endowment_return"]["value"] == "3.8%"
+    assert details["term.premium"]["source"] == "Brochure page 1 · read twice"  # LLM + OCR agree
     assert not any(d["label"].startswith("Could not check") for d in res["screen_details"])

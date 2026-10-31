@@ -100,6 +100,6 @@ def test_affordability_from_family(demo_repo):
 def test_tool_facts_work_with_evidence_checker(demo_repo):
     facts = [Fact.model_validate(x) for x in tools.calc_fd_value(50_000, 15, 0.07)["facts"]]
     facts += [Fact.model_validate(x) for x in tools.family_get_profile(1, demo_repo)["facts"]]
-    assert check_argument("An FD would give 13.4 lakh.", ["fd_value"], facts, {}).kept
-    assert check_argument("You have 1,60,000 saved.", ["profile.savings"], facts, {}).kept
-    assert not check_argument("You have 1,60,000 saved.", ["fd_value"], facts, {}).kept
+    assert check_argument("An FD would give {fd_value}.", [], facts, {}).rendered == "An FD would give ₹13.44 lakh."
+    assert check_argument("You have {profile.savings} saved.", [], facts, {}).rendered == "You have ₹1.6 lakh saved."
+    assert not check_argument("You have 1,60,000 saved.", ["profile.savings"], facts, {}).kept

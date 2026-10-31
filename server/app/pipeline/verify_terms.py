@@ -32,6 +32,7 @@ class VerifiedTerm(BaseModel):
     source: str
     verified: bool
     reason: str | None = None
+    photo: bool = False  # confirmed by a second, independent reading (OCR of the photo)
 
     @property
     def display(self) -> str:
@@ -95,7 +96,9 @@ def verify_term(term: ExtractedTerm, evidence: list[EvidenceText]) -> VerifiedTe
         return fail("the number is not in the quoted words", match.quote_id)
     if match.ocr_text is not None and not _number_in(value, unit, match.ocr_text):
         return fail("photo reading did not confirm the number", match.quote_id)
-    return VerifiedTerm(**base | {"source": match.source}, quote_id=match.quote_id, verified=True)
+    return VerifiedTerm(
+        **base | {"source": match.source}, quote_id=match.quote_id, verified=True, photo=match.ocr_text is not None
+    )
 
 
 def verify_terms(terms: list[ExtractedTerm], evidence: list[EvidenceText]) -> list[VerifiedTerm]:
@@ -117,5 +120,5 @@ def term_fact(t: VerifiedTerm) -> Fact | None:
         unit=t.unit,
         kind="offer",
         formula="read from the document and checked twice",
-        inputs={"quote_id": t.quote_id, "source": t.source},
+        inputs={"quote_id": t.quote_id, "source": t.source, "photo": t.photo},
     )

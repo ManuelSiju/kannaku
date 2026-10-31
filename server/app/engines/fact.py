@@ -30,17 +30,40 @@ class Fact(BaseModel):
 
     @property
     def display(self) -> str:
+        """Plain, speakable form; this is what replaces a {fact_id} placeholder in model text."""
         if self.value_text is not None:
             return self.value_text
         if self.value is None:
             return "unknown"
+        v = self.value
         if self.unit == "fraction":
-            return f"{self.value * 100:.1f}%"
+            pct = v * 100
+            return f"{round(pct)}%" if abs(pct) >= 100 else f"{_trim(round(pct, 1))}%"
         if self.unit == "INR":
-            return format_inr(self.value)
+            return speakable_inr(v)
         if self.unit in ("months", "years"):
-            return f"{self.value:.1f} {self.unit}"
-        return f"{self.value:g} {self.unit}".strip()
+            n = _trim(round(v, 1))
+            return f"{n} {self.unit[:-1] if n == '1' else self.unit}"
+        if self.unit == "times":
+            return f"{_trim(round(v, 1))} times"
+        if self.unit in ("count", "level"):
+            return _trim(round(v, 1))
+        return f"{_trim(round(v, 2))} {self.unit}".strip()
+
+
+def _trim(x: float) -> str:
+    return f"{x:,.2f}".rstrip("0").rstrip(".") if x % 1 else f"{int(x)}"
+
+
+def speakable_inr(amount: float) -> str:
+    """₹13.44 lakh / ₹2.5 crore for big amounts; whole rupees with Indian grouping below one lakh."""
+    a = abs(amount)
+    sign = "-" if amount < 0 else ""
+    if a >= 1e7:
+        return f"{sign}₹{_trim(round(a / 1e7, 2))} crore"
+    if a >= 1e5:
+        return f"{sign}₹{_trim(round(a / 1e5, 2))} lakh"
+    return format_inr(round(amount))
 
 
 def known(id: str, label: str, value: float, unit: str, kind: FactKind, formula: str, **inputs: Any) -> Fact:

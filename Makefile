@@ -25,11 +25,11 @@ endif
 
 .PHONY: help setup setup-system env doctor run-server health llm-up llm-down llm-pull llm-list \
         check-models test test-fast smoke lint fmt clean run-mcp seed-demo reset-demo demo-assets run-app demo commit-phase \
-        lan-url firewall-open phone-devices phone-usb phone-usb-off up down status logs app-release app-ios
+        reliability reliability-framing reliability-vision lan-url firewall-open phone-devices phone-usb phone-usb-off up down status logs app-release app-ios
 
 help: ## Show this list
 	@grep -hE '^[a-zA-Z_-]+:.*?## ' $(MAKEFILE_LIST) | \
-	  awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-14s\033[0m %s\n", $$1, $$2}'
+	  awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-20s\033[0m %s\n", $$1, $$2}'
 
 # ---------------------------------------------------------------- setup
 setup: env ## Create .venv (Python 3.11) and install server + dev deps
@@ -117,6 +117,15 @@ fmt: ## Ruff auto-fix + format
 
 clean: ## Remove caches (keeps .venv and .env)
 	find . -name __pycache__ -type d -prune -exec rm -rf {} + ; rm -rf $(SERVER)/.pytest_cache $(SERVER)/.ruff_cache
+
+reliability: ## Real-model run: 5 cases x RUNS (default 5) -> docs/reliability.md (needs make up / llm-up)
+	cd $(SERVER) && $(PY) scripts/reliability.py --runs $(or $(RUNS),5)
+
+reliability-framing: ## Real-model framing test: 3 framings x RUNS (default 3) -> docs/reliability_framing.md
+	cd $(SERVER) && $(PY) scripts/reliability.py --framing --runs $(or $(RUNS),3)
+
+reliability-vision: ## Endowment from brochure PHOTOS with LLM_VISION_MODEL -> docs/reliability_vision.md
+	cd $(SERVER) && $(PY) scripts/reliability.py --vision --runs $(or $(RUNS),3)
 
 # ---------------------------------------------------------------- phone
 lan-url: ## Print the URLs to open on your phone (same Wi-Fi)

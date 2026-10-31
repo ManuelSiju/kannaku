@@ -13,7 +13,7 @@ from pydantic import BaseModel
 
 from app.engines.fact import Fact
 from app.pipeline.consensus import Position
-from app.pipeline.evidence import check_argument
+from app.pipeline.evidence import Kept, check_argument
 from app.pipeline.schemas import AgentOpinion, CouncilOutput
 from app.prompts import prompts
 from app.providers.llm import LLMProvider
@@ -22,7 +22,8 @@ from app.providers.llm import LLMProvider
 class CheckedArgument(BaseModel):
     agent: str
     round: int
-    text: str
+    text: str  # as the model wrote it, with {fact_id} placeholders
+    rendered: str | None = None  # placeholders filled in (kept arguments only)
     cited_ids: list[str]
     kept: bool
     drop_reason: str | None = None
@@ -37,8 +38,13 @@ class CouncilRound(BaseModel):
     abstained: list[str]  # all arguments dropped
 
 
-def facts_table(facts: list[Fact]) -> list[dict[str, Any]]:
-    return [{"id": f.id, "label": f.label, "value": f.display, "kind": f.kind} for f in facts]
+def facts_table(facts: list[Fact], include_personal: bool = True) -> list[dict[str, Any]]:
+    """What the model sees. "placeholder" is the exact token to write in text."""
+    return [
+        {"placeholder": "{" + f.id + "}", "label": f.label, "value_for_reasoning": f.display, "kind": f.kind}
+        for f in facts
+        if include_personal or f.kind != "personal"
+    ]
 
 
 def council_input(
@@ -67,16 +73,23 @@ def check_round(
         kept = 0
         for arg in op.arguments:
             res = check_argument(arg.text, arg.cited_ids, facts, quote_text)
-            checked.append(
-                CheckedArgument(
-                    agent=agent,
-                    round=round,
-                    text=arg.text,
-                    cited_ids=arg.cited_ids,
-                    kept=res.kept,
-                    drop_reason=None if res.kept else res.reason,
+            if isinstance(res, Kept):
+                checked.append(
+                    CheckedArgument(
+                        agent=agent, round=round, text=arg.text, rendered=res.rendered, cited_ids=res.cited, kept=True
+                    )
                 )
-            )  # type: ignore[union-attr]
+            else:
+                checked.append(
+                    CheckedArgument(
+                        agent=agent,
+                        round=round,
+                        text=arg.text,
+                        cited_ids=arg.cited_ids,
+                        kept=False,
+                        drop_reason=res.reason,
+                    )
+                )
             kept += int(res.kept)
         if kept:
             positions.append(Position(agent=agent, stance=op.stance, strength=op.strength))

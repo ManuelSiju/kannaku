@@ -29,7 +29,8 @@ CASE_TYPES = {
     "out_of_scope",
 }
 
-# Unknown case types fall back to general_money; the pipeline classifies "unknown" with the LLM first.
+# Unrecognised case types fall back to general_money. The pipeline itself never routes "unknown": Alfii asks a
+# clarifying question instead.
 FALLBACK_CASE_TYPE = "general_money"
 
 

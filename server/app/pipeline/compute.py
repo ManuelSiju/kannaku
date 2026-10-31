@@ -40,6 +40,7 @@ def compute_facts(
     facts: list[Fact] = [f for f in (term_fact(x) for x in terms) if f is not None]
     profile = _facts(tools.family_get_profile(family_id, repo))
     facts += profile
+    facts += _facts(tools.rates_get_reference())  # every agent may compare against these assumptions
     savings = next((f.value for f in profile if f.id == "profile.savings"), None)
     rates = tools.reference_rates()
     missing: list[str] = []
@@ -56,7 +57,6 @@ def compute_facts(
         )
 
     if case_type in ("insurance_offer", "ulip"):
-        facts += _facts(tools.rates_get_reference())
         years = t.get("pay_years") or t.get("policy_years")
         if "pay_years" not in t and "policy_years" not in t:
             missing.append("pay_years")
@@ -100,7 +100,6 @@ def compute_facts(
                 flags.append("amount_large")
 
     elif case_type == "sip_or_fund_question":
-        facts += _facts(tools.rates_get_reference())
         if need("monthly_amount"):
             months = int(t.get("years", 10) * 12)
             facts += _facts(tools.calc_sip_value(t["monthly_amount"], months, rates["index_long_run_return"]))
@@ -108,8 +107,5 @@ def compute_facts(
             afford(t["monthly_amount"])
             if savings is None or t["monthly_amount"] * 12 > LARGE_SHARE_OF_SAVINGS * savings:
                 flags.append("amount_vs_savings")
-
-    elif case_type == "general_money":
-        facts += _facts(tools.rates_get_reference())
 
     return Computed(facts=facts, missing_required=missing, flags=flags, commitment=commitment)

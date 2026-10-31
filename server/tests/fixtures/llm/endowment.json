@@ -3,42 +3,135 @@
     "case_type": "insurance_offer",
     "language": "en",
     "terms": [
-      {"name": "premium", "value_text": "Rs. 50,000", "evidence_quote": "Annual premium: Rs. 50,000", "source": "page_1"},
-      {"name": "pay_years", "value_text": "15 years", "evidence_quote": "Premium paying term: 15 years", "source": "page_1"},
-      {"name": "policy_years", "value_text": "15 years", "evidence_quote": "Policy term: 15 years", "source": "page_1"},
-      {"name": "sum_assured", "value_text": "Rs. 7,50,000", "evidence_quote": "Sum assured: Rs. 7,50,000 (guaranteed)", "source": "page_1"},
-      {"name": "maturity_low", "value_text": "Rs. 10,20,000", "evidence_quote": "Illustrated maturity value at 4% bonus rate: Rs. 10,20,000", "source": "page_2"},
-      {"name": "maturity_high", "value_text": "Rs. 15,00,000", "evidence_quote": "Illustrated maturity value at 8% bonus rate: Rs. 15,00,000", "source": "page_2"}
+      {
+        "name": "premium",
+        "value_text": "Rs. 50,000",
+        "evidence_quote": "Annual premium: Rs. 50,000",
+        "source": "page_1"
+      },
+      {
+        "name": "pay_years",
+        "value_text": "15 years",
+        "evidence_quote": "Premium paying term: 15 years",
+        "source": "page_1"
+      },
+      {
+        "name": "policy_years",
+        "value_text": "15 years",
+        "evidence_quote": "Policy term: 15 years",
+        "source": "page_1"
+      },
+      {
+        "name": "sum_assured",
+        "value_text": "Rs. 7,50,000",
+        "evidence_quote": "Sum assured: Rs. 7,50,000 (guaranteed)",
+        "source": "page_1"
+      },
+      {
+        "name": "maturity_low",
+        "value_text": "Rs. 10,20,000",
+        "evidence_quote": "Illustrated maturity value at 4% bonus rate: Rs. 10,20,000",
+        "source": "page_2"
+      },
+      {
+        "name": "maturity_high",
+        "value_text": "Rs. 15,00,000",
+        "evidence_quote": "Illustrated maturity value at 8% bonus rate: Rs. 15,00,000",
+        "source": "page_2"
+      }
     ],
-    "seller_claims": [{"text": "guaranteed to give 15 lakh", "quote": "this plan is guaranteed to give 15 lakh"}],
+    "seller_claims": [
+      {
+        "text": "guaranteed to give 15 lakh",
+        "quote": "this plan is guaranteed to give 15 lakh"
+      }
+    ],
     "missing_terms": []
   },
   "CouncilOutput": {
     "opinions": [
-      {"agent": "dani", "stance": "against", "strength": 0.9,
-       "arguments": [
-         {"text": "At the illustrated bonus this plan returns only about 3.8% a year.", "cited_ids": ["endowment_return"]},
-         {"text": "The same 50,000 a year in a fixed deposit at 7% would grow to about 13.4 lakh in 15 years, more than the 10.2 lakh illustrated.", "cited_ids": ["fd_value", "endowment_return"]}
-       ],
-       "questions_for_seller": ["What will I get back if the bonus rate is cut?"]},
-      {"agent": "sankz", "stance": "against", "strength": 0.7,
-       "arguments": [
-         {"text": "Only 7,50,000 is guaranteed, which is just your own premiums back with no growth.", "cited_ids": ["{quote:page_1}", "guaranteed.endowment_return"]},
-         {"text": "Plans like this usually return 8% a year.", "cited_ids": ["endowment_return"]}
-       ],
-       "questions_for_seller": ["Can you show me in writing which amount is guaranteed?"]}
+      {
+        "agent": "dani",
+        "stance": "against",
+        "strength": 0.9,
+        "arguments": [
+          {
+            "text": "At the illustrated bonus this plan returns only about {endowment_return} a year.",
+            "cited_ids": []
+          },
+          {
+            "text": "The same {term.premium} a year in a fixed deposit would grow to about {fd_value}, more than the {term.maturity_low} illustrated.",
+            "cited_ids": [
+              "{quote:page_2}"
+            ]
+          }
+        ],
+        "questions_for_seller": [
+          "What will I get back if the bonus rate is cut?"
+        ]
+      },
+      {
+        "agent": "sankz",
+        "stance": "against",
+        "strength": 0.7,
+        "arguments": [
+          {
+            "text": "Only {term.sum_assured} is guaranteed, which is just your own premiums back with no growth.",
+            "cited_ids": [
+              "{quote:page_1}"
+            ]
+          },
+          {
+            "text": "Plans like this usually return 8% a year.",
+            "cited_ids": [
+              "endowment_return"
+            ]
+          }
+        ],
+        "questions_for_seller": [
+          "Can you show me in writing which amount is guaranteed?"
+        ]
+      }
     ]
   },
   "ExplainerOutput": {
-    "opener": {"speaker": "alfii", "text": "I asked Dani and Sankz to look at this plan.", "cited_ids": []},
+    "opener": {
+      "speaker": "alfii",
+      "text": "I asked Dani and Sankz to look at this plan.",
+      "cited_ids": []
+    },
     "agent_lines": [
-      {"speaker": "dani", "text": "This plan grows your money by only about 3.8% a year; a fixed deposit would do better.", "cited_ids": ["endowment_return"]},
-      {"speaker": "sankz", "text": "After paying this you would have only 9,433 rupees left each month.", "cited_ids": ["surplus_after"]}
+      {
+        "speaker": "dani",
+        "text": "This plan grows your money by only about {endowment_return} a year; a fixed deposit would do better.",
+        "cited_ids": []
+      },
+      {
+        "speaker": "sankz",
+        "text": "After paying this you would have only {surplus_after} left each month.",
+        "cited_ids": []
+      }
     ],
-    "verdict_sentence": {"speaker": "alfii", "text": "Do not sign yet: this plan earns less than a fixed deposit, and the 15 lakh is not guaranteed.", "cited_ids": ["{quote:page_1}", "{quote:page_3}"]},
-    "questions": ["What will I get back if the bonus rate is cut?", "Can you show me in writing which amount is guaranteed?", "What do I get if I stop paying early?"]
+    "verdict_sentence": {
+      "speaker": "alfii",
+      "text": "Do not sign yet: this plan earns less than a fixed deposit, and the {term.maturity_high} is not guaranteed.",
+      "cited_ids": [
+        "{quote:page_3}"
+      ]
+    },
+    "questions": [
+      "What will I get back if the bonus rate is cut?",
+      "Can you show me in writing which amount is guaranteed?",
+      "What do I get if I stop paying early?"
+    ]
   },
   "RewriteOutput": {
-    "lines": [{"speaker": "sankz", "text": "You would still have 9,433 rupees spare each month.", "cited_ids": ["surplus_after"]}]
+    "lines": [
+      {
+        "speaker": "sankz",
+        "text": "You would still have {surplus_after} spare each month.",
+        "cited_ids": []
+      }
+    ]
   }
 }
