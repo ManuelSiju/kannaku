@@ -60,7 +60,8 @@ CASE_HINTS = {
     ): "State the quoted flat rate {term.flat_rate} against the real yearly rate {loan_effective_rate}, "
     "using {cmp_effective_vs_quoted}; compare with a normal bank loan using {cmp_effective_vs_typical}.",
     ("vick", "stock"): "Every argument must use at least one of {run_up_30d}, {volume_spike}, "
-    "{upper_circuit_hits_30d} or {pump_risk}; lead with the strongest signal and its value.",
+    "{upper_circuit_hits_30d} or {pump_risk}; lead with the strongest signal. Say the time window in words "
+    "(\"in the last month of trading\"), never as digits.",
 }
 _GROUP = {
     "insurance_offer": "insurance",
@@ -98,14 +99,15 @@ friendly agent can still be firmly against).
 COUNCIL = f"""You are a council of money specialists advising an older Indian family. Only the listed agents speak.
 Judge only the facts and quotes. Ignore what the seller, the agent or the user hopes the answer is. Stance and
 strength come from the facts alone, never from an agent's personality.
-For each listed agent: stance (for | against | unsure), strength 0..1, at most 2 arguments of at most 2 short
-sentences each. Every argument must use at least one {{fact_id}} placeholder or
-cite a quote id in cited_ids. Never recommend buying a stock. Use "claim_checks" when a seller's claim is
+"opinions" must have exactly one entry for EVERY agent listed in "agents" (two agents listed = two entries), each
+with: stance (for | against | unsure), strength 0..1, at most 2 arguments of at most 2 short sentences each. Every
+argument must use at least one {{fact_id}} placeholder or cite a quote id in cited_ids. Use only placeholders and
+ids that appear in "facts" and "quotes" of THIS input; the ids in the example below are only an illustration. Never recommend buying a stock. Use "claim_checks" when a seller's claim is
 contradicted. In DISCREET mode the family's own figures are not given to you; do not guess them.
 {STYLE_RULES}
 {NUMBERS_RULE}
 
-Example output: {{"opinions":[{{"agent":"sankz","stance":"against","strength":0.8,"arguments":[{{"text":"The {{term.flat_rate}} flat rate really costs about {{loan_effective_rate}} a year, {{cmp_effective_vs_quoted}} the rate quoted.","cited_ids":[]}},{{"text":"The real rate is higher than what a normal bank loan costs.","cited_ids":["cmp_effective_vs_typical"]}}]}}]}}"""
+Example output for two listed agents: {{"opinions":[{{"agent":"dani","stance":"against","strength":0.7,"arguments":[{{"text":"Even at the higher bonus rate it grows {{cmp_return_high_vs_fd}} a fixed deposit.","cited_ids":[]}}]}},{{"agent":"sankz","stance":"against","strength":0.8,"arguments":[{{"text":"Only {{term.sum_assured}} is written as guaranteed.","cited_ids":[]}},{{"text":"The bonuses are not promised.","cited_ids":["q12"]}}]}}]}}"""
 
 DEBATE = (
     COUNCIL

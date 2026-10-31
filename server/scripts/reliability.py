@@ -356,6 +356,7 @@ async def main() -> None:
         md += "**Suggested follow-ups:** " + ("; ".join(r["followups"]) or "none") + "\n\n"
         if r["claims"]:
             md += "**Claim checks:** " + "; ".join(r["claims"]) + "\n\n"
+    stem = f"{stem}_full" if args.full and not (args.framing or args.vision) else stem
     stem = f"{stem}_{args.tag}" if args.tag else stem
     (docs / f"{stem}.md").write_text(md)
     (docs / f"{stem}_raw.json").write_text(
