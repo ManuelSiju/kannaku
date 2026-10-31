@@ -212,6 +212,7 @@ async def main() -> None:
     ap.add_argument("--cases", default=",".join(CASES))
     ap.add_argument("--framing", action="store_true")
     ap.add_argument("--vision", action="store_true")
+    ap.add_argument("--tag", default="", help="suffix for the report file names, e.g. vl_single")
     args = ap.parse_args()
 
     s = get_settings()
@@ -286,6 +287,7 @@ async def main() -> None:
     for name, runs in groups.items():
         lines = [x for x in runs[0]["spoken"] if not x.startswith("alfii: Let me ask")][:2]
         md += f"**{name}**\n\n" + "\n".join(f"> {x}  " for x in lines) + "\n\n"
+    stem = f"{stem}_{args.tag}" if args.tag else stem
     (docs / f"{stem}.md").write_text(md)
     (docs / f"{stem}_raw.json").write_text(
         json.dumps({"groups": groups, "llm_stats": llm_stats}, indent=1, default=str)
