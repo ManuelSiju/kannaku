@@ -22,7 +22,7 @@ from typing import Any, Literal
 
 from pydantic import BaseModel
 
-from app.engines.fact import Fact, FactKind
+from app.engines.fact import Fact, FactKind, format_inr
 from app.numbers.indian_number_parser import find_amounts, find_percents
 
 REL_TOL = 0.01
@@ -128,14 +128,17 @@ def resolve_placeholders(text: str, fact_ids: Iterable[str]) -> tuple[str, list[
 def auto_placeholders(text: str, facts: Facts) -> tuple[str, list[str]]:
     """Replace a raw number that exactly equals the display of exactly ONE known fact by that fact's placeholder.
     Text inside existing placeholders is never touched. Ambiguous or non-matching numbers stay (and get dropped)."""
-    by_display: dict[str, list[str]] = {}
+    by_display: dict[str, list[Fact]] = {}
     for f in as_fact_map(facts).values():
         if f.status == "known" and _DIGIT.search(f.display):
-            by_display.setdefault(f.display, []).append(f.id)
+            for form in display_forms(f):
+                by_display.setdefault(form, []).append(f)
     fixes: list[str] = []
     parts = re.split(r"(\{[A-Za-z][A-Za-z0-9_.]*\})", text)
     for display in sorted(by_display, key=len, reverse=True):
-        ids = by_display[display]
+        # several facts with the same value and unit (pay_years = policy_years = 15 years) are one number, not ambiguous
+        same = {(f.value, f.unit) for f in by_display[display]}
+        ids = [by_display[display][0].id] if len(same) == 1 else [f.id for f in by_display[display]]
         # not part of a longer number: no digit (or "1." / "1,") just before, no digit (or ".5" / ",000") just after
         pat = re.compile(r"(?<!\d)(?<!\d[.,])" + re.escape(display) + r"(?!\d|[.,]\d)")
         for k, part in enumerate(parts):
@@ -147,6 +150,18 @@ def auto_placeholders(text: str, facts: Facts) -> tuple[str, list[str]]:
             fixes.append(f"auto_placeholder '{display}' -> {{{ids[0]}}}")
         parts = re.split(r"(\{[A-Za-z][A-Za-z0-9_.]*\})", "".join(parts))
     return "".join(parts), fixes
+
+
+def display_forms(f: Fact) -> list[str]:
+    """Ways the same value is commonly written: the screen display, without the rupee sign, and full Indian digits
+    for amounts shown in lakh/crore ("₹7.5 lakh" -> "7.5 lakh", "₹7,50,000", "7,50,000")."""
+    forms = [f.display]
+    if f.unit == "INR" and f.value is not None:
+        forms += [f.display.removeprefix("₹")]
+        if abs(f.value) >= 1e5 and float(f.value).is_integer():
+            full = format_inr(f.value)
+            forms += [full, full.removeprefix("₹")]
+    return list(dict.fromkeys(forms))
 
 
 def comparison_problem(rendered: str, cited: Iterable[str], fact_map: Mapping[str, Fact]) -> str | None:

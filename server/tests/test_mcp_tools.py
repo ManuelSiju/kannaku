@@ -102,7 +102,10 @@ def test_tool_facts_work_with_evidence_checker(demo_repo):
     facts += [Fact.model_validate(x) for x in tools.family_get_profile(1, demo_repo)["facts"]]
     assert check_argument("An FD would give {fd_value}.", [], facts, {}).rendered == "An FD would give ₹13.44 lakh."
     assert check_argument("You have {profile.savings} saved.", [], facts, {}).rendered == "You have ₹1.6 lakh saved."
-    assert not check_argument("You have 1,60,000 saved.", ["profile.savings"], facts, {}).kept
+    # the same value written in full Indian digits becomes the placeholder (recorded as an auto_placeholder fix)
+    r = check_argument("You have 1,60,000 saved.", [], facts, {})
+    assert r.kept and r.fixes == ["auto_placeholder '1,60,000' -> {profile.savings}"]
+    assert not check_argument("You have 1,70,000 saved.", ["profile.savings"], facts, {}).kept
 
 
 @pytest.mark.parametrize("raw", ["ZEPHYRX", "zephyrx", "ZEPHYRX LTD", "Zephyrx Limited", "NSE:ZEPHYRX", "zephyrx.ns"])

@@ -166,3 +166,28 @@ def test_openers_and_followups():
 def test_affordability_signature_still_needs_commitments():
     with pytest.raises(TypeError):
         affordability(1, 1, 1, 1, 1)  # regular_commitments is keyword-only and required
+
+
+def test_double_comparison_is_rejected():
+    assert "double_comparison" in lint("This loan costs you more higher than the quoted rate.")
+    assert lint("This loan costs even higher than a bank loan.") == []
+
+
+def test_bonus_rate_terms_are_percentages():
+    from app.pipeline.verify_terms import term_unit
+
+    assert term_unit("bonus_rate_low") == term_unit("flat_rate") == "fraction"
+
+
+def test_auto_placeholder_variants_and_identical_values():
+    from app.pipeline.evidence import check_argument
+
+    facts = [
+        Fact(id="term.sum_assured", label="", value=750_000, unit="INR", kind="offer", formula=""),
+        Fact(id="term.maturity_high", label="", value=1_500_000, unit="INR", kind="offer", formula=""),
+        Fact(id="term.pay_years", label="", value=15, unit="years", kind="offer", formula=""),
+        Fact(id="term.policy_years", label="", value=15, unit="years", kind="offer", formula=""),
+    ]
+    r = check_argument("Only ₹7,50,000 is guaranteed, not 15 lakh, after 15 years.", [], facts, {})
+    assert r.kept, r
+    assert r.cited == ["term.sum_assured", "term.maturity_high", "term.pay_years"]

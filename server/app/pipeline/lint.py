@@ -15,7 +15,16 @@ JARGON = re.compile(r"\b(IRR|XIRR|CAGR|FOIR|NAV|illustrat\w*|annuit\w*|amorti[sz
 VAGUE = re.compile(r"\b(this is risky|it'?s risky|risky|not worth it|bad idea|not good|be careful)\b", re.I)
 REASON = re.compile(r"\b(because|since|as|so|which|while|but|than|only|if|when)\b", re.I)
 REPEAT = re.compile(r"\b(\w+)\s+\1\b", re.I)
-RULES = ("too_many_sentences", "sentence_too_long", "too_many_numbers", "jargon", "repeated_word", "vague")
+DOUBLE_COMPARISON = re.compile(r"\b(more|less|much|even)\s+(higher|lower|better|worse)\s+than\b", re.I)
+RULES = (
+    "too_many_sentences",
+    "sentence_too_long",
+    "too_many_numbers",
+    "jargon",
+    "repeated_word",
+    "double_comparison",
+    "vague",
+)
 
 
 def sentences(text: str) -> list[str]:
@@ -37,6 +46,8 @@ def lint(spoken: str, raw: str | None = None) -> list[str]:
         out.append("jargon")
     if REPEAT.search(spoken):
         out.append("repeated_word")
+    if DOUBLE_COMPARISON.search(spoken) and not re.search(r"\beven\s+(higher|lower)", spoken, re.I):
+        out.append("double_comparison")
     has_fact = bool(raw and PLACEHOLDER.search(raw)) or bool(numbers_in(spoken))
     if VAGUE.search(spoken) and not has_fact and not REASON.search(spoken):
         out.append("vague")

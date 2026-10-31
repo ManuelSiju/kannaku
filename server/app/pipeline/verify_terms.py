@@ -47,7 +47,7 @@ class VerifiedTerm(BaseModel):
 
 
 def term_unit(name: str) -> str:
-    if name.endswith("rate"):
+    if "rate" in name:  # flat_rate, bonus_rate_low, bonus_rate_high
         return "fraction"
     if name.endswith("months"):
         return "months"

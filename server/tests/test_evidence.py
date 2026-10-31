@@ -153,7 +153,11 @@ def test_comparisons_can_be_switched_off_for_questions():
 
 
 def test_ambiguous_display_is_not_auto_replaced():
-    facts = [Fact(id=f"term.{n}", label="", value=15, unit="years", kind="offer", formula="") for n in ("a", "b")]
+    # two different values that display the same way: the number is ambiguous, so it is dropped
+    facts = [
+        Fact(id="term.a", label="", value=15, unit="years", kind="offer", formula=""),
+        Fact(id="term.b", label="", value=15.02, unit="years", kind="offer", formula=""),
+    ]
     r = check_argument("You pay for 15 years.", ["q1"], facts, QUOTES)
     assert isinstance(r, Dropped) and "raw number" in r.reason
 
