@@ -231,7 +231,7 @@ def test_audio_question(harness):
     client, state, _ = harness
     state["llm"] = FakeLLM(load_fixture("flat_loan"))
     state["stt"] = FakeSTT(LOAN_Q)
-    res = ask(client, files=[("audio", ("q.m4a", b"fake-audio", "audio/mp4"))])
+    res = ask(client, files=[("audio", ("q.m4a", b"\x00\x00\x00\x18ftypM4A fake-audio", "audio/mp4"))])
     assert res["verdict"]["colour"] in ("red", "yellow") and res["called_agents"] == ["sankz"]
 
 

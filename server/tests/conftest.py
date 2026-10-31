@@ -1,6 +1,22 @@
-import pytest
+import os
+import tempfile
 
-from app.config import Settings
+# The app reads .env / .env.local; tests must not depend on them nor write the developer's run/ logs, backups or
+# database. Environment variables win over env files, so pin everything that matters before app is imported.
+_TMP = tempfile.mkdtemp(prefix="kanakku-tests-")
+os.environ.update(
+    LLM_PROVIDER="local",
+    KANAKKU_TOKEN="",
+    LLM_FALLBACK="none",
+    LOG_PATH=os.path.join(_TMP, "server.log"),
+    BACKUP_DIR=os.path.join(_TMP, "backups"),
+    DB_PATH=os.path.join(_TMP, "kanakku.db"),
+    ASKS_PER_MINUTE="1000",
+)
+
+import pytest  # noqa: E402
+
+from app.config import Settings  # noqa: E402
 
 
 @pytest.fixture

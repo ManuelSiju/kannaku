@@ -13,9 +13,8 @@ from typing import Any, Literal
 from pydantic import BaseModel
 
 from app.config import get_settings
+from app.db.migrate import migrate
 from app.engines.fact import Fact
-
-SCHEMA = Path(__file__).with_name("schema.sql")
 
 Source = Literal["typed", "voice", "document"]
 ItemKind = Literal["policy", "loan", "deposit", "chit", "other"]
@@ -95,10 +94,34 @@ class Repo:
         self.conn = sqlite3.connect(self.path, check_same_thread=False)
         self.conn.row_factory = sqlite3.Row
         self.conn.execute("PRAGMA foreign_keys = ON")
+        if self.path != ":memory:":
+            self.conn.execute("PRAGMA journal_mode = WAL")  # readers do not block the writer
+            self.conn.execute("PRAGMA busy_timeout = 5000")
         self.init_schema()
 
     def init_schema(self) -> None:
-        self.conn.executescript(SCHEMA.read_text())
+        migrate(self.conn)
+
+    def ping(self) -> bool:
+        return self.conn.execute("SELECT 1").fetchone()[0] == 1
+
+    # ------------------------------------------------------------ idempotency (POST /cases)
+    def idempotent_case(self, key: str, family_id: int) -> int | None:
+        row = self.conn.execute(
+            "SELECT case_id FROM idempotency WHERE key = ? AND family_id = ?", (key, family_id)
+        ).fetchone()
+        return int(row[0]) if row else None
+
+    def claim_idempotency(self, key: str, family_id: int, case_id: int) -> bool:
+        """False if another request already holds this key."""
+        try:
+            self.conn.execute(
+                "INSERT INTO idempotency (key, family_id, case_id) VALUES (?, ?, ?)", (key, family_id, case_id)
+            )
+            self.conn.commit()
+            return True
+        except sqlite3.IntegrityError:
+            return False
 
     def close(self) -> None:
         self.conn.close()

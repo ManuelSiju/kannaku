@@ -1,0 +1,42 @@
+name: ci
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  server:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: server
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+      - name: Install
+        run: |
+          uv venv --python 3.11 ../.venv
+          uv pip install --python ../.venv/bin/python -e ".[dev]"
+      - name: Lint
+        run: ../.venv/bin/ruff check . && ../.venv/bin/ruff format --check .
+      - name: Tests (offline; the LLM is mocked)
+        run: ../.venv/bin/python -m pytest -q
+
+  app:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Is there a Flutter app yet?
+        id: app
+        run: test -f app/pubspec.yaml && echo "exists=true" >> "$GITHUB_OUTPUT" || echo "exists=false" >> "$GITHUB_OUTPUT"
+      - uses: subosito/flutter-action@v2
+        if: steps.app.outputs.exists == 'true'
+        with:
+          channel: stable
+      - name: flutter analyze + test
+        if: steps.app.outputs.exists == 'true'
+        working-directory: app
+        run: |
+          flutter pub get
+          flutter analyze
+          flutter test

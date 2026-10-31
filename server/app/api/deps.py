@@ -6,6 +6,7 @@ from functools import lru_cache
 
 from fastapi import HTTPException
 
+from app.config import Settings, get_settings
 from app.db.repo import Repo
 from app.mcp_server.tools import default_repo
 from app.pipeline.events import BUS, EventBus
@@ -33,6 +34,10 @@ def _stt() -> STTProvider:
 
 def get_stt_provider() -> STTProvider:
     return _stt()
+
+
+def get_settings_dep() -> Settings:
+    return get_settings()
 
 
 def get_bus() -> EventBus:

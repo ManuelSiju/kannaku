@@ -17,49 +17,76 @@ make setup-system   # tesseract (English), ffmpeg — needs sudo
 make llm-up         # start Ollama
 make llm-pull       # pull the model in .env (default qwen2.5:7b-instruct)
 make check-models   # PASS/FAIL per provider
-make run-server     # API on :8000
+make run-server     # API on :8013 (foreground); make up runs it in the background
 make health
 make test
 ```
 
 Run `make` to see every target.
 
-## Test on your laptop (server) and phone
+## Run it: laptop server + phone
 
 ```bash
 # laptop — once
-make setup && make setup-system && make llm-up && make llm-pull
-make smoke              # tests + lint + model check + /health, all in one
+make setup && make setup-system
+make smoke              # tests + lint + make up (local) + model check + /health + make down
 
 # laptop — every time
-make llm-up
-make run-server         # prints the URL your phone should use
+make up                 # asks for a Meta Model API key (hidden). Enter = local models.
+make up PROVIDER=local  # or PROVIDER=meta: skip the question
+make status · make provider · make logs · make down
+make forget-key         # delete the saved Meta key from .env.local
+```
 
+`make up` chooses the model provider in this order: `PROVIDER=meta|local` on the command line; a saved
+`META_API_KEY` (environment or `.env.local`); a hidden prompt in a terminal; otherwise (CI, `make smoke`) local.
+A Meta key is checked with one call first (10 s). If it is rejected or there is no internet, `make up` says so and
+offers the local models; it never starts half-configured. A typed key can be saved in `.env.local` (gitignored,
+mode 600). The key is never printed or logged, and never appears in a trace, an error, `/health` or the app.
+
+At the end `make up` prints the provider, models, cache, spend guard, the laptop and phone URLs, and the **access
+token** to type into the app's Settings (every request except `/health` needs `Authorization: Bearer <token>`).
+
+With Meta: identical prompts are answered from a SQLite cache, and `META_MAX_CALLS_PER_DAY` (default 300) caps the calls
+(warning at 80 %). At the cap an ask fails with a clear message, or, with `LLM_FALLBACK=local`, the local models answer
+and the answer carries a "local fallback" badge. Speech-to-text stays on local faster-whisper until a Meta speech
+endpoint is confirmed.
+
+```bash
 # phone on the same Wi-Fi
 make lan-url            # open the printed /health URL in the phone browser
 make firewall-open      # only if the phone cannot connect (ufw)
 
 # phone over USB instead (no Wi-Fi needed; enable USB debugging)
-make phone-devices      # phone must be listed
-make phone-usb          # tunnel phone 127.0.0.1:8000 -> laptop
+make phone-devices && make phone-usb
 
-# the app (from phase 5)
-make run-app            # Wi-Fi: app talks to http://<laptop-ip>:8000
-make run-app USB=1      # USB tunnel: app talks to http://127.0.0.1:8000
+# the app
+make run-app            # Wi-Fi
+make run-app USB=1      # USB tunnel
 ```
+
+## API and reliability
+
+- Versioned under `/v1` (old unversioned paths stay as aliases until the app switches). `GET /health` (liveness and
+  providers), `GET /ready` (database and LLM reachable).
+- One error format: `{"error": {"code", "message", "request_id"}}`. Every response carries `X-Request-ID`, which is
+  also in every log line (`run/server.log`, JSON, rotated 10 MB × 5) and in the case trace.
+- Limits: audio 10 MB, images 8 MB each, PDF 15 MB, at most 5 files, types checked by content; 20 asks a minute
+  per device; request timeout. `Idempotency-Key` on `POST /v1/cases` makes a resend safe.
+- Provider calls retry once with backoff on timeouts, 429 and 5xx, within the 4-call budget per ask.
+- SQLite in WAL mode with numbered migrations (`server/app/db/migrations`); a daily copy goes to `run/backups`
+  (newest 3 kept). Shutdown waits up to 15 s for running asks.
+- CI (`.github/workflows/ci.yml`): server tests and lint on every push; `flutter analyze` and `flutter test` once
+  the app exists.
 
 ## Models
 
-All models sit behind provider interfaces chosen by `.env`:
-
-| Role | Local (now) | Later |
+| Role | Local | Meta (chosen at `make up`) |
 |---|---|---|
-| LLM (text + vision) | Ollama / llama.cpp, OpenAI-compatible `/v1` | Meta Model API (`https://api.meta.ai/v1`, `muse-spark-1.3`) |
-| Speech-to-text | faster-whisper | Muse Voice Transcribe |
-| Text-to-speech | on-device (flutter_tts) | — |
-| OCR | Tesseract eng (Malayalam later) | — |
-
-Switching LLM = editing `LLM_BASE_URL`, `LLM_MODEL`, `LLM_API_KEY` in `.env`. No code changes.
+| LLM (text + vision) | Ollama / llama.cpp, OpenAI-compatible `/v1` (see docs/model_setup.md) | Meta Model API (`https://api.meta.ai/v1`, `muse-spark-1.3`), vision on |
+| Speech-to-text | faster-whisper | faster-whisper (Meta speech endpoint not confirmed yet) |
+| Text-to-speech | on-device (flutter_tts) | on-device |
+| OCR | Tesseract eng | Tesseract eng |
 
 ## Layout
 

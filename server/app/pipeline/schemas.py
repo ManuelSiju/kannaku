@@ -168,6 +168,9 @@ class CaseResult(BaseModel):
     degraded: bool
     degraded_steps: list[str]
     llm_calls: int
+    provider: str = "local"  # meta | local | local fallback (Meta daily cap reached; shown as a badge)
+    local_fallback: bool = False
+    request_id: str = ""
     language: str = "en"
     short_answer: ShortAnswer | None = None
     council: list[CouncilLine] = []  # opener, each called agent once, rebuttals, notes, claims, Alfii's conclusion

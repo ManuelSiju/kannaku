@@ -88,6 +88,7 @@ class AskInput(BaseModel):
     files: list[Upload] = []
     earphones: bool = False
     user_says_alone: bool = False
+    request_id: str = ""
 
 
 class _Run:
@@ -156,6 +157,8 @@ async def run_pipeline(
     settings = settings or get_settings()
     budget = AskBudget(settings.llm_max_calls_per_ask)
     run = _Run(case_id, repo, bus)
+    provider = settings.llm_provider
+    repo.add_trace(case_id, "request", 0.0, "ok", {"request_id": inp.request_id, "provider": provider})
     with use_budget(budget):
         try:
             result = await _pipeline(run, inp, repo=repo, llm=llm, stt=stt)
@@ -178,6 +181,22 @@ async def run_pipeline(
                 llm_calls=budget.used,
             )
     result.llm_calls = budget.used
+    result.provider = "local fallback" if budget.fallback_used else provider
+    result.local_fallback = budget.fallback_used
+    result.request_id = inp.request_id
+    if budget.fallback_used or budget.cache_hits or budget.retries:
+        repo.add_trace(
+            case_id,
+            "llm_provider",
+            0.0,
+            "degraded" if budget.fallback_used else "ok",
+            {
+                "local_fallback": budget.fallback_used,
+                "cache_hits": budget.cache_hits,
+                "retries": budget.retries,
+                "reason": "Meta daily call cap reached; LLM_FALLBACK=local" if budget.fallback_used else "",
+            },
+        )
     repo.update_case(case_id, status="done", result_json=result.model_dump_json())
     bus.publish(case_id, DONE, verdict=result.verdict.colour, degraded=result.degraded)
     return result

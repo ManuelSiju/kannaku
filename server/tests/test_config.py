@@ -1,7 +1,8 @@
 from app.config import REPO_ROOT, Settings
 
 
-def test_defaults():
+def test_defaults(monkeypatch):
+    monkeypatch.delenv("DB_PATH", raising=False)  # conftest points the app at a temp database
     s = Settings(_env_file=None)
     assert s.llm_base_url == "http://localhost:8080/v1"
     assert s.llm_max_calls_per_ask == 4

@@ -1,6 +1,6 @@
 [project]
 name = "kanakku-server"
-version = "0.1.0"
+version = "0.2.0"
 description = "Kanakku: voice-first money adviser backend"
 requires-python = ">=3.11"
 dependencies = [
@@ -44,6 +44,9 @@ build-backend = "setuptools.build_meta"
 
 [tool.setuptools.packages.find]
 include = ["app*"]
+
+[tool.setuptools.package-data]
+"app.db" = ["migrations/*.sql"]
 
 [tool.ruff.lint.flake8-bugbear]
 extend-immutable-calls = ["fastapi.Depends", "fastapi.File", "fastapi.Form", "fastapi.Query"]

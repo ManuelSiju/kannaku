@@ -11,13 +11,14 @@ import base64
 import contextlib
 import json
 import logging
+import random
 import re
 from abc import ABC, abstractmethod
 from collections.abc import Iterator
 from contextvars import ContextVar
 from typing import Any, TypeVar
 
-from openai import AsyncOpenAI, BadRequestError
+from openai import APIStatusError, AsyncOpenAI, BadRequestError, RateLimitError
 from pydantic import BaseModel, ValidationError
 
 from app.config import Settings, get_settings
@@ -48,6 +49,13 @@ class AskBudget:
     def __init__(self, max_calls: int) -> None:
         self.max_calls = max_calls
         self.used = 0
+        self.fallback_used = False  # the Meta daily cap was hit and the local models answered (shown to the user)
+        self.cache_hits = 0
+        self.retries = 0
+
+    @property
+    def left(self) -> int:
+        return self.max_calls - self.used
 
     def consume(self) -> None:
         if self.used >= self.max_calls:
@@ -119,6 +127,16 @@ def _sniff_mime(data: bytes) -> str:
     return "image/jpeg"
 
 
+RETRIES = 1  # extra attempts for a retryable error (timeout, 429, 5xx), each one counts against the ask budget
+BACKOFF_S = 0.5
+
+
+def retryable(e: BaseException) -> bool:
+    if isinstance(e, TimeoutError | RateLimitError):
+        return True
+    return isinstance(e, APIStatusError) and e.status_code >= 500
+
+
 class LLMStats(BaseModel):
     """Counters for reliability reports (per provider instance)."""
 
@@ -142,7 +160,7 @@ class OpenAICompatibleLLM(LLMProvider):
         self.vision_model = self.settings.llm_vision_model or self.model
         self.client = client or AsyncOpenAI(
             base_url=self.settings.llm_base_url,
-            api_key=self.settings.llm_api_key or "none",
+            api_key=self.settings.llm_api_key.get_secret_value() or "none",
             timeout=self.settings.llm_timeout_s,
             max_retries=0,
         )
@@ -176,6 +194,27 @@ class OpenAICompatibleLLM(LLMProvider):
         return await asyncio.wait_for(self.client.chat.completions.create(**kwargs, timeout=timeout), timeout=timeout)
 
     async def _call(
+        self, messages: list[dict[str, Any]], schema: type[BaseModel] | None, usage: LLMUsage, *, vision: bool
+    ) -> str:
+        """One request, retried with backoff on timeouts / 429 / 5xx while the ask budget allows."""
+        budget = current_budget()
+        for attempt in range(RETRIES + 1):
+            try:
+                return await self._call_once(messages, schema, usage, vision=vision)
+            except LLMStepFailed as e:
+                cause = e.__cause__
+                if attempt >= RETRIES or cause is None or not retryable(cause):
+                    raise
+                if budget is not None and budget.left <= 0:
+                    raise
+                if budget is not None:
+                    budget.retries += 1
+                delay = BACKOFF_S * (2**attempt) * (1 + random.random())
+                log.warning("LLM call failed (%s); retrying in %.1fs", type(cause).__name__, delay)
+                await asyncio.sleep(delay)
+        raise AssertionError("unreachable")
+
+    async def _call_once(
         self, messages: list[dict[str, Any]], schema: type[BaseModel] | None, usage: LLMUsage, *, vision: bool
     ) -> str:
         budget = current_budget()
@@ -264,4 +303,13 @@ class OpenAICompatibleLLM(LLMProvider):
 
 
 def get_llm(settings: Settings | None = None) -> LLMProvider:
-    return OpenAICompatibleLLM(settings)
+    """Local: the OpenAI-compatible client. Meta: the same client wrapped in the spend guard (cache + daily cap,
+    with the local models as a visible fallback if LLM_FALLBACK=local)."""
+    settings = settings or get_settings()
+    base = OpenAICompatibleLLM(settings)
+    if not settings.meta:
+        return base
+    from app.providers.guard import GuardedLLM, SpendGuard
+
+    fallback = OpenAICompatibleLLM(settings.local_settings()) if settings.llm_fallback == "local" else None
+    return GuardedLLM(base, settings, SpendGuard(settings.db_path, settings.meta_max_calls_per_day), fallback)

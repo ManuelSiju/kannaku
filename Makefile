@@ -25,7 +25,7 @@ endif
 
 .PHONY: help setup setup-system env doctor run-server health llm-up llm-down llm-pull llm-list \
         check-models test test-fast smoke lint fmt clean run-mcp seed-demo reset-demo demo-assets run-app demo commit-phase \
-        reliability reliability-framing reliability-vision lan-url firewall-open phone-devices phone-usb phone-usb-off up down status logs app-release app-ios
+        reliability reliability-framing reliability-vision lan-url firewall-open phone-devices phone-usb phone-usb-off up down status logs app-release app-ios provider forget-key
 
 help: ## Show this list
 	@grep -hE '^[a-zA-Z_-]+:.*?## ' $(MAKEFILE_LIST) | \
@@ -53,8 +53,14 @@ doctor: ## Show which tools are installed
 	@command -v tesseract >/dev/null && echo "  tesseract langs: $$(tesseract --list-langs 2>/dev/null | tail -n +2 | tr '\n' ' ')" || true
 
 # ---------------------------------------------------------------- run
-up: ## Start LLM backend (if needed) + API server in background; prints phone URL
-	@scripts/up.sh
+up: ## Choose provider (PROVIDER=meta|local), start LLM backend if local + API server; prints phone URL + token
+	@PROVIDER="$(PROVIDER)" scripts/up.sh
+
+provider: ## Show the provider the server uses (and what the next make up would choose)
+	@scripts/provider.sh
+
+forget-key: ## Delete the saved Meta API key from .env.local
+	@scripts/forget_key.sh
 
 down: ## Stop the server, and the LLM backend only if make up started it
 	@scripts/down.sh
@@ -62,7 +68,7 @@ down: ## Stop the server, and the LLM backend only if make up started it
 status: ## What is running, ports, health
 	@scripts/status.sh
 
-logs: ## Follow the background server log (Ctrl-C to quit)
+logs: ## Follow the background server log, JSON lines (Ctrl-C to quit)
 	@test -f run/server.log && tail -n 50 -f run/server.log || echo "no run/server.log yet — make up"
 
 run-server: ## Start the API in the foreground on PORT (reachable from phone on same Wi-Fi), auto-reload
