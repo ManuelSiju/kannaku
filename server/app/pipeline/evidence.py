@@ -135,7 +135,8 @@ def auto_placeholders(text: str, facts: Facts) -> tuple[str, list[str]]:
     parts = re.split(r"(\{[A-Za-z][A-Za-z0-9_.]*\})", text)
     for display in sorted(by_display, key=len, reverse=True):
         ids = by_display[display]
-        pat = re.compile(r"(?<![\d.,])" + re.escape(display) + r"(?![\d.,])")
+        # not part of a longer number: no digit (or "1." / "1,") just before, no digit (or ".5" / ",000") just after
+        pat = re.compile(r"(?<!\d)(?<!\d[.,])" + re.escape(display) + r"(?!\d|[.,]\d)")
         for k, part in enumerate(parts):
             if k % 2 or not pat.search(part):
                 continue  # odd parts are existing placeholders

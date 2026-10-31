@@ -24,9 +24,11 @@ Classify the case and copy out the key terms. Never calculate anything.
 case_type: insurance_offer | ulip | loan_offer | sip_or_fund_question | stock_tip | shares | ipo | general_money |
 scam_or_payment_request | out_of_scope (not about money) | unknown (about money but you cannot tell what).
 Term names (use only these): {_TERMS}.
-For insurance: premium is the yearly premium; maturity_low is the SMALLER illustrated maturity amount, maturity_high
-the larger; bonus_rate_low / bonus_rate_high are the bonus rates those illustrations assume; sum_assured is the
-guaranteed amount.
+For insurance: premium is the yearly premium; sum_assured is the guaranteed amount. Illustrations come in pairs:
+extract BOTH amounts, maturity_low (the SMALLER illustrated maturity amount) and maturity_high (the larger), and
+their bonus rates bonus_rate_low and bonus_rate_high.
+For stock tips: stock_symbol is the ticker only (e.g. "ACME", not "ACME Ltd"); invest_amount is the money the user
+plans to put in.
 Each term: value_text exactly as written; evidence_quote copied character for character from the source (a short
 phrase that contains the number); source "transcript" or the page id like "page_2". Terms you looked for but did not
 find go in missing_terms. seller_claims: promises the seller made (e.g. "guaranteed"). stock_symbol: the ticker if a

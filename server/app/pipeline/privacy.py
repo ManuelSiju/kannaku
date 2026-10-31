@@ -15,6 +15,8 @@ from app.pipeline.evidence import Facts, as_fact_map, numbers_in, value_matches
 
 PrivacyMode = Literal["full", "discreet"]
 DEFAULT_MODE: PrivacyMode = "discreet"
+# raw inputs of personal facts that are the family's own money
+PERSONAL_INPUTS = {"monthly_income", "monthly_expenses", "savings", "existing_emi", "regular_commitments"}
 
 
 class Allowed(BaseModel):
@@ -41,6 +43,8 @@ def speech_allowed(line_text: str, cited_ids: Iterable[str], facts: Facts, mode:
                 return Blocked(reason=f"says '{n.text}', which is the family's own {f.id}")
             # personal facts' raw inputs (income, savings, ...) are personal amounts too
             for k, v in f.inputs.items():
+                if k not in PERSONAL_INPUTS:
+                    continue  # e.g. new_monthly_cost is the offer's own price, not the family's money
                 if isinstance(v, int | float) and not isinstance(v, bool) and value_matches(n, float(v), "INR"):
                     return Blocked(reason=f"says '{n.text}', which is the family's own {k}")
     return Allowed()

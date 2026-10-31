@@ -31,6 +31,7 @@ from pydantic import BaseModel
 from app.config import Settings, get_settings
 from app.db.repo import Repo
 from app.engines.fact import Fact
+from app.mcp_server import tools
 from app.pipeline import council as council_mod
 from app.pipeline import explainer as explainer_mod
 from app.pipeline.compute import Computed, compute_facts
@@ -240,7 +241,8 @@ async def _pipeline(run: _Run, inp: AskInput, *, repo: Repo, llm: LLMProvider, s
     # 5 compute facts ------------------------------------------------------------------------------------------
     computed = Computed(facts=[], missing_required=[], flags=[], commitment=None)
     async with run.step("compute") as info:
-        computed = compute_facts(case_type, terms, inp.family_id, repo, stock_symbol=draft.stock_symbol, flags=flags)
+        symbol = _stock_symbol(draft, transcript, ing.doc_text)
+        computed = compute_facts(case_type, terms, inp.family_id, repo, stock_symbol=symbol, flags=flags)
         info.update(facts=[f.id for f in computed.facts], missing_required=computed.missing_required)
     facts = computed.facts
     repo.save_facts(case_id, facts)
@@ -381,6 +383,13 @@ async def _pipeline(run: _Run, inp: AskInput, *, repo: Repo, llm: LLMProvider, s
         degraded_steps=list(run.degraded_steps),
         llm_calls=0,
     )
+
+
+def _stock_symbol(draft: CaseDraft, transcript: str, doc_text: str) -> str | None:
+    """The builder's ticker if we have its history; else a known ticker named in the question or documents."""
+    if draft.stock_symbol and tools.stocks_get_history(draft.stock_symbol)["found"]:
+        return draft.stock_symbol
+    return tools.find_known_symbol(f"{transcript}\n{doc_text}") or draft.stock_symbol
 
 
 def _vote(case_type: str, rnd: council_mod.CouncilRound) -> tuple[float, float]:

@@ -164,3 +164,13 @@ def test_short_id_fix_is_reported():
     facts = [*FACTS, Fact(id="term.sum_assured", label="", value=750_000, unit="INR", kind="offer", formula="")]
     r = check_argument("Only {sum_assured} is guaranteed.", [], facts, QUOTES)
     assert r.fixes == ["short id {sum_assured} -> {term.sum_assured}"]
+
+
+def test_auto_placeholder_before_punctuation_but_not_inside_longer_numbers():
+    from app.engines.fact import Fact
+
+    facts = [Fact(id="emi_share", label="", value=0.168, unit="fraction", kind="personal", formula="")]
+    r = check_argument("Your EMIs will be 16.8%, which is a lot.", [], facts, QUOTES)
+    assert r.kept and r.cited == ["emi_share"]
+    assert not check_argument("It is 116.8% now.", [], facts, QUOTES).kept
+    assert not check_argument("It is 16.85% now.", [], facts, QUOTES).kept

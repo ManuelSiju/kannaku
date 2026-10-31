@@ -103,3 +103,14 @@ def test_tool_facts_work_with_evidence_checker(demo_repo):
     assert check_argument("An FD would give {fd_value}.", [], facts, {}).rendered == "An FD would give ₹13.44 lakh."
     assert check_argument("You have {profile.savings} saved.", [], facts, {}).rendered == "You have ₹1.6 lakh saved."
     assert not check_argument("You have 1,60,000 saved.", ["profile.savings"], facts, {}).kept
+
+
+@pytest.mark.parametrize("raw", ["ZEPHYRX", "zephyrx", "ZEPHYRX LTD", "Zephyrx Limited", "NSE:ZEPHYRX", "zephyrx.ns"])
+def test_symbol_normalisation(raw):
+    assert tools.normalize_symbol(raw) == "ZEPHYRX"
+    assert tools.stocks_tip_signals(raw)["found"] is True
+
+
+def test_find_known_symbol():
+    assert tools.find_known_symbol("Big news: zephyrx ltd will fly!") == "ZEPHYRX"
+    assert tools.find_known_symbol("ZEPHYRXS is not it") is None

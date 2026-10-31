@@ -340,3 +340,12 @@ def test_comparison_facts_present(harness):
     state["llm"] = FakeLLM(load_fixture("flat_loan"))
     details = {d["id"]: d["value"] for d in ask(client, LOAN_Q)["screen_details"]}
     assert details["cmp_effective_vs_quoted"] == "higher"
+
+
+def test_stock_symbol_fallback_when_builder_omits_it(harness):
+    client, state, _ = harness
+    script = load_fixture("stock_tip")
+    script["CaseDraft"]["stock_symbol"] = None
+    state["llm"] = FakeLLM(script)
+    details = {d["id"]: d["value"] for d in ask(client, TIP_Q)["screen_details"]}
+    assert details["pump_risk"] == "high"

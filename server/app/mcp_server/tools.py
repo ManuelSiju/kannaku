@@ -17,6 +17,7 @@ from __future__ import annotations
 
 import csv
 import json
+import re
 from datetime import date
 from functools import lru_cache
 from pathlib import Path
@@ -194,20 +195,41 @@ def rates_get_reference(path: Path | None = None) -> dict[str, Any]:
 
 
 # ---------------------------------------------------------------- stocks (local cache)
+def normalize_symbol(symbol: str) -> str:
+    """'ZEPHYRX LTD', 'NSE:ZEPHYRX', 'zephyrx.ns' -> 'ZEPHYRX' (company suffixes and exchange tags removed)."""
+    s = symbol.upper().strip()
+    s = re.sub(r"^(?:NSE|BSE)\s*[:\-]\s*", "", s)
+    s = re.sub(r"\.(?:NS|BO)$", "", s)
+    s = re.sub(r"\s+(?:LTD\.?|LIMITED|INC\.?|PVT\.?|CORP\.?)$", "", s)
+    return "".join(ch for ch in s if ch.isalnum())
+
+
+def known_symbols() -> list[str]:
+    return sorted(f.stem for f in STOCKS_DIR.glob("*.csv"))
+
+
+def find_known_symbol(text: str) -> str | None:
+    """A ticker we have price history for, named as a whole word in the text (fallback when the case builder
+    returns no usable stock_symbol)."""
+    for sym in known_symbols():
+        if re.search(rf"(?<![A-Za-z0-9]){re.escape(sym)}(?![A-Za-z0-9])", text, re.I):
+            return sym
+    return None
+
+
 def _stock_file(symbol: str) -> Path:
-    safe = "".join(ch for ch in symbol.upper() if ch.isalnum())
-    return STOCKS_DIR / f"{safe}.csv"
+    return STOCKS_DIR / f"{normalize_symbol(symbol)}.csv"
 
 
 def stocks_get_history(symbol: str) -> dict[str, Any]:
     path = _stock_file(symbol)
     if not path.exists():
-        return {"symbol": symbol.upper(), "found": False, "rows": [], "facts": []}
+        return {"symbol": normalize_symbol(symbol), "found": False, "rows": [], "facts": []}
     with path.open() as f:
         rows = [
             {"date": r["date"], "close": float(r["close"]), "volume": float(r["volume"])} for r in csv.DictReader(f)
         ]
-    return {"symbol": symbol.upper(), "found": True, "rows": rows, "facts": []}
+    return {"symbol": normalize_symbol(symbol), "found": True, "rows": rows, "facts": []}
 
 
 def stocks_tip_signals(symbol: str) -> dict[str, Any]:

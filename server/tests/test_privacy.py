@@ -43,3 +43,14 @@ def test_full_mode_allows_everything():
 )
 def test_decide_mode(earphones, alone, second, cue, mode):
     assert decide_mode(earphones, alone, second, cue) == mode
+
+
+def test_offer_cost_is_not_a_personal_amount():
+    from app.engines.finance import flat_to_effective
+
+    facts = [
+        *flat_to_effective(1_00_000, 0.12, 24),
+        *affordability(45_000, 28_000, 1_60_000, 2_400, 5_166.67, regular_commitments=1_000),
+    ]
+    assert speech_allowed("The EMI would be ₹5,167.", ["loan_emi"], facts, "discreet").allowed
+    assert not speech_allowed("Your income is ₹45,000.", [], facts, "discreet").allowed
