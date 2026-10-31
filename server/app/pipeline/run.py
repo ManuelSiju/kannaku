@@ -66,6 +66,9 @@ log = logging.getLogger(__name__)
 ALERT_YELLOW_MIN_COMMITMENT = 25_000
 COUNCIL_WORD_BUDGET = 110  # about 45 s of speech at 150 words a minute
 WORDS_PER_MINUTE = 150
+# A red conclusion must say no plainly: "do not sign without written guarantees" invites signing once the paper comes.
+RED_NO = re.compile(r"\b(do not|don't|dont|not go ahead|avoid|stop|never|say no)\b", re.I)
+RED_LOOPHOLE = re.compile(r"\b(without|unless|until|carefully|first compare|more facts|more details)\b", re.I)
 ACTION_CUES = re.compile(r"\b(ask|wait|talk to|show me|call|do not sign|don't sign|before you)\b", re.I)
 CONTEXT_CUES = re.compile(
     r"\b(?:he|she|they) (?:says|said|is saying|is asking|wants)\b|\bthe agent is here\b|\b(?:agent|man|lady|he|she)"
@@ -416,6 +419,12 @@ async def _pipeline(run: _Run, inp: AskInput, *, repo: Repo, llm: LLMProvider, s
 
     # Alfii's conclusion always ends with one next step ------------------------------------------------------------
     verdict_text = conclusion.text if conclusion else t(lang, consensus.verdict)
+    if consensus.verdict == "red" and lang == "en":
+        from app.pipeline.lint import sentences
+
+        parts = sentences(verdict_text)
+        if not parts or not RED_NO.search(parts[0]) or RED_LOOPHOLE.search(parts[0]):
+            verdict_text = " ".join([t(lang, "red"), *parts[1:]])
     if not ACTION_CUES.search(verdict_text):
         verdict_text = f"{verdict_text} {_next_step(consensus.verdict, final_questions, guardian, lang)}"
     closing = explainer_mod.CheckedLine(speaker="alfii", text=verdict_text, kind="conclusion")
@@ -538,8 +547,11 @@ def _fit_budget(lines: list[explainer_mod.CheckedLine]) -> list[explainer_mod.Ch
 
 
 def _short(conclusion: str, colour: str | None, lang: str) -> str:
+    """One sentence for the default reply. Red is always the plain template: a red answer must not be conditional."""
     from app.pipeline.lint import sentences
 
+    if colour == "red":
+        return t(lang, "short_red")
     first = sentences(conclusion)[0] if conclusion.strip() else ""
     if first and len(first.split()) <= 20:
         return first

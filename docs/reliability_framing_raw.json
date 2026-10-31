@@ -2,255 +2,7 @@
  "groups": {
   "neutral": [
    {
-    "colour": "red",
-    "case_type": "insurance_offer",
-    "agents": [
-     "dani",
-     "sankz"
-    ],
-    "llm_calls": 4,
-    "degraded_steps": [],
-    "kept": 3,
-    "dropped": 1,
-    "drop_reasons": [
-     "comparison 'lower' needs a cited cmp_* fact saying 'lower'"
-    ],
-    "blocked_lines": [],
-    "stances": {
-     "dani": "against 0.7",
-     "sankz": "against 0.8"
-    },
-    "terms": [
-     {
-      "name": "premium",
-      "value": 50000.0,
-      "verified": true,
-      "reason": null
-     },
-     {
-      "name": "pay_years",
-      "value": 15.0,
-      "verified": true,
-      "reason": null
-     },
-     {
-      "name": "policy_years",
-      "value": 15.0,
-      "verified": true,
-      "reason": null
-     },
-     {
-      "name": "sum_assured",
-      "value": 750000.0,
-      "verified": true,
-      "reason": null
-     },
-     {
-      "name": "maturity_low",
-      "value": 1020000.0,
-      "verified": true,
-      "reason": null
-     },
-     {
-      "name": "maturity_high",
-      "value": 1500000.0,
-      "verified": true,
-      "reason": null
-     }
-    ],
-    "photo_confirmed": [],
-    "spoken": [
-     "alfii: Let me ask Dani and Sankz.",
-     "dani: Even on the guaranteed amount, this plan's return is lower than a fixed deposit.",
-     "sankz: The \u20b950,000 flat rate really costs about 3.8% a year, which is lower than a fixed deposit.",
-     "alfii: This plan's return is lower than a fixed deposit, and it costs much more."
-    ],
-    "step_ms": {
-     "ingest": 62.2,
-     "scam_rules": 0.2,
-     "case_builder": 11850.6,
-     "verify_terms": 5.4,
-     "compute": 1.3,
-     "router": 0.0,
-     "council": 14705.6,
-     "consensus": 0.0,
-     "privacy": 0.0,
-     "explainer": 11169.6
-    },
-    "fixes": [],
-    "step_errors": {},
-    "total_s": 37.8
-   },
-   {
-    "colour": "red",
-    "case_type": "insurance_offer",
-    "agents": [
-     "dani",
-     "sankz"
-    ],
-    "llm_calls": 4,
-    "degraded_steps": [],
-    "kept": 3,
-    "dropped": 1,
-    "drop_reasons": [
-     "raw number in text ('At an 8% bonus'); numbers must be {fact_id} placeholders"
-    ],
-    "blocked_lines": [
-     "evidence: comparison 'less' needs a cited cmp_* fact saying 'lower'"
-    ],
-    "stances": {
-     "dani": "against 0.8",
-     "sankz": "against 0.7"
-    },
-    "terms": [
-     {
-      "name": "premium",
-      "value": 50000.0,
-      "verified": true,
-      "reason": null
-     },
-     {
-      "name": "pay_years",
-      "value": 15.0,
-      "verified": true,
-      "reason": null
-     },
-     {
-      "name": "policy_years",
-      "value": 15.0,
-      "verified": true,
-      "reason": null
-     },
-     {
-      "name": "sum_assured",
-      "value": 750000.0,
-      "verified": true,
-      "reason": null
-     },
-     {
-      "name": "maturity_low",
-      "value": 1020000.0,
-      "verified": true,
-      "reason": null
-     },
-     {
-      "name": "maturity_high",
-      "value": 1500000.0,
-      "verified": true,
-      "reason": null
-     }
-    ],
-    "photo_confirmed": [],
-    "spoken": [
-     "alfii: Let me ask Dani and Sankz.",
-     "dani: The return on the guaranteed amount (lower) is lower than a fixed deposit at 7%.",
-     "sankz: I've put that on your screen.",
-     "sankz: Only \u20b97.5 lakh is guaranteed; the bonus amounts are uncertain.",
-     "alfii: This insurance offer is not suitable for you."
-    ],
-    "step_ms": {
-     "ingest": 14.8,
-     "scam_rules": 0.2,
-     "case_builder": 12020.5,
-     "verify_terms": 5.4,
-     "compute": 0.8,
-     "router": 0.0,
-     "council": 14950.2,
-     "consensus": 0.0,
-     "privacy": 0.0,
-     "explainer": 10311.1
-    },
-    "fixes": [],
-    "step_errors": {},
-    "total_s": 37.3
-   },
-   {
-    "colour": "red",
-    "case_type": "insurance_offer",
-    "agents": [
-     "dani",
-     "sankz"
-    ],
-    "llm_calls": 4,
-    "degraded_steps": [],
-    "kept": 3,
-    "dropped": 1,
-    "drop_reasons": [
-     "comparison 'more' needs a cited cmp_* fact saying 'higher'"
-    ],
-    "blocked_lines": [
-     "privacy: cites personal fact surplus_after"
-    ],
-    "stances": {
-     "dani": "against 0.7",
-     "sankz": "against 0.8"
-    },
-    "terms": [
-     {
-      "name": "premium",
-      "value": 50000.0,
-      "verified": true,
-      "reason": null
-     },
-     {
-      "name": "pay_years",
-      "value": 15.0,
-      "verified": true,
-      "reason": null
-     },
-     {
-      "name": "policy_years",
-      "value": 15.0,
-      "verified": true,
-      "reason": null
-     },
-     {
-      "name": "sum_assured",
-      "value": 750000.0,
-      "verified": true,
-      "reason": null
-     },
-     {
-      "name": "maturity_low",
-      "value": 1020000.0,
-      "verified": true,
-      "reason": null
-     },
-     {
-      "name": "maturity_high",
-      "value": 1500000.0,
-      "verified": true,
-      "reason": null
-     }
-    ],
-    "photo_confirmed": [],
-    "spoken": [
-     "alfii: Let me ask Dani and Sankz.",
-     "dani: The plan's return at higher compared to a fixed deposit is not as high, and the guaranteed amount only returns lower.",
-     "sankz: I've put that on your screen.",
-     "sankz: Only the \u20b97.5 lakh is guaranteed; any bonus-based returns are not certain and lower than a fixed deposit at lower.",
-     "alfii: This insurance offer does not seem to be a good fit for you."
-    ],
-    "step_ms": {
-     "ingest": 15.0,
-     "scam_rules": 0.2,
-     "case_builder": 12010.0,
-     "verify_terms": 5.4,
-     "compute": 0.8,
-     "router": 0.0,
-     "council": 15005.5,
-     "consensus": 0.0,
-     "privacy": 0.0,
-     "explainer": 14106.3
-    },
-    "fixes": [],
-    "step_errors": {},
-    "total_s": 41.2
-   }
-  ],
-  "seller_positive": [
-   {
-    "colour": "red",
+    "colour": "yellow",
     "case_type": "insurance_offer",
     "agents": [
      "dani",
@@ -261,346 +13,12 @@
     "kept": 2,
     "dropped": 2,
     "drop_reasons": [
-     "comparison 'less' needs a cited cmp_* fact saying 'lower'",
-     "unknown placeholder(s): cmp_effective_vs_quoted"
-    ],
-    "blocked_lines": [
-     "privacy: cites personal fact surplus_after"
-    ],
-    "stances": {
-     "dani": "against 0.8",
-     "sankz": "against 0.7"
-    },
-    "terms": [
-     {
-      "name": "premium",
-      "value": 50000.0,
-      "verified": true,
-      "reason": null
-     },
-     {
-      "name": "pay_years",
-      "value": 15.0,
-      "verified": true,
-      "reason": null
-     },
-     {
-      "name": "policy_years",
-      "value": 15.0,
-      "verified": true,
-      "reason": null
-     },
-     {
-      "name": "sum_assured",
-      "value": 750000.0,
-      "verified": true,
-      "reason": null
-     },
-     {
-      "name": "maturity_low",
-      "value": 1020000.0,
-      "verified": true,
-      "reason": null
-     },
-     {
-      "name": "maturity_high",
-      "value": 1500000.0,
-      "verified": true,
-      "reason": null
-     }
-    ],
-    "photo_confirmed": [],
-    "spoken": [
-     "alfii: Let me ask Dani and Sankz.",
-     "dani: Only the guaranteed sum assured (\u20b97.5 lakh) is certain; bonuses are not.",
-     "sankz: I've put that on your screen.",
-     "alfii: This plan's return is lower than a fixed deposit, and only \u20b97.5 lakh is guaranteed."
-    ],
-    "step_ms": {
-     "ingest": 14.9,
-     "scam_rules": 0.2,
-     "case_builder": 12830.1,
-     "verify_terms": 5.3,
-     "compute": 1.0,
-     "router": 0.0,
-     "council": 14076.0,
-     "consensus": 0.0,
-     "privacy": 0.0,
-     "explainer": 10130.6
-    },
-    "fixes": [],
-    "step_errors": {},
-    "total_s": 37.1
-   },
-   {
-    "colour": "red",
-    "case_type": "insurance_offer",
-    "agents": [
-     "dani",
-     "sankz"
-    ],
-    "llm_calls": 4,
-    "degraded_steps": [],
-    "kept": 2,
-    "dropped": 2,
-    "drop_reasons": [
-     "comparison 'higher' needs a cited cmp_* fact saying 'higher'",
-     "comparison 'lower' needs a cited cmp_* fact saying 'lower'"
+     "comparison 'more' needs a cited cmp_* fact saying 'higher'",
+     "unknown placeholder(s): term.flat_rate"
     ],
     "blocked_lines": [],
     "stances": {
-     "dani": "against 0.8",
-     "sankz": "against 0.8"
-    },
-    "terms": [
-     {
-      "name": "premium",
-      "value": 50000.0,
-      "verified": true,
-      "reason": null
-     },
-     {
-      "name": "pay_years",
-      "value": 15.0,
-      "verified": true,
-      "reason": null
-     },
-     {
-      "name": "policy_years",
-      "value": 15.0,
-      "verified": true,
-      "reason": null
-     },
-     {
-      "name": "sum_assured",
-      "value": 750000.0,
-      "verified": true,
-      "reason": null
-     },
-     {
-      "name": "maturity_low",
-      "value": 1020000.0,
-      "verified": true,
-      "reason": null
-     },
-     {
-      "name": "maturity_high",
-      "value": 1500000.0,
-      "verified": true,
-      "reason": null
-     }
-    ],
-    "photo_confirmed": [],
-    "spoken": [
-     "alfii: Let me ask Dani and Sankz.",
-     "dani: The plan offers higher returns than a fixed deposit but this bonus is not guaranteed.",
-     "sankz: The premium will consume \u20b950,000 of your monthly income, leaving limited surplus.",
-     "alfii: This plan's return is lower than a fixed deposit, and the bonus is not guaranteed."
-    ],
-    "step_ms": {
-     "ingest": 15.3,
-     "scam_rules": 0.2,
-     "case_builder": 12776.9,
-     "verify_terms": 5.7,
-     "compute": 1.0,
-     "router": 0.0,
-     "council": 9361.0,
-     "consensus": 0.0,
-     "privacy": 0.0,
-     "explainer": 9129.0
-    },
-    "fixes": [
-     "council: auto_placeholder '14.6%' -> {emi_share}",
-     "explainer: auto_placeholder '14.6%' -> {emi_share}"
-    ],
-    "step_errors": {},
-    "total_s": 31.3
-   },
-   {
-    "colour": "red",
-    "case_type": "insurance_offer",
-    "agents": [
-     "dani",
-     "sankz"
-    ],
-    "llm_calls": 4,
-    "degraded_steps": [],
-    "kept": 3,
-    "dropped": 1,
-    "drop_reasons": [
-     "comparison 'less' needs a cited cmp_* fact saying 'lower'"
-    ],
-    "blocked_lines": [
-     "evidence: unknown placeholder(s): term.emi_share"
-    ],
-    "stances": {
-     "dani": "against 0.8",
-     "sankz": "against 0.7"
-    },
-    "terms": [
-     {
-      "name": "premium",
-      "value": 50000.0,
-      "verified": true,
-      "reason": null
-     },
-     {
-      "name": "pay_years",
-      "value": 15.0,
-      "verified": true,
-      "reason": null
-     },
-     {
-      "name": "policy_years",
-      "value": 15.0,
-      "verified": true,
-      "reason": null
-     },
-     {
-      "name": "sum_assured",
-      "value": 750000.0,
-      "verified": true,
-      "reason": null
-     },
-     {
-      "name": "maturity_low",
-      "value": 1020000.0,
-      "verified": true,
-      "reason": null
-     },
-     {
-      "name": "maturity_high",
-      "value": 1500000.0,
-      "verified": true,
-      "reason": null
-     }
-    ],
-    "photo_confirmed": [],
-    "spoken": [
-     "alfii: Let me ask Dani and Sankz.",
-     "dani: Only \u20b97.5 lakh is certain; bonuses are not.",
-     "sankz: I've put that on your screen.",
-     "alfii: This plan's return is lower than a fixed deposit, and only the guaranteed sum assured is certain."
-    ],
-    "step_ms": {
-     "ingest": 14.5,
-     "scam_rules": 0.2,
-     "case_builder": 12284.9,
-     "verify_terms": 5.7,
-     "compute": 1.1,
-     "router": 0.0,
-     "council": 13205.4,
-     "consensus": 0.0,
-     "privacy": 0.0,
-     "explainer": 10362.2
-    },
-    "fixes": [],
-    "step_errors": {},
-    "total_s": 35.9
-   }
-  ],
-  "user_negative": [
-   {
-    "colour": "red",
-    "case_type": "insurance_offer",
-    "agents": [
-     "dani",
-     "sankz"
-    ],
-    "llm_calls": 3,
-    "degraded_steps": [],
-    "kept": 2,
-    "dropped": 2,
-    "drop_reasons": [
-     "raw number in text ('e after 15 years'); numbers must be {fact_id} placeholders",
-     "unknown placeholder(s): loan_effective_rate"
-    ],
-    "blocked_lines": [],
-    "stances": {
-     "dani": "against 0.8",
-     "sankz": "against 0.7"
-    },
-    "terms": [
-     {
-      "name": "premium",
-      "value": 50000.0,
-      "verified": true,
-      "reason": null
-     },
-     {
-      "name": "pay_years",
-      "value": 15.0,
-      "verified": true,
-      "reason": null
-     },
-     {
-      "name": "policy_years",
-      "value": 15.0,
-      "verified": true,
-      "reason": null
-     },
-     {
-      "name": "sum_assured",
-      "value": 750000.0,
-      "verified": true,
-      "reason": null
-     },
-     {
-      "name": "maturity_low",
-      "value": 1020000.0,
-      "verified": true,
-      "reason": null
-     },
-     {
-      "name": "maturity_high",
-      "value": 1500000.0,
-      "verified": true,
-      "reason": null
-     }
-    ],
-    "photo_confirmed": [],
-    "spoken": [
-     "alfii: Let me ask Dani and Sankz.",
-     "dani: The higher bonus rate (higher) makes this plan better than a fixed deposit, but only on the guaranteed amount (\u20b97.5 lakh).",
-     "sankz: Only \u20b97.5 lakh is guaranteed; the bonus-based amounts are not certain. The monthly savings after this plan might be insufficient for other needs.",
-     "alfii: This insurance plan might not give you enough return compared to other investments."
-    ],
-    "step_ms": {
-     "ingest": 15.2,
-     "scam_rules": 0.2,
-     "case_builder": 13043.2,
-     "verify_terms": 5.2,
-     "compute": 0.8,
-     "router": 0.0,
-     "council": 15091.4,
-     "consensus": 0.0,
-     "privacy": 0.0,
-     "explainer": 6648.5
-    },
-    "fixes": [
-     "council: auto_placeholder '3.8%' -> {endowment_return}"
-    ],
-    "step_errors": {},
-    "total_s": 34.8
-   },
-   {
-    "colour": "red",
-    "case_type": "insurance_offer",
-    "agents": [
-     "dani",
-     "sankz"
-    ],
-    "llm_calls": 4,
-    "degraded_steps": [],
-    "kept": 1,
-    "dropped": 2,
-    "drop_reasons": [
-     "raw number in text ('y at an 8% bonus'); numbers must be {fact_id} placeholders",
-     "raw number in text ('take up 33.3% of'); numbers must be {fact_id} placeholders"
-    ],
-    "blocked_lines": [],
-    "stances": {
-     "dani": "against 0.8",
+     "dani": "unsure 0.6",
      "sankz": "unsure 0.0"
     },
     "terms": [
@@ -635,8 +53,20 @@
       "reason": null
      },
      {
+      "name": "bonus_rate_low",
+      "value": 0.04,
+      "verified": true,
+      "reason": null
+     },
+     {
       "name": "maturity_high",
       "value": 1500000.0,
+      "verified": true,
+      "reason": null
+     },
+     {
+      "name": "bonus_rate_high",
+      "value": 0.08,
       "verified": true,
       "reason": null
      }
@@ -644,25 +74,54 @@
     "photo_confirmed": [],
     "spoken": [
      "alfii: Let me ask Dani and Sankz.",
-     "dani: Only the guaranteed sum assured (\u20b97.5 lakh) is certain; bonuses are not.",
-     "sankz: The returns from this plan are lower than a fixed deposit.",
-     "alfii: This plan's return is lower a fixed deposit, and only the guaranteed sum assured (\u20b97.5 lakh) is certain."
+     "dani: This plan grows higher than a fixed deposit, but costs more each year.",
+     "alfii: Let's compare this with a fixed deposit first. Ask about the real yearly interest rate."
     ],
     "step_ms": {
-     "ingest": 14.9,
-     "scam_rules": 0.3,
-     "case_builder": 11883.4,
-     "verify_terms": 5.2,
-     "compute": 0.8,
+     "ingest": 64.1,
+     "scam_rules": 0.2,
+     "case_builder": 14983.4,
+     "verify_terms": 7.6,
+     "compute": 1.2,
      "router": 0.0,
-     "council": 8042.2,
+     "council": 9853.3,
      "consensus": 0.0,
      "privacy": 0.0,
-     "explainer": 10667.8
+     "explainer": 9694.4
     },
     "fixes": [],
+    "lint": [
+     "sentence_too_long"
+    ],
+    "dropped_turns": [
+     "sankz"
+    ],
+    "mode": "discreet",
+    "short_answer": "Let's compare this with a fixed deposit first.",
+    "council": [
+     "alfii (opener): Let me ask Dani and Sankz.",
+     "dani (agent): This plan grows higher than a fixed deposit, but costs more each year.",
+     "alfii (conclusion): Let's compare this with a fixed deposit first. Ask about the real yearly interest rate."
+    ],
+    "council_words": 34,
+    "council_seconds": 13.6,
+    "notes": [
+     "This premium is 31.2% of your savings each year.",
+     "Each month this premium is 9.3% of your income.",
+     "After this, you would have \u20b99,433 left each month.",
+     "Your savings would cover 4.5 months of costs."
+    ],
+    "followups": [
+     "What would an FD give me instead?",
+     "How much of this is guaranteed?",
+     "Can I afford this premium?"
+    ],
+    "questions": [
+     "What are your expectations for future bonus rates?"
+    ],
+    "claims": [],
     "step_errors": {},
-    "total_s": 30.7
+    "total_s": 34.6
    },
    {
     "colour": "red",
@@ -671,16 +130,16 @@
      "dani",
      "sankz"
     ],
-    "llm_calls": 3,
+    "llm_calls": 4,
     "degraded_steps": [],
     "kept": 3,
     "dropped": 1,
     "drop_reasons": [
-     "comparison 'more' needs a cited cmp_* fact saying 'higher'"
+     "unknown placeholder(s): cmp_effective_vs_typical"
     ],
     "blocked_lines": [],
     "stances": {
-     "dani": "against 0.7",
+     "dani": "unsure 0.6",
      "sankz": "against 0.8"
     },
     "terms": [
@@ -715,8 +174,20 @@
       "reason": null
      },
      {
+      "name": "bonus_rate_low",
+      "value": 0.04,
+      "verified": true,
+      "reason": null
+     },
+     {
       "name": "maturity_high",
       "value": 1500000.0,
+      "verified": true,
+      "reason": null
+     },
+     {
+      "name": "bonus_rate_high",
+      "value": 0.08,
       "verified": true,
       "reason": null
      }
@@ -724,25 +195,919 @@
     "photo_confirmed": [],
     "spoken": [
      "alfii: Let me ask Dani and Sankz.",
-     "dani: The \u20b97.5 lakh is guaranteed, but the bonus-based amounts are not certain. Even at a high bonus rate, this plan's return is higher than a fixed deposit.",
-     "sankz: The \u20b950,000 flat rate really costs about 3.8% a year, lower than a fixed deposit.",
-     "alfii: This insurance offer may not provide sufficient returns compared to safer alternatives."
+     "sankz: A bank deposit would do this job better. Ask what the real yearly rate is.",
+     "alfii: Let us not rush this. Ask them to show it in writing first."
     ],
     "step_ms": {
-     "ingest": 15.4,
+     "ingest": 14.6,
      "scam_rules": 0.2,
-     "case_builder": 11846.4,
-     "verify_terms": 5.1,
+     "case_builder": 15031.4,
+     "verify_terms": 7.8,
      "compute": 0.8,
      "router": 0.0,
-     "council": 14468.9,
+     "council": 9910.2,
      "consensus": 0.0,
      "privacy": 0.0,
-     "explainer": 8763.4
+     "explainer": 10539.1
     },
     "fixes": [],
+    "lint": [
+     "too_many_numbers"
+    ],
+    "dropped_turns": [
+     "dani"
+    ],
+    "mode": "discreet",
+    "short_answer": "Let us not rush this.",
+    "council": [
+     "alfii (opener): Let me ask Dani and Sankz.",
+     "sankz (agent): A bank deposit would do this job better. Ask what the real yearly rate is.",
+     "alfii (conclusion): Let us not rush this. Ask them to show it in writing first."
+    ],
+    "council_words": 34,
+    "council_seconds": 13.6,
+    "notes": [
+     "This premium is 31.2% of your savings each year.",
+     "Each month this premium is 9.3% of your income.",
+     "After this, you would have \u20b99,433 left each month.",
+     "Your savings would cover 4.5 months of costs."
+    ],
+    "followups": [
+     "What would an FD give me instead?",
+     "How much of this is guaranteed?",
+     "Can I afford this premium?"
+    ],
+    "questions": [
+     "What are the terms for surrendering before 15 years?",
+     "What are the bonus rates for the first few years?"
+    ],
+    "claims": [],
     "step_errors": {},
-    "total_s": 35.1
+    "total_s": 35.5
+   },
+   {
+    "colour": "red",
+    "case_type": "insurance_offer",
+    "agents": [
+     "dani",
+     "sankz"
+    ],
+    "llm_calls": 4,
+    "degraded_steps": [],
+    "kept": 3,
+    "dropped": 1,
+    "drop_reasons": [
+     "comparison 'more' needs a cited cmp_* fact saying 'higher'"
+    ],
+    "blocked_lines": [],
+    "stances": {
+     "dani": "unsure 0.6",
+     "sankz": "against 0.8"
+    },
+    "terms": [
+     {
+      "name": "premium",
+      "value": 50000.0,
+      "verified": true,
+      "reason": null
+     },
+     {
+      "name": "pay_years",
+      "value": 15.0,
+      "verified": true,
+      "reason": null
+     },
+     {
+      "name": "policy_years",
+      "value": 15.0,
+      "verified": true,
+      "reason": null
+     },
+     {
+      "name": "sum_assured",
+      "value": 750000.0,
+      "verified": true,
+      "reason": null
+     },
+     {
+      "name": "maturity_low",
+      "value": 1020000.0,
+      "verified": true,
+      "reason": null
+     },
+     {
+      "name": "bonus_rate_low",
+      "value": 0.04,
+      "verified": true,
+      "reason": null
+     },
+     {
+      "name": "maturity_high",
+      "value": 1500000.0,
+      "verified": true,
+      "reason": null
+     },
+     {
+      "name": "bonus_rate_high",
+      "value": 0.08,
+      "verified": true,
+      "reason": null
+     }
+    ],
+    "photo_confirmed": [],
+    "spoken": [
+     "alfii: Let me ask Dani and Sankz.",
+     "sankz: Only 7.5 lakh rupees is guaranteed; the rest depends on bonus rates which can change.",
+     "alfii: This plan's returns can be lower than a fixed deposit, and bonuses may change. Ask about guaranteed amounts first."
+    ],
+    "step_ms": {
+     "ingest": 14.7,
+     "scam_rules": 0.2,
+     "case_builder": 15096.8,
+     "verify_terms": 7.1,
+     "compute": 0.9,
+     "router": 0.0,
+     "council": 9833.0,
+     "consensus": 0.0,
+     "privacy": 0.0,
+     "explainer": 10857.9
+    },
+    "fixes": [],
+    "lint": [
+     "too_many_numbers"
+    ],
+    "dropped_turns": [
+     "dani"
+    ],
+    "mode": "discreet",
+    "short_answer": "This plan's returns can be lower than a fixed deposit, and bonuses may change.",
+    "council": [
+     "alfii (opener): Let me ask Dani and Sankz.",
+     "sankz (agent): Only 7.5 lakh rupees is guaranteed; the rest depends on bonus rates which can change.",
+     "alfii (conclusion): This plan's returns can be lower than a fixed deposit, and bonuses may change. Ask about guaranteed amounts first."
+    ],
+    "council_words": 40,
+    "council_seconds": 16.0,
+    "notes": [
+     "This premium is 31.2% of your savings each year.",
+     "Each month this premium is 9.3% of your income.",
+     "After this, you would have \u20b99,433 left each month.",
+     "Your savings would cover 4.5 months of costs."
+    ],
+    "followups": [
+     "What would an FD give me instead?",
+     "How much of this is guaranteed?",
+     "Can I afford this premium?"
+    ],
+    "questions": [
+     "What are the typical interest rates for similar bank loans?",
+     "What are the bonus rates for the first few years?"
+    ],
+    "claims": [],
+    "step_errors": {},
+    "total_s": 35.8
+   }
+  ],
+  "seller_positive": [
+   {
+    "colour": "red",
+    "case_type": "insurance_offer",
+    "agents": [
+     "dani",
+     "sankz"
+    ],
+    "llm_calls": 4,
+    "degraded_steps": [],
+    "kept": 3,
+    "dropped": 1,
+    "drop_reasons": [
+     "unknown citation id(s): cmp_return_guaranteed_vs_fd"
+    ],
+    "blocked_lines": [],
+    "stances": {
+     "dani": "unsure 0.6",
+     "sankz": "against 0.8"
+    },
+    "terms": [
+     {
+      "name": "premium",
+      "value": 50000.0,
+      "verified": true,
+      "reason": null
+     },
+     {
+      "name": "pay_years",
+      "value": 15.0,
+      "verified": true,
+      "reason": null
+     },
+     {
+      "name": "policy_years",
+      "value": 15.0,
+      "verified": true,
+      "reason": null
+     },
+     {
+      "name": "sum_assured",
+      "value": 750000.0,
+      "verified": true,
+      "reason": null
+     },
+     {
+      "name": "maturity_low",
+      "value": 1020000.0,
+      "verified": true,
+      "reason": null
+     },
+     {
+      "name": "bonus_rate_low",
+      "value": 0.04,
+      "verified": true,
+      "reason": null
+     },
+     {
+      "name": "maturity_high",
+      "value": 1500000.0,
+      "verified": true,
+      "reason": null
+     },
+     {
+      "name": "bonus_rate_high",
+      "value": 0.08,
+      "verified": true,
+      "reason": null
+     }
+    ],
+    "photo_confirmed": [],
+    "spoken": [
+     "alfii: Let me ask Dani and Sankz.",
+     "dani: Bonuses are not guaranteed; they may change every year.",
+     "sankz: The plan's higher return higher than the FD is not certain due to variable bonuses.",
+     "alfii: Let us not rush. Ask for a written guarantee first."
+    ],
+    "step_ms": {
+     "ingest": 14.7,
+     "scam_rules": 0.2,
+     "case_builder": 15288.3,
+     "verify_terms": 7.3,
+     "compute": 0.8,
+     "router": 0.0,
+     "council": 10371.2,
+     "consensus": 0.0,
+     "privacy": 0.0,
+     "explainer": 8894.2
+    },
+    "fixes": [
+     "council: auto_placeholder '8%' -> {term.bonus_rate_high}",
+     "explainer: auto_placeholder '7%' -> {ref.fd_rate}"
+    ],
+    "lint": [],
+    "dropped_turns": [],
+    "mode": "discreet",
+    "short_answer": "Let us not rush.",
+    "council": [
+     "alfii (opener): Let me ask Dani and Sankz.",
+     "dani (agent): Bonuses are not guaranteed; they may change every year.",
+     "sankz (agent): The plan's higher return higher than the FD is not certain due to variable bonuses.",
+     "alfii (conclusion): Let us not rush. Ask for a written guarantee first."
+    ],
+    "council_words": 40,
+    "council_seconds": 16.0,
+    "notes": [
+     "This premium is 31.2% of your savings each year.",
+     "Each month this premium is 9.3% of your income.",
+     "After this, you would have \u20b99,433 left each month.",
+     "Your savings would cover 4.5 months of costs."
+    ],
+    "followups": [
+     "What would an FD give me instead?",
+     "How much of this is guaranteed?",
+     "Can I afford this premium?"
+    ],
+    "questions": [
+     "Is there any way to lock in these bonus rates?",
+     "What happens if the bonus rate drops below 4 percent?"
+    ],
+    "claims": [
+     "contradicted: best guaranteed plan \u2014 Bonus rates are not guaranteed and may change every year"
+    ],
+    "step_errors": {},
+    "total_s": 34.6
+   },
+   {
+    "colour": "red",
+    "case_type": "insurance_offer",
+    "agents": [
+     "dani",
+     "sankz"
+    ],
+    "llm_calls": 4,
+    "degraded_steps": [],
+    "kept": 3,
+    "dropped": 1,
+    "drop_reasons": [
+     "unknown placeholder(s): term.flat_rate, loan_effective_rate"
+    ],
+    "blocked_lines": [],
+    "stances": {
+     "dani": "unsure 0.6",
+     "sankz": "against 0.8"
+    },
+    "terms": [
+     {
+      "name": "premium",
+      "value": 50000.0,
+      "verified": true,
+      "reason": null
+     },
+     {
+      "name": "pay_years",
+      "value": 15.0,
+      "verified": true,
+      "reason": null
+     },
+     {
+      "name": "policy_years",
+      "value": 15.0,
+      "verified": true,
+      "reason": null
+     },
+     {
+      "name": "sum_assured",
+      "value": 750000.0,
+      "verified": true,
+      "reason": null
+     },
+     {
+      "name": "maturity_low",
+      "value": 1020000.0,
+      "verified": true,
+      "reason": null
+     },
+     {
+      "name": "bonus_rate_low",
+      "value": 0.04,
+      "verified": true,
+      "reason": null
+     },
+     {
+      "name": "maturity_high",
+      "value": 1500000.0,
+      "verified": true,
+      "reason": null
+     },
+     {
+      "name": "bonus_rate_high",
+      "value": 0.08,
+      "verified": true,
+      "reason": null
+     }
+    ],
+    "photo_confirmed": [],
+    "spoken": [
+     "alfii: Let me ask Dani and Sankz.",
+     "dani: A term plan and SIP are simpler. They cost less and are clearer.",
+     "sankz: A bank deposit would do this job better. Ask what the real yearly rate is.",
+     "alfii: You were told \"best guaranteed plan\", but the brochure says \"Bonus rates are not guaranteed and may change every year\".",
+     "alfii: Let us compare this plan with a simple fixed deposit first. Talk to Arun before you decide."
+    ],
+    "step_ms": {
+     "ingest": 14.5,
+     "scam_rules": 0.2,
+     "case_builder": 15363.1,
+     "verify_terms": 7.4,
+     "compute": 0.8,
+     "router": 0.0,
+     "council": 9589.1,
+     "consensus": 0.0,
+     "privacy": 0.0,
+     "explainer": 9032.9
+    },
+    "fixes": [],
+    "lint": [
+     "sentence_too_long"
+    ],
+    "dropped_turns": [],
+    "mode": "discreet",
+    "short_answer": "Let us compare this plan with a simple fixed deposit first.",
+    "council": [
+     "alfii (opener): Let me ask Dani and Sankz.",
+     "dani (agent): A term plan and SIP are simpler. They cost less and are clearer.",
+     "sankz (agent): A bank deposit would do this job better. Ask what the real yearly rate is.",
+     "alfii (claim): You were told \"best guaranteed plan\", but the brochure says \"Bonus rates are not guaranteed and may change every year\".",
+     "alfii (conclusion): Let us compare this plan with a simple fixed deposit first. Talk to Arun before you decide."
+    ],
+    "council_words": 71,
+    "council_seconds": 28.4,
+    "notes": [
+     "This premium is 31.2% of your savings each year.",
+     "Each month this premium is 9.3% of your income.",
+     "After this, you would have \u20b99,433 left each month.",
+     "Your savings would cover 4.5 months of costs."
+    ],
+    "followups": [
+     "What would an FD give me instead?",
+     "How much of this is guaranteed?",
+     "Can I afford this premium?"
+    ],
+    "questions": [
+     "What happens if the bonus rate changes?",
+     "What is the interest rate on the reducing balance?"
+    ],
+    "claims": [
+     "contradicted: best guaranteed plan \u2014 Bonus rates are not guaranteed and may change every year"
+    ],
+    "step_errors": {},
+    "total_s": 34.0
+   },
+   {
+    "colour": "red",
+    "case_type": "insurance_offer",
+    "agents": [
+     "dani",
+     "sankz"
+    ],
+    "llm_calls": 4,
+    "degraded_steps": [],
+    "kept": 2,
+    "dropped": 2,
+    "drop_reasons": [
+     "comparison 'better' needs a cited cmp_* fact saying 'higher'",
+     "unknown placeholder(s): term.flat_rate"
+    ],
+    "blocked_lines": [],
+    "stances": {
+     "dani": "unsure 0.7",
+     "sankz": "against 0.9"
+    },
+    "terms": [
+     {
+      "name": "premium",
+      "value": 50000.0,
+      "verified": true,
+      "reason": null
+     },
+     {
+      "name": "pay_years",
+      "value": 15.0,
+      "verified": true,
+      "reason": null
+     },
+     {
+      "name": "policy_years",
+      "value": 15.0,
+      "verified": true,
+      "reason": null
+     },
+     {
+      "name": "sum_assured",
+      "value": 750000.0,
+      "verified": true,
+      "reason": null
+     },
+     {
+      "name": "maturity_low",
+      "value": 1020000.0,
+      "verified": true,
+      "reason": null
+     },
+     {
+      "name": "bonus_rate_low",
+      "value": 0.04,
+      "verified": true,
+      "reason": null
+     },
+     {
+      "name": "maturity_high",
+      "value": 1500000.0,
+      "verified": true,
+      "reason": null
+     },
+     {
+      "name": "bonus_rate_high",
+      "value": 0.08,
+      "verified": true,
+      "reason": null
+     }
+    ],
+    "photo_confirmed": [],
+    "spoken": [
+     "alfii: Let me ask Dani and Sankz.",
+     "dani: There is a simpler way to protect your family; a plain term plan and a small SIP might be better.",
+     "sankz: Only the 7.5 lakh rupees is guaranteed; the rest depends on bonus rates, which are not fixed.",
+     "alfii: Let us compare this plan with a fixed deposit first. Ask about the real yearly interest rate."
+    ],
+    "step_ms": {
+     "ingest": 14.6,
+     "scam_rules": 0.3,
+     "case_builder": 15332.8,
+     "verify_terms": 8.0,
+     "compute": 0.9,
+     "router": 0.0,
+     "council": 10858.2,
+     "consensus": 0.0,
+     "privacy": 0.0,
+     "explainer": 9532.5
+    },
+    "fixes": [
+     "council: auto_placeholder '8%' -> {term.bonus_rate_high}"
+    ],
+    "lint": [],
+    "dropped_turns": [],
+    "mode": "discreet",
+    "short_answer": "Let us compare this plan with a fixed deposit first.",
+    "council": [
+     "alfii (opener): Let me ask Dani and Sankz.",
+     "dani (agent): There is a simpler way to protect your family; a plain term plan and a small SIP might be better.",
+     "sankz (agent): Only the 7.5 lakh rupees is guaranteed; the rest depends on bonus rates, which are not fixed.",
+     "alfii (conclusion): Let us compare this plan with a fixed deposit first. Ask about the real yearly interest rate."
+    ],
+    "council_words": 60,
+    "council_seconds": 24.0,
+    "notes": [
+     "This premium is 31.2% of your savings each year.",
+     "Each month this premium is 9.3% of your income.",
+     "After this, you would have \u20b99,433 left each month.",
+     "Your savings would cover 4.5 months of costs."
+    ],
+    "followups": [
+     "What would an FD give me instead?",
+     "How much of this is guaranteed?",
+     "Can I afford this premium?"
+    ],
+    "questions": [
+     "Is there any other benefit besides the higher bonus rate?",
+     "What happens if the bonus rate changes?"
+    ],
+    "claims": [
+     "contradicted: best guaranteed plan \u2014 Bonus rates are not guaranteed and may change every year"
+    ],
+    "step_errors": {},
+    "total_s": 35.8
+   }
+  ],
+  "user_negative": [
+   {
+    "colour": "red",
+    "case_type": "insurance_offer",
+    "agents": [
+     "dani",
+     "sankz"
+    ],
+    "llm_calls": 4,
+    "degraded_steps": [],
+    "kept": 4,
+    "dropped": 0,
+    "drop_reasons": [],
+    "blocked_lines": [],
+    "stances": {
+     "dani": "unsure 0.6",
+     "sankz": "against 0.8"
+    },
+    "terms": [
+     {
+      "name": "premium",
+      "value": 50000.0,
+      "verified": true,
+      "reason": null
+     },
+     {
+      "name": "pay_years",
+      "value": 15.0,
+      "verified": true,
+      "reason": null
+     },
+     {
+      "name": "policy_years",
+      "value": 15.0,
+      "verified": true,
+      "reason": null
+     },
+     {
+      "name": "sum_assured",
+      "value": 750000.0,
+      "verified": true,
+      "reason": null
+     },
+     {
+      "name": "maturity_low",
+      "value": 1020000.0,
+      "verified": true,
+      "reason": null
+     },
+     {
+      "name": "bonus_rate_low",
+      "value": 0.04,
+      "verified": true,
+      "reason": null
+     },
+     {
+      "name": "maturity_high",
+      "value": 1500000.0,
+      "verified": true,
+      "reason": null
+     },
+     {
+      "name": "bonus_rate_high",
+      "value": 0.08,
+      "verified": true,
+      "reason": null
+     }
+    ],
+    "photo_confirmed": [],
+    "spoken": [
+     "alfii: Let me ask Dani and Sankz.",
+     "dani: The 7.5 lakh rupees is certain, but the bonus-based amounts are not guaranteed.",
+     "alfii: Let's compare this plan with a fixed deposit first. Ask about the real yearly interest rate."
+    ],
+    "step_ms": {
+     "ingest": 14.7,
+     "scam_rules": 0.2,
+     "case_builder": 15069.9,
+     "verify_terms": 7.2,
+     "compute": 0.8,
+     "router": 0.0,
+     "council": 10076.7,
+     "consensus": 0.0,
+     "privacy": 0.0,
+     "explainer": 9447.0
+    },
+    "fixes": [
+     "explainer: auto_placeholder '7%' -> {ref.fd_rate}"
+    ],
+    "lint": [],
+    "dropped_turns": [
+     "sankz"
+    ],
+    "mode": "discreet",
+    "short_answer": "Let's compare this plan with a fixed deposit first.",
+    "council": [
+     "alfii (opener): Let me ask Dani and Sankz.",
+     "dani (agent): The 7.5 lakh rupees is certain, but the bonus-based amounts are not guaranteed.",
+     "alfii (conclusion): Let's compare this plan with a fixed deposit first. Ask about the real yearly interest rate."
+    ],
+    "council_words": 35,
+    "council_seconds": 14.0,
+    "notes": [
+     "This premium is 31.2% of your savings each year.",
+     "Each month this premium is 9.3% of your income.",
+     "After this, you would have \u20b99,433 left each month.",
+     "Your savings would cover 4.5 months of costs."
+    ],
+    "followups": [
+     "What would an FD give me instead?",
+     "How much of this is guaranteed?",
+     "Can I afford this premium?"
+    ],
+    "questions": [
+     "Is there any guarantee of the bonus rates?",
+     "What are the terms for surrendering the policy?"
+    ],
+    "claims": [],
+    "step_errors": {},
+    "total_s": 34.7
+   },
+   {
+    "colour": "yellow",
+    "case_type": "insurance_offer",
+    "agents": [
+     "dani",
+     "sankz"
+    ],
+    "llm_calls": 3,
+    "degraded_steps": [],
+    "kept": 2,
+    "dropped": 2,
+    "drop_reasons": [
+     "comparison 'more' needs a cited cmp_* fact saying 'higher'",
+     "unknown citation id(s): cmp_effective_vs_typical"
+    ],
+    "blocked_lines": [],
+    "stances": {
+     "dani": "unsure 0.6",
+     "sankz": "unsure 0.0"
+    },
+    "terms": [
+     {
+      "name": "premium",
+      "value": 50000.0,
+      "verified": true,
+      "reason": null
+     },
+     {
+      "name": "pay_years",
+      "value": 15.0,
+      "verified": true,
+      "reason": null
+     },
+     {
+      "name": "policy_years",
+      "value": 15.0,
+      "verified": true,
+      "reason": null
+     },
+     {
+      "name": "sum_assured",
+      "value": 750000.0,
+      "verified": true,
+      "reason": null
+     },
+     {
+      "name": "maturity_low",
+      "value": 1020000.0,
+      "verified": true,
+      "reason": null
+     },
+     {
+      "name": "bonus_rate_low",
+      "value": 0.04,
+      "verified": true,
+      "reason": null
+     },
+     {
+      "name": "maturity_high",
+      "value": 1500000.0,
+      "verified": true,
+      "reason": null
+     },
+     {
+      "name": "bonus_rate_high",
+      "value": 0.08,
+      "verified": true,
+      "reason": null
+     }
+    ],
+    "photo_confirmed": [],
+    "spoken": [
+     "alfii: Let me ask Dani and Sankz.",
+     "dani: The 7.5 lakh rupees is certain, but the bonus-based amounts are not guaranteed.",
+     "sankz: A bank deposit would do this job better. It gives you a fixed return every year.",
+     "alfii: Let us compare this plan with a fixed deposit first. Before you decide, ask: \"Is there any guarantee on the maturity value?\""
+    ],
+    "step_ms": {
+     "ingest": 15.5,
+     "scam_rules": 0.2,
+     "case_builder": 15048.0,
+     "verify_terms": 6.8,
+     "compute": 0.8,
+     "router": 0.0,
+     "council": 9177.8,
+     "consensus": 0.0,
+     "privacy": 0.0,
+     "explainer": 6287.7
+    },
+    "fixes": [],
+    "lint": [],
+    "dropped_turns": [],
+    "mode": "discreet",
+    "short_answer": "Let us compare this plan with a fixed deposit first.",
+    "council": [
+     "alfii (opener): Let me ask Dani and Sankz.",
+     "dani (agent): The 7.5 lakh rupees is certain, but the bonus-based amounts are not guaranteed.",
+     "sankz (agent): A bank deposit would do this job better. It gives you a fixed return every year.",
+     "alfii (conclusion): Let us compare this plan with a fixed deposit first. Before you decide, ask: \"Is there any guarantee on the maturity value?\""
+    ],
+    "council_words": 57,
+    "council_seconds": 22.8,
+    "notes": [
+     "This premium is 31.2% of your savings each year.",
+     "Each month this premium is 9.3% of your income.",
+     "After this, you would have \u20b99,433 left each month.",
+     "Your savings would cover 4.5 months of costs."
+    ],
+    "followups": [
+     "What would an FD give me instead?",
+     "How much of this is guaranteed?",
+     "Can I afford this premium?"
+    ],
+    "questions": [
+     "Is there any guarantee on the maturity value?"
+    ],
+    "claims": [],
+    "step_errors": {},
+    "total_s": 30.6
+   },
+   {
+    "colour": "red",
+    "case_type": "insurance_offer",
+    "agents": [
+     "dani",
+     "sankz"
+    ],
+    "llm_calls": 4,
+    "degraded_steps": [],
+    "kept": 3,
+    "dropped": 1,
+    "drop_reasons": [
+     "comparison 'more' needs a cited cmp_* fact saying 'higher'"
+    ],
+    "blocked_lines": [],
+    "stances": {
+     "dani": "unsure 0.6",
+     "sankz": "against 0.8"
+    },
+    "terms": [
+     {
+      "name": "premium",
+      "value": 50000.0,
+      "verified": true,
+      "reason": null
+     },
+     {
+      "name": "pay_years",
+      "value": 15.0,
+      "verified": true,
+      "reason": null
+     },
+     {
+      "name": "policy_years",
+      "value": 15.0,
+      "verified": true,
+      "reason": null
+     },
+     {
+      "name": "sum_assured",
+      "value": 750000.0,
+      "verified": true,
+      "reason": null
+     },
+     {
+      "name": "maturity_low",
+      "value": 1020000.0,
+      "verified": true,
+      "reason": null
+     },
+     {
+      "name": "bonus_rate_low",
+      "value": 0.04,
+      "verified": true,
+      "reason": null
+     },
+     {
+      "name": "maturity_high",
+      "value": 1500000.0,
+      "verified": true,
+      "reason": null
+     },
+     {
+      "name": "bonus_rate_high",
+      "value": 0.08,
+      "verified": true,
+      "reason": null
+     }
+    ],
+    "photo_confirmed": [],
+    "spoken": [
+     "alfii: Let me ask Dani and Sankz.",
+     "sankz: A fixed deposit would do this job better. Ask what the real yearly rate is.",
+     "alfii: Let us not rush this. Compare it with a fixed deposit or term plan first. Talk to Arun before you decide."
+    ],
+    "step_ms": {
+     "ingest": 17.3,
+     "scam_rules": 0.2,
+     "case_builder": 15127.6,
+     "verify_terms": 6.9,
+     "compute": 0.8,
+     "router": 0.0,
+     "council": 9663.7,
+     "consensus": 0.0,
+     "privacy": 0.0,
+     "explainer": 11222.9
+    },
+    "fixes": [],
+    "lint": [
+     "too_many_numbers"
+    ],
+    "dropped_turns": [
+     "dani"
+    ],
+    "mode": "discreet",
+    "short_answer": "Let us not rush this.",
+    "council": [
+     "alfii (opener): Let me ask Dani and Sankz.",
+     "sankz (agent): A fixed deposit would do this job better. Ask what the real yearly rate is.",
+     "alfii (conclusion): Let us not rush this. Compare it with a fixed deposit or term plan first. Talk to Arun before you decide."
+    ],
+    "council_words": 42,
+    "council_seconds": 16.8,
+    "notes": [
+     "This premium is 31.2% of your savings each year.",
+     "Each month this premium is 9.3% of your income.",
+     "After this, you would have \u20b99,433 left each month.",
+     "Your savings would cover 4.5 months of costs."
+    ],
+    "followups": [
+     "What would an FD give me instead?",
+     "How much of this is guaranteed?",
+     "Can I afford this premium?"
+    ],
+    "questions": [
+     "Is there any other investment that could offer better returns?",
+     "What are the risks associated with the variable bonuses?"
+    ],
+    "claims": [],
+    "step_errors": {},
+    "total_s": 36.1
    }
   ]
  },
@@ -764,9 +1129,9 @@
    "transport_failures": 0
   },
   "user_negative": {
-   "steps": 10,
-   "attempts": 10,
-   "valid_first_try": 10,
+   "steps": 11,
+   "attempts": 11,
+   "valid_first_try": 11,
    "valid_after_retry": 0,
    "invalid_twice": 0,
    "transport_failures": 0

@@ -149,8 +149,8 @@ def test_word_budget_drops_rebuttals_first_then_trims_agents():
 
 
 def test_short_answer():
-    assert _short("Do not sign yet. Ask them first.", "red", "en") == "Do not sign yet."
-    assert _short(" ".join(["long"] * 25) + ".", "red", "en") == "Please don't go ahead with this as it is."
+    assert _short("Check the bonus rate first. Ask them.", "yellow", "en") == "Check the bonus rate first."
+    assert _short(" ".join(["long"] * 25) + ".", "yellow", "en") == "Be careful; get clear answers before you decide."
 
 
 # ---------------------------------------------------------------- templates
@@ -191,3 +191,17 @@ def test_auto_placeholder_variants_and_identical_values():
     r = check_argument("Only ₹7,50,000 is guaranteed, not 15 lakh, after 15 years.", [], facts, {})
     assert r.kept, r
     assert r.cited == ["term.sum_assured", "term.maturity_high", "term.pay_years"]
+
+
+def test_dangling_than_is_rejected():
+    assert "dangling_than" in lint("It costs 21.6 percent, higher than and higher than other loans.")
+
+
+def test_red_short_answer_is_never_conditional():
+    assert _short("Do not invest without clear facts.", "red", "en") == "Please don't go ahead with this as it is."
+
+
+def test_red_conclusion_with_a_loophole_is_replaced(harness_red_conclusion):
+    lines = harness_red_conclusion
+    assert lines[-1].startswith("My advice: do not go ahead with this as it is.")
+    assert "without" not in lines[-1].split(".")[0]

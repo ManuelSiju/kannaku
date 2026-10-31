@@ -24,3 +24,25 @@ def demo_repo(repo):
 
     seed(repo)
     return repo
+
+
+@pytest.fixture
+def harness_red_conclusion(demo_repo):
+    """Run the flat-loan case with a red conclusion that has a loophole ("do not ... without ...")."""
+    from fastapi.testclient import TestClient
+
+    from app.api import deps
+    from app.main import app
+    from app.pipeline.events import EventBus
+    from tests.fakes import FakeLLM, load_fixture
+
+    script = load_fixture("flat_loan")
+    script["ExplainerOutput"]["verdict_sentence"]["text"] = "Do not take this loan without clear written terms."
+    app.dependency_overrides[deps.get_repo] = lambda: demo_repo
+    app.dependency_overrides[deps.get_llm_provider] = lambda: FakeLLM(script)
+    app.dependency_overrides[deps.get_bus] = lambda: EventBus()
+    with TestClient(app) as client:
+        text = "A finance company is offering me a loan of 1,00,000 at 12% flat for 24 months. Should I take it?"
+        res = client.post("/cases", data={"family_id": "1", "text": text}).json()
+    app.dependency_overrides.clear()
+    return [ln["text"] for ln in res["spoken_lines"]]
