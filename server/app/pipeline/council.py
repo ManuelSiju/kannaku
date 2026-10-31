@@ -12,8 +12,9 @@ from typing import Any
 from pydantic import BaseModel
 
 from app.engines.fact import Fact
+from app.pipeline import vick
 from app.pipeline.consensus import Position
-from app.pipeline.evidence import Kept, check_argument
+from app.pipeline.evidence import Dropped, Kept, check_argument
 from app.pipeline.schemas import AgentOpinion, CouncilOutput
 from app.prompts import prompts
 from app.providers.llm import LLMProvider
@@ -74,6 +75,8 @@ def check_round(
         kept = 0
         for arg in op.arguments:
             res = check_argument(arg.text, arg.cited_ids, facts, quote_text)
+            if agent == "vick" and isinstance(res, Kept) and (why := vick.argument_problem(res.cited, facts)):
+                res = Dropped(reason=why, fixes=res.fixes)
             if isinstance(res, Kept):
                 checked.append(
                     CheckedArgument(
@@ -101,7 +104,6 @@ def check_round(
             kept += int(res.kept)
         if kept:
             positions.append(Position(agent=agent, stance=op.stance, strength=op.strength))
-            questions += op.questions_for_seller
         else:
             positions.append(Position(agent=agent, stance="unsure", strength=0.0))
             abstained.append(agent)

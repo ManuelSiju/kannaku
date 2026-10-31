@@ -12,6 +12,7 @@ from __future__ import annotations
 import argparse
 import asyncio
 import json
+import re
 import statistics
 import sys
 import tempfile
@@ -134,6 +135,8 @@ async def one_run(text: str, files: list[Upload], llm: OpenAICompatibleLLM, earp
         "notes": [d.label for d in res.screen_details if d.id.startswith("note.")],
         "followups": res.suggested_followups,
         "questions": res.verdict.questions,
+        "conclusion": next((c.text for c in reversed(res.council) if c.kind == "conclusion"), ""),
+        "question_trace": next((t["detail"] for t in b.get("trace", []) if t["step"] == "questions"), {}),
         "claims": [f"{c.status}: {c.claim} — {c.evidence}" for c in res.claims],
         "step_errors": {t["step"]: t["detail"].get("error") for t in b.get("trace", []) if t["detail"].get("error")},
         "total_s": round(total, 1),
@@ -322,6 +325,26 @@ async def main() -> None:
         )
         + " (median)\n"
     )
+    reds = [(name, i, r) for name, runs in groups.items() for i, r in enumerate(runs, 1) if r["colour"] == "red"]
+    md += f"\n## Red runs: short answer and Alfii's final line ({len(reds)})\n\n"
+    md += "| case | run | short answer | Alfii's final line |\n|---|---|---|---|\n"
+    md += "".join(f"| {n} | {i} | {r['short_answer']} | {r['conclusion']} |\n" for n, i, r in reds) or "| — | | | |\n"
+    md += "\n## Questions (every run)\n\n| case | run | questions said | reworded | rejected |\n|---|---|---|---|---|\n"
+    for name, runs in groups.items():
+        for i, r in enumerate(runs, 1):
+            qt = r.get("question_trace") or {}
+            rw = "; ".join(f"{x['id']}: “{x['to']}”" for x in qt.get("reworded", [])) or "—"
+            rj = "; ".join(f"{x['id']} ({x['why']})" for x in qt.get("rejected", [])) or "—"
+            md += f"| {name} | {i} | {' / '.join(r['questions']) or 'none'} | {rw} | {rj} |\n"
+    banned = [
+        (name, q)
+        for name, runs in groups.items()
+        for r in runs
+        if r["case_type"] in ("stock_tip", "shares", "ipo")
+        for q in r["questions"]
+        if re.search(r"fundamental|seller", q, re.I)
+    ]
+    md += f"\nStock-tip questions mentioning fundamentals or the seller: {len(banned)}\n"
     md += "\n## What the user gets (first run of each case)\n"
     for name, runs in groups.items():
         r = runs[0]

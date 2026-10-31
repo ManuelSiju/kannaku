@@ -65,9 +65,6 @@
               "{quote:page_2}"
             ]
           }
-        ],
-        "questions_for_seller": [
-          "What will I get back if the bonus rate is cut?"
         ]
       },
       {
@@ -87,9 +84,6 @@
               "endowment_return"
             ]
           }
-        ],
-        "questions_for_seller": [
-          "Can you show me in writing which amount is guaranteed?"
         ]
       }
     ]
@@ -116,9 +110,14 @@
       ]
     },
     "questions": [
-      "What will I get back if the bonus rate is cut?",
-      "Can you show me in writing which amount is guaranteed?",
-      "What do I get if I stop paying early?"
+      {
+        "id": "ins_guaranteed",
+        "text": "Can you show me in writing what is guaranteed?"
+      },
+      {
+        "id": "ins_stop_early",
+        "text": "What do I get if I stop paying early?"
+      }
     ]
   },
   "RewriteOutput": {

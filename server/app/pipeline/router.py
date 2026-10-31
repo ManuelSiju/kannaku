@@ -23,6 +23,7 @@ CASE_TYPES = {
     "stock_tip",
     "shares",
     "ipo",
+    "chit_fund",
     "general_money",
     "general",
     "scam_or_payment_request",
@@ -53,7 +54,7 @@ def route(case_type: str, flags: Mapping[str, bool] | Iterable[str] | None = Non
         agents = ["dani", "sankz", "vick"]
     elif ct == "insurance_offer":
         agents = ["dani", "sankz"]
-    elif ct == "loan_offer":
+    elif ct in ("loan_offer", "chit_fund"):
         agents = ["sankz"]
     elif ct in ("sip_or_fund_question", "investment_question"):
         agents = ["dani", "sankz"] if big_amount else ["dani"]

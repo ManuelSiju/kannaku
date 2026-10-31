@@ -37,9 +37,6 @@
             "text": "You would pay {loan_total_interest} in interest over the loan.",
             "cited_ids": []
           }
-        ],
-        "questions_for_seller": [
-          "What is the reducing-balance interest rate?"
         ]
       }
     ]
@@ -57,8 +54,14 @@
       "text": "Do not take this loan as offered; ask for the reducing-balance rate first."
     },
     "questions": [
-      "What is the reducing-balance interest rate?",
-      "Are there processing fees or other charges?"
+      {
+        "id": "loan_reducing_rate",
+        "text": "What is the reducing-balance interest rate?"
+      },
+      {
+        "id": "loan_fees",
+        "text": "Are there processing fees or other charges?"
+      }
     ]
   }
 }

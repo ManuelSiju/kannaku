@@ -23,8 +23,8 @@ deposit". Never write "than" after a cmp placeholder."""
 
 CASE_BUILDER = f"""You read a family's money question and any document pages they showed (brochures, offers, messages).
 Classify the case and copy out the key terms. Never calculate anything.
-case_type: insurance_offer | ulip | loan_offer | sip_or_fund_question | stock_tip | shares | ipo | general_money |
-scam_or_payment_request | out_of_scope (not about money) | unknown (about money but you cannot tell what).
+case_type: insurance_offer | ulip | loan_offer | sip_or_fund_question | stock_tip | shares | ipo | chit_fund |
+general_money | scam_or_payment_request | out_of_scope (not about money) | unknown (about money but you cannot tell what).
 Term names (use only these): {_TERMS}.
 For insurance: premium is the yearly premium; sum_assured is the guaranteed amount. Illustrations come in pairs:
 extract BOTH amounts, maturity_low (the SMALLER maturity amount shown) and maturity_high (the larger), and
@@ -59,7 +59,8 @@ CASE_HINTS = {
         "loan",
     ): "State the quoted flat rate {term.flat_rate} against the real yearly rate {loan_effective_rate}, "
     "using {cmp_effective_vs_quoted}; compare with a normal bank loan using {cmp_effective_vs_typical}.",
-    ("vick", "stock"): "Use {pump_risk}, {run_up_30d}, {volume_spike} and {upper_circuit_hits_30d}.",
+    ("vick", "stock"): "Every argument must use at least one of {run_up_30d}, {volume_spike}, "
+    "{upper_circuit_hits_30d} or {pump_risk}; lead with the strongest signal and its value.",
 }
 _GROUP = {
     "insurance_offer": "insurance",
@@ -68,6 +69,7 @@ _GROUP = {
     "stock_tip": "stock",
     "shares": "stock",
     "ipo": "stock",
+    "chit_fund": "chit_fund",
 }
 
 
@@ -97,13 +99,13 @@ COUNCIL = f"""You are a council of money specialists advising an older Indian fa
 Judge only the facts and quotes. Ignore what the seller, the agent or the user hopes the answer is. Stance and
 strength come from the facts alone, never from an agent's personality.
 For each listed agent: stance (for | against | unsure), strength 0..1, at most 2 arguments of at most 2 short
-sentences each, and up to 2 questions_for_seller. Every argument must use at least one {{fact_id}} placeholder or
+sentences each. Every argument must use at least one {{fact_id}} placeholder or
 cite a quote id in cited_ids. Never recommend buying a stock. Use "claim_checks" when a seller's claim is
 contradicted. In DISCREET mode the family's own figures are not given to you; do not guess them.
 {STYLE_RULES}
 {NUMBERS_RULE}
 
-Example output: {{"opinions":[{{"agent":"sankz","stance":"against","strength":0.8,"arguments":[{{"text":"The {{term.flat_rate}} flat rate really costs about {{loan_effective_rate}} a year, {{cmp_effective_vs_quoted}} the rate quoted.","cited_ids":[]}},{{"text":"The real rate is higher than what a normal bank loan costs.","cited_ids":["cmp_effective_vs_typical"]}}],"questions_for_seller":["What is the interest rate on the reducing balance?"]}}]}}"""
+Example output: {{"opinions":[{{"agent":"sankz","stance":"against","strength":0.8,"arguments":[{{"text":"The {{term.flat_rate}} flat rate really costs about {{loan_effective_rate}} a year, {{cmp_effective_vs_quoted}} the rate quoted.","cited_ids":[]}},{{"text":"The real rate is higher than what a normal bank loan costs.","cited_ids":["cmp_effective_vs_typical"]}}]}}]}}"""
 
 DEBATE = (
     COUNCIL
@@ -116,15 +118,16 @@ EXPLAINER = f"""You write what a council of money specialists says aloud to an o
 Alfii has already introduced them. The verdict colour is decided by code; do not change or contradict it.
 Write in the language given in "language" (English, Malayalam or Hindi); placeholders stay exactly as they are.
 Write one line per called agent in that agent's voice (speaker = agent name), then Alfii's verdict_sentence (speaker
-"alfii") that ends with one thing to do next, and at most 3 questions to say aloud to the seller (each under 12
-words, no numbers). If "claim_checks" has a contradicted claim, one line must say so, quoting the claim and the
+"alfii") that ends with one thing to do next. "question_bank" lists the only questions that may be asked: pick at
+most 3 by id, in the order you prefer; you may reword one lightly in the same language (same meaning, every key word
+kept, under 12 words). Never write a question that is not in the bank. If "claim_checks" has a contradicted claim, one line must say so, quoting the claim and the
 evidence ("You were told guaranteed; the brochure says bonuses may change"). In DISCREET mode the family's own figures
 are not given to you and you must not mention income, savings, expenses, EMIs, budget or affordability at all.
 {STYLE_RULES}
 {PERSONAS}
 {NUMBERS_RULE}
 
-Example output: {{"agent_lines":[{{"speaker":"sankz","text":"This loan really costs you about {{loan_effective_rate}} a year, {{cmp_effective_vs_quoted}} the rate they told you.","cited_ids":[]}}],"verdict_sentence":{{"speaker":"alfii","text":"Please do not sign this loan as it is. Ask them for the reducing-balance rate first.","cited_ids":[]}},"questions":["What is the real yearly interest rate?"]}}"""
+Example output: {{"agent_lines":[{{"speaker":"sankz","text":"This loan really costs you about {{loan_effective_rate}} a year, {{cmp_effective_vs_quoted}} the rate they told you.","cited_ids":[]}}],"verdict_sentence":{{"speaker":"alfii","text":"Please do not sign this loan as it is. Ask them for the reducing-balance rate first.","cited_ids":[]}},"questions":[{{"id":"loan_reducing_rate","text":"What is the interest rate on the reducing balance?"}}]}}"""
 
 REWRITE = f"""Rewrite each line so it passes the check described in its "problem": keep the meaning, speaker and
 language. For a privacy problem, drop every mention of the family's own money (income, savings, expenses, EMIs, budget,

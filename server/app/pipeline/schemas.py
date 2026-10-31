@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from typing import Literal
 
-from pydantic import BaseModel, Field, field_validator
+from pydantic import BaseModel, Field, field_validator, model_validator
 
 from app.pipeline.consensus import Colour
 
@@ -17,6 +17,7 @@ CaseType = Literal[
     "shares",
     "ipo",
     "general_money",
+    "chit_fund",
     "scam_or_payment_request",
     "out_of_scope",
     "unknown",
@@ -96,10 +97,22 @@ class Line(BaseModel):
     cited_ids: list[str] = []
 
 
+class QuestionPick(BaseModel):
+    """A question chosen from the code's question bank: its id, and the wording (the bank's, or a light rewording)."""
+
+    id: str = ""
+    text: str = ""
+
+    @model_validator(mode="before")
+    @classmethod
+    def _from_text(cls, v: object) -> object:
+        return {"text": v} if isinstance(v, str) else v  # a bare string has no bank id and is ignored
+
+
 class ExplainerOutput(BaseModel):
     agent_lines: list[Line] = []
     verdict_sentence: Line
-    questions: list[str] = []
+    questions: list[QuestionPick] = []
 
 
 class RewriteOutput(BaseModel):

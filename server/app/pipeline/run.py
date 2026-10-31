@@ -34,6 +34,7 @@ from app.engines.fact import Fact
 from app.mcp_server import tools
 from app.pipeline import council as council_mod
 from app.pipeline import explainer as explainer_mod
+from app.pipeline import questions as questions_mod
 from app.pipeline.claims import ClaimCheck, check_claims, mentioned
 from app.pipeline.compute import Computed, compute_facts
 from app.pipeline.consensus import ConsensusResult, override_inputs_from_facts, run_consensus
@@ -45,7 +46,6 @@ from app.pipeline.privacy import decide_mode
 from app.pipeline.router import route
 from app.pipeline.scam_rules import ScamSignal, detect
 from app.pipeline.schemas import (
-    TERM_NAMES,
     CaseDraft,
     CaseResult,
     ClaimOut,
@@ -56,7 +56,7 @@ from app.pipeline.schemas import (
     VerdictOut,
 )
 from app.pipeline.templates import NOTES, SCAM_SHORT, followups, lang_of, opener, t
-from app.pipeline.verify_terms import EvidenceText, VerifiedTerm, term_question, verify_terms
+from app.pipeline.verify_terms import EvidenceText, VerifiedTerm, verify_terms
 from app.prompts import prompts
 from app.providers.llm import AskBudget, LLMProvider, LLMStepFailed, use_budget
 from app.providers.stt import STTProvider
@@ -373,13 +373,12 @@ async def _pipeline(run: _Run, inp: AskInput, *, repo: Repo, llm: LLMProvider, s
             for a in rounds[0].arguments
             if a.kept and a.agent not in {k["agent"] for k in kept_args}
         ]
-    # only real document terms become "show me in writing" questions (not gaps like "price history")
-    term_qs = [term_question(n) for n in unverified if n in TERM_NAMES]
-    candidate_qs = computed.questions + term_qs + (final.questions if final else [])
+    # questions come from the code's bank for this case type: missing terms and contradicted claims first
+    bank = questions_mod.candidates(case_type, unverified, claims, lang)
     agent_lines: list[explainer_mod.CheckedLine] = []
     notes: list[explainer_mod.CheckedLine] = []
     conclusion: explainer_mod.CheckedLine | None = None
-    model_questions: list[str] = []
+    model_questions: list[tuple[str, str]] = []
     explained = False
     async with run.step("explainer") as info:
         payload = explainer_mod.explainer_input(
@@ -391,7 +390,7 @@ async def _pipeline(run: _Run, inp: AskInput, *, repo: Repo, llm: LLMProvider, s
             [{"id": k, **v} for k, v in quotes.items()],
             mode,
             lang,
-            candidate_qs,
+            [{"id": q.id, "text": q.text} for q in bank],
             claims=summary["claim_checks"],
         )
         ex = await explainer_mod.explain(
@@ -409,13 +408,16 @@ async def _pipeline(run: _Run, inp: AskInput, *, repo: Repo, llm: LLMProvider, s
     if not explained:
         agent_lines, notes = explainer_mod.fallback_turns(agents, kept_args, facts, quote_text, mode, lang)
 
-    # questions to ask the seller (said aloud: under 12 words) ---------------------------------------------------
-    pool = [
-        r
-        for q in [*computed.questions, *model_questions, *candidate_qs]
-        if (r := explainer_mod.render_question(q, facts, quote_text, mode, lang))
-    ]
-    final_questions = list(dict.fromkeys(pool))[:3]
+    # questions said aloud (the bank only; the model's picks and rewordings are checked) --------------------------
+    picked = questions_mod.pick(case_type, bank, model_questions, facts, mode, lang)
+    final_questions = [q.text for q in picked.questions]
+    async with run.step("questions") as info:
+        info.update(
+            bank=[q.id for q in bank],
+            picked=[q.id for q in picked.questions],
+            reworded=picked.reworded,
+            rejected=picked.rejected,
+        )
 
     # Alfii's conclusion always ends with one next step ------------------------------------------------------------
     verdict_text = conclusion.text if conclusion else t(lang, consensus.verdict)
@@ -426,7 +428,7 @@ async def _pipeline(run: _Run, inp: AskInput, *, repo: Repo, llm: LLMProvider, s
         if not parts or not RED_NO.search(parts[0]) or RED_LOOPHOLE.search(parts[0]):
             verdict_text = " ".join([t(lang, "red"), *parts[1:]])
     if not ACTION_CUES.search(verdict_text):
-        verdict_text = f"{verdict_text} {_next_step(consensus.verdict, final_questions, guardian, lang)}"
+        verdict_text = f"{verdict_text} {_next_step(consensus.verdict, picked.questions, guardian, lang)}"
     closing = explainer_mod.CheckedLine(speaker="alfii", text=verdict_text, kind="conclusion")
 
     # contradicted claims must be mentioned (code line if the agents did not) -----------------------------------
@@ -484,11 +486,13 @@ async def _pipeline(run: _Run, inp: AskInput, *, repo: Repo, llm: LLMProvider, s
     )
 
 
-def _next_step(colour: str, questions: list[str], guardian: str | None, lang: str) -> str:
+def _next_step(colour: str, questions: list[questions_mod.Question], guardian: str | None, lang: str) -> str:
     if colour == "red":
         return t(lang, "next_guardian", guardian=guardian) if guardian else t(lang, "next_wait")
     if questions:
-        return t(lang, "next_ask", question=questions[0])
+        q = questions[0]
+        key = {"self": "next_ask_self", "sender": "next_ask_sender"}.get(q.audience, "next_ask")
+        return t(lang, key, question=q.text)
     return t(lang, "next_paper") if colour == "yellow" else t(lang, "next_wait")
 
 

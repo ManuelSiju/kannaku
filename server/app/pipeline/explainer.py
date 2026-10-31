@@ -6,7 +6,8 @@ speech), evidence check (no raw digits, known ids, comparison words backed by cm
 personal words in discreet mode) and the speaking-style linter. Failing lines are regenerated once (if the LLM
 budget allows). Then an agent falls back to its own checked council argument; if that fails too its turn is dropped,
 and if privacy was the reason Alfii says the agent left a note on the screen. An agent line is never a bare fallback
-sentence.
+sentence; the one exception is Vick in a stock case, whose line code writes from the strongest pump-and-dump signal
+(see vick.py). Questions come from the code's bank (questions.py): the model only picks ids and may reword.
 """
 
 from __future__ import annotations
@@ -17,6 +18,7 @@ from typing import Any
 from pydantic import BaseModel
 
 from app.engines.fact import Fact
+from app.pipeline import vick
 from app.pipeline.consensus import Colour
 from app.pipeline.evidence import Dropped, Kept, check_argument, placeholders, raw_number
 from app.pipeline.lint import lint
@@ -50,7 +52,7 @@ class Explained(BaseModel):
     agent_lines: list[CheckedLine]
     notes: list[CheckedLine]  # Alfii: "<Agent> has left a note about your budget on your screen."
     verdict: CheckedLine | None  # None -> the caller uses the verdict template
-    questions: list[str]
+    questions: list[tuple[str, str]]  # (bank id, wording) picked by the model; validated by questions.pick
     rewrite_used: bool
     fixes: list[str]
     lint_rejections: list[str]
@@ -88,14 +90,22 @@ def check_line(
     return LineCheck(problem=None, spoken=spoken, screen=screen, cited=cited, fixes=fixes)
 
 
-def render_question(
-    q: str, facts: list[Fact], quotes: dict[str, str], mode: PrivacyMode, lang: str = "en"
-) -> str | None:
-    """Questions are said aloud to the seller: same checks, no comparison rule, under 12 words."""
-    c = check_line(Line(speaker="alfii", text=q), facts, quotes, mode, lang=lang, comparisons=False, style=False)
-    if c.problem or len(c.spoken.split()) >= 12:
+def agent_check(
+    line: Line, facts: list[Fact], quotes: dict[str, str], mode: PrivacyMode, *, lang: str = "en"
+) -> LineCheck:
+    """check_line plus the per-agent rules (Vick names the strongest pump-and-dump signal)."""
+    c = check_line(line, facts, quotes, mode, lang=lang)
+    if line.speaker == "vick" and c.problem is None and (p := vick.line_problem(c.cited, facts)):
+        c = c.model_copy(update={"problem": f"evidence: {p}"})
+    return c
+
+
+def vick_template(facts: list[Fact], lang: str) -> CheckedLine | None:
+    out = vick.template_line(facts, lang)
+    if out is None:
         return None
-    return c.spoken
+    spoken, screen, cited = out
+    return CheckedLine(speaker="vick", text=spoken, screen_text=screen, cited_ids=cited)
 
 
 def explainer_input(
@@ -107,7 +117,7 @@ def explainer_input(
     quotes: list[dict[str, str]],
     mode: PrivacyMode,
     language: str,
-    questions: list[str],
+    question_bank: list[dict[str, str]],
     claims: list[dict[str, Any]] | None = None,
 ) -> dict[str, Any]:
     return {
@@ -120,7 +130,7 @@ def explainer_input(
         "claim_checks": claims or [],
         "privacy_mode": mode.upper(),
         "language": LANG_NAMES.get(language, "English"),
-        "candidate_questions": questions,
+        "question_bank": question_bank,
     }
 
 
@@ -151,7 +161,11 @@ async def explain(
     results: dict[str, LineCheck] = {}
     first_problem: dict[str, str] = {}
     for key, ln in slots:
-        c = check_line(ln, facts, quotes, mode, lang=lang)
+        c = (
+            check_line(ln, facts, quotes, mode, lang=lang)
+            if key == "verdict"
+            else agent_check(ln, facts, quotes, mode, lang=lang)
+        )
         results[key] = c
         fixes += c.fixes
         lint_rejections += c.lint
@@ -179,7 +193,11 @@ async def explain(
             )
             for k, new in zip(failing, fixed.lines, strict=False):
                 new = new.model_copy(update={"speaker": lines[k].speaker})
-                c = check_line(new, facts, quotes, mode, lang=lang)
+                c = (
+                    check_line(new, facts, quotes, mode, lang=lang)
+                    if k == "verdict"
+                    else agent_check(new, facts, quotes, mode, lang=lang)
+                )
                 fixes += c.fixes
                 lint_rejections += c.lint
                 if c.problem is None:
@@ -198,7 +216,7 @@ async def explain(
             # fall back to the agent's own council argument, held to the same checks
             arg = next((x for x in kept_args if x["agent"] == a), None)
             fb = (
-                check_line(
+                agent_check(
                     Line(speaker=a, text=arg["text"], cited_ids=arg["cited_ids"]), facts, quotes, mode, lang=lang
                 )
                 if arg
@@ -206,6 +224,10 @@ async def explain(
             )
             if fb is not None and fb.problem is None:
                 c = fb
+            elif a == "vick" and (tl := vick_template(facts, lang)):
+                agent_lines.append(tl)
+                fixes.append("vick_template")
+                continue
             else:
                 dropped.append(a)
                 reasons = [first_problem.get(a, ""), c.problem if c else "", fb.problem if fb else ""]
@@ -229,7 +251,7 @@ async def explain(
         agent_lines=agent_lines,
         notes=notes,
         verdict=verdict,
-        questions=out.questions,
+        questions=[(q.id, q.text) for q in out.questions if q.id],
         rewrite_used=rewrite_used,
         fixes=fixes,
         lint_rejections=lint_rejections,
@@ -250,10 +272,14 @@ def fallback_turns(
     for a in agents:
         arg = next((x for x in kept_args if x["agent"] == a), None)
         if arg is None:
+            if a == "vick" and (tl := vick_template(facts, lang)):
+                lines.append(tl)
             continue
-        c = check_line(Line(speaker=a, text=arg["text"], cited_ids=arg["cited_ids"]), facts, quotes, mode, lang=lang)
+        c = agent_check(Line(speaker=a, text=arg["text"], cited_ids=arg["cited_ids"]), facts, quotes, mode, lang=lang)
         if c.problem is None:
             lines.append(CheckedLine(speaker=a, text=c.spoken, screen_text=c.screen, cited_ids=c.cited))
+        elif a == "vick" and (tl := vick_template(facts, lang)):
+            lines.append(tl)
         elif c.problem.startswith("privacy"):
             notes.append(CheckedLine(speaker="alfii", text=t(lang, "budget_note", agent=name(lang, a)), kind="note"))
     return lines, notes

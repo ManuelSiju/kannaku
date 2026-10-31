@@ -32,9 +32,6 @@
             "text": "Trading volume is about {volume_spike} its usual level, a classic pump-and-dump sign.",
             "cited_ids": []
           }
-        ],
-        "questions_for_seller": [
-          "Who sent this message, and do they own this share?"
         ]
       },
       {
@@ -67,7 +64,10 @@
       "text": "Do not buy on this tip; it shows strong pump-and-dump signs."
     },
     "questions": [
-      "Who sent this message, and do they own this share?"
+      {
+        "id": "stock_who",
+        "text": "Who sent this tip, and does that person own the stock?"
+      }
     ]
   }
 }
