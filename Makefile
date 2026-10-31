@@ -25,7 +25,7 @@ endif
 
 .PHONY: help setup setup-system env doctor run-server health llm-up llm-down llm-pull llm-list \
         check-models test test-fast smoke lint fmt clean run-mcp seed-demo reset-demo demo-assets run-app demo commit-phase \
-        reliability reliability-framing reliability-vision lan-url firewall-open phone-devices phone-usb phone-usb-off up down status logs app-release app-ios provider forget-key
+        reliability reliability-framing reliability-vision lan-url firewall-open phone-devices phone-usb phone-usb-off up down status logs app-release app-ios provider forget-key app-test
 
 help: ## Show this list
 	@grep -hE '^[a-zA-Z_-]+:.*?## ' $(MAKEFILE_LIST) | \
@@ -172,10 +172,14 @@ reset-demo: ## Wipe the database and re-seed the demo family
 demo-assets: ## Regenerate fictional brochure PDF/PNGs, ZEPHYRX tip + price CSV
 	cd $(SERVER) && $(PY) scripts/make_demo_assets.py
 
-run-app: ## [phase 5] Run app on connected phone (Wi-Fi URL; USB=1 for usb tunnel; DEVICE=id)
-	@test -f app/pubspec.yaml || { echo "run-app: Flutter app arrives in phase 5"; exit 0; }; \
-	  echo "App -> server at $(API_URL)"; \
-	  cd app && flutter run $(if $(DEVICE),-d $(DEVICE),) --dart-define=API_URL=$(API_URL)
+run-app: ## Run the app on a connected phone (Wi-Fi URL; USB=1 for usb tunnel; DEVICE=id); passes the LAN token
+	@echo "App -> server at $(API_URL)"; \
+	  token=$$(grep -E '^KANAKKU_TOKEN=' .env.local 2>/dev/null | cut -d= -f2-); \
+	  [ -n "$$token" ] || echo "! no access token yet: run make up first (or type it in the app's Settings)"; \
+	  cd app && flutter run $(if $(DEVICE),-d $(DEVICE),) --dart-define=API_URL=$(API_URL) --dart-define=API_TOKEN=$$token
+
+app-test: ## flutter analyze + flutter test
+	cd app && flutter analyze && flutter test
 
 demo: ## [phase 6] Reset demo, start server, print demo questions
 	@echo "demo: arrives in phase 6"
