@@ -26,7 +26,7 @@ case_type: insurance_offer | ulip | loan_offer | sip_or_fund_question | stock_ti
 scam_or_payment_request | out_of_scope (not about money) | unknown (about money but you cannot tell what).
 Term names (use only these): {_TERMS}.
 For insurance: premium is the yearly premium; sum_assured is the guaranteed amount. Illustrations come in pairs:
-extract BOTH amounts, maturity_low (the SMALLER illustrated maturity amount) and maturity_high (the larger), and
+extract BOTH amounts, maturity_low (the SMALLER maturity amount shown) and maturity_high (the larger), and
 their bonus rates bonus_rate_low and bonus_rate_high.
 For stock tips: stock_symbol is the ticker only (e.g. "ACME", not "ACME Ltd"); invest_amount is the money the user
 plans to put in.

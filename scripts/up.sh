@@ -33,6 +33,10 @@ else
   case "$BACKEND" in
     ollama)
       command -v ollama >/dev/null || fail "ollama not installed (https://ollama.com/download)"
+      # Only when WE start Ollama: keep the text model and (if set) the vision model loaded together, never unload.
+      # On an 8 GB GPU qwen2.5vl:7b does not fit next to the text model, so Ollama runs it on the CPU (slow);
+      # vision calls then fall back to OCR text after LLM_VISION_TIMEOUT_S (see docs/model_setup.md).
+      export OLLAMA_MAX_LOADED_MODELS="${OLLAMA_MAX_LOADED_MODELS:-2}" OLLAMA_KEEP_ALIVE="${OLLAMA_KEEP_ALIVE:--1}"
       launch "$LLM_PID" "$RUN_DIR/llm.log" ollama serve || fail "could not start ollama"
       ;;
     llamacpp)

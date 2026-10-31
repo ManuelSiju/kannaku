@@ -81,14 +81,19 @@ STEPS = [
 ]
 
 
-async def one_run(text: str, files: list[Upload], llm: OpenAICompatibleLLM) -> dict[str, Any]:
+async def one_run(text: str, files: list[Upload], llm: OpenAICompatibleLLM, earphones: bool = False) -> dict[str, Any]:
     with tempfile.TemporaryDirectory() as tmp:
         repo = Repo(Path(tmp) / "k.db")
         seed(repo)
         case_id = repo.create_case(1)
         t0 = time.perf_counter()
         res = await run_pipeline(
-            case_id, AskInput(family_id=1, text=text, files=files), repo=repo, llm=llm, stt=None, bus=EventBus()
+            case_id,
+            AskInput(family_id=1, text=text, files=files, earphones=earphones),
+            repo=repo,
+            llm=llm,
+            stt=None,
+            bus=EventBus(),
         )
         total = time.perf_counter() - t0
         b = repo.case_bundle(case_id) or {}
@@ -119,6 +124,17 @@ async def one_run(text: str, files: list[Upload], llm: OpenAICompatibleLLM) -> d
         "spoken": [f"{ln['speaker']}: {ln['text']}" for ln in b.get("spoken_lines", [])],
         "step_ms": {t["step"]: t["ms"] for t in b.get("trace", [])},
         "fixes": [f"{t['step']}: {x}" for t in b.get("trace", []) for x in t["detail"].get("auto_placeholder", [])],
+        "lint": [x for t in b.get("trace", []) for x in t["detail"].get("lint", [])],
+        "dropped_turns": [x for t in b.get("trace", []) for x in t["detail"].get("dropped_turns", [])],
+        "mode": res.privacy_mode,
+        "short_answer": res.short_answer.text if res.short_answer else "",
+        "council": [f"{c.speaker} ({c.kind}): {c.text}" for c in res.council],
+        "council_words": res.council_words,
+        "council_seconds": res.council_seconds,
+        "notes": [d.label for d in res.screen_details if d.id.startswith("note.")],
+        "followups": res.suggested_followups,
+        "questions": res.verdict.questions,
+        "claims": [f"{c.status}: {c.claim} — {c.evidence}" for c in res.claims],
         "step_errors": {t["step"]: t["detail"].get("error") for t in b.get("trace", []) if t["detail"].get("error")},
         "total_s": round(total, 1),
     }
@@ -213,6 +229,7 @@ async def main() -> None:
     ap.add_argument("--framing", action="store_true")
     ap.add_argument("--vision", action="store_true")
     ap.add_argument("--tag", default="", help="suffix for the report file names, e.g. vl_single")
+    ap.add_argument("--full", action="store_true", help="earphones on: full privacy mode instead of discreet")
     args = ap.parse_args()
 
     s = get_settings()
@@ -240,7 +257,7 @@ async def main() -> None:
         llm.stats = type(llm.stats)()
         groups[name] = []
         for i in range(args.runs):
-            r = await one_run(text, files, llm)
+            r = await one_run(text, files, llm, earphones=args.full)
             groups[name].append(r)
             print(
                 f"{name} run {i + 1}: {r['colour']} calls={r['llm_calls']} kept={r['kept']} dropped={r['dropped']} "
@@ -283,10 +300,39 @@ async def main() -> None:
         f"- {name} run {i}: {x}" for name, runs in groups.items() for i, r in enumerate(runs, 1) for x in r["fixes"]
     ]
     md += ("\n".join(rewrites) or "- none") + "\n"
-    md += "\nSample spoken lines (2 per case, from the first run; Alfii's opener is a fixed template):\n\n"
+    lint = Counter(x for runs in groups.values() for r in runs for x in r["lint"])
+    md += (
+        "\nLinter rejections per rule:\n\n"
+        + ("\n".join(f"- {n}× {r}" for r, n in lint.most_common()) or "- none")
+        + "\n"
+    )
+    dropped_turns = Counter(x for runs in groups.values() for r in runs for x in r["dropped_turns"])
+    if dropped_turns:
+        md += (
+            "\nAgent turns dropped after regeneration + fallback:\n\n"
+            + "\n".join(f"- {n}× {a}" for a, n in dropped_turns.most_common())
+            + "\n"
+        )
+    md += (
+        "\nCouncil length: "
+        + ", ".join(
+            f"{name} {statistics.median(r['council_words'] for r in runs):.0f} words / "
+            f"{statistics.median(r['council_seconds'] for r in runs):.0f} s"
+            for name, runs in groups.items()
+        )
+        + " (median)\n"
+    )
+    md += "\n## What the user gets (first run of each case)\n"
     for name, runs in groups.items():
-        lines = [x for x in runs[0]["spoken"] if not x.startswith("alfii: Let me ask")][:2]
-        md += f"**{name}**\n\n" + "\n".join(f"> {x}  " for x in lines) + "\n\n"
+        r = runs[0]
+        md += f"\n### {name} ({r['mode']} mode) — {r['colour']}\n\n**Short answer:** {r['short_answer']}\n\n"
+        md += f"**Council** ({r['council_words']} words, ~{r['council_seconds']:.0f} s):\n\n"
+        md += "\n".join(f"> {x}  " for x in r["council"]) + "\n\n"
+        md += "**On-screen notes:** " + ("; ".join(r["notes"]) or "none") + "\n\n"
+        md += "**Questions to ask:** " + ("; ".join(r["questions"]) or "none") + "\n\n"
+        md += "**Suggested follow-ups:** " + ("; ".join(r["followups"]) or "none") + "\n\n"
+        if r["claims"]:
+            md += "**Claim checks:** " + "; ".join(r["claims"]) + "\n\n"
     stem = f"{stem}_{args.tag}" if args.tag else stem
     (docs / f"{stem}.md").write_text(md)
     (docs / f"{stem}_raw.json").write_text(

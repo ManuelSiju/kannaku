@@ -45,6 +45,7 @@ from app.pipeline.privacy import decide_mode
 from app.pipeline.router import route
 from app.pipeline.scam_rules import ScamSignal, detect
 from app.pipeline.schemas import (
+    TERM_NAMES,
     CaseDraft,
     CaseResult,
     ClaimOut,
@@ -369,7 +370,9 @@ async def _pipeline(run: _Run, inp: AskInput, *, repo: Repo, llm: LLMProvider, s
             for a in rounds[0].arguments
             if a.kept and a.agent not in {k["agent"] for k in kept_args}
         ]
-    candidate_qs = computed.questions + [term_question(n) for n in unverified] + (final.questions if final else [])
+    # only real document terms become "show me in writing" questions (not gaps like "price history")
+    term_qs = [term_question(n) for n in unverified if n in TERM_NAMES]
+    candidate_qs = computed.questions + term_qs + (final.questions if final else [])
     agent_lines: list[explainer_mod.CheckedLine] = []
     notes: list[explainer_mod.CheckedLine] = []
     conclusion: explainer_mod.CheckedLine | None = None
