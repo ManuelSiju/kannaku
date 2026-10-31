@@ -121,14 +121,13 @@ class _CouncilScreenState extends State<CouncilScreen> {
           top: false,
           child: Padding(
             padding: const EdgeInsets.fromLTRB(16, 8, 16, 12),
-            child: Row(children: [
+            child: Wrap(spacing: 8, runSpacing: 8, crossAxisAlignment: WrapCrossAlignment.center, children: [
               IconButton.filled(
                 iconSize: 32,
                 tooltip: _playing ? 'Pause' : 'Play',
                 onPressed: _playing ? _pause : _play,
                 icon: Icon(_playing ? Icons.pause : Icons.play_arrow),
               ),
-              const SizedBox(width: 8),
               PopupMenuButton<double>(
                 tooltip: 'Speed',
                 initialValue: settings.speechSpeed,
@@ -141,7 +140,6 @@ class _CouncilScreenState extends State<CouncilScreen> {
                 ],
                 child: Pill('${settings.speechSpeed}x', icon: Icons.speed),
               ),
-              const Spacer(),
               if (conclusion >= 0)
                 FilledButton.tonalIcon(
                     onPressed: () => _jump(conclusion),

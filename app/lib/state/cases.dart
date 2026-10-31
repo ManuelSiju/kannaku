@@ -23,7 +23,8 @@ class AskRequest {
   final Upload? audio;
   final List<Upload> files;
   final bool outLoud;
-  AskRequest({required this.text, this.audio, this.files = const [], this.outLoud = false, String? key})
+  final int? caseId; // a follow-up continues this case (its documents still count)
+  AskRequest({required this.text, this.audio, this.files = const [], this.outLoud = false, this.caseId, String? key})
       : key = key ?? newKey();
 
   String get label {
@@ -187,6 +188,7 @@ class CaseProvider extends ChangeNotifier {
         outLoud: req.outLoud,
         earphones: settings.earphones,
         idempotencyKey: req.key,
+        caseId: req.caseId,
       );
       await _follow(api, entry.caseId!);
       entry.result = await _result(api, entry.caseId!);

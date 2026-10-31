@@ -1,0 +1,16 @@
+{
+ "values": [
+  {
+   "field": "monthly_income",
+   "value": 45000.0,
+   "unit": "INR",
+   "source": "typed",
+   "source_ref": null,
+   "quote": "My pension is 45,000 a month.",
+   "uncertain": false,
+   "readback": "I heard \u20b945,000 a month for your income each month. Is that right?"
+  }
+ ],
+ "items": [],
+ "heard": "My pension is 45,000 a month."
+}

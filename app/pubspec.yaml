@@ -40,7 +40,6 @@ dependencies:
   flutter_tts: ^4.2.5
   image_picker: ^1.2.4
   file_picker: ^13.3.0
-  google_fonts: ^8.2.1
   flutter_secure_storage: ^11.2.0
   package_info_plus: ^10.2.2
   connectivity_plus: ^7.3.2
@@ -50,6 +49,8 @@ dependencies:
 
 dev_dependencies:
   flutter_test:
+    sdk: flutter
+  integration_test:
     sdk: flutter
 
   # The "flutter_lints" package below contains a set of recommended lints to
@@ -69,6 +70,29 @@ flutter:
   # included with your application, so that you can use the icons in
   # the material Icons class.
   uses-material-design: true
+
+  # Bundled so the app reads well offline (and in screenshots). OFL fonts.
+  fonts:
+    - family: Noto
+      fonts:
+        - asset: assets/fonts/NotoSans-Regular.ttf
+        - asset: assets/fonts/NotoSans-SemiBold.ttf
+          weight: 600
+        - asset: assets/fonts/NotoSans-Bold.ttf
+          weight: 700
+    - family: NotoMalayalam
+      fonts:
+        - asset: assets/fonts/NotoSansMalayalam-Regular.ttf
+        - asset: assets/fonts/NotoSansMalayalam-Bold.ttf
+          weight: 700
+    - family: NotoDevanagari
+      fonts:
+        - asset: assets/fonts/NotoSansDevanagari-Regular.ttf
+        - asset: assets/fonts/NotoSansDevanagari-Bold.ttf
+          weight: 700
+    - family: Baloo
+      fonts:
+        - asset: assets/fonts/BalooChettan2.ttf
 
   # To add assets to your application, add an assets section, like this:
   # assets:

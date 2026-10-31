@@ -71,6 +71,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 onPressed: () => setState(() => _hide = !_hide)),
           ),
         ),
+        if (_result != null)
+          Padding(
+            padding: const EdgeInsets.only(top: 10),
+            child: Text(_result!,
+                key: const Key('connection_result'),
+                style: TextStyle(fontSize: 17, color: _ok ? K.alfii : VerdictStyle.red.solid, fontWeight: FontWeight.w600)),
+          ),
         const SizedBox(height: 10),
         FilledButton.icon(
           onPressed: _testing ? null : _test,
@@ -79,12 +86,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
               : const Icon(Icons.wifi_tethering),
           label: const Text('Save and test connection'),
         ),
-        if (_result != null)
-          Padding(
-            padding: const EdgeInsets.only(top: 10),
-            child: Text(_result!,
-                style: TextStyle(fontSize: 17, color: _ok ? K.alfii : VerdictStyle.red.solid, fontWeight: FontWeight.w600)),
-          ),
         const SectionTitle('Voice and language'),
         SegmentedButton<String>(
           segments: const [

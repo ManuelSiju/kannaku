@@ -5,7 +5,7 @@ set -uo pipefail
 source "$(dirname "$0")/lib.sh"
 
 echo "Stopping Kanakku"
-if [[ -f "$RUN_DIR/server.pid" ]]; then stop_pid "$RUN_DIR/server.pid" server; else echo "  server not started by make up"; fi
+if [[ -f "$RUN_DIR/server.pid" ]]; then stop_pid "$RUN_DIR/server.pid" server; else echo "  Kanakku was not running (nothing to stop)"; fi
 if [[ "${1:-}" == --server-only ]]; then
   :
 elif [[ -f "$RUN_DIR/llm.pid" ]]; then

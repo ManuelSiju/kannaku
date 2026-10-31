@@ -1,10 +1,9 @@
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 
 import '../core/api_client.dart';
 import '../core/models.dart';
+import '../core/pickers.dart';
 import '../core/speech.dart';
 import '../state/profile.dart';
 import '../theme.dart';
@@ -90,15 +89,9 @@ class _MyDetailsScreenState extends State<MyDetailsScreen> {
         if (audio == null) return;
         proposal = await p.extract(audio: Upload('audio', 'details.m4a', audio, 'audio/mp4'));
       } else {
-        final x = await ImagePicker().pickImage(source: ImageSource.camera, maxWidth: 2400, imageQuality: 85);
-        if (x != null) {
-          proposal = await p.extract(file: Upload('file', x.name, await x.readAsBytes(), 'image/jpeg'));
-        } else {
-          final picked = await FilePicker.pickFiles(type: FileType.custom, allowedExtensions: ['pdf']);
-          if (picked.isEmpty) return;
-          final bytes = await picked.first.readAsBytes();
-          proposal = await p.extract(file: Upload('file', picked.first.name, bytes, 'application/pdf'));
-        }
+        final up = await Pickers.pick('camera', 'file') ?? await Pickers.pick('pdf', 'file');
+        if (up == null) return;
+        proposal = await p.extract(file: up);
       }
     } on ApiException catch (e) {
       if (context.mounted) toast(context, e.friendly);

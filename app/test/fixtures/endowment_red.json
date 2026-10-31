@@ -1,0 +1,1626 @@
+{
+ "result": {
+  "case_id": 1,
+  "case_type": "insurance_offer",
+  "verdict": {
+   "colour": "red",
+   "sentence": "Do not sign yet: this plan earns less than a fixed deposit, and the 15 lakh rupees is not guaranteed.",
+   "questions": [
+    "Can you show me in writing what is guaranteed?",
+    "What do I get if I stop after 3 years?"
+   ]
+  },
+  "called_agents": [
+   "dani",
+   "sankz"
+  ],
+  "spoken_lines": [
+   {
+    "speaker": "alfii",
+    "text": "Let me ask Dani and Sankz."
+   },
+   {
+    "speaker": "dani",
+    "text": "This plan grows only about 3.8 percent a year, lower than a fixed deposit."
+   },
+   {
+    "speaker": "sankz",
+    "text": "Only 7.5 lakh rupees is guaranteed, which is just your own premiums back with no growth."
+   },
+   {
+    "speaker": "alfii",
+    "text": "Do not sign yet: this plan earns less than a fixed deposit, and the 15 lakh rupees is not guaranteed."
+   }
+  ],
+  "screen_details": [
+   {
+    "id": "note.premium_share_of_savings",
+    "label": "This premium is 31.2% of your savings each year.",
+    "value": "31.2%",
+    "kind": "personal",
+    "source": "Kanakku note \u00b7 only on your screen"
+   },
+   {
+    "id": "note.premium_share_of_income",
+    "label": "Each month this premium is 9.3% of your income.",
+    "value": "9.3%",
+    "kind": "personal",
+    "source": "Kanakku note \u00b7 only on your screen"
+   },
+   {
+    "id": "note.surplus_after",
+    "label": "After this, you would have \u20b99,433 left each month.",
+    "value": "\u20b99,433",
+    "kind": "personal",
+    "source": "Kanakku note \u00b7 only on your screen"
+   },
+   {
+    "id": "note.buffer_months_after",
+    "label": "Your savings would cover 4.5 months of costs.",
+    "value": "4.5 months",
+    "kind": "personal",
+    "source": "Kanakku note \u00b7 only on your screen"
+   },
+   {
+    "id": "term.premium",
+    "label": "From the document: yearly premium",
+    "value": "\u20b950,000",
+    "kind": "offer",
+    "source": "Brochure page 1 \u00b7 checked"
+   },
+   {
+    "id": "term.pay_years",
+    "label": "From the document: number of years you pay",
+    "value": "15 years",
+    "kind": "offer",
+    "source": "Brochure page 1 \u00b7 checked"
+   },
+   {
+    "id": "term.policy_years",
+    "label": "From the document: policy term in years",
+    "value": "15 years",
+    "kind": "offer",
+    "source": "Brochure page 1 \u00b7 checked"
+   },
+   {
+    "id": "term.sum_assured",
+    "label": "From the document: guaranteed sum assured",
+    "value": "\u20b97.5 lakh",
+    "kind": "offer",
+    "source": "Brochure page 1 \u00b7 checked"
+   },
+   {
+    "id": "term.maturity_low",
+    "label": "From the document: amount you get back at the lower bonus rate",
+    "value": "\u20b910.2 lakh",
+    "kind": "offer",
+    "source": "Brochure page 2 \u00b7 checked"
+   },
+   {
+    "id": "term.maturity_high",
+    "label": "From the document: amount you get back at the higher bonus rate",
+    "value": "\u20b915 lakh",
+    "kind": "offer",
+    "source": "Brochure page 2 \u00b7 checked"
+   },
+   {
+    "id": "profile.monthly_income",
+    "label": "Family's monthly income",
+    "value": "\u20b945,000",
+    "kind": "personal",
+    "source": "You told us by voice"
+   },
+   {
+    "id": "profile.monthly_expenses",
+    "label": "Family's monthly household spending (not counting loan EMIs)",
+    "value": "\u20b928,000",
+    "kind": "personal",
+    "source": "You typed it"
+   },
+   {
+    "id": "profile.savings",
+    "label": "Family's savings",
+    "value": "\u20b91.6 lakh",
+    "kind": "personal",
+    "source": "From your passbook photo"
+   },
+   {
+    "id": "existing_emi",
+    "label": "Loan EMIs the family already pays each month",
+    "value": "\u20b92,400",
+    "kind": "personal",
+    "source": "Added up from your saved loans and policies"
+   },
+   {
+    "id": "regular_commitments",
+    "label": "Other regular payments each month, such as policy premiums (not loan EMIs)",
+    "value": "\u20b91,000",
+    "kind": "personal",
+    "source": "Added up from your saved loans and policies"
+   },
+   {
+    "id": "ref.fd_rate",
+    "label": "Typical fixed deposit interest rate (assumption), as of 2026-10-01",
+    "value": "7%",
+    "kind": "offer",
+    "source": "Assumption \u00b7 as of 1 Oct 2026"
+   },
+   {
+    "id": "ref.inflation",
+    "label": "Yearly price rise / inflation (assumption), as of 2026-10-01",
+    "value": "5%",
+    "kind": "offer",
+    "source": "Assumption \u00b7 as of 1 Oct 2026"
+   },
+   {
+    "id": "ref.index_long_run_return",
+    "label": "Long-run yearly return of a stock-market index fund (assumption), as of 2026-10-01",
+    "value": "11%",
+    "kind": "offer",
+    "source": "Assumption \u00b7 as of 1 Oct 2026"
+   },
+   {
+    "id": "ref.typical_personal_loan_rate",
+    "label": "Typical yearly interest rate of a normal bank personal loan (assumption), as of 2026-10-01",
+    "value": "14%",
+    "kind": "offer",
+    "source": "Assumption \u00b7 as of 1 Oct 2026"
+   },
+   {
+    "id": "endowment_return",
+    "label": "Yearly return of this policy: what you pay in vs what you get back",
+    "value": "3.8%",
+    "kind": "offer",
+    "source": "Worked out by Kanakku"
+   },
+   {
+    "id": "f_return_high",
+    "label": "Yearly return of this policy: what you pay in vs what you get back (at the higher bonus rate)",
+    "value": "8.3%",
+    "kind": "offer",
+    "source": "Worked out by Kanakku"
+   },
+   {
+    "id": "f_return_guaranteed",
+    "label": "Yearly return of this policy: what you pay in vs what you get back (on the guaranteed amount only)",
+    "value": "0%",
+    "kind": "offer",
+    "source": "Worked out by Kanakku"
+   },
+   {
+    "id": "fd_value",
+    "label": "Value after 15 years if the same yearly amount went into a fixed deposit instead",
+    "value": "\u20b913.44 lakh",
+    "kind": "offer",
+    "source": "Worked out by Kanakku"
+   },
+   {
+    "id": "cmp_return_low_vs_fd",
+    "label": "This plan's yearly return at the lower bonus rate, compared with a fixed deposit",
+    "value": "lower than",
+    "kind": "offer",
+    "source": "Worked out by Kanakku"
+   },
+   {
+    "id": "cmp_return_low_vs_inflation",
+    "label": "This plan's yearly return at the lower bonus rate, compared with rising prices (inflation)",
+    "value": "lower than",
+    "kind": "offer",
+    "source": "Worked out by Kanakku"
+   },
+   {
+    "id": "cmp_return_high_vs_fd",
+    "label": "This plan's yearly return at the higher bonus rate, compared with a fixed deposit",
+    "value": "higher than",
+    "kind": "offer",
+    "source": "Worked out by Kanakku"
+   },
+   {
+    "id": "cmp_return_high_vs_inflation",
+    "label": "This plan's yearly return at the higher bonus rate, compared with rising prices (inflation)",
+    "value": "higher than",
+    "kind": "offer",
+    "source": "Worked out by Kanakku"
+   },
+   {
+    "id": "cmp_guaranteed_vs_fd",
+    "label": "This plan's yearly return on the guaranteed amount only, compared with a fixed deposit",
+    "value": "lower than",
+    "kind": "offer",
+    "source": "Worked out by Kanakku"
+   },
+   {
+    "id": "cmp_guaranteed_vs_inflation",
+    "label": "This plan's yearly return on the guaranteed amount only, compared with rising prices (inflation)",
+    "value": "lower than",
+    "kind": "offer",
+    "source": "Worked out by Kanakku"
+   },
+   {
+    "id": "emi_share",
+    "label": "Share of monthly income going to loan EMIs after this",
+    "value": "5.3%",
+    "kind": "personal",
+    "source": "Worked out by Kanakku"
+   },
+   {
+    "id": "buffer_months_after",
+    "label": "Months your savings would cover all monthly costs after this",
+    "value": "4.5 months",
+    "kind": "personal",
+    "source": "Worked out by Kanakku"
+   },
+   {
+    "id": "surplus_after",
+    "label": "Money left each month after all costs and this",
+    "value": "\u20b99,433",
+    "kind": "personal",
+    "source": "Worked out by Kanakku"
+   },
+   {
+    "id": "premium_share_of_income",
+    "label": "The premium per month as a share of your monthly income",
+    "value": "9.3%",
+    "kind": "personal",
+    "source": "Worked out by Kanakku"
+   },
+   {
+    "id": "premium_share_of_savings",
+    "label": "One year's premium as a share of your savings",
+    "value": "31.2%",
+    "kind": "personal",
+    "source": "Worked out by Kanakku"
+   }
+  ],
+  "privacy_mode": "discreet",
+  "degraded": false,
+  "degraded_steps": [],
+  "llm_calls": 4,
+  "provider": "local",
+  "local_fallback": false,
+  "request_id": "1ae42e2045e048e3",
+  "language": "en",
+  "short_answer": {
+   "text": "Please don't go ahead with this as it is.",
+   "colour": "red"
+  },
+  "council": [
+   {
+    "speaker": "alfii",
+    "text": "Let me ask Dani and Sankz.",
+    "kind": "opener"
+   },
+   {
+    "speaker": "dani",
+    "text": "This plan grows only about 3.8 percent a year, lower than a fixed deposit.",
+    "kind": "agent"
+   },
+   {
+    "speaker": "sankz",
+    "text": "Only 7.5 lakh rupees is guaranteed, which is just your own premiums back with no growth.",
+    "kind": "agent"
+   },
+   {
+    "speaker": "alfii",
+    "text": "Do not sign yet: this plan earns less than a fixed deposit, and the 15 lakh rupees is not guaranteed.",
+    "kind": "conclusion"
+   }
+  ],
+  "council_words": 56,
+  "council_seconds": 22.4,
+  "suggested_followups": [
+   "What would an FD give me instead?",
+   "How much of this is guaranteed?",
+   "Can I afford this premium?"
+  ],
+  "claims": [
+   {
+    "claim": "guaranteed to give 15 lakh",
+    "status": "contradicted",
+    "evidence_ids": [
+     "q4",
+     "term.maturity_high"
+    ],
+    "evidence": "Bonus rates are not guaranteed and may change every year"
+   }
+  ]
+ },
+ "bundle": {
+  "case": {
+   "id": 1,
+   "family_id": 1,
+   "case_type": "insurance_offer",
+   "status": "done",
+   "transcript": "An agent from the company says this plan is guaranteed to give 15 lakh. Should I take it?",
+   "language": "en",
+   "privacy_mode": "discreet",
+   "created_at": "2026-10-31 14:15:17"
+  },
+  "quotes": [
+   {
+    "id": "q1",
+    "source": "transcript",
+    "text": "An agent from the company says this plan is guaranteed to give 15 lakh. Should I take it?"
+   },
+   {
+    "id": "q2",
+    "source": "page_1",
+    "text": "Kanakavalli Sthira Endowment Plan\nby Kanakavalli Life Assurance (fictional)\nA savings plan with life cover for your family.\nAnnual premium: Rs. 50,000\nPremium paying term: 15 years\nPolicy term: 15 years\nSum assured: Rs. 7,50,000 (guaranteed)\nGet up to Rs. 15,00,000 at maturity!*\nFICTIONAL DOCUMENT - FOR THE KANAKKU DEMO ONLY - NOT A REAL PRODUCT"
+   },
+   {
+    "id": "q3",
+    "source": "page_2",
+    "text": "Benefit illustration\nTotal premiums paid over 15 years: Rs. 7,50,000\nIllustrated maturity value at 4% bonus rate: Rs. 10,20,000\nIllustrated maturity value at 8% bonus rate: Rs. 15,00,000\nDeath benefit: sum assured plus bonuses added till then.\nMaturity is paid at the end of year 15.\nFICTIONAL DOCUMENT - FOR THE KANAKKU DEMO ONLY - NOT A REAL PRODUCT"
+   },
+   {
+    "id": "q4",
+    "source": "page_3",
+    "text": "Important terms\nBonus rates are not guaranteed and may change every year.\nSurrender value in the first 3 years: nil.\n* The Rs. 15,00,000 figure is illustrative, at an 8% bonus rate.\nPlease read the policy document before you sign.\nFICTIONAL DOCUMENT - FOR THE KANAKKU DEMO ONLY - NOT A REAL PRODUCT"
+   }
+  ],
+  "terms": [
+   {
+    "id": 1,
+    "case_id": 1,
+    "name": "premium",
+    "value": 50000.0,
+    "unit": "INR",
+    "evidence_id": 2,
+    "verified": true,
+    "reason": null,
+    "quote_id": "q2"
+   },
+   {
+    "id": 2,
+    "case_id": 1,
+    "name": "pay_years",
+    "value": 15.0,
+    "unit": "years",
+    "evidence_id": 2,
+    "verified": true,
+    "reason": null,
+    "quote_id": "q2"
+   },
+   {
+    "id": 3,
+    "case_id": 1,
+    "name": "policy_years",
+    "value": 15.0,
+    "unit": "years",
+    "evidence_id": 2,
+    "verified": true,
+    "reason": null,
+    "quote_id": "q2"
+   },
+   {
+    "id": 4,
+    "case_id": 1,
+    "name": "sum_assured",
+    "value": 750000.0,
+    "unit": "INR",
+    "evidence_id": 2,
+    "verified": true,
+    "reason": null,
+    "quote_id": "q2"
+   },
+   {
+    "id": 5,
+    "case_id": 1,
+    "name": "maturity_low",
+    "value": 1020000.0,
+    "unit": "INR",
+    "evidence_id": 3,
+    "verified": true,
+    "reason": null,
+    "quote_id": "q3"
+   },
+   {
+    "id": 6,
+    "case_id": 1,
+    "name": "maturity_high",
+    "value": 1500000.0,
+    "unit": "INR",
+    "evidence_id": 3,
+    "verified": true,
+    "reason": null,
+    "quote_id": "q3"
+   }
+  ],
+  "facts": [
+   {
+    "id": "term.premium",
+    "label": "From the document: yearly premium",
+    "value": 50000.0,
+    "unit": "INR",
+    "kind": "offer",
+    "formula": "read from the document and checked twice",
+    "inputs": {
+     "quote_id": "q2",
+     "source": "page_1",
+     "photo": false,
+     "reading": "checked"
+    },
+    "status": "known",
+    "value_text": null,
+    "phrase": null
+   },
+   {
+    "id": "term.pay_years",
+    "label": "From the document: number of years you pay",
+    "value": 15.0,
+    "unit": "years",
+    "kind": "offer",
+    "formula": "read from the document and checked twice",
+    "inputs": {
+     "quote_id": "q2",
+     "source": "page_1",
+     "photo": false,
+     "reading": "checked"
+    },
+    "status": "known",
+    "value_text": null,
+    "phrase": null
+   },
+   {
+    "id": "term.policy_years",
+    "label": "From the document: policy term in years",
+    "value": 15.0,
+    "unit": "years",
+    "kind": "offer",
+    "formula": "read from the document and checked twice",
+    "inputs": {
+     "quote_id": "q2",
+     "source": "page_1",
+     "photo": false,
+     "reading": "checked"
+    },
+    "status": "known",
+    "value_text": null,
+    "phrase": null
+   },
+   {
+    "id": "term.sum_assured",
+    "label": "From the document: guaranteed sum assured",
+    "value": 750000.0,
+    "unit": "INR",
+    "kind": "offer",
+    "formula": "read from the document and checked twice",
+    "inputs": {
+     "quote_id": "q2",
+     "source": "page_1",
+     "photo": false,
+     "reading": "checked"
+    },
+    "status": "known",
+    "value_text": null,
+    "phrase": null
+   },
+   {
+    "id": "term.maturity_low",
+    "label": "From the document: amount you get back at the lower bonus rate",
+    "value": 1020000.0,
+    "unit": "INR",
+    "kind": "offer",
+    "formula": "read from the document and checked twice",
+    "inputs": {
+     "quote_id": "q3",
+     "source": "page_2",
+     "photo": false,
+     "reading": "checked"
+    },
+    "status": "known",
+    "value_text": null,
+    "phrase": null
+   },
+   {
+    "id": "term.maturity_high",
+    "label": "From the document: amount you get back at the higher bonus rate",
+    "value": 1500000.0,
+    "unit": "INR",
+    "kind": "offer",
+    "formula": "read from the document and checked twice",
+    "inputs": {
+     "quote_id": "q3",
+     "source": "page_2",
+     "photo": false,
+     "reading": "checked"
+    },
+    "status": "known",
+    "value_text": null,
+    "phrase": null
+   },
+   {
+    "id": "profile.monthly_income",
+    "label": "Family's monthly income",
+    "value": 45000.0,
+    "unit": "INR",
+    "kind": "personal",
+    "formula": "confirmed value (voice)",
+    "inputs": {
+     "source": "voice",
+     "source_ref": "onboarding voice note",
+     "updated_at": "2026-10-31 14:15:17"
+    },
+    "status": "known",
+    "value_text": null,
+    "phrase": null
+   },
+   {
+    "id": "profile.monthly_expenses",
+    "label": "Family's monthly household spending (not counting loan EMIs)",
+    "value": 28000.0,
+    "unit": "INR",
+    "kind": "personal",
+    "formula": "confirmed value (typed)",
+    "inputs": {
+     "source": "typed",
+     "source_ref": "onboarding",
+     "updated_at": "2026-10-31 14:15:17"
+    },
+    "status": "known",
+    "value_text": null,
+    "phrase": null
+   },
+   {
+    "id": "profile.savings",
+    "label": "Family's savings",
+    "value": 160000.0,
+    "unit": "INR",
+    "kind": "personal",
+    "formula": "confirmed value (document)",
+    "inputs": {
+     "source": "document",
+     "source_ref": "passbook photo",
+     "updated_at": "2026-10-31 14:15:17"
+    },
+    "status": "known",
+    "value_text": null,
+    "phrase": null
+   },
+   {
+    "id": "existing_emi",
+    "label": "Loan EMIs the family already pays each month",
+    "value": 2400.0,
+    "unit": "INR",
+    "kind": "personal",
+    "formula": "sum of active confirmed loan items, per month",
+    "inputs": {
+     "items": [
+      2
+     ]
+    },
+    "status": "known",
+    "value_text": null,
+    "phrase": null
+   },
+   {
+    "id": "regular_commitments",
+    "label": "Other regular payments each month, such as policy premiums (not loan EMIs)",
+    "value": 1000.0,
+    "unit": "INR",
+    "kind": "personal",
+    "formula": "sum of active confirmed non-loan items, per month (yearly / 12)",
+    "inputs": {
+     "items": [
+      1
+     ]
+    },
+    "status": "known",
+    "value_text": null,
+    "phrase": null
+   },
+   {
+    "id": "ref.fd_rate",
+    "label": "Typical fixed deposit interest rate (assumption), as of 2026-10-01",
+    "value": 0.07,
+    "unit": "fraction",
+    "kind": "offer",
+    "formula": "reference snapshot",
+    "inputs": {
+     "as_of": "2026-10-01",
+     "assumption": true
+    },
+    "status": "known",
+    "value_text": null,
+    "phrase": null
+   },
+   {
+    "id": "ref.inflation",
+    "label": "Yearly price rise / inflation (assumption), as of 2026-10-01",
+    "value": 0.05,
+    "unit": "fraction",
+    "kind": "offer",
+    "formula": "reference snapshot",
+    "inputs": {
+     "as_of": "2026-10-01",
+     "assumption": true
+    },
+    "status": "known",
+    "value_text": null,
+    "phrase": null
+   },
+   {
+    "id": "ref.index_long_run_return",
+    "label": "Long-run yearly return of a stock-market index fund (assumption), as of 2026-10-01",
+    "value": 0.11,
+    "unit": "fraction",
+    "kind": "offer",
+    "formula": "reference snapshot",
+    "inputs": {
+     "as_of": "2026-10-01",
+     "assumption": true
+    },
+    "status": "known",
+    "value_text": null,
+    "phrase": null
+   },
+   {
+    "id": "ref.typical_personal_loan_rate",
+    "label": "Typical yearly interest rate of a normal bank personal loan (assumption), as of 2026-10-01",
+    "value": 0.14,
+    "unit": "fraction",
+    "kind": "offer",
+    "formula": "reference snapshot",
+    "inputs": {
+     "as_of": "2026-10-01",
+     "assumption": true
+    },
+    "status": "known",
+    "value_text": null,
+    "phrase": null
+   },
+   {
+    "id": "endowment_return",
+    "label": "Yearly return of this policy: what you pay in vs what you get back",
+    "value": 0.037543,
+    "unit": "fraction",
+    "kind": "offer",
+    "formula": "IRR of -premium at years 0..pay_years-1 and +payout at payout_year",
+    "inputs": {
+     "premium": 50000.0,
+     "pay_years": 15,
+     "payout": 1020000.0,
+     "payout_year": 15.0
+    },
+    "status": "known",
+    "value_text": null,
+    "phrase": null
+   },
+   {
+    "id": "f_return_high",
+    "label": "Yearly return of this policy: what you pay in vs what you get back (at the higher bonus rate)",
+    "value": 0.082613,
+    "unit": "fraction",
+    "kind": "offer",
+    "formula": "IRR of -premium at years 0..pay_years-1 and +payout at payout_year",
+    "inputs": {
+     "premium": 50000.0,
+     "pay_years": 15,
+     "payout": 1500000.0,
+     "payout_year": 15.0
+    },
+    "status": "known",
+    "value_text": null,
+    "phrase": null
+   },
+   {
+    "id": "f_return_guaranteed",
+    "label": "Yearly return of this policy: what you pay in vs what you get back (on the guaranteed amount only)",
+    "value": 0.0,
+    "unit": "fraction",
+    "kind": "offer",
+    "formula": "IRR of -premium at years 0..pay_years-1 and +payout at payout_year",
+    "inputs": {
+     "premium": 50000.0,
+     "pay_years": 15,
+     "payout": 750000.0,
+     "payout_year": 15.0
+    },
+    "status": "known",
+    "value_text": null,
+    "phrase": null
+   },
+   {
+    "id": "fd_value",
+    "label": "Value after 15 years if the same yearly amount went into a fixed deposit instead",
+    "value": 1344402.68,
+    "unit": "INR",
+    "kind": "offer",
+    "formula": "A * ((1+r)^n - 1) / r * (1+r)",
+    "inputs": {
+     "yearly_amount": 50000.0,
+     "years": 15,
+     "rate": 0.07
+    },
+    "status": "known",
+    "value_text": null,
+    "phrase": null
+   },
+   {
+    "id": "cmp_return_low_vs_fd",
+    "label": "This plan's yearly return at the lower bonus rate, compared with a fixed deposit",
+    "value": -3.25,
+    "unit": "percentage points",
+    "kind": "offer",
+    "formula": "endowment_return - ref.fd_rate in percentage points; within \u00b10.5 = about the same",
+    "inputs": {
+     "endowment_return": 0.037543,
+     "ref.fd_rate": 0.07,
+     "tolerance_pp": 0.5
+    },
+    "status": "known",
+    "value_text": "lower",
+    "phrase": null
+   },
+   {
+    "id": "cmp_return_low_vs_inflation",
+    "label": "This plan's yearly return at the lower bonus rate, compared with rising prices (inflation)",
+    "value": -1.25,
+    "unit": "percentage points",
+    "kind": "offer",
+    "formula": "endowment_return - ref.inflation in percentage points; within \u00b10.5 = about the same",
+    "inputs": {
+     "endowment_return": 0.037543,
+     "ref.inflation": 0.05,
+     "tolerance_pp": 0.5
+    },
+    "status": "known",
+    "value_text": "lower",
+    "phrase": null
+   },
+   {
+    "id": "cmp_return_high_vs_fd",
+    "label": "This plan's yearly return at the higher bonus rate, compared with a fixed deposit",
+    "value": 1.26,
+    "unit": "percentage points",
+    "kind": "offer",
+    "formula": "f_return_high - ref.fd_rate in percentage points; within \u00b10.5 = about the same",
+    "inputs": {
+     "f_return_high": 0.082613,
+     "ref.fd_rate": 0.07,
+     "tolerance_pp": 0.5
+    },
+    "status": "known",
+    "value_text": "higher",
+    "phrase": null
+   },
+   {
+    "id": "cmp_return_high_vs_inflation",
+    "label": "This plan's yearly return at the higher bonus rate, compared with rising prices (inflation)",
+    "value": 3.26,
+    "unit": "percentage points",
+    "kind": "offer",
+    "formula": "f_return_high - ref.inflation in percentage points; within \u00b10.5 = about the same",
+    "inputs": {
+     "f_return_high": 0.082613,
+     "ref.inflation": 0.05,
+     "tolerance_pp": 0.5
+    },
+    "status": "known",
+    "value_text": "higher",
+    "phrase": null
+   },
+   {
+    "id": "cmp_guaranteed_vs_fd",
+    "label": "This plan's yearly return on the guaranteed amount only, compared with a fixed deposit",
+    "value": -7.0,
+    "unit": "percentage points",
+    "kind": "offer",
+    "formula": "f_return_guaranteed - ref.fd_rate in percentage points; within \u00b10.5 = about the same",
+    "inputs": {
+     "f_return_guaranteed": 0.0,
+     "ref.fd_rate": 0.07,
+     "tolerance_pp": 0.5
+    },
+    "status": "known",
+    "value_text": "lower",
+    "phrase": null
+   },
+   {
+    "id": "cmp_guaranteed_vs_inflation",
+    "label": "This plan's yearly return on the guaranteed amount only, compared with rising prices (inflation)",
+    "value": -5.0,
+    "unit": "percentage points",
+    "kind": "offer",
+    "formula": "f_return_guaranteed - ref.inflation in percentage points; within \u00b10.5 = about the same",
+    "inputs": {
+     "f_return_guaranteed": 0.0,
+     "ref.inflation": 0.05,
+     "tolerance_pp": 0.5
+    },
+    "status": "known",
+    "value_text": "lower",
+    "phrase": null
+   },
+   {
+    "id": "emi_share",
+    "label": "Share of monthly income going to loan EMIs after this",
+    "value": 0.0533,
+    "unit": "fraction",
+    "kind": "personal",
+    "formula": "(existing_emi + new_monthly_cost) / monthly_income",
+    "inputs": {
+     "monthly_income": 45000.0,
+     "monthly_expenses": 28000.0,
+     "savings": 160000.0,
+     "existing_emi": 2400.0,
+     "regular_commitments": 5166.666666666667,
+     "new_monthly_cost": 0
+    },
+    "status": "known",
+    "value_text": null,
+    "phrase": null
+   },
+   {
+    "id": "buffer_months_after",
+    "label": "Months your savings would cover all monthly costs after this",
+    "value": 4.5,
+    "unit": "months",
+    "kind": "personal",
+    "formula": "savings / (monthly_expenses + existing_emi + regular_commitments + new_monthly_cost)",
+    "inputs": {
+     "monthly_income": 45000.0,
+     "monthly_expenses": 28000.0,
+     "savings": 160000.0,
+     "existing_emi": 2400.0,
+     "regular_commitments": 5166.666666666667,
+     "new_monthly_cost": 0
+    },
+    "status": "known",
+    "value_text": null,
+    "phrase": null
+   },
+   {
+    "id": "surplus_after",
+    "label": "Money left each month after all costs and this",
+    "value": 9433.33,
+    "unit": "INR",
+    "kind": "personal",
+    "formula": "monthly_income - monthly_expenses - existing_emi - regular_commitments - new_monthly_cost",
+    "inputs": {
+     "monthly_income": 45000.0,
+     "monthly_expenses": 28000.0,
+     "savings": 160000.0,
+     "existing_emi": 2400.0,
+     "regular_commitments": 5166.666666666667,
+     "new_monthly_cost": 0
+    },
+    "status": "known",
+    "value_text": null,
+    "phrase": null
+   },
+   {
+    "id": "premium_share_of_income",
+    "label": "The premium per month as a share of your monthly income",
+    "value": 0.0926,
+    "unit": "fraction",
+    "kind": "personal",
+    "formula": "(premium / 12) / monthly_income",
+    "inputs": {
+     "part": 4166.666666666667,
+     "whole": 45000.0
+    },
+    "status": "known",
+    "value_text": null,
+    "phrase": null
+   },
+   {
+    "id": "premium_share_of_savings",
+    "label": "One year's premium as a share of your savings",
+    "value": 0.3125,
+    "unit": "fraction",
+    "kind": "personal",
+    "formula": "premium / savings",
+    "inputs": {
+     "part": 50000.0,
+     "whole": 160000.0
+    },
+    "status": "known",
+    "value_text": null,
+    "phrase": null
+   }
+  ],
+  "positions": [
+   {
+    "id": 1,
+    "case_id": 1,
+    "agent": "dani",
+    "round": 1,
+    "stance": "against",
+    "strength": 0.9
+   },
+   {
+    "id": 2,
+    "case_id": 1,
+    "agent": "sankz",
+    "round": 1,
+    "stance": "against",
+    "strength": 0.7
+   }
+  ],
+  "arguments": [
+   {
+    "id": 1,
+    "case_id": 1,
+    "agent": "dani",
+    "round": 1,
+    "text": "At the illustrated bonus this plan returns only about 3.8% a year.",
+    "kept": 1,
+    "drop_reason": null,
+    "cited_ids": [
+     "endowment_return"
+    ]
+   },
+   {
+    "id": 2,
+    "case_id": 1,
+    "agent": "dani",
+    "round": 1,
+    "text": "The same \u20b950,000 a year in a fixed deposit would grow to about \u20b913.44 lakh, while the plan illustrates only \u20b910.2 lakh.",
+    "kept": 1,
+    "drop_reason": null,
+    "cited_ids": [
+     "q3",
+     "term.premium",
+     "fd_value",
+     "term.maturity_low"
+    ]
+   },
+   {
+    "id": 3,
+    "case_id": 1,
+    "agent": "sankz",
+    "round": 1,
+    "text": "Only \u20b97.5 lakh is guaranteed, which is just your own premiums back with no growth.",
+    "kept": 1,
+    "drop_reason": null,
+    "cited_ids": [
+     "q2",
+     "term.sum_assured"
+    ]
+   },
+   {
+    "id": 4,
+    "case_id": 1,
+    "agent": "sankz",
+    "round": 1,
+    "text": "Plans like this usually return 8% a year.",
+    "kept": 0,
+    "drop_reason": "raw number in text ('return 8% a year'); numbers must be {fact_id} placeholders",
+    "cited_ids": [
+     "endowment_return"
+    ]
+   }
+  ],
+  "verdict": {
+   "id": 1,
+   "case_id": 1,
+   "colour": "red",
+   "score": -0.8,
+   "disagreement": 0.0,
+   "sentence": "Do not sign yet: this plan earns less than a fixed deposit, and the 15 lakh rupees is not guaranteed.",
+   "degraded": 0,
+   "overrides": [
+    {
+     "rule": "unbacked_guarantee",
+     "effect": "min_yellow",
+     "detail": "seller said guaranteed; document does not"
+    }
+   ],
+   "questions": [
+    "Can you show me in writing what is guaranteed?",
+    "What do I get if I stop after 3 years?"
+   ]
+  },
+  "spoken_lines": [
+   {
+    "id": 1,
+    "case_id": 1,
+    "speaker": "alfii",
+    "order": 1,
+    "text": "Let me ask Dani and Sankz.",
+    "allowed": 1,
+    "blocked_reason": null
+   },
+   {
+    "id": 2,
+    "case_id": 1,
+    "speaker": "dani",
+    "order": 2,
+    "text": "This plan grows only about 3.8 percent a year, lower than a fixed deposit.",
+    "allowed": 1,
+    "blocked_reason": null
+   },
+   {
+    "id": 3,
+    "case_id": 1,
+    "speaker": "sankz",
+    "order": 3,
+    "text": "Only 7.5 lakh rupees is guaranteed, which is just your own premiums back with no growth.",
+    "allowed": 1,
+    "blocked_reason": null
+   },
+   {
+    "id": 4,
+    "case_id": 1,
+    "speaker": "alfii",
+    "order": 4,
+    "text": "Do not sign yet: this plan earns less than a fixed deposit, and the 15 lakh rupees is not guaranteed.",
+    "allowed": 1,
+    "blocked_reason": null
+   }
+  ],
+  "trace": [
+   {
+    "id": 1,
+    "case_id": 1,
+    "step": "request",
+    "ms": 0.0,
+    "outcome": "ok",
+    "detail": {
+     "request_id": "1ae42e2045e048e3",
+     "provider": "local"
+    }
+   },
+   {
+    "id": 2,
+    "case_id": 1,
+    "step": "ingest",
+    "ms": 37.7,
+    "outcome": "ok",
+    "detail": {
+     "pages": 3,
+     "transcript_chars": 89,
+     "problems": []
+    }
+   },
+   {
+    "id": 3,
+    "case_id": 1,
+    "step": "scam_rules",
+    "ms": 0.2,
+    "outcome": "ok",
+    "detail": {
+     "signals": []
+    }
+   },
+   {
+    "id": 4,
+    "case_id": 1,
+    "step": "case_builder",
+    "ms": 0.2,
+    "outcome": "ok",
+    "detail": {
+     "case_type": "insurance_offer",
+     "terms": 6,
+     "vision_read": false,
+     "ms_llm": 0.0,
+     "tokens": [
+      null,
+      null
+     ]
+    }
+   },
+   {
+    "id": 5,
+    "case_id": 1,
+    "step": "verify_terms",
+    "ms": 2.3,
+    "outcome": "ok",
+    "detail": {
+     "unverified": [],
+     "readings": {
+      "premium": "checked",
+      "pay_years": "checked",
+      "policy_years": "checked",
+      "sum_assured": "checked",
+      "maturity_low": "checked",
+      "maturity_high": "checked"
+     }
+    }
+   },
+   {
+    "id": 6,
+    "case_id": 1,
+    "step": "compute",
+    "ms": 1.2,
+    "outcome": "ok",
+    "detail": {
+     "facts": [
+      "term.premium",
+      "term.pay_years",
+      "term.policy_years",
+      "term.sum_assured",
+      "term.maturity_low",
+      "term.maturity_high",
+      "profile.monthly_income",
+      "profile.monthly_expenses",
+      "profile.savings",
+      "existing_emi",
+      "regular_commitments",
+      "ref.fd_rate",
+      "ref.inflation",
+      "ref.index_long_run_return",
+      "ref.typical_personal_loan_rate",
+      "endowment_return",
+      "f_return_high",
+      "f_return_guaranteed",
+      "fd_value",
+      "cmp_return_low_vs_fd",
+      "cmp_return_low_vs_inflation",
+      "cmp_return_high_vs_fd",
+      "cmp_return_high_vs_inflation",
+      "cmp_guaranteed_vs_fd",
+      "cmp_guaranteed_vs_inflation",
+      "emi_share",
+      "buffer_months_after",
+      "surplus_after",
+      "premium_share_of_income",
+      "premium_share_of_savings"
+     ],
+     "missing_required": []
+    }
+   },
+   {
+    "id": 7,
+    "case_id": 1,
+    "step": "router",
+    "ms": 0.0,
+    "outcome": "ok",
+    "detail": {
+     "case_type": "insurance_offer",
+     "flags": [],
+     "agents": [
+      "dani",
+      "sankz"
+     ],
+     "market_linked": "no market-linked words in the documents",
+     "claims": [
+      {
+       "claim": "guaranteed to give 15 lakh",
+       "quote": "this plan is guaranteed to give 15 lakh",
+       "status": "contradicted",
+       "evidence_ids": [
+        "q4",
+        "term.maturity_high"
+       ],
+       "evidence": "Bonus rates are not guaranteed and may change every year",
+       "reason": "the document says it is not guaranteed"
+      }
+     ]
+    }
+   },
+   {
+    "id": 8,
+    "case_id": 1,
+    "step": "council",
+    "ms": 1.6,
+    "outcome": "ok",
+    "detail": {
+     "agents": [
+      "dani",
+      "sankz"
+     ],
+     "dropped": [
+      "raw number in text ('return 8% a year'); numbers must be {fact_id} placeholders"
+     ],
+     "auto_placeholder": [],
+     "missing_agents": [],
+     "abstained": []
+    }
+   },
+   {
+    "id": 9,
+    "case_id": 1,
+    "step": "consensus",
+    "ms": 0.0,
+    "outcome": "ok",
+    "detail": {
+     "verdict": "red",
+     "vote_verdict": "red",
+     "score": -0.8,
+     "disagreement": 0.0,
+     "debate_needed": false,
+     "weights": {
+      "dani": 0.5,
+      "sankz": 0.5
+     },
+     "overrides": [
+      {
+       "rule": "unbacked_guarantee",
+       "effect": "min_yellow",
+       "detail": "seller said guaranteed; document does not"
+      }
+     ]
+    }
+   },
+   {
+    "id": 10,
+    "case_id": 1,
+    "step": "privacy",
+    "ms": 0.0,
+    "outcome": "ok",
+    "detail": {
+     "mode": "discreet",
+     "earphones": false,
+     "user_says_alone": false,
+     "context_cue": false
+    }
+   },
+   {
+    "id": 11,
+    "case_id": 1,
+    "step": "explainer",
+    "ms": 4.3,
+    "outcome": "ok",
+    "detail": {
+     "rewrite_used": true,
+     "auto_placeholder": [],
+     "lint": [],
+     "dropped_turns": [],
+     "notes": []
+    }
+   },
+   {
+    "id": 12,
+    "case_id": 1,
+    "step": "questions",
+    "ms": 0.0,
+    "outcome": "ok",
+    "detail": {
+     "bank": [
+      "ins_guaranteed",
+      "ins_lower_bonus",
+      "ins_higher_bonus",
+      "ins_stop_early",
+      "ins_bonus_rate"
+     ],
+     "picked": [
+      "ins_guaranteed",
+      "ins_stop_early"
+     ],
+     "reworded": [
+      {
+       "id": "ins_guaranteed",
+       "from": "How much is guaranteed in writing?",
+       "to": "Can you show me in writing what is guaranteed?"
+      }
+     ],
+     "rejected": [
+      {
+       "id": "ins_stop_early",
+       "text": "What do I get if I stop paying early?",
+       "why": "changed a number"
+      }
+     ]
+    }
+   }
+  ],
+  "result": {
+   "case_id": 1,
+   "case_type": "insurance_offer",
+   "verdict": {
+    "colour": "red",
+    "sentence": "Do not sign yet: this plan earns less than a fixed deposit, and the 15 lakh rupees is not guaranteed.",
+    "questions": [
+     "Can you show me in writing what is guaranteed?",
+     "What do I get if I stop after 3 years?"
+    ]
+   },
+   "called_agents": [
+    "dani",
+    "sankz"
+   ],
+   "spoken_lines": [
+    {
+     "speaker": "alfii",
+     "text": "Let me ask Dani and Sankz."
+    },
+    {
+     "speaker": "dani",
+     "text": "This plan grows only about 3.8 percent a year, lower than a fixed deposit."
+    },
+    {
+     "speaker": "sankz",
+     "text": "Only 7.5 lakh rupees is guaranteed, which is just your own premiums back with no growth."
+    },
+    {
+     "speaker": "alfii",
+     "text": "Do not sign yet: this plan earns less than a fixed deposit, and the 15 lakh rupees is not guaranteed."
+    }
+   ],
+   "screen_details": [
+    {
+     "id": "note.premium_share_of_savings",
+     "label": "This premium is 31.2% of your savings each year.",
+     "value": "31.2%",
+     "kind": "personal",
+     "source": "Kanakku note \u00b7 only on your screen"
+    },
+    {
+     "id": "note.premium_share_of_income",
+     "label": "Each month this premium is 9.3% of your income.",
+     "value": "9.3%",
+     "kind": "personal",
+     "source": "Kanakku note \u00b7 only on your screen"
+    },
+    {
+     "id": "note.surplus_after",
+     "label": "After this, you would have \u20b99,433 left each month.",
+     "value": "\u20b99,433",
+     "kind": "personal",
+     "source": "Kanakku note \u00b7 only on your screen"
+    },
+    {
+     "id": "note.buffer_months_after",
+     "label": "Your savings would cover 4.5 months of costs.",
+     "value": "4.5 months",
+     "kind": "personal",
+     "source": "Kanakku note \u00b7 only on your screen"
+    },
+    {
+     "id": "term.premium",
+     "label": "From the document: yearly premium",
+     "value": "\u20b950,000",
+     "kind": "offer",
+     "source": "Brochure page 1 \u00b7 checked"
+    },
+    {
+     "id": "term.pay_years",
+     "label": "From the document: number of years you pay",
+     "value": "15 years",
+     "kind": "offer",
+     "source": "Brochure page 1 \u00b7 checked"
+    },
+    {
+     "id": "term.policy_years",
+     "label": "From the document: policy term in years",
+     "value": "15 years",
+     "kind": "offer",
+     "source": "Brochure page 1 \u00b7 checked"
+    },
+    {
+     "id": "term.sum_assured",
+     "label": "From the document: guaranteed sum assured",
+     "value": "\u20b97.5 lakh",
+     "kind": "offer",
+     "source": "Brochure page 1 \u00b7 checked"
+    },
+    {
+     "id": "term.maturity_low",
+     "label": "From the document: amount you get back at the lower bonus rate",
+     "value": "\u20b910.2 lakh",
+     "kind": "offer",
+     "source": "Brochure page 2 \u00b7 checked"
+    },
+    {
+     "id": "term.maturity_high",
+     "label": "From the document: amount you get back at the higher bonus rate",
+     "value": "\u20b915 lakh",
+     "kind": "offer",
+     "source": "Brochure page 2 \u00b7 checked"
+    },
+    {
+     "id": "profile.monthly_income",
+     "label": "Family's monthly income",
+     "value": "\u20b945,000",
+     "kind": "personal",
+     "source": "You told us by voice"
+    },
+    {
+     "id": "profile.monthly_expenses",
+     "label": "Family's monthly household spending (not counting loan EMIs)",
+     "value": "\u20b928,000",
+     "kind": "personal",
+     "source": "You typed it"
+    },
+    {
+     "id": "profile.savings",
+     "label": "Family's savings",
+     "value": "\u20b91.6 lakh",
+     "kind": "personal",
+     "source": "From your passbook photo"
+    },
+    {
+     "id": "existing_emi",
+     "label": "Loan EMIs the family already pays each month",
+     "value": "\u20b92,400",
+     "kind": "personal",
+     "source": "Added up from your saved loans and policies"
+    },
+    {
+     "id": "regular_commitments",
+     "label": "Other regular payments each month, such as policy premiums (not loan EMIs)",
+     "value": "\u20b91,000",
+     "kind": "personal",
+     "source": "Added up from your saved loans and policies"
+    },
+    {
+     "id": "ref.fd_rate",
+     "label": "Typical fixed deposit interest rate (assumption), as of 2026-10-01",
+     "value": "7%",
+     "kind": "offer",
+     "source": "Assumption \u00b7 as of 1 Oct 2026"
+    },
+    {
+     "id": "ref.inflation",
+     "label": "Yearly price rise / inflation (assumption), as of 2026-10-01",
+     "value": "5%",
+     "kind": "offer",
+     "source": "Assumption \u00b7 as of 1 Oct 2026"
+    },
+    {
+     "id": "ref.index_long_run_return",
+     "label": "Long-run yearly return of a stock-market index fund (assumption), as of 2026-10-01",
+     "value": "11%",
+     "kind": "offer",
+     "source": "Assumption \u00b7 as of 1 Oct 2026"
+    },
+    {
+     "id": "ref.typical_personal_loan_rate",
+     "label": "Typical yearly interest rate of a normal bank personal loan (assumption), as of 2026-10-01",
+     "value": "14%",
+     "kind": "offer",
+     "source": "Assumption \u00b7 as of 1 Oct 2026"
+    },
+    {
+     "id": "endowment_return",
+     "label": "Yearly return of this policy: what you pay in vs what you get back",
+     "value": "3.8%",
+     "kind": "offer",
+     "source": "Worked out by Kanakku"
+    },
+    {
+     "id": "f_return_high",
+     "label": "Yearly return of this policy: what you pay in vs what you get back (at the higher bonus rate)",
+     "value": "8.3%",
+     "kind": "offer",
+     "source": "Worked out by Kanakku"
+    },
+    {
+     "id": "f_return_guaranteed",
+     "label": "Yearly return of this policy: what you pay in vs what you get back (on the guaranteed amount only)",
+     "value": "0%",
+     "kind": "offer",
+     "source": "Worked out by Kanakku"
+    },
+    {
+     "id": "fd_value",
+     "label": "Value after 15 years if the same yearly amount went into a fixed deposit instead",
+     "value": "\u20b913.44 lakh",
+     "kind": "offer",
+     "source": "Worked out by Kanakku"
+    },
+    {
+     "id": "cmp_return_low_vs_fd",
+     "label": "This plan's yearly return at the lower bonus rate, compared with a fixed deposit",
+     "value": "lower than",
+     "kind": "offer",
+     "source": "Worked out by Kanakku"
+    },
+    {
+     "id": "cmp_return_low_vs_inflation",
+     "label": "This plan's yearly return at the lower bonus rate, compared with rising prices (inflation)",
+     "value": "lower than",
+     "kind": "offer",
+     "source": "Worked out by Kanakku"
+    },
+    {
+     "id": "cmp_return_high_vs_fd",
+     "label": "This plan's yearly return at the higher bonus rate, compared with a fixed deposit",
+     "value": "higher than",
+     "kind": "offer",
+     "source": "Worked out by Kanakku"
+    },
+    {
+     "id": "cmp_return_high_vs_inflation",
+     "label": "This plan's yearly return at the higher bonus rate, compared with rising prices (inflation)",
+     "value": "higher than",
+     "kind": "offer",
+     "source": "Worked out by Kanakku"
+    },
+    {
+     "id": "cmp_guaranteed_vs_fd",
+     "label": "This plan's yearly return on the guaranteed amount only, compared with a fixed deposit",
+     "value": "lower than",
+     "kind": "offer",
+     "source": "Worked out by Kanakku"
+    },
+    {
+     "id": "cmp_guaranteed_vs_inflation",
+     "label": "This plan's yearly return on the guaranteed amount only, compared with rising prices (inflation)",
+     "value": "lower than",
+     "kind": "offer",
+     "source": "Worked out by Kanakku"
+    },
+    {
+     "id": "emi_share",
+     "label": "Share of monthly income going to loan EMIs after this",
+     "value": "5.3%",
+     "kind": "personal",
+     "source": "Worked out by Kanakku"
+    },
+    {
+     "id": "buffer_months_after",
+     "label": "Months your savings would cover all monthly costs after this",
+     "value": "4.5 months",
+     "kind": "personal",
+     "source": "Worked out by Kanakku"
+    },
+    {
+     "id": "surplus_after",
+     "label": "Money left each month after all costs and this",
+     "value": "\u20b99,433",
+     "kind": "personal",
+     "source": "Worked out by Kanakku"
+    },
+    {
+     "id": "premium_share_of_income",
+     "label": "The premium per month as a share of your monthly income",
+     "value": "9.3%",
+     "kind": "personal",
+     "source": "Worked out by Kanakku"
+    },
+    {
+     "id": "premium_share_of_savings",
+     "label": "One year's premium as a share of your savings",
+     "value": "31.2%",
+     "kind": "personal",
+     "source": "Worked out by Kanakku"
+    }
+   ],
+   "privacy_mode": "discreet",
+   "degraded": false,
+   "degraded_steps": [],
+   "llm_calls": 4,
+   "provider": "local",
+   "local_fallback": false,
+   "request_id": "1ae42e2045e048e3",
+   "language": "en",
+   "short_answer": {
+    "text": "Please don't go ahead with this as it is.",
+    "colour": "red"
+   },
+   "council": [
+    {
+     "speaker": "alfii",
+     "text": "Let me ask Dani and Sankz.",
+     "kind": "opener"
+    },
+    {
+     "speaker": "dani",
+     "text": "This plan grows only about 3.8 percent a year, lower than a fixed deposit.",
+     "kind": "agent"
+    },
+    {
+     "speaker": "sankz",
+     "text": "Only 7.5 lakh rupees is guaranteed, which is just your own premiums back with no growth.",
+     "kind": "agent"
+    },
+    {
+     "speaker": "alfii",
+     "text": "Do not sign yet: this plan earns less than a fixed deposit, and the 15 lakh rupees is not guaranteed.",
+     "kind": "conclusion"
+    }
+   ],
+   "council_words": 56,
+   "council_seconds": 22.4,
+   "suggested_followups": [
+    "What would an FD give me instead?",
+    "How much of this is guaranteed?",
+    "Can I afford this premium?"
+   ],
+   "claims": [
+    {
+     "claim": "guaranteed to give 15 lakh",
+     "status": "contradicted",
+     "evidence_ids": [
+      "q4",
+      "term.maturity_high"
+     ],
+     "evidence": "Bonus rates are not guaranteed and may change every year"
+    }
+   ]
+  }
+ }
+}

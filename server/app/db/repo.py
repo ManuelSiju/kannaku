@@ -6,7 +6,7 @@ import json
 import re
 import sqlite3
 from collections.abc import Iterable
-from datetime import date
+from datetime import date, datetime
 from pathlib import Path
 from typing import Any, Literal
 
@@ -404,7 +404,12 @@ class Repo:
         return self._rows(sql + " ORDER BY id DESC", *args)
 
     def update_alert(self, alert_id: int, *, status: str | None = None, note: str | None = None) -> bool:
-        cols = {k: v for k, v in {"status": status, "note": strip_ids(note)}.items() if v is not None}
+        """note = the guardian's note for Amma (shown on her Home screen); the alert's own message is not changed."""
+        cols: dict[str, Any] = {
+            k: v for k, v in {"status": status, "guardian_note": strip_ids(note)}.items() if v is not None
+        }
+        if note is not None:
+            cols["noted_at"] = datetime.now().isoformat(timespec="seconds")
         if not cols:
             return False
         sets = ", ".join(f"{k} = ?" for k in cols)

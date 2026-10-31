@@ -1,0 +1,66 @@
+{
+ "items": [
+  {
+   "id": 1,
+   "family_id": 1,
+   "kind": "policy",
+   "name": "Money-back policy (fictional)",
+   "amount": 12000.0,
+   "frequency": "yearly",
+   "start_date": null,
+   "end_date": null,
+   "source": "document",
+   "source_ref": "policy bond photo",
+   "confirmed": true
+  },
+  {
+   "id": 2,
+   "family_id": 1,
+   "kind": "loan",
+   "name": "Scooter loan EMI",
+   "amount": 2400.0,
+   "frequency": "monthly",
+   "start_date": null,
+   "end_date": "2027-03-31",
+   "source": "voice",
+   "source_ref": null,
+   "confirmed": true
+  }
+ ],
+ "facts": [
+  {
+   "id": "item.1.amount",
+   "label": "Money-back policy (fictional): amount paid a year",
+   "value": 12000.0,
+   "unit": "INR",
+   "kind": "personal",
+   "formula": "confirmed item (document)",
+   "inputs": {
+    "item_kind": "policy",
+    "frequency": "yearly",
+    "end_date": null,
+    "source": "document"
+   },
+   "status": "known",
+   "value_text": null,
+   "phrase": null
+  },
+  {
+   "id": "item.2.amount",
+   "label": "Scooter loan EMI: amount paid a month",
+   "value": 2400.0,
+   "unit": "INR",
+   "kind": "personal",
+   "formula": "confirmed item (voice)",
+   "inputs": {
+    "item_kind": "loan",
+    "frequency": "monthly",
+    "end_date": "2027-03-31",
+    "source": "voice"
+   },
+   "status": "known",
+   "value_text": null,
+   "phrase": null
+  }
+ ]
+}

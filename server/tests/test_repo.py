@@ -80,7 +80,7 @@ def test_case_round_trip(repo):
     assert b["verdict"]["colour"] == "red" and b["verdict"]["questions"] == ["Is the bonus guaranteed?"]
     assert b["trace"][0]["detail"] == {"tokens": 120}
     assert repo.update_alert(aid, status="handled", note="Called Amma")
-    assert repo.list_alerts(fam, "handled")[0]["note"] == "Called Amma"
+    assert repo.list_alerts(fam, "handled")[0]["guardian_note"] == "Called Amma"
 
 
 def test_facts_round_trip_unchanged(repo):

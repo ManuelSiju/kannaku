@@ -165,7 +165,7 @@ class Proposal {
 
 class Alert {
   final int id, caseId;
-  final String status, message, colour, sentence, caseType, note;
+  final String status, message, colour, sentence, caseType, note; // note = the guardian's note for Amma
   final List<Map<String, dynamic>> keyFacts, agentLines;
   Alert(this.id, this.caseId, this.status, this.message, this.colour, this.sentence, this.caseType, this.note,
       this.keyFacts, this.agentLines);
@@ -173,11 +173,11 @@ class Alert {
       integer(j['id']),
       integer(j['case_id']),
       str(j['status'], 'new'),
-      str(j['message']),
+      str(j['note']),
       str(j['colour']),
       str(j['sentence']),
       str(j['case_type']),
-      str(j['note']),
+      str(j['guardian_note']),
       objs(j['key_facts']),
       objs(j['agent_lines']));
 }

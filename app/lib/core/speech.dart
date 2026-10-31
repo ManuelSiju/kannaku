@@ -23,8 +23,14 @@ String ttsLocale(String lang) => switch (lang) {
       _ => 'en-IN',
     };
 
+/// Text-to-speech. Tests replace [Speaker.create] with a fake that records what was said.
 class Speaker {
-  final FlutterTts _tts = FlutterTts();
+  static Speaker Function() create = Speaker.base;
+  factory Speaker() => create();
+  Speaker.base();
+
+  FlutterTts? _ttsInstance;
+  FlutterTts get _tts => _ttsInstance ??= FlutterTts();
   bool _ready = false;
   double speed = 1.0;
 
@@ -56,9 +62,14 @@ class Speaker {
   }
 }
 
-/// Hold-to-talk recording to an .m4a file.
+/// Hold-to-talk recording to an .m4a file. Tests replace [Recorder.create] (e.g. with a fixture recording).
 class Recorder {
-  final AudioRecorder _rec = AudioRecorder();
+  static Recorder Function() create = Recorder.base;
+  factory Recorder() => create();
+  Recorder.base();
+
+  AudioRecorder? _recInstance;
+  AudioRecorder get _rec => _recInstance ??= AudioRecorder();
   String? _path;
 
   Future<bool> start() async {
@@ -95,5 +106,5 @@ class Recorder {
     } catch (_) {}
   }
 
-  void dispose() => _rec.dispose();
+  void dispose() => _recInstance?.dispose();
 }

@@ -103,11 +103,9 @@ class _AlertCard extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Row(children: [
+          Wrap(spacing: 8, runSpacing: 6, crossAxisAlignment: WrapCrossAlignment.center, children: [
             VerdictChip(a.colour),
-            const SizedBox(width: 8),
             Text(a.caseType.replaceAll('_', ' '), style: const TextStyle(fontSize: 16, color: K.muted)),
-            const Spacer(),
             if (handled) const Pill('handled', icon: Icons.check),
           ]),
           const SizedBox(height: 10),

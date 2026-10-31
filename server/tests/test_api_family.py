@@ -76,3 +76,13 @@ def test_alerts(client, demo_repo):
     assert client.patch(f"/alerts/{aid}", json={"status": "handled", "note": "Called Amma"}).json() == {"updated": True}
     assert client.get("/families/1/alerts", params={"status": "new"}).json() == []
     assert client.patch("/alerts/999", json={"status": "handled"}).status_code == 404
+
+
+def test_guardian_note_reaches_amma(client, demo_repo):
+    cid = demo_repo.create_case(1)
+    aid = demo_repo.create_alert(cid, 1, "RED: loan offer: do not sign")
+    assert client.patch(f"/v1/alerts/{aid}", json={"note": "Wait for me, I will call."}).status_code == 200
+    alert = client.get("/v1/families/1/alerts").json()[0]
+    assert alert["note"] == "RED: loan offer: do not sign" and alert["guardian_note"] == "Wait for me, I will call."
+    notes = client.get("/v1/families/1/notes").json()
+    assert notes[0]["note"] == "Wait for me, I will call." and notes[0]["from"] == "Arun"

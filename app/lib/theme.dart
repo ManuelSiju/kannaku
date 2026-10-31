@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 /// Design tokens for older users: large type, strong contrast, verdicts always colour + icon + word.
 class K {
@@ -60,14 +59,25 @@ class VerdictStyle {
       };
 }
 
+const fonts = ['Noto', 'NotoMalayalam', 'NotoDevanagari'];
+
 ThemeData buildTheme() {
   final base = ThemeData(
     useMaterial3: true,
+    fontFamily: 'Noto',
+    fontFamilyFallback: fonts,
     colorScheme: ColorScheme.fromSeed(seedColor: K.alfii, primary: K.alfii, surface: K.surface),
     scaffoldBackgroundColor: K.ground,
   );
-  final body = GoogleFonts.notoSansTextTheme(base.textTheme).apply(bodyColor: K.ink, displayColor: K.ink);
-  final heading = GoogleFonts.balooChettan2(fontWeight: FontWeight.w700, color: K.ink);
+  // Noto for body text, with Malayalam and Devanagari fallbacks; Baloo Chettan 2 (variable font) for headings.
+  final body = base.textTheme.apply(
+      fontFamily: 'Noto', fontFamilyFallback: fonts, bodyColor: K.ink, displayColor: K.ink);
+  const heading = TextStyle(
+      fontFamily: 'Baloo',
+      fontFamilyFallback: fonts,
+      fontWeight: FontWeight.w700,
+      fontVariations: [FontVariation('wght', 700)],
+      color: K.ink);
   return base.copyWith(
     textTheme: body.copyWith(
       bodyLarge: body.bodyLarge?.copyWith(fontSize: 18, height: 1.35),
@@ -87,7 +97,7 @@ ThemeData buildTheme() {
     filledButtonTheme: FilledButtonThemeData(
       style: FilledButton.styleFrom(
         minimumSize: const Size(K.touch, 56),
-        textStyle: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+        textStyle: const TextStyle(fontFamily: 'Noto', fontFamilyFallback: fonts, fontSize: 18, fontWeight: FontWeight.w600),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
       ),
     ),
@@ -96,7 +106,7 @@ ThemeData buildTheme() {
         minimumSize: const Size(K.touch, 52),
         foregroundColor: K.ink,
         side: const BorderSide(color: K.line, width: 1.5),
-        textStyle: const TextStyle(fontSize: K.body, fontWeight: FontWeight.w600),
+        textStyle: const TextStyle(fontFamily: 'Noto', fontFamilyFallback: fonts, fontSize: K.body, fontWeight: FontWeight.w600),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
       ),
     ),
@@ -107,6 +117,12 @@ ThemeData buildTheme() {
       border: OutlineInputBorder(borderRadius: BorderRadius.circular(14), borderSide: const BorderSide(color: K.line)),
       enabledBorder:
           OutlineInputBorder(borderRadius: BorderRadius.circular(14), borderSide: const BorderSide(color: K.line)),
+    ),
+    textButtonTheme: TextButtonThemeData(
+      style: TextButton.styleFrom(
+        minimumSize: const Size(K.touch, K.touch),
+        textStyle: const TextStyle(fontFamily: 'Noto', fontFamilyFallback: fonts, fontSize: K.body),
+      ),
     ),
     cardTheme: CardThemeData(
       color: K.surface,

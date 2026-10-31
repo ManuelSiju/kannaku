@@ -2,10 +2,10 @@
 # shellcheck shell=bash
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-RUN_DIR="$ROOT/run"
+RUN_DIR="${KANAKKU_RUN_DIR:-$ROOT/run}"  # tests point these elsewhere
 PY="$ROOT/.venv/bin/python"
 
-ENV_LOCAL="$ROOT/.env.local"  # secrets written by make up (gitignored, mode 600): META_API_KEY, KANAKKU_TOKEN
+ENV_LOCAL="${KANAKKU_ENV_LOCAL:-$ROOT/.env.local}"  # secrets written by make up (gitignored, mode 600): META_API_KEY, KANAKKU_TOKEN
 
 _fileget() {  # _fileget FILE KEY -> value (inline "# comments" and quotes stripped)
   [[ -f "$1" ]] || return 0

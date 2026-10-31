@@ -15,7 +15,25 @@ router = APIRouter(tags=["alerts"])
 
 class AlertPatch(BaseModel):
     status: Literal["new", "handled"] | None = None
-    note: str | None = None
+    note: str | None = None  # the guardian's note for Amma
+
+
+@router.get("/families/{family_id}/notes")
+def guardian_notes(family_id: int, repo: Repo = Depends(get_repo)) -> list[dict[str, Any]]:
+    """Notes the guardian left for Amma, newest first (her Home screen shows "A note from <guardian>")."""
+    require_family(repo, family_id)
+    guardian = next((m["name"] for m in repo.members(family_id) if m["role"] == "guardian"), "your family")
+    return [
+        {
+            "alert_id": a["id"],
+            "case_id": a["case_id"],
+            "from": guardian,
+            "note": a["guardian_note"],
+            "at": a["noted_at"],
+        }
+        for a in sorted(repo.list_alerts(family_id), key=lambda a: a.get("noted_at") or "", reverse=True)
+        if a.get("guardian_note")
+    ]
 
 
 @router.get("/families/{family_id}/alerts")

@@ -66,8 +66,10 @@ echo "✔ $OUT"
 
 # ---------------------------------------------------------------- install
 if [[ "$TARGET" == android ]]; then
-  if command -v adb >/dev/null && adb devices | awk 'NR>1 && $2=="device"' | grep -q .; then
-    adb install -r "$OUT" && echo "✔ installed on phone" || echo "✘ adb install failed"
+  SERIAL="${DEVICE:-$(adb devices 2>/dev/null | awk 'NR>1 && $2=="device" {print $1}' | grep -v '^emulator-' | head -n1)}"
+  SERIAL="${SERIAL:-$(adb devices 2>/dev/null | awk 'NR>1 && $2=="device" {print $1}' | head -n1)}"
+  if [[ "${NO_INSTALL:-}" != 1 && -n "$SERIAL" ]]; then
+    adb -s "$SERIAL" install -r "$OUT" && echo "✔ installed on $SERIAL" || echo "✘ adb install failed"
   else
     echo "No phone connected. Install later with: adb install -r $OUT"
   fi

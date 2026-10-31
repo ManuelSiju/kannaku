@@ -1,9 +1,10 @@
-import 'package:file_picker/file_picker.dart';
+import 'dart:async';
+
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 
 import '../core/api_client.dart';
+import '../core/pickers.dart';
 import '../core/speech.dart';
 import '../state/cases.dart';
 import '../state/settings.dart';
@@ -75,20 +76,8 @@ class _HomeScreenState extends State<HomeScreen> {
     );
     if (choice == null) return;
     try {
-      if (choice == 'pdf') {
-        final picked = await FilePicker.pickFiles(type: FileType.custom, allowedExtensions: ['pdf']);
-        if (picked.isNotEmpty) {
-          final bytes = await picked.first.readAsBytes();
-          setState(() => _pages.add(Upload('files', picked.first.name, bytes, 'application/pdf')));
-        }
-      } else {
-        final x = await ImagePicker().pickImage(
-            source: choice == 'camera' ? ImageSource.camera : ImageSource.gallery, maxWidth: 2400, imageQuality: 85);
-        if (x != null) {
-          final bytes = await x.readAsBytes();
-          setState(() => _pages.add(Upload('files', x.name, bytes, 'image/jpeg')));
-        }
-      }
+      final up = await Pickers.pick(choice, 'files');
+      if (up != null) setState(() => _pages.add(up));
     } catch (_) {
       if (mounted) toast(context, 'Could not open that. Please try again.');
     }
@@ -113,7 +102,8 @@ class _HomeScreenState extends State<HomeScreen> {
               label: _outLoud ? 'Answers out loud. Tap for private.' : 'Private answers. Tap for out loud.',
               child: ActionChip(
                 avatar: Icon(_outLoud ? Icons.volume_up_outlined : Icons.lock_outline, size: 18),
-                label: Text(_outLoud ? 'Out loud' : 'Private'),
+                label: Text(MediaQuery.textScalerOf(context).scale(10) > 12 ? '' : (_outLoud ? 'Out loud' : 'Private')),
+                labelPadding: MediaQuery.textScalerOf(context).scale(10) > 12 ? EdgeInsets.zero : null,
                 onPressed: () => setState(() => _outLoud = !_outLoud),
               ),
             ),
@@ -137,6 +127,7 @@ class _HomeScreenState extends State<HomeScreen> {
             child: const Text('No internet. Questions wait and are checked when it is back.',
                 textAlign: TextAlign.center, style: TextStyle(fontSize: 16)),
           ),
+        const NotesBanner(),
         Expanded(
           child: cases.chat.isEmpty
               ? _Empty(name: settings.userName)
@@ -320,6 +311,64 @@ class _AnswerCard extends StatelessWidget {
                     label: const Text('Why?')),
             ]),
           ]),
+        ),
+      ),
+    );
+  }
+}
+
+/// "A note from Arun": what the guardian wrote for Amma (newest), loaded each time Home is shown.
+class NotesBanner extends StatefulWidget {
+  const NotesBanner({super.key});
+  @override
+  State<NotesBanner> createState() => _NotesBannerState();
+}
+
+class _NotesBannerState extends State<NotesBanner> {
+  Map<String, dynamic>? _note;
+  Timer? _timer;
+
+  @override
+  void initState() {
+    super.initState();
+    _load();
+    // a note can arrive while the app is open; a failed load is retried on the next tick
+    _timer = Timer.periodic(const Duration(seconds: 30), (_) => _load());
+  }
+
+  Future<void> _load() async {
+    final s = context.read<SettingsProvider>();
+    try {
+      final n = await s.api.notes(s.familyId);
+      if (mounted && n.isNotEmpty) setState(() => _note = n.first);
+    } catch (_) {
+      if (mounted) Future<void>.delayed(const Duration(seconds: 3), () => mounted ? _load() : null);
+    }
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final n = _note;
+    if (n == null) return const SizedBox.shrink();
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+      child: Card(
+        color: const Color(0xFFE6F2EF),
+        child: ListTile(
+          leading: const Icon(Icons.favorite_outline, color: K.alfii),
+          title: Text('A note from ${n['from']}', style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 17)),
+          subtitle: Text('${n['note']}', style: const TextStyle(fontSize: 17, color: K.ink)),
+          trailing: IconButton(
+              tooltip: 'Read aloud',
+              icon: const Icon(Icons.volume_up_outlined),
+              onPressed: () => Speaker().say('A note from ${n['from']}. ${n['note']}',
+                  lang: context.read<SettingsProvider>().language)),
         ),
       ),
     );

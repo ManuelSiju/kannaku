@@ -1,0 +1,269 @@
+{
+ "result": {
+  "case_id": 5,
+  "case_type": "scam_or_payment_request",
+  "verdict": {
+   "colour": "red",
+   "sentence": "Please don't share any code or pay anyone. Hang up and call your bank yourself.",
+   "questions": []
+  },
+  "called_agents": [],
+  "spoken_lines": [
+   {
+    "speaker": "alfii",
+    "text": "You did the right thing by asking me."
+   },
+   {
+    "speaker": "alfii",
+    "text": "No real bank ever asks for your OTP or PIN."
+   },
+   {
+    "speaker": "alfii",
+    "text": "Please don't share any code or pay anyone. Hang up and call your bank yourself."
+   }
+  ],
+  "screen_details": [
+   {
+    "id": "scam.otp_pin_request",
+    "label": "Someone is asking for your OTP, PIN, CVV or password. No real bank or company ever asks for these.",
+    "value": "tell him the OTP",
+    "kind": "offer",
+    "source": "Warning sign in what you said"
+   },
+   {
+    "id": "scam.kyc_urgency",
+    "label": "A message says your KYC is expiring or your account will be blocked. Banks do not do this by call or link; visit your branch instead.",
+    "value": "KYC has expired",
+    "kind": "offer",
+    "source": "Warning sign in what you said"
+   }
+  ],
+  "privacy_mode": "discreet",
+  "degraded": false,
+  "degraded_steps": [],
+  "llm_calls": 0,
+  "provider": "local",
+  "local_fallback": false,
+  "request_id": "4e804af240de4ef1",
+  "language": "en",
+  "short_answer": {
+   "text": "No real bank ever asks for your OTP or PIN.",
+   "colour": "red"
+  },
+  "council": [
+   {
+    "speaker": "alfii",
+    "text": "You did the right thing by asking me.",
+    "kind": "opener"
+   },
+   {
+    "speaker": "alfii",
+    "text": "No real bank ever asks for your OTP or PIN.",
+    "kind": "agent"
+   },
+   {
+    "speaker": "alfii",
+    "text": "Please don't share any code or pay anyone. Hang up and call your bank yourself.",
+    "kind": "conclusion"
+   }
+  ],
+  "council_words": 33,
+  "council_seconds": 13.2,
+  "suggested_followups": [
+   "Is this message real?"
+  ],
+  "claims": []
+ },
+ "bundle": {
+  "case": {
+   "id": 5,
+   "family_id": 1,
+   "case_type": "scam_or_payment_request",
+   "status": "done",
+   "transcript": "A man from the bank called. My KYC has expired and he asks me to tell him the OTP.",
+   "language": "en",
+   "privacy_mode": "discreet",
+   "created_at": "2026-10-31 14:15:17"
+  },
+  "quotes": [
+   {
+    "id": "q11",
+    "source": "transcript",
+    "text": "A man from the bank called. My KYC has expired and he asks me to tell him the OTP."
+   }
+  ],
+  "terms": [],
+  "facts": [],
+  "positions": [],
+  "arguments": [],
+  "verdict": {
+   "id": 5,
+   "case_id": 5,
+   "colour": "red",
+   "score": 0.0,
+   "disagreement": 0.0,
+   "sentence": "Please don't share any code or pay anyone. Hang up and call your bank yourself.",
+   "degraded": 0,
+   "overrides": [
+    {
+     "rule": "scam_signal",
+     "effect": "red",
+     "detail": "scam signal detected"
+    }
+   ],
+   "questions": []
+  },
+  "spoken_lines": [
+   {
+    "id": 16,
+    "case_id": 5,
+    "speaker": "alfii",
+    "order": 1,
+    "text": "You did the right thing by asking me.",
+    "allowed": 1,
+    "blocked_reason": null
+   },
+   {
+    "id": 17,
+    "case_id": 5,
+    "speaker": "alfii",
+    "order": 2,
+    "text": "No real bank ever asks for your OTP or PIN.",
+    "allowed": 1,
+    "blocked_reason": null
+   },
+   {
+    "id": 18,
+    "case_id": 5,
+    "speaker": "alfii",
+    "order": 3,
+    "text": "Please don't share any code or pay anyone. Hang up and call your bank yourself.",
+    "allowed": 1,
+    "blocked_reason": null
+   }
+  ],
+  "trace": [
+   {
+    "id": 49,
+    "case_id": 5,
+    "step": "request",
+    "ms": 0.0,
+    "outcome": "ok",
+    "detail": {
+     "request_id": "4e804af240de4ef1",
+     "provider": "local"
+    }
+   },
+   {
+    "id": 50,
+    "case_id": 5,
+    "step": "ingest",
+    "ms": 0.0,
+    "outcome": "ok",
+    "detail": {
+     "pages": 0,
+     "transcript_chars": 82,
+     "problems": []
+    }
+   },
+   {
+    "id": 51,
+    "case_id": 5,
+    "step": "scam_rules",
+    "ms": 0.1,
+    "outcome": "ok",
+    "detail": {
+     "signals": [
+      {
+       "rule": "otp_pin_request",
+       "source": "transcript",
+       "matched_text": "tell him the OTP",
+       "explanation": "Someone is asking for your OTP, PIN, CVV or password. No real bank or company ever asks for these."
+      },
+      {
+       "rule": "kyc_urgency",
+       "source": "transcript",
+       "matched_text": "KYC has expired",
+       "explanation": "A message says your KYC is expiring or your account will be blocked. Banks do not do this by call or link; visit your branch instead."
+      }
+     ]
+    }
+   }
+  ],
+  "result": {
+   "case_id": 5,
+   "case_type": "scam_or_payment_request",
+   "verdict": {
+    "colour": "red",
+    "sentence": "Please don't share any code or pay anyone. Hang up and call your bank yourself.",
+    "questions": []
+   },
+   "called_agents": [],
+   "spoken_lines": [
+    {
+     "speaker": "alfii",
+     "text": "You did the right thing by asking me."
+    },
+    {
+     "speaker": "alfii",
+     "text": "No real bank ever asks for your OTP or PIN."
+    },
+    {
+     "speaker": "alfii",
+     "text": "Please don't share any code or pay anyone. Hang up and call your bank yourself."
+    }
+   ],
+   "screen_details": [
+    {
+     "id": "scam.otp_pin_request",
+     "label": "Someone is asking for your OTP, PIN, CVV or password. No real bank or company ever asks for these.",
+     "value": "tell him the OTP",
+     "kind": "offer",
+     "source": "Warning sign in what you said"
+    },
+    {
+     "id": "scam.kyc_urgency",
+     "label": "A message says your KYC is expiring or your account will be blocked. Banks do not do this by call or link; visit your branch instead.",
+     "value": "KYC has expired",
+     "kind": "offer",
+     "source": "Warning sign in what you said"
+    }
+   ],
+   "privacy_mode": "discreet",
+   "degraded": false,
+   "degraded_steps": [],
+   "llm_calls": 0,
+   "provider": "local",
+   "local_fallback": false,
+   "request_id": "4e804af240de4ef1",
+   "language": "en",
+   "short_answer": {
+    "text": "No real bank ever asks for your OTP or PIN.",
+    "colour": "red"
+   },
+   "council": [
+    {
+     "speaker": "alfii",
+     "text": "You did the right thing by asking me.",
+     "kind": "opener"
+    },
+    {
+     "speaker": "alfii",
+     "text": "No real bank ever asks for your OTP or PIN.",
+     "kind": "agent"
+    },
+    {
+     "speaker": "alfii",
+     "text": "Please don't share any code or pay anyone. Hang up and call your bank yourself.",
+     "kind": "conclusion"
+    }
+   ],
+   "council_words": 33,
+   "council_seconds": 13.2,
+   "suggested_followups": [
+    "Is this message real?"
+   ],
+   "claims": []
+  }
+ }
+}

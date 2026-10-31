@@ -1,0 +1,1015 @@
+{
+ "result": {
+  "case_id": 4,
+  "case_type": "stock_tip",
+  "verdict": {
+   "colour": "red",
+   "sentence": "Do not buy on this tip; it shows strong pump-and-dump signs. Talk to Arun before you decide.",
+   "questions": [
+    "Who sent this tip, and does that person own the stock?"
+   ]
+  },
+  "called_agents": [
+   "vick",
+   "sankz"
+  ],
+  "spoken_lines": [
+   {
+    "speaker": "alfii",
+    "text": "Let me ask Vick and Sankz."
+   },
+   {
+    "speaker": "vick",
+    "text": "This share jumped about 222 percent in a few weeks on huge volume, which is how pump-and-dump schemes look."
+   },
+   {
+    "speaker": "alfii",
+    "text": "Sankz has left a note about your budget on your screen."
+   },
+   {
+    "speaker": "alfii",
+    "text": "Do not buy on this tip; it shows strong pump-and-dump signs. Talk to Arun before you decide."
+   }
+  ],
+  "screen_details": [
+   {
+    "id": "note.invest_share_of_savings",
+    "label": "This amount is 62.5% of your savings.",
+    "value": "62.5%",
+    "kind": "personal",
+    "source": "Kanakku note \u00b7 only on your screen"
+   },
+   {
+    "id": "term.invest_amount",
+    "label": "From the document: amount to invest",
+    "value": "\u20b91 lakh",
+    "kind": "offer",
+    "source": "What you said \u00b7 checked"
+   },
+   {
+    "id": "profile.monthly_income",
+    "label": "Family's monthly income",
+    "value": "\u20b945,000",
+    "kind": "personal",
+    "source": "You told us by voice"
+   },
+   {
+    "id": "profile.monthly_expenses",
+    "label": "Family's monthly household spending (not counting loan EMIs)",
+    "value": "\u20b928,000",
+    "kind": "personal",
+    "source": "You typed it"
+   },
+   {
+    "id": "profile.savings",
+    "label": "Family's savings",
+    "value": "\u20b91.6 lakh",
+    "kind": "personal",
+    "source": "From your passbook photo"
+   },
+   {
+    "id": "existing_emi",
+    "label": "Loan EMIs the family already pays each month",
+    "value": "\u20b92,400",
+    "kind": "personal",
+    "source": "Added up from your saved loans and policies"
+   },
+   {
+    "id": "regular_commitments",
+    "label": "Other regular payments each month, such as policy premiums (not loan EMIs)",
+    "value": "\u20b91,000",
+    "kind": "personal",
+    "source": "Added up from your saved loans and policies"
+   },
+   {
+    "id": "ref.fd_rate",
+    "label": "Typical fixed deposit interest rate (assumption), as of 2026-10-01",
+    "value": "7%",
+    "kind": "offer",
+    "source": "Assumption \u00b7 as of 1 Oct 2026"
+   },
+   {
+    "id": "ref.inflation",
+    "label": "Yearly price rise / inflation (assumption), as of 2026-10-01",
+    "value": "5%",
+    "kind": "offer",
+    "source": "Assumption \u00b7 as of 1 Oct 2026"
+   },
+   {
+    "id": "ref.index_long_run_return",
+    "label": "Long-run yearly return of a stock-market index fund (assumption), as of 2026-10-01",
+    "value": "11%",
+    "kind": "offer",
+    "source": "Assumption \u00b7 as of 1 Oct 2026"
+   },
+   {
+    "id": "ref.typical_personal_loan_rate",
+    "label": "Typical yearly interest rate of a normal bank personal loan (assumption), as of 2026-10-01",
+    "value": "14%",
+    "kind": "offer",
+    "source": "Assumption \u00b7 as of 1 Oct 2026"
+   },
+   {
+    "id": "run_up_30d",
+    "label": "Price rise of ZEPHYRX over the last 30 trading days",
+    "value": "222%",
+    "kind": "offer",
+    "source": "Worked out by Kanakku"
+   },
+   {
+    "id": "upper_circuit_hits_30d",
+    "label": "Days of ZEPHYRX in the last 30 trading days the price jumped 4.9% or more",
+    "value": "22",
+    "kind": "offer",
+    "source": "Worked out by Kanakku"
+   },
+   {
+    "id": "volume_spike",
+    "label": "Trading volume of ZEPHYRX in the last 5 trading days compared with the 60 trading days before (times)",
+    "value": "4 times",
+    "kind": "offer",
+    "source": "Worked out by Kanakku"
+   },
+   {
+    "id": "max_drawdown_90d",
+    "label": "Biggest fall of ZEPHYRX from a high in the last 90 trading days",
+    "value": "2.8%",
+    "kind": "offer",
+    "source": "Worked out by Kanakku"
+   },
+   {
+    "id": "pump_risk",
+    "label": "Pump-and-dump warning level of ZEPHYRX",
+    "value": "a high pump-and-dump risk",
+    "kind": "offer",
+    "source": "Worked out by Kanakku"
+   },
+   {
+    "id": "invest_share_of_savings",
+    "label": "The amount you would put in, as a share of your savings",
+    "value": "62.5%",
+    "kind": "personal",
+    "source": "Worked out by Kanakku"
+   }
+  ],
+  "privacy_mode": "discreet",
+  "degraded": false,
+  "degraded_steps": [],
+  "llm_calls": 4,
+  "provider": "local",
+  "local_fallback": false,
+  "request_id": "0784f0b6aa574798",
+  "language": "en",
+  "short_answer": {
+   "text": "Please don't go ahead with this as it is.",
+   "colour": "red"
+  },
+  "council": [
+   {
+    "speaker": "alfii",
+    "text": "Let me ask Vick and Sankz.",
+    "kind": "opener"
+   },
+   {
+    "speaker": "vick",
+    "text": "This share jumped about 222 percent in a few weeks on huge volume, which is how pump-and-dump schemes look.",
+    "kind": "agent"
+   },
+   {
+    "speaker": "alfii",
+    "text": "Sankz has left a note about your budget on your screen.",
+    "kind": "note"
+   },
+   {
+    "speaker": "alfii",
+    "text": "Do not buy on this tip; it shows strong pump-and-dump signs. Talk to Arun before you decide.",
+    "kind": "conclusion"
+   }
+  ],
+  "council_words": 53,
+  "council_seconds": 21.2,
+  "suggested_followups": [
+   "What are the warning signs?",
+   "How much of my savings is this?"
+  ],
+  "claims": [
+   {
+    "claim": "Upper circuit guaranteed",
+    "status": "cant_verify",
+    "evidence_ids": [],
+    "evidence": ""
+   }
+  ]
+ },
+ "bundle": {
+  "case": {
+   "id": 4,
+   "family_id": 1,
+   "case_type": "stock_tip",
+   "status": "done",
+   "transcript": "I got this message: ZEPHYRX LTD - BIG NEWS COMING! Target Rs. 180 in 2 weeks. Upper circuit guaranteed. Should I put 1 lakh in it?",
+   "language": "en",
+   "privacy_mode": "discreet",
+   "created_at": "2026-10-31 14:15:17"
+  },
+  "quotes": [
+   {
+    "id": "q10",
+    "source": "transcript",
+    "text": "I got this message: ZEPHYRX LTD - BIG NEWS COMING! Target Rs. 180 in 2 weeks. Upper circuit guaranteed. Should I put 1 lakh in it?"
+   }
+  ],
+  "terms": [
+   {
+    "id": 16,
+    "case_id": 4,
+    "name": "invest_amount",
+    "value": 100000.0,
+    "unit": "INR",
+    "evidence_id": 10,
+    "verified": true,
+    "reason": null,
+    "quote_id": "q10"
+   }
+  ],
+  "facts": [
+   {
+    "id": "term.invest_amount",
+    "label": "From the document: amount to invest",
+    "value": 100000.0,
+    "unit": "INR",
+    "kind": "offer",
+    "formula": "read from the document and checked twice",
+    "inputs": {
+     "quote_id": "q10",
+     "source": "transcript",
+     "photo": false,
+     "reading": "checked"
+    },
+    "status": "known",
+    "value_text": null,
+    "phrase": null
+   },
+   {
+    "id": "profile.monthly_income",
+    "label": "Family's monthly income",
+    "value": 45000.0,
+    "unit": "INR",
+    "kind": "personal",
+    "formula": "confirmed value (voice)",
+    "inputs": {
+     "source": "voice",
+     "source_ref": "onboarding voice note",
+     "updated_at": "2026-10-31 14:15:17"
+    },
+    "status": "known",
+    "value_text": null,
+    "phrase": null
+   },
+   {
+    "id": "profile.monthly_expenses",
+    "label": "Family's monthly household spending (not counting loan EMIs)",
+    "value": 28000.0,
+    "unit": "INR",
+    "kind": "personal",
+    "formula": "confirmed value (typed)",
+    "inputs": {
+     "source": "typed",
+     "source_ref": "onboarding",
+     "updated_at": "2026-10-31 14:15:17"
+    },
+    "status": "known",
+    "value_text": null,
+    "phrase": null
+   },
+   {
+    "id": "profile.savings",
+    "label": "Family's savings",
+    "value": 160000.0,
+    "unit": "INR",
+    "kind": "personal",
+    "formula": "confirmed value (document)",
+    "inputs": {
+     "source": "document",
+     "source_ref": "passbook photo",
+     "updated_at": "2026-10-31 14:15:17"
+    },
+    "status": "known",
+    "value_text": null,
+    "phrase": null
+   },
+   {
+    "id": "existing_emi",
+    "label": "Loan EMIs the family already pays each month",
+    "value": 2400.0,
+    "unit": "INR",
+    "kind": "personal",
+    "formula": "sum of active confirmed loan items, per month",
+    "inputs": {
+     "items": [
+      2
+     ]
+    },
+    "status": "known",
+    "value_text": null,
+    "phrase": null
+   },
+   {
+    "id": "regular_commitments",
+    "label": "Other regular payments each month, such as policy premiums (not loan EMIs)",
+    "value": 1000.0,
+    "unit": "INR",
+    "kind": "personal",
+    "formula": "sum of active confirmed non-loan items, per month (yearly / 12)",
+    "inputs": {
+     "items": [
+      1
+     ]
+    },
+    "status": "known",
+    "value_text": null,
+    "phrase": null
+   },
+   {
+    "id": "ref.fd_rate",
+    "label": "Typical fixed deposit interest rate (assumption), as of 2026-10-01",
+    "value": 0.07,
+    "unit": "fraction",
+    "kind": "offer",
+    "formula": "reference snapshot",
+    "inputs": {
+     "as_of": "2026-10-01",
+     "assumption": true
+    },
+    "status": "known",
+    "value_text": null,
+    "phrase": null
+   },
+   {
+    "id": "ref.inflation",
+    "label": "Yearly price rise / inflation (assumption), as of 2026-10-01",
+    "value": 0.05,
+    "unit": "fraction",
+    "kind": "offer",
+    "formula": "reference snapshot",
+    "inputs": {
+     "as_of": "2026-10-01",
+     "assumption": true
+    },
+    "status": "known",
+    "value_text": null,
+    "phrase": null
+   },
+   {
+    "id": "ref.index_long_run_return",
+    "label": "Long-run yearly return of a stock-market index fund (assumption), as of 2026-10-01",
+    "value": 0.11,
+    "unit": "fraction",
+    "kind": "offer",
+    "formula": "reference snapshot",
+    "inputs": {
+     "as_of": "2026-10-01",
+     "assumption": true
+    },
+    "status": "known",
+    "value_text": null,
+    "phrase": null
+   },
+   {
+    "id": "ref.typical_personal_loan_rate",
+    "label": "Typical yearly interest rate of a normal bank personal loan (assumption), as of 2026-10-01",
+    "value": 0.14,
+    "unit": "fraction",
+    "kind": "offer",
+    "formula": "reference snapshot",
+    "inputs": {
+     "as_of": "2026-10-01",
+     "assumption": true
+    },
+    "status": "known",
+    "value_text": null,
+    "phrase": null
+   },
+   {
+    "id": "run_up_30d",
+    "label": "Price rise of ZEPHYRX over the last 30 trading days",
+    "value": 2.2179,
+    "unit": "fraction",
+    "kind": "offer",
+    "formula": "close[latest] / close[30 trading days earlier] - 1",
+    "inputs": {
+     "symbol": "ZEPHYRX",
+     "close_then": 39.46,
+     "close_now": 126.98,
+     "window_trading_days": 30,
+     "window_from": "2026-09-04",
+     "window_to": "2026-10-16"
+    },
+    "status": "known",
+    "value_text": null,
+    "phrase": null
+   },
+   {
+    "id": "upper_circuit_hits_30d",
+    "label": "Days of ZEPHYRX in the last 30 trading days the price jumped 4.9% or more",
+    "value": 22.0,
+    "unit": "count",
+    "kind": "offer",
+    "formula": "count of day-to-day rises >= 4.9% over the same 30 trading days as run_up_30d",
+    "inputs": {
+     "symbol": "ZEPHYRX",
+     "circuit_pct": 4.9,
+     "window_trading_days": 30,
+     "window_from": "2026-09-04",
+     "window_to": "2026-10-16"
+    },
+    "status": "known",
+    "value_text": null,
+    "phrase": null
+   },
+   {
+    "id": "volume_spike",
+    "label": "Trading volume of ZEPHYRX in the last 5 trading days compared with the 60 trading days before (times)",
+    "value": 3.97,
+    "unit": "times",
+    "kind": "offer",
+    "formula": "mean(volume, last 5 trading days) / mean(volume, previous 60 trading days)",
+    "inputs": {
+     "symbol": "ZEPHYRX"
+    },
+    "status": "known",
+    "value_text": null,
+    "phrase": null
+   },
+   {
+    "id": "max_drawdown_90d",
+    "label": "Biggest fall of ZEPHYRX from a high in the last 90 trading days",
+    "value": 0.0283,
+    "unit": "fraction",
+    "kind": "offer",
+    "formula": "max over days of (1 - close / running peak) within the last 90 trading days",
+    "inputs": {
+     "symbol": "ZEPHYRX"
+    },
+    "status": "known",
+    "value_text": null,
+    "phrase": null
+   },
+   {
+    "id": "pump_risk",
+    "label": "Pump-and-dump warning level of ZEPHYRX",
+    "value": 2.0,
+    "unit": "level",
+    "kind": "offer",
+    "formula": "thresholds in engines/tip_signals.py",
+    "inputs": {
+     "symbol": "ZEPHYRX",
+     "run_up_30d": 2.2179422199695895,
+     "volume_spike": 3.9699098477583687,
+     "upper_circuit_hits_30d": 22
+    },
+    "status": "known",
+    "value_text": "high",
+    "phrase": null
+   },
+   {
+    "id": "invest_share_of_savings",
+    "label": "The amount you would put in, as a share of your savings",
+    "value": 0.625,
+    "unit": "fraction",
+    "kind": "personal",
+    "formula": "invest_amount / savings",
+    "inputs": {
+     "part": 100000.0,
+     "whole": 160000.0
+    },
+    "status": "known",
+    "value_text": null,
+    "phrase": null
+   }
+  ],
+  "positions": [
+   {
+    "id": 6,
+    "case_id": 4,
+    "agent": "vick",
+    "round": 1,
+    "stance": "against",
+    "strength": 1.0
+   },
+   {
+    "id": 7,
+    "case_id": 4,
+    "agent": "sankz",
+    "round": 1,
+    "stance": "against",
+    "strength": 0.6
+   }
+  ],
+  "arguments": [
+   {
+    "id": 11,
+    "case_id": 4,
+    "agent": "vick",
+    "round": 1,
+    "text": "ZEPHYRX rose about 222% in the last month of trading, with 22 days of big jumps.",
+    "kept": 1,
+    "drop_reason": null,
+    "cited_ids": [
+     "run_up_30d",
+     "upper_circuit_hits_30d"
+    ]
+   },
+   {
+    "id": 12,
+    "case_id": 4,
+    "agent": "vick",
+    "round": 1,
+    "text": "Trading volume is about 4 times its usual level, a classic pump-and-dump sign.",
+    "kept": 1,
+    "drop_reason": null,
+    "cited_ids": [
+     "volume_spike"
+    ]
+   },
+   {
+    "id": 13,
+    "case_id": 4,
+    "agent": "sankz",
+    "round": 1,
+    "text": "Putting \u20b91 lakh into one tip is a big risk for your savings.",
+    "kept": 1,
+    "drop_reason": null,
+    "cited_ids": [
+     "term.invest_amount"
+    ]
+   }
+  ],
+  "verdict": {
+   "id": 4,
+   "case_id": 4,
+   "colour": "red",
+   "score": -0.84,
+   "disagreement": 0.0,
+   "sentence": "Do not buy on this tip; it shows strong pump-and-dump signs. Talk to Arun before you decide.",
+   "degraded": 0,
+   "overrides": [],
+   "questions": [
+    "Who sent this tip, and does that person own the stock?"
+   ]
+  },
+  "spoken_lines": [
+   {
+    "id": 12,
+    "case_id": 4,
+    "speaker": "alfii",
+    "order": 1,
+    "text": "Let me ask Vick and Sankz.",
+    "allowed": 1,
+    "blocked_reason": null
+   },
+   {
+    "id": 13,
+    "case_id": 4,
+    "speaker": "vick",
+    "order": 2,
+    "text": "This share jumped about 222 percent in a few weeks on huge volume, which is how pump-and-dump schemes look.",
+    "allowed": 1,
+    "blocked_reason": null
+   },
+   {
+    "id": 14,
+    "case_id": 4,
+    "speaker": "alfii",
+    "order": 3,
+    "text": "Sankz has left a note about your budget on your screen.",
+    "allowed": 1,
+    "blocked_reason": "privacy: personal word 'savings' in discreet mode"
+   },
+   {
+    "id": 15,
+    "case_id": 4,
+    "speaker": "alfii",
+    "order": 4,
+    "text": "Do not buy on this tip; it shows strong pump-and-dump signs. Talk to Arun before you decide.",
+    "allowed": 1,
+    "blocked_reason": null
+   }
+  ],
+  "trace": [
+   {
+    "id": 37,
+    "case_id": 4,
+    "step": "request",
+    "ms": 0.0,
+    "outcome": "ok",
+    "detail": {
+     "request_id": "0784f0b6aa574798",
+     "provider": "local"
+    }
+   },
+   {
+    "id": 38,
+    "case_id": 4,
+    "step": "ingest",
+    "ms": 0.0,
+    "outcome": "ok",
+    "detail": {
+     "pages": 0,
+     "transcript_chars": 130,
+     "problems": []
+    }
+   },
+   {
+    "id": 39,
+    "case_id": 4,
+    "step": "scam_rules",
+    "ms": 0.1,
+    "outcome": "ok",
+    "detail": {
+     "signals": []
+    }
+   },
+   {
+    "id": 40,
+    "case_id": 4,
+    "step": "case_builder",
+    "ms": 0.1,
+    "outcome": "ok",
+    "detail": {
+     "case_type": "stock_tip",
+     "terms": 1,
+     "vision_read": false,
+     "ms_llm": 0.0,
+     "tokens": [
+      null,
+      null
+     ]
+    }
+   },
+   {
+    "id": 41,
+    "case_id": 4,
+    "step": "verify_terms",
+    "ms": 0.4,
+    "outcome": "ok",
+    "detail": {
+     "unverified": [],
+     "readings": {
+      "invest_amount": "checked"
+     }
+    }
+   },
+   {
+    "id": 42,
+    "case_id": 4,
+    "step": "compute",
+    "ms": 1.0,
+    "outcome": "ok",
+    "detail": {
+     "facts": [
+      "term.invest_amount",
+      "profile.monthly_income",
+      "profile.monthly_expenses",
+      "profile.savings",
+      "existing_emi",
+      "regular_commitments",
+      "ref.fd_rate",
+      "ref.inflation",
+      "ref.index_long_run_return",
+      "ref.typical_personal_loan_rate",
+      "run_up_30d",
+      "upper_circuit_hits_30d",
+      "volume_spike",
+      "max_drawdown_90d",
+      "pump_risk",
+      "invest_share_of_savings"
+     ],
+     "missing_required": []
+    }
+   },
+   {
+    "id": 43,
+    "case_id": 4,
+    "step": "router",
+    "ms": 0.0,
+    "outcome": "ok",
+    "detail": {
+     "case_type": "stock_tip",
+     "flags": [
+      "amount_large"
+     ],
+     "agents": [
+      "vick",
+      "sankz"
+     ],
+     "market_linked": "no market-linked words in the documents",
+     "claims": [
+      {
+       "claim": "Upper circuit guaranteed",
+       "quote": "Upper circuit guaranteed",
+       "status": "cant_verify",
+       "evidence_ids": [],
+       "evidence": "",
+       "reason": "no one can guarantee a share price"
+      }
+     ]
+    }
+   },
+   {
+    "id": 44,
+    "case_id": 4,
+    "step": "council",
+    "ms": 0.5,
+    "outcome": "ok",
+    "detail": {
+     "agents": [
+      "vick",
+      "sankz"
+     ],
+     "dropped": [],
+     "auto_placeholder": [],
+     "missing_agents": [],
+     "abstained": []
+    }
+   },
+   {
+    "id": 45,
+    "case_id": 4,
+    "step": "consensus",
+    "ms": 0.0,
+    "outcome": "ok",
+    "detail": {
+     "verdict": "red",
+     "vote_verdict": "red",
+     "score": -0.84,
+     "disagreement": 0.0,
+     "debate_needed": false,
+     "weights": {
+      "vick": 0.6,
+      "sankz": 0.4
+     },
+     "overrides": []
+    }
+   },
+   {
+    "id": 46,
+    "case_id": 4,
+    "step": "privacy",
+    "ms": 0.0,
+    "outcome": "ok",
+    "detail": {
+     "mode": "discreet",
+     "earphones": false,
+     "user_says_alone": false,
+     "context_cue": false
+    }
+   },
+   {
+    "id": 47,
+    "case_id": 4,
+    "step": "explainer",
+    "ms": 1.0,
+    "outcome": "ok",
+    "detail": {
+     "rewrite_used": true,
+     "auto_placeholder": [],
+     "lint": [],
+     "dropped_turns": [
+      "sankz"
+     ],
+     "notes": [
+      "Sankz has left a note about your budget on your screen."
+     ]
+    }
+   },
+   {
+    "id": 48,
+    "case_id": 4,
+    "step": "questions",
+    "ms": 0.0,
+    "outcome": "ok",
+    "detail": {
+     "bank": [
+      "stock_who",
+      "stock_why_rising",
+      "stock_lose"
+     ],
+     "picked": [
+      "stock_who"
+     ],
+     "reworded": [
+      {
+       "id": "stock_who",
+       "from": "Who sent this tip, and do they own the stock?",
+       "to": "Who sent this tip, and does that person own the stock?"
+      }
+     ],
+     "rejected": []
+    }
+   }
+  ],
+  "result": {
+   "case_id": 4,
+   "case_type": "stock_tip",
+   "verdict": {
+    "colour": "red",
+    "sentence": "Do not buy on this tip; it shows strong pump-and-dump signs. Talk to Arun before you decide.",
+    "questions": [
+     "Who sent this tip, and does that person own the stock?"
+    ]
+   },
+   "called_agents": [
+    "vick",
+    "sankz"
+   ],
+   "spoken_lines": [
+    {
+     "speaker": "alfii",
+     "text": "Let me ask Vick and Sankz."
+    },
+    {
+     "speaker": "vick",
+     "text": "This share jumped about 222 percent in a few weeks on huge volume, which is how pump-and-dump schemes look."
+    },
+    {
+     "speaker": "alfii",
+     "text": "Sankz has left a note about your budget on your screen."
+    },
+    {
+     "speaker": "alfii",
+     "text": "Do not buy on this tip; it shows strong pump-and-dump signs. Talk to Arun before you decide."
+    }
+   ],
+   "screen_details": [
+    {
+     "id": "note.invest_share_of_savings",
+     "label": "This amount is 62.5% of your savings.",
+     "value": "62.5%",
+     "kind": "personal",
+     "source": "Kanakku note \u00b7 only on your screen"
+    },
+    {
+     "id": "term.invest_amount",
+     "label": "From the document: amount to invest",
+     "value": "\u20b91 lakh",
+     "kind": "offer",
+     "source": "What you said \u00b7 checked"
+    },
+    {
+     "id": "profile.monthly_income",
+     "label": "Family's monthly income",
+     "value": "\u20b945,000",
+     "kind": "personal",
+     "source": "You told us by voice"
+    },
+    {
+     "id": "profile.monthly_expenses",
+     "label": "Family's monthly household spending (not counting loan EMIs)",
+     "value": "\u20b928,000",
+     "kind": "personal",
+     "source": "You typed it"
+    },
+    {
+     "id": "profile.savings",
+     "label": "Family's savings",
+     "value": "\u20b91.6 lakh",
+     "kind": "personal",
+     "source": "From your passbook photo"
+    },
+    {
+     "id": "existing_emi",
+     "label": "Loan EMIs the family already pays each month",
+     "value": "\u20b92,400",
+     "kind": "personal",
+     "source": "Added up from your saved loans and policies"
+    },
+    {
+     "id": "regular_commitments",
+     "label": "Other regular payments each month, such as policy premiums (not loan EMIs)",
+     "value": "\u20b91,000",
+     "kind": "personal",
+     "source": "Added up from your saved loans and policies"
+    },
+    {
+     "id": "ref.fd_rate",
+     "label": "Typical fixed deposit interest rate (assumption), as of 2026-10-01",
+     "value": "7%",
+     "kind": "offer",
+     "source": "Assumption \u00b7 as of 1 Oct 2026"
+    },
+    {
+     "id": "ref.inflation",
+     "label": "Yearly price rise / inflation (assumption), as of 2026-10-01",
+     "value": "5%",
+     "kind": "offer",
+     "source": "Assumption \u00b7 as of 1 Oct 2026"
+    },
+    {
+     "id": "ref.index_long_run_return",
+     "label": "Long-run yearly return of a stock-market index fund (assumption), as of 2026-10-01",
+     "value": "11%",
+     "kind": "offer",
+     "source": "Assumption \u00b7 as of 1 Oct 2026"
+    },
+    {
+     "id": "ref.typical_personal_loan_rate",
+     "label": "Typical yearly interest rate of a normal bank personal loan (assumption), as of 2026-10-01",
+     "value": "14%",
+     "kind": "offer",
+     "source": "Assumption \u00b7 as of 1 Oct 2026"
+    },
+    {
+     "id": "run_up_30d",
+     "label": "Price rise of ZEPHYRX over the last 30 trading days",
+     "value": "222%",
+     "kind": "offer",
+     "source": "Worked out by Kanakku"
+    },
+    {
+     "id": "upper_circuit_hits_30d",
+     "label": "Days of ZEPHYRX in the last 30 trading days the price jumped 4.9% or more",
+     "value": "22",
+     "kind": "offer",
+     "source": "Worked out by Kanakku"
+    },
+    {
+     "id": "volume_spike",
+     "label": "Trading volume of ZEPHYRX in the last 5 trading days compared with the 60 trading days before (times)",
+     "value": "4 times",
+     "kind": "offer",
+     "source": "Worked out by Kanakku"
+    },
+    {
+     "id": "max_drawdown_90d",
+     "label": "Biggest fall of ZEPHYRX from a high in the last 90 trading days",
+     "value": "2.8%",
+     "kind": "offer",
+     "source": "Worked out by Kanakku"
+    },
+    {
+     "id": "pump_risk",
+     "label": "Pump-and-dump warning level of ZEPHYRX",
+     "value": "a high pump-and-dump risk",
+     "kind": "offer",
+     "source": "Worked out by Kanakku"
+    },
+    {
+     "id": "invest_share_of_savings",
+     "label": "The amount you would put in, as a share of your savings",
+     "value": "62.5%",
+     "kind": "personal",
+     "source": "Worked out by Kanakku"
+    }
+   ],
+   "privacy_mode": "discreet",
+   "degraded": false,
+   "degraded_steps": [],
+   "llm_calls": 4,
+   "provider": "local",
+   "local_fallback": false,
+   "request_id": "0784f0b6aa574798",
+   "language": "en",
+   "short_answer": {
+    "text": "Please don't go ahead with this as it is.",
+    "colour": "red"
+   },
+   "council": [
+    {
+     "speaker": "alfii",
+     "text": "Let me ask Vick and Sankz.",
+     "kind": "opener"
+    },
+    {
+     "speaker": "vick",
+     "text": "This share jumped about 222 percent in a few weeks on huge volume, which is how pump-and-dump schemes look.",
+     "kind": "agent"
+    },
+    {
+     "speaker": "alfii",
+     "text": "Sankz has left a note about your budget on your screen.",
+     "kind": "note"
+    },
+    {
+     "speaker": "alfii",
+     "text": "Do not buy on this tip; it shows strong pump-and-dump signs. Talk to Arun before you decide.",
+     "kind": "conclusion"
+    }
+   ],
+   "council_words": 53,
+   "council_seconds": 21.2,
+   "suggested_followups": [
+    "What are the warning signs?",
+    "How much of my savings is this?"
+   ],
+   "claims": [
+    {
+     "claim": "Upper circuit guaranteed",
+     "status": "cant_verify",
+     "evidence_ids": [],
+     "evidence": ""
+    }
+   ]
+  }
+ }
+}

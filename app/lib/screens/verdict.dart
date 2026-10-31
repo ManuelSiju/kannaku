@@ -5,11 +5,13 @@ import 'package:provider/provider.dart';
 import '../core/api_client.dart';
 import '../core/models.dart';
 import '../core/speech.dart';
+import '../state/cases.dart';
 import '../state/settings.dart';
 import '../theme.dart';
 import '../widgets/common.dart';
 import 'council.dart';
 import 'why.dart';
+import 'working.dart';
 
 class VerdictScreen extends StatefulWidget {
   final CaseResult result;
@@ -21,6 +23,15 @@ class VerdictScreen extends StatefulWidget {
 
 class _VerdictScreenState extends State<VerdictScreen> {
   final _speaker = Speaker();
+  final _followUp = TextEditingController();
+
+  /// A follow-up continues this case: the brochure and earlier answers still count.
+  void _ask(String text) {
+    if (text.trim().isEmpty) return;
+    _followUp.clear();
+    Navigator.of(context).pushReplacement(MaterialPageRoute(
+        builder: (_) => WorkingScreen(request: AskRequest(text: text, caseId: widget.result.caseId))));
+  }
 
   @override
   void initState() {
@@ -35,6 +46,7 @@ class _VerdictScreenState extends State<VerdictScreen> {
   @override
   void dispose() {
     _speaker.stop();
+    _followUp.dispose();
     super.dispose();
   }
 
@@ -168,12 +180,32 @@ class _VerdictScreenState extends State<VerdictScreen> {
               OutlinedButton.icon(
                   onPressed: _helpSayNo, icon: const Icon(Icons.edit_note), label: const Text('Help me say no')),
             ],
-            if (r.followups.isNotEmpty) ...[
-              const SectionTitle('You could also ask'),
+            const SectionTitle('Ask more about this'),
+            if (r.followups.isNotEmpty)
               Wrap(spacing: 8, runSpacing: 8, children: [
-                for (final f in r.followups) Chip(label: Text(f, style: const TextStyle(fontSize: 16))),
+                for (final f in r.followups)
+                  ActionChip(label: Text(f, style: const TextStyle(fontSize: 16)), onPressed: () => _ask(f)),
               ]),
-            ],
+            const SizedBox(height: 10),
+            Row(children: [
+              Expanded(
+                child: TextField(
+                  key: const Key('followup_field'),
+                  textInputAction: TextInputAction.send,
+                  controller: _followUp,
+                  style: const TextStyle(fontSize: 18),
+                  decoration: const InputDecoration(hintText: 'e.g. What if I pay for 10 years?'),
+                  onSubmitted: _ask,
+                ),
+              ),
+              const SizedBox(width: 8),
+              IconButton.filled(
+                  key: const Key('followup_send'),
+                  tooltip: 'Ask',
+                  iconSize: 28,
+                  onPressed: () => _ask(_followUp.text),
+                  icon: const Icon(Icons.send)),
+            ]),
           ]),
         ),
       ]),

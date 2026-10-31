@@ -25,32 +25,46 @@ endif
 
 .PHONY: help setup setup-system env doctor run-server health llm-up llm-down llm-pull llm-list \
         check-models test test-fast smoke lint fmt clean run-mcp seed-demo reset-demo demo-assets run-app demo commit-phase \
-        reliability reliability-framing reliability-vision lan-url firewall-open phone-devices phone-usb phone-usb-off up down status logs app-release app-ios provider forget-key app-test
+        reliability reliability-framing reliability-vision lan-url firewall-open phone-devices phone-usb phone-usb-off up down status logs app-release app-ios provider forget-key app-test start stop phone app-fixtures app-goldens app-integration meta-check
 
-help: ## Show this list
+help: ##! Show this list (owner commands first)
+	@echo "Start here (docs/OWNER_GUIDE.md):"
+	@grep -hE '^[a-zA-Z_-]+:.*?##! ' $(MAKEFILE_LIST) | \
+	  awk 'BEGIN {FS = ":.*?##! "}; {printf "  \033[32m%-14s\033[0m %s\n", $$1, $$2}'
+	@echo
+	@echo "Developer commands (docs/GUIDE.md):"
 	@grep -hE '^[a-zA-Z_-]+:.*?## ' $(MAKEFILE_LIST) | \
 	  awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-20s\033[0m %s\n", $$1, $$2}'
 
+# ---------------------------------------------------------------- owner commands
+doctor: ##! Check everything; each problem comes with the command that fixes it
+	@scripts/doctor.sh
+
+start: ##! Start Kanakku (asks for a Meta key; press Enter for the local AI) and show the phone settings
+	@PROVIDER="$(PROVIDER)" scripts/start.sh
+
+stop: ##! Stop Kanakku
+	@scripts/down.sh
+
+phone: ##! Build the app and put it on the phone (USB), or show the file to send to the phone
+	@scripts/phone.sh
+
+demo: ##! Reset the demo family and show the 4 demo questions
+	@scripts/demo.sh
+
 # ---------------------------------------------------------------- setup
-setup: env ## Create .venv (Python 3.11) and install server + dev deps
+setup: env ##! One-time setup: Python, the server parts and the settings file
 	@command -v uv >/dev/null || { echo "uv missing: curl -LsSf https://astral.sh/uv/install.sh | sh"; exit 1; }
 	test -x $(PY) || uv venv --python 3.11 $(VENV)
 	uv pip install --python $(PY) -e "$(SERVER)[dev]"
+	@cd app 2>/dev/null && command -v flutter >/dev/null && flutter pub get >/dev/null && echo "✔ app packages ready" || true
 	@echo "✔ setup done. Next: make doctor"
 
 env: ## Copy .env.example to .env if .env does not exist
 	@test -f .env || { cp .env.example .env; echo "✔ created .env from .env.example"; }
 
-setup-system: ## Install OS packages: tesseract (English), ffmpeg (needs sudo)
-	sudo apt-get update && sudo apt-get install -y tesseract-ocr tesseract-ocr-eng ffmpeg
-
-doctor: ## Show which tools are installed
-	@for t in uv python3 tesseract ffmpeg ollama llama-server flutter; do \
-	  if command -v $$t >/dev/null; then printf "  ✔ %-13s %s\n" $$t "$$(command -v $$t)"; \
-	  else printf "  ✘ %-13s missing\n" $$t; fi; done
-	@test -x $(PY) && echo "  ✔ venv          $$($(PY) --version)" || echo "  ✘ venv          run: make setup"
-	@test -f .env && echo "  ✔ .env" || echo "  ✘ .env          run: make env"
-	@command -v tesseract >/dev/null && echo "  tesseract langs: $$(tesseract --list-langs 2>/dev/null | tail -n +2 | tr '\n' ' ')" || true
+setup-system: ## Install OS packages: tesseract (English + Malayalam), ffmpeg, adb (needs sudo)
+	sudo apt-get update && sudo apt-get install -y tesseract-ocr tesseract-ocr-eng tesseract-ocr-mal ffmpeg adb
 
 # ---------------------------------------------------------------- run
 up: ## Choose provider (PROVIDER=meta|local), start LLM backend if local + API server; prints phone URL + token
@@ -139,14 +153,14 @@ lan-url: ## Print the URLs to open on your phone (same Wi-Fi)
 	@echo "Health    : http://$(LAN_IP):$(PORT)/health   <- open in phone browser"
 	@echo "API docs  : http://$(LAN_IP):$(PORT)/docs"
 
-firewall-open: ## Allow port 8000 through ufw so the phone can reach the server (sudo)
+firewall-open: ## Allow PORT (8013) through ufw so the phone can reach the server (sudo)
 	sudo ufw allow $(PORT)/tcp
 
 phone-devices: ## List phones/emulators adb + flutter can see
 	adb devices -l
 	flutter devices
 
-phone-usb: ## USB phone: tunnel phone's localhost:8000 to this laptop (no Wi-Fi/firewall needed)
+phone-usb: ## USB phone: tunnel the phone's localhost:PORT to this laptop (no Wi-Fi/firewall needed)
 	adb reverse tcp:$(PORT) tcp:$(PORT) && echo "✔ phone http://127.0.0.1:$(PORT) -> laptop:$(PORT)"
 
 phone-usb-off: ## Remove the USB tunnel
@@ -181,8 +195,18 @@ run-app: ## Run the app on a connected phone (Wi-Fi URL; USB=1 for usb tunnel; D
 app-test: ## flutter analyze + flutter test
 	cd app && flutter analyze && flutter test
 
-demo: ## [phase 6] Reset demo, start server, print demo questions
-	@echo "demo: arrives in phase 6"
+app-fixtures: ## Re-export the app test fixtures from the real pipeline (offline)
+	cd $(SERVER) && $(PY) scripts/export_app_fixtures.py
+
+app-goldens: ## Re-draw the app screenshots (app/test/goldens -> docs/screens)
+	cd app && flutter test test/screens_test.dart --update-goldens
+	@mkdir -p docs/screens && cp app/test/goldens/*.png docs/screens/ && echo "✔ docs/screens"
+
+app-integration: ## On-device tests against the real server + screen recording (emulator or USB phone)
+	@scripts/app_integration.sh
+
+meta-check: ## One endowment case against the real Meta API (only if META_API_KEY is set)
+	cd $(SERVER) && $(PY) scripts/meta_live_check.py
 
 # ---------------------------------------------------------------- git
 commit-phase: ## Test, then commit everything: make commit-phase P=2 M="numbers and engines"

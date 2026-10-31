@@ -1,0 +1,120 @@
+{
+ "family_id": 1,
+ "values": [
+  {
+   "field": "monthly_income",
+   "status": "known",
+   "value": 45000.0,
+   "source": "voice"
+  },
+  {
+   "field": "monthly_expenses",
+   "status": "known",
+   "value": 28000.0,
+   "source": "typed"
+  },
+  {
+   "field": "savings",
+   "status": "known",
+   "value": 160000.0,
+   "source": "document"
+  }
+ ],
+ "facts": [
+  {
+   "id": "profile.monthly_income",
+   "label": "Family's monthly income",
+   "value": 45000.0,
+   "unit": "INR",
+   "kind": "personal",
+   "formula": "confirmed value (voice)",
+   "inputs": {
+    "source": "voice",
+    "source_ref": "onboarding voice note",
+    "updated_at": "2026-10-31 14:15:17"
+   },
+   "status": "known",
+   "value_text": null,
+   "phrase": null
+  },
+  {
+   "id": "profile.monthly_expenses",
+   "label": "Family's monthly household spending (not counting loan EMIs)",
+   "value": 28000.0,
+   "unit": "INR",
+   "kind": "personal",
+   "formula": "confirmed value (typed)",
+   "inputs": {
+    "source": "typed",
+    "source_ref": "onboarding",
+    "updated_at": "2026-10-31 14:15:17"
+   },
+   "status": "known",
+   "value_text": null,
+   "phrase": null
+  },
+  {
+   "id": "profile.savings",
+   "label": "Family's savings",
+   "value": 160000.0,
+   "unit": "INR",
+   "kind": "personal",
+   "formula": "confirmed value (document)",
+   "inputs": {
+    "source": "document",
+    "source_ref": "passbook photo",
+    "updated_at": "2026-10-31 14:15:17"
+   },
+   "status": "known",
+   "value_text": null,
+   "phrase": null
+  },
+  {
+   "id": "existing_emi",
+   "label": "Loan EMIs the family already pays each month",
+   "value": 2400.0,
+   "unit": "INR",
+   "kind": "personal",
+   "formula": "sum of active confirmed loan items, per month",
+   "inputs": {
+    "items": [
+     2
+    ]
+   },
+   "status": "known",
+   "value_text": null,
+   "phrase": null
+  },
+  {
+   "id": "regular_commitments",
+   "label": "Other regular payments each month, such as policy premiums (not loan EMIs)",
+   "value": 1000.0,
+   "unit": "INR",
+   "kind": "personal",
+   "formula": "sum of active confirmed non-loan items, per month (yearly / 12)",
+   "inputs": {
+    "items": [
+     1
+    ]
+   },
+   "status": "known",
+   "value_text": null,
+   "phrase": null
+  }
+ ],
+ "members": [
+  {
+   "id": 3,
+   "family_id": 1,
+   "name": "Lakshmi",
+   "role": "primary"
+  },
+  {
+   "id": 4,
+   "family_id": 1,
+   "name": "Arun",
+   "role": "guardian"
+  }
+ ],
+ "language": "en"
+}

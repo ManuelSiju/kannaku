@@ -13,7 +13,7 @@ from pydantic import BaseModel
 from app.providers.llm import LLMProvider, LLMStepFailed, LLMUsage, current_budget
 from app.providers.stt import STTProvider, Transcript
 
-FIXTURES = Path(__file__).parent / "fixtures" / "llm"
+FIXTURES = Path(__file__).parents[1] / "fixtures" / "llm"
 TIMEOUT = "__timeout__"
 _PLACEHOLDER = re.compile(r"\{quote:([a-z_0-9]+)\}")
 

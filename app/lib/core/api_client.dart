@@ -138,6 +138,7 @@ class ApiClient {
     required bool outLoud,
     required bool earphones,
     required String idempotencyKey,
+    int? caseId,
   }) async {
     final body = obj(await postForm(
       '/v1/cases',
@@ -147,6 +148,7 @@ class ApiClient {
         'wait': 'false',
         'earphones': '$earphones',
         'user_says_alone': '$outLoud',
+        if (caseId != null) 'case_id': '$caseId',
       },
       files: [?audio, ...files],
       headers: {'Idempotency-Key': idempotencyKey},
@@ -194,8 +196,10 @@ class ApiClient {
 
   Future<Map<String, dynamic>> profile(int familyId) async => obj(await get('/v1/families/$familyId/profile'));
 
-  Future<List<FamilyItem>> items(int familyId) async =>
-      ((await get('/v1/families/$familyId/items')) as List? ?? []).map((e) => FamilyItem.from(obj(e))).toList();
+  Future<List<FamilyItem>> items(int familyId) async {
+    final body = await get('/v1/families/$familyId/items');
+    return objs(body is Map ? body['items'] : body).map(FamilyItem.from).toList(); // server: {"items": [...]}
+  }
 
   Future<Proposal> extract(int familyId, {String? text, String? field, Upload? audio, Upload? file}) async =>
       Proposal.from(obj(await postForm('/v1/families/$familyId/profile/extract', {
@@ -208,8 +212,11 @@ class ApiClient {
         'items': [for (final p in chosen.where((p) => p.isItem)) p.confirmed()],
       });
 
+  /// The guardian's notes for Amma, newest first: [{from, note, at, case_id}].
+  Future<List<Map<String, dynamic>>> notes(int familyId) async => objs(await get('/v1/families/$familyId/notes'));
+
   Future<List<Alert>> alerts(int familyId) async =>
-      ((await get('/v1/families/$familyId/alerts')) as List? ?? []).map((e) => Alert.from(obj(e))).toList();
+      objs(await get('/v1/families/$familyId/alerts')).map(Alert.from).toList();
 
   Future<void> updateAlert(int id, {String? status, String? note}) =>
       patchJson('/v1/alerts/$id', {'status': ?status, 'note': ?note});

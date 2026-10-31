@@ -1,99 +1,73 @@
 # Kanakku
 
-Voice-first money adviser for ordinary Indian families. Ask a money question by voice or text (optionally
-show a brochure, loan offer or stock tip); a council of AI specialists — **Alfii** (curator), **Sankz**
-(banking), **Dani** (mutual funds), **Vick** (stocks) — answers with a red / yellow / green verdict, one plain
-sentence and up to three "ask him this" questions.
+A voice-first money adviser for ordinary Indian families. Amma asks about a loan, a policy, a share tip or a
+strange phone call, by voice or text, and can show the paper. A council of AI helpers answers with
+**red / yellow / green**, one plain sentence and the questions to ask. Every number is worked out by code, never by the
+AI. Decision support, not investment advice.
 
-Every number comes from deterministic code, never from the LLM. Decision support, not investment advice.
+<p>
+  <img src="docs/screens/verdict_endowment_red@1.0.png" width="230" alt="A red answer">
+  <img src="docs/screens/working@1.0.png" width="230" alt="The helpers at work">
+  <img src="docs/screens/home_answers@1.0.png" width="230" alt="Home with answers">
+</p>
+
+**Start here: [docs/OWNER_GUIDE.md](docs/OWNER_GUIDE.md)** (no technical background needed).
+Technical guide: [docs/GUIDE.md](docs/GUIDE.md). All screens: [docs/screens/](docs/screens/).
+A recorded run on an Android emulator: [docs/demo_run.mp4](docs/demo_run.mp4).
 
 Built for the Meta AI Developer Hackathon (Oct 27 – Nov 4 2026).
 
-## Quick start (dev)
+## Quickstart
 
 ```bash
-make setup          # .venv (Python 3.11) + deps + .env
-make setup-system   # tesseract (English), ffmpeg — needs sudo
-make llm-up         # start Ollama
-make llm-pull       # pull the model in .env (default qwen2.5:7b-instruct)
-make check-models   # PASS/FAIL per provider
-make run-server     # API on :8013 (foreground); make up runs it in the background
-make health
-make test
+make setup      # one time: Python, server parts, settings file
+make doctor     # checks everything; each ✘ comes with the command that fixes it
+make start      # starts Kanakku; asks for a Meta key (Enter = the local AI); shows the phone settings
+make phone      # builds the app and installs it on the USB phone (or prints the .apk to send)
+make stop       # stops Kanakku
 ```
 
-Run `make` to see every target.
+Also: `make demo` (reset the demo family, print the 4 demo questions), `make help` (all commands).
 
-## Run it: laptop server + phone
+## Switching to the Meta Model API
 
-```bash
-# laptop — once
-make setup && make setup-system
-make smoke              # tests + lint + make up (local) + model check + /health + make down
+Run `make start` and paste the key when asked (or `make up PROVIDER=meta` with a saved key). Kanakku then uses
+`https://api.meta.ai/v1` (`muse-spark-1.3`, with vision) instead of the local Ollama model; nothing else changes.
+A response cache and a daily cap (`META_MAX_CALLS_PER_DAY`, default 300) protect the credit; `make forget-key` removes
+the saved key.
 
-# laptop — every time
-make up                 # asks for a Meta Model API key (hidden). Enter = local models.
-make up PROVIDER=local  # or PROVIDER=meta: skip the question
-make status · make provider · make logs · make down
-make forget-key         # delete the saved Meta key from .env.local
+## How it works
+
+```
+ phone app ──HTTP + token──▶ FastAPI /v1 ──▶ pipeline ──▶ engines + MCP tools ──▶ SQLite
+ (Flutter)  ◀──JSON + SSE──                  │
+                                             └──▶ model providers: LLM (Ollama | llama.cpp | Meta) · STT (faster-whisper)
+                                                                   · OCR (Tesseract) · TTS (on the phone)
 ```
 
-`make up` chooses the model provider in this order: `PROVIDER=meta|local` on the command line; a saved
-`META_API_KEY` (environment or `.env.local`); a hidden prompt in a terminal; otherwise (CI, `make smoke`) local.
-A Meta key is checked with one call first (10 s). If it is rejected or there is no internet, `make up` says so and
-offers the local models; it never starts half-configured. A typed key can be saved in `.env.local` (gitignored,
-mode 600). The key is never printed or logged, and never appears in a trace, an error, `/health` or the app.
+1. **ingest** voice, photos, PDFs → text and evidence quotes · 2. **scam rules** (code; instant red) ·
+3. **case builder** (model call 1) · 4. **verify terms** (every amount found in the evidence) ·
+5. **compute** (code: returns, real interest rate, affordability, pump-and-dump signals) · 6. **router** ·
+7. **council** (call 2: Sankz, Dani, Vick argue with fact ids only) · 8. **evidence check** (no raw numbers) ·
+9. **debate** (call 3, only on disagreement) · 10. **consensus** (weighted vote; safety rules beat the vote) ·
+11. **privacy** (own figures never spoken unless alone) · 12. **explainer** (call 4) · 13. **questions** (a fixed bank)
 
-At the end `make up` prints the provider, models, cache, spend guard, the laptop and phone URLs, and the **access
-token** to type into the app's Settings (every request except `/health` needs `Authorization: Bearer <token>`).
+At most 4 model calls per ask, 20 s each, and a visible "degraded" flag if a step fails. Details, the API and a worked
+example: [docs/GUIDE.md](docs/GUIDE.md).
 
-With Meta: identical prompts are answered from a SQLite cache, and `META_MAX_CALLS_PER_DAY` (default 300) caps the calls
-(warning at 80 %). At the cap an ask fails with a clear message, or, with `LLM_FALLBACK=local`, the local models answer
-and the answer carries a "local fallback" badge. Speech-to-text stays on local faster-whisper until a Meta speech
-endpoint is confirmed.
+## Tests
 
-```bash
-# phone on the same Wi-Fi
-make lan-url            # open the printed /health URL in the phone browser
-make firewall-open      # only if the phone cannot connect (ufw)
-
-# phone over USB instead (no Wi-Fi needed; enable USB debugging)
-make phone-devices && make phone-usb
-
-# the app
-make run-app            # Wi-Fi
-make run-app USB=1      # USB tunnel
-```
-
-## API and reliability
-
-- Versioned under `/v1` (old unversioned paths stay as aliases until the app switches). `GET /health` (liveness and
-  providers), `GET /ready` (database and LLM reachable).
-- One error format: `{"error": {"code", "message", "request_id"}}`. Every response carries `X-Request-ID`, which is
-  also in every log line (`run/server.log`, JSON, rotated 10 MB × 5) and in the case trace.
-- Limits: audio 10 MB, images 8 MB each, PDF 15 MB, at most 5 files, types checked by content; 20 asks a minute
-  per device; request timeout. `Idempotency-Key` on `POST /v1/cases` makes a resend safe.
-- Provider calls retry once with backoff on timeouts, 429 and 5xx, within the 4-call budget per ask.
-- SQLite in WAL mode with numbered migrations (`server/app/db/migrations`); a daily copy goes to `run/backups`
-  (newest 3 kept). Shutdown waits up to 15 s for running asks.
-- CI (`.github/workflows/ci.yml`): server tests and lint on every push; `flutter analyze` and `flutter test` once
-  the app exists.
-
-## Models
-
-| Role | Local | Meta (chosen at `make up`) |
+| | command | evidence |
 |---|---|---|
-| LLM (text + vision) | Ollama / llama.cpp, OpenAI-compatible `/v1` (see docs/model_setup.md) | Meta Model API (`https://api.meta.ai/v1`, `muse-spark-1.3`), vision on |
-| Speech-to-text | faster-whisper | faster-whisper (Meta speech endpoint not confirmed yet) |
-| Text-to-speech | on-device (flutter_tts) | on-device |
-| OCR | Tesseract eng | Tesseract eng |
+| server: unit, API, end-to-end (offline) | `make test` | 400+ tests |
+| `make up` paths vs a fake Meta server | `cd server && ../.venv/bin/python -m pytest tests/test_make_up.py` | key never in any log |
+| app: analyze, widgets, screenshots | `make app-test` | [docs/screens/](docs/screens/) |
+| app on a device vs the real server | `make app-integration` | [docs/demo_run.mp4](docs/demo_run.mp4) |
+| real-model reliability | `make reliability` | [docs/reliability_confirm.md](docs/reliability_confirm.md), [full mode](docs/reliability_full_confirm.md), [model setup](docs/model_setup.md) |
+| fresh-clone rehearsals | | [docs/rehearsal_1.md](docs/rehearsal_1.md), [docs/rehearsal_2.md](docs/rehearsal_2.md) |
 
-## Layout
+## Built during the hackathon vs prior work
 
-```
-server/app/      FastAPI app, providers, engines, pipeline, db, MCP server
-server/tests/    tests
-app/             Flutter app (phase 5)
-```
-
-_Full docs arrive in phase 6._
+All code in this repository was written during the hackathon (Oct 27 – Nov 4 2026). The consensus idea (a weighted
+vote of specialists with safety overrides) comes from our earlier project **IFA** (patent pending), which is not in
+this repository; no code was copied from it. The demo family, brochure, loan offer and share (ZEPHYRX) are fictional.

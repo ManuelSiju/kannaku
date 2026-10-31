@@ -1,0 +1,1121 @@
+{
+ "result": {
+  "case_id": 3,
+  "case_type": "loan_offer",
+  "verdict": {
+   "colour": "red",
+   "sentence": "Do not take this loan as offered; ask for the reducing-balance rate first.",
+   "questions": [
+    "What is the reducing-balance interest rate?"
+   ]
+  },
+  "called_agents": [
+   "sankz"
+  ],
+  "spoken_lines": [
+   {
+    "speaker": "alfii",
+    "text": "Let me ask Sankz."
+   },
+   {
+    "speaker": "sankz",
+    "text": "This flat-rate loan really costs about 21.6 percent a year."
+   },
+   {
+    "speaker": "alfii",
+    "text": "Do not take this loan as offered; ask for the reducing-balance rate first."
+   }
+  ],
+  "screen_details": [
+   {
+    "id": "note.emi_share",
+    "label": "Your EMIs would take 16.8% of your income.",
+    "value": "16.8%",
+    "kind": "personal",
+    "source": "Kanakku note \u00b7 only on your screen"
+   },
+   {
+    "id": "note.surplus_after",
+    "label": "After this, you would have \u20b98,433 left each month.",
+    "value": "\u20b98,433",
+    "kind": "personal",
+    "source": "Kanakku note \u00b7 only on your screen"
+   },
+   {
+    "id": "note.buffer_months_after",
+    "label": "Your savings would cover 4.4 months of costs.",
+    "value": "4.4 months",
+    "kind": "personal",
+    "source": "Kanakku note \u00b7 only on your screen"
+   },
+   {
+    "id": "term.loan_amount",
+    "label": "From the document: loan amount",
+    "value": "\u20b91 lakh",
+    "kind": "offer",
+    "source": "What you said \u00b7 checked"
+   },
+   {
+    "id": "term.flat_rate",
+    "label": "From the document: flat interest rate",
+    "value": "12%",
+    "kind": "offer",
+    "source": "What you said \u00b7 checked"
+   },
+   {
+    "id": "term.tenure_months",
+    "label": "From the document: loan period in months",
+    "value": "24 months",
+    "kind": "offer",
+    "source": "What you said \u00b7 checked"
+   },
+   {
+    "id": "profile.monthly_income",
+    "label": "Family's monthly income",
+    "value": "\u20b945,000",
+    "kind": "personal",
+    "source": "You told us by voice"
+   },
+   {
+    "id": "profile.monthly_expenses",
+    "label": "Family's monthly household spending (not counting loan EMIs)",
+    "value": "\u20b928,000",
+    "kind": "personal",
+    "source": "You typed it"
+   },
+   {
+    "id": "profile.savings",
+    "label": "Family's savings",
+    "value": "\u20b91.6 lakh",
+    "kind": "personal",
+    "source": "From your passbook photo"
+   },
+   {
+    "id": "existing_emi",
+    "label": "Loan EMIs the family already pays each month",
+    "value": "\u20b92,400",
+    "kind": "personal",
+    "source": "Added up from your saved loans and policies"
+   },
+   {
+    "id": "regular_commitments",
+    "label": "Other regular payments each month, such as policy premiums (not loan EMIs)",
+    "value": "\u20b91,000",
+    "kind": "personal",
+    "source": "Added up from your saved loans and policies"
+   },
+   {
+    "id": "ref.fd_rate",
+    "label": "Typical fixed deposit interest rate (assumption), as of 2026-10-01",
+    "value": "7%",
+    "kind": "offer",
+    "source": "Assumption \u00b7 as of 1 Oct 2026"
+   },
+   {
+    "id": "ref.inflation",
+    "label": "Yearly price rise / inflation (assumption), as of 2026-10-01",
+    "value": "5%",
+    "kind": "offer",
+    "source": "Assumption \u00b7 as of 1 Oct 2026"
+   },
+   {
+    "id": "ref.index_long_run_return",
+    "label": "Long-run yearly return of a stock-market index fund (assumption), as of 2026-10-01",
+    "value": "11%",
+    "kind": "offer",
+    "source": "Assumption \u00b7 as of 1 Oct 2026"
+   },
+   {
+    "id": "ref.typical_personal_loan_rate",
+    "label": "Typical yearly interest rate of a normal bank personal loan (assumption), as of 2026-10-01",
+    "value": "14%",
+    "kind": "offer",
+    "source": "Assumption \u00b7 as of 1 Oct 2026"
+   },
+   {
+    "id": "loan_emi",
+    "label": "Monthly instalment (EMI)",
+    "value": "\u20b95,167",
+    "kind": "offer",
+    "source": "Worked out by Kanakku"
+   },
+   {
+    "id": "loan_total_interest",
+    "label": "Total interest paid over the loan",
+    "value": "\u20b924,000",
+    "kind": "offer",
+    "source": "Worked out by Kanakku"
+   },
+   {
+    "id": "loan_effective_rate",
+    "label": "Real yearly interest rate (reducing balance) of this flat-rate loan",
+    "value": "21.6%",
+    "kind": "offer",
+    "source": "Worked out by Kanakku"
+   },
+   {
+    "id": "emi_share",
+    "label": "Share of monthly income going to loan EMIs after this",
+    "value": "16.8%",
+    "kind": "personal",
+    "source": "Worked out by Kanakku"
+   },
+   {
+    "id": "buffer_months_after",
+    "label": "Months your savings would cover all monthly costs after this",
+    "value": "4.4 months",
+    "kind": "personal",
+    "source": "Worked out by Kanakku"
+   },
+   {
+    "id": "surplus_after",
+    "label": "Money left each month after all costs and this",
+    "value": "\u20b98,433",
+    "kind": "personal",
+    "source": "Worked out by Kanakku"
+   },
+   {
+    "id": "cmp_effective_vs_quoted",
+    "label": "The loan's real yearly rate compared with the flat rate it was sold at",
+    "value": "higher than",
+    "kind": "offer",
+    "source": "Worked out by Kanakku"
+   },
+   {
+    "id": "cmp_effective_vs_typical",
+    "label": "The loan's real yearly rate compared with a normal bank personal loan (assumption)",
+    "value": "higher than",
+    "kind": "offer",
+    "source": "Worked out by Kanakku"
+   }
+  ],
+  "privacy_mode": "discreet",
+  "degraded": false,
+  "degraded_steps": [],
+  "llm_calls": 3,
+  "provider": "local",
+  "local_fallback": false,
+  "request_id": "bc91c12ff2cc44b1",
+  "language": "en",
+  "short_answer": {
+   "text": "Please don't go ahead with this as it is.",
+   "colour": "red"
+  },
+  "council": [
+   {
+    "speaker": "alfii",
+    "text": "Let me ask Sankz.",
+    "kind": "opener"
+   },
+   {
+    "speaker": "sankz",
+    "text": "This flat-rate loan really costs about 21.6 percent a year.",
+    "kind": "agent"
+   },
+   {
+    "speaker": "alfii",
+    "text": "Do not take this loan as offered; ask for the reducing-balance rate first.",
+    "kind": "conclusion"
+   }
+  ],
+  "council_words": 27,
+  "council_seconds": 10.8,
+  "suggested_followups": [
+   "What is the real interest rate?",
+   "What would my EMI be?",
+   "Can I afford this EMI?"
+  ],
+  "claims": []
+ },
+ "bundle": {
+  "case": {
+   "id": 3,
+   "family_id": 1,
+   "case_type": "loan_offer",
+   "status": "done",
+   "transcript": "A finance company is offering me a loan of 1,00,000 at 12% flat for 24 months. Should I take it?",
+   "language": "en",
+   "privacy_mode": "discreet",
+   "created_at": "2026-10-31 14:15:17"
+  },
+  "quotes": [
+   {
+    "id": "q9",
+    "source": "transcript",
+    "text": "A finance company is offering me a loan of 1,00,000 at 12% flat for 24 months. Should I take it?"
+   }
+  ],
+  "terms": [
+   {
+    "id": 13,
+    "case_id": 3,
+    "name": "loan_amount",
+    "value": 100000.0,
+    "unit": "INR",
+    "evidence_id": 9,
+    "verified": true,
+    "reason": null,
+    "quote_id": "q9"
+   },
+   {
+    "id": 14,
+    "case_id": 3,
+    "name": "flat_rate",
+    "value": 0.12,
+    "unit": "fraction",
+    "evidence_id": 9,
+    "verified": true,
+    "reason": null,
+    "quote_id": "q9"
+   },
+   {
+    "id": 15,
+    "case_id": 3,
+    "name": "tenure_months",
+    "value": 24.0,
+    "unit": "months",
+    "evidence_id": 9,
+    "verified": true,
+    "reason": null,
+    "quote_id": "q9"
+   }
+  ],
+  "facts": [
+   {
+    "id": "term.loan_amount",
+    "label": "From the document: loan amount",
+    "value": 100000.0,
+    "unit": "INR",
+    "kind": "offer",
+    "formula": "read from the document and checked twice",
+    "inputs": {
+     "quote_id": "q9",
+     "source": "transcript",
+     "photo": false,
+     "reading": "checked"
+    },
+    "status": "known",
+    "value_text": null,
+    "phrase": null
+   },
+   {
+    "id": "term.flat_rate",
+    "label": "From the document: flat interest rate",
+    "value": 0.12,
+    "unit": "fraction",
+    "kind": "offer",
+    "formula": "read from the document and checked twice",
+    "inputs": {
+     "quote_id": "q9",
+     "source": "transcript",
+     "photo": false,
+     "reading": "checked"
+    },
+    "status": "known",
+    "value_text": null,
+    "phrase": null
+   },
+   {
+    "id": "term.tenure_months",
+    "label": "From the document: loan period in months",
+    "value": 24.0,
+    "unit": "months",
+    "kind": "offer",
+    "formula": "read from the document and checked twice",
+    "inputs": {
+     "quote_id": "q9",
+     "source": "transcript",
+     "photo": false,
+     "reading": "checked"
+    },
+    "status": "known",
+    "value_text": null,
+    "phrase": null
+   },
+   {
+    "id": "profile.monthly_income",
+    "label": "Family's monthly income",
+    "value": 45000.0,
+    "unit": "INR",
+    "kind": "personal",
+    "formula": "confirmed value (voice)",
+    "inputs": {
+     "source": "voice",
+     "source_ref": "onboarding voice note",
+     "updated_at": "2026-10-31 14:15:17"
+    },
+    "status": "known",
+    "value_text": null,
+    "phrase": null
+   },
+   {
+    "id": "profile.monthly_expenses",
+    "label": "Family's monthly household spending (not counting loan EMIs)",
+    "value": 28000.0,
+    "unit": "INR",
+    "kind": "personal",
+    "formula": "confirmed value (typed)",
+    "inputs": {
+     "source": "typed",
+     "source_ref": "onboarding",
+     "updated_at": "2026-10-31 14:15:17"
+    },
+    "status": "known",
+    "value_text": null,
+    "phrase": null
+   },
+   {
+    "id": "profile.savings",
+    "label": "Family's savings",
+    "value": 160000.0,
+    "unit": "INR",
+    "kind": "personal",
+    "formula": "confirmed value (document)",
+    "inputs": {
+     "source": "document",
+     "source_ref": "passbook photo",
+     "updated_at": "2026-10-31 14:15:17"
+    },
+    "status": "known",
+    "value_text": null,
+    "phrase": null
+   },
+   {
+    "id": "existing_emi",
+    "label": "Loan EMIs the family already pays each month",
+    "value": 2400.0,
+    "unit": "INR",
+    "kind": "personal",
+    "formula": "sum of active confirmed loan items, per month",
+    "inputs": {
+     "items": [
+      2
+     ]
+    },
+    "status": "known",
+    "value_text": null,
+    "phrase": null
+   },
+   {
+    "id": "regular_commitments",
+    "label": "Other regular payments each month, such as policy premiums (not loan EMIs)",
+    "value": 1000.0,
+    "unit": "INR",
+    "kind": "personal",
+    "formula": "sum of active confirmed non-loan items, per month (yearly / 12)",
+    "inputs": {
+     "items": [
+      1
+     ]
+    },
+    "status": "known",
+    "value_text": null,
+    "phrase": null
+   },
+   {
+    "id": "ref.fd_rate",
+    "label": "Typical fixed deposit interest rate (assumption), as of 2026-10-01",
+    "value": 0.07,
+    "unit": "fraction",
+    "kind": "offer",
+    "formula": "reference snapshot",
+    "inputs": {
+     "as_of": "2026-10-01",
+     "assumption": true
+    },
+    "status": "known",
+    "value_text": null,
+    "phrase": null
+   },
+   {
+    "id": "ref.inflation",
+    "label": "Yearly price rise / inflation (assumption), as of 2026-10-01",
+    "value": 0.05,
+    "unit": "fraction",
+    "kind": "offer",
+    "formula": "reference snapshot",
+    "inputs": {
+     "as_of": "2026-10-01",
+     "assumption": true
+    },
+    "status": "known",
+    "value_text": null,
+    "phrase": null
+   },
+   {
+    "id": "ref.index_long_run_return",
+    "label": "Long-run yearly return of a stock-market index fund (assumption), as of 2026-10-01",
+    "value": 0.11,
+    "unit": "fraction",
+    "kind": "offer",
+    "formula": "reference snapshot",
+    "inputs": {
+     "as_of": "2026-10-01",
+     "assumption": true
+    },
+    "status": "known",
+    "value_text": null,
+    "phrase": null
+   },
+   {
+    "id": "ref.typical_personal_loan_rate",
+    "label": "Typical yearly interest rate of a normal bank personal loan (assumption), as of 2026-10-01",
+    "value": 0.14,
+    "unit": "fraction",
+    "kind": "offer",
+    "formula": "reference snapshot",
+    "inputs": {
+     "as_of": "2026-10-01",
+     "assumption": true
+    },
+    "status": "known",
+    "value_text": null,
+    "phrase": null
+   },
+   {
+    "id": "loan_emi",
+    "label": "Monthly instalment (EMI)",
+    "value": 5166.67,
+    "unit": "INR",
+    "kind": "offer",
+    "formula": "(P + P * flat_rate * months / 12) / months",
+    "inputs": {
+     "principal": 100000.0,
+     "flat_rate_annual": 0.12,
+     "months": 24
+    },
+    "status": "known",
+    "value_text": null,
+    "phrase": null
+   },
+   {
+    "id": "loan_total_interest",
+    "label": "Total interest paid over the loan",
+    "value": 24000.0,
+    "unit": "INR",
+    "kind": "offer",
+    "formula": "P * flat_rate * months / 12",
+    "inputs": {
+     "principal": 100000.0,
+     "flat_rate_annual": 0.12,
+     "months": 24
+    },
+    "status": "known",
+    "value_text": null,
+    "phrase": null
+   },
+   {
+    "id": "loan_effective_rate",
+    "label": "Real yearly interest rate (reducing balance) of this flat-rate loan",
+    "value": 0.215712,
+    "unit": "fraction",
+    "kind": "offer",
+    "formula": "12 * monthly IRR of +P at month 0 and -EMI at months 1..n",
+    "inputs": {
+     "principal": 100000.0,
+     "flat_rate_annual": 0.12,
+     "months": 24
+    },
+    "status": "known",
+    "value_text": null,
+    "phrase": null
+   },
+   {
+    "id": "emi_share",
+    "label": "Share of monthly income going to loan EMIs after this",
+    "value": 0.1681,
+    "unit": "fraction",
+    "kind": "personal",
+    "formula": "(existing_emi + new_monthly_cost) / monthly_income",
+    "inputs": {
+     "monthly_income": 45000.0,
+     "monthly_expenses": 28000.0,
+     "savings": 160000.0,
+     "existing_emi": 2400.0,
+     "regular_commitments": 1000.0,
+     "new_monthly_cost": 5166.67
+    },
+    "status": "known",
+    "value_text": null,
+    "phrase": null
+   },
+   {
+    "id": "buffer_months_after",
+    "label": "Months your savings would cover all monthly costs after this",
+    "value": 4.38,
+    "unit": "months",
+    "kind": "personal",
+    "formula": "savings / (monthly_expenses + existing_emi + regular_commitments + new_monthly_cost)",
+    "inputs": {
+     "monthly_income": 45000.0,
+     "monthly_expenses": 28000.0,
+     "savings": 160000.0,
+     "existing_emi": 2400.0,
+     "regular_commitments": 1000.0,
+     "new_monthly_cost": 5166.67
+    },
+    "status": "known",
+    "value_text": null,
+    "phrase": null
+   },
+   {
+    "id": "surplus_after",
+    "label": "Money left each month after all costs and this",
+    "value": 8433.33,
+    "unit": "INR",
+    "kind": "personal",
+    "formula": "monthly_income - monthly_expenses - existing_emi - regular_commitments - new_monthly_cost",
+    "inputs": {
+     "monthly_income": 45000.0,
+     "monthly_expenses": 28000.0,
+     "savings": 160000.0,
+     "existing_emi": 2400.0,
+     "regular_commitments": 1000.0,
+     "new_monthly_cost": 5166.67
+    },
+    "status": "known",
+    "value_text": null,
+    "phrase": null
+   },
+   {
+    "id": "cmp_effective_vs_quoted",
+    "label": "The loan's real yearly rate compared with the flat rate it was sold at",
+    "value": 9.57,
+    "unit": "percentage points",
+    "kind": "offer",
+    "formula": "loan_effective_rate - term.flat_rate in percentage points; within \u00b10.5 = about the same",
+    "inputs": {
+     "loan_effective_rate": 0.215712,
+     "term.flat_rate": 0.12,
+     "tolerance_pp": 0.5
+    },
+    "status": "known",
+    "value_text": "higher",
+    "phrase": null
+   },
+   {
+    "id": "cmp_effective_vs_typical",
+    "label": "The loan's real yearly rate compared with a normal bank personal loan (assumption)",
+    "value": 7.57,
+    "unit": "percentage points",
+    "kind": "offer",
+    "formula": "loan_effective_rate - ref.typical_personal_loan_rate in percentage points; within \u00b10.5 = about the same",
+    "inputs": {
+     "loan_effective_rate": 0.215712,
+     "ref.typical_personal_loan_rate": 0.14,
+     "tolerance_pp": 0.5
+    },
+    "status": "known",
+    "value_text": "higher",
+    "phrase": null
+   }
+  ],
+  "positions": [
+   {
+    "id": 5,
+    "case_id": 3,
+    "agent": "sankz",
+    "round": 1,
+    "stance": "against",
+    "strength": 0.8
+   }
+  ],
+  "arguments": [
+   {
+    "id": 9,
+    "case_id": 3,
+    "agent": "sankz",
+    "round": 1,
+    "text": "The 12% flat rate really costs about 21.6% a year on the reducing balance.",
+    "kept": 1,
+    "drop_reason": null,
+    "cited_ids": [
+     "term.flat_rate",
+     "loan_effective_rate"
+    ]
+   },
+   {
+    "id": 10,
+    "case_id": 3,
+    "agent": "sankz",
+    "round": 1,
+    "text": "You would pay \u20b924,000 in interest over the loan.",
+    "kept": 1,
+    "drop_reason": null,
+    "cited_ids": [
+     "loan_total_interest"
+    ]
+   }
+  ],
+  "verdict": {
+   "id": 3,
+   "case_id": 3,
+   "colour": "red",
+   "score": -0.8,
+   "disagreement": 0.0,
+   "sentence": "Do not take this loan as offered; ask for the reducing-balance rate first.",
+   "degraded": 0,
+   "overrides": [],
+   "questions": [
+    "What is the reducing-balance interest rate?"
+   ]
+  },
+  "spoken_lines": [
+   {
+    "id": 9,
+    "case_id": 3,
+    "speaker": "alfii",
+    "order": 1,
+    "text": "Let me ask Sankz.",
+    "allowed": 1,
+    "blocked_reason": null
+   },
+   {
+    "id": 10,
+    "case_id": 3,
+    "speaker": "sankz",
+    "order": 2,
+    "text": "This flat-rate loan really costs about 21.6 percent a year.",
+    "allowed": 1,
+    "blocked_reason": null
+   },
+   {
+    "id": 11,
+    "case_id": 3,
+    "speaker": "alfii",
+    "order": 3,
+    "text": "Do not take this loan as offered; ask for the reducing-balance rate first.",
+    "allowed": 1,
+    "blocked_reason": null
+   }
+  ],
+  "trace": [
+   {
+    "id": 25,
+    "case_id": 3,
+    "step": "request",
+    "ms": 0.0,
+    "outcome": "ok",
+    "detail": {
+     "request_id": "bc91c12ff2cc44b1",
+     "provider": "local"
+    }
+   },
+   {
+    "id": 26,
+    "case_id": 3,
+    "step": "ingest",
+    "ms": 0.0,
+    "outcome": "ok",
+    "detail": {
+     "pages": 0,
+     "transcript_chars": 96,
+     "problems": []
+    }
+   },
+   {
+    "id": 27,
+    "case_id": 3,
+    "step": "scam_rules",
+    "ms": 0.0,
+    "outcome": "ok",
+    "detail": {
+     "signals": []
+    }
+   },
+   {
+    "id": 28,
+    "case_id": 3,
+    "step": "case_builder",
+    "ms": 0.1,
+    "outcome": "ok",
+    "detail": {
+     "case_type": "loan_offer",
+     "terms": 3,
+     "vision_read": false,
+     "ms_llm": 0.0,
+     "tokens": [
+      null,
+      null
+     ]
+    }
+   },
+   {
+    "id": 29,
+    "case_id": 3,
+    "step": "verify_terms",
+    "ms": 1.0,
+    "outcome": "ok",
+    "detail": {
+     "unverified": [],
+     "readings": {
+      "loan_amount": "checked",
+      "flat_rate": "checked",
+      "tenure_months": "checked"
+     }
+    }
+   },
+   {
+    "id": 30,
+    "case_id": 3,
+    "step": "compute",
+    "ms": 0.6,
+    "outcome": "ok",
+    "detail": {
+     "facts": [
+      "term.loan_amount",
+      "term.flat_rate",
+      "term.tenure_months",
+      "profile.monthly_income",
+      "profile.monthly_expenses",
+      "profile.savings",
+      "existing_emi",
+      "regular_commitments",
+      "ref.fd_rate",
+      "ref.inflation",
+      "ref.index_long_run_return",
+      "ref.typical_personal_loan_rate",
+      "loan_emi",
+      "loan_total_interest",
+      "loan_effective_rate",
+      "emi_share",
+      "buffer_months_after",
+      "surplus_after",
+      "cmp_effective_vs_quoted",
+      "cmp_effective_vs_typical"
+     ],
+     "missing_required": []
+    }
+   },
+   {
+    "id": 31,
+    "case_id": 3,
+    "step": "router",
+    "ms": 0.0,
+    "outcome": "ok",
+    "detail": {
+     "case_type": "loan_offer",
+     "flags": [],
+     "agents": [
+      "sankz"
+     ],
+     "market_linked": "no market-linked words in the documents",
+     "claims": []
+    }
+   },
+   {
+    "id": 32,
+    "case_id": 3,
+    "step": "council",
+    "ms": 1.1,
+    "outcome": "ok",
+    "detail": {
+     "agents": [
+      "sankz"
+     ],
+     "dropped": [],
+     "auto_placeholder": [],
+     "missing_agents": [],
+     "abstained": []
+    }
+   },
+   {
+    "id": 33,
+    "case_id": 3,
+    "step": "consensus",
+    "ms": 0.0,
+    "outcome": "ok",
+    "detail": {
+     "verdict": "red",
+     "vote_verdict": "red",
+     "score": -0.8,
+     "disagreement": 0.0,
+     "debate_needed": false,
+     "weights": {
+      "sankz": 1.0
+     },
+     "overrides": []
+    }
+   },
+   {
+    "id": 34,
+    "case_id": 3,
+    "step": "privacy",
+    "ms": 0.0,
+    "outcome": "ok",
+    "detail": {
+     "mode": "discreet",
+     "earphones": false,
+     "user_says_alone": false,
+     "context_cue": false
+    }
+   },
+   {
+    "id": 35,
+    "case_id": 3,
+    "step": "explainer",
+    "ms": 0.8,
+    "outcome": "ok",
+    "detail": {
+     "rewrite_used": false,
+     "auto_placeholder": [],
+     "lint": [],
+     "dropped_turns": [],
+     "notes": []
+    }
+   },
+   {
+    "id": 36,
+    "case_id": 3,
+    "step": "questions",
+    "ms": 0.0,
+    "outcome": "ok",
+    "detail": {
+     "bank": [
+      "loan_reducing_rate",
+      "loan_charges"
+     ],
+     "picked": [
+      "loan_reducing_rate"
+     ],
+     "reworded": [],
+     "rejected": [
+      {
+       "id": "loan_fees",
+       "text": "Are there processing fees or other charges?",
+       "why": "not in the question bank"
+      }
+     ]
+    }
+   }
+  ],
+  "result": {
+   "case_id": 3,
+   "case_type": "loan_offer",
+   "verdict": {
+    "colour": "red",
+    "sentence": "Do not take this loan as offered; ask for the reducing-balance rate first.",
+    "questions": [
+     "What is the reducing-balance interest rate?"
+    ]
+   },
+   "called_agents": [
+    "sankz"
+   ],
+   "spoken_lines": [
+    {
+     "speaker": "alfii",
+     "text": "Let me ask Sankz."
+    },
+    {
+     "speaker": "sankz",
+     "text": "This flat-rate loan really costs about 21.6 percent a year."
+    },
+    {
+     "speaker": "alfii",
+     "text": "Do not take this loan as offered; ask for the reducing-balance rate first."
+    }
+   ],
+   "screen_details": [
+    {
+     "id": "note.emi_share",
+     "label": "Your EMIs would take 16.8% of your income.",
+     "value": "16.8%",
+     "kind": "personal",
+     "source": "Kanakku note \u00b7 only on your screen"
+    },
+    {
+     "id": "note.surplus_after",
+     "label": "After this, you would have \u20b98,433 left each month.",
+     "value": "\u20b98,433",
+     "kind": "personal",
+     "source": "Kanakku note \u00b7 only on your screen"
+    },
+    {
+     "id": "note.buffer_months_after",
+     "label": "Your savings would cover 4.4 months of costs.",
+     "value": "4.4 months",
+     "kind": "personal",
+     "source": "Kanakku note \u00b7 only on your screen"
+    },
+    {
+     "id": "term.loan_amount",
+     "label": "From the document: loan amount",
+     "value": "\u20b91 lakh",
+     "kind": "offer",
+     "source": "What you said \u00b7 checked"
+    },
+    {
+     "id": "term.flat_rate",
+     "label": "From the document: flat interest rate",
+     "value": "12%",
+     "kind": "offer",
+     "source": "What you said \u00b7 checked"
+    },
+    {
+     "id": "term.tenure_months",
+     "label": "From the document: loan period in months",
+     "value": "24 months",
+     "kind": "offer",
+     "source": "What you said \u00b7 checked"
+    },
+    {
+     "id": "profile.monthly_income",
+     "label": "Family's monthly income",
+     "value": "\u20b945,000",
+     "kind": "personal",
+     "source": "You told us by voice"
+    },
+    {
+     "id": "profile.monthly_expenses",
+     "label": "Family's monthly household spending (not counting loan EMIs)",
+     "value": "\u20b928,000",
+     "kind": "personal",
+     "source": "You typed it"
+    },
+    {
+     "id": "profile.savings",
+     "label": "Family's savings",
+     "value": "\u20b91.6 lakh",
+     "kind": "personal",
+     "source": "From your passbook photo"
+    },
+    {
+     "id": "existing_emi",
+     "label": "Loan EMIs the family already pays each month",
+     "value": "\u20b92,400",
+     "kind": "personal",
+     "source": "Added up from your saved loans and policies"
+    },
+    {
+     "id": "regular_commitments",
+     "label": "Other regular payments each month, such as policy premiums (not loan EMIs)",
+     "value": "\u20b91,000",
+     "kind": "personal",
+     "source": "Added up from your saved loans and policies"
+    },
+    {
+     "id": "ref.fd_rate",
+     "label": "Typical fixed deposit interest rate (assumption), as of 2026-10-01",
+     "value": "7%",
+     "kind": "offer",
+     "source": "Assumption \u00b7 as of 1 Oct 2026"
+    },
+    {
+     "id": "ref.inflation",
+     "label": "Yearly price rise / inflation (assumption), as of 2026-10-01",
+     "value": "5%",
+     "kind": "offer",
+     "source": "Assumption \u00b7 as of 1 Oct 2026"
+    },
+    {
+     "id": "ref.index_long_run_return",
+     "label": "Long-run yearly return of a stock-market index fund (assumption), as of 2026-10-01",
+     "value": "11%",
+     "kind": "offer",
+     "source": "Assumption \u00b7 as of 1 Oct 2026"
+    },
+    {
+     "id": "ref.typical_personal_loan_rate",
+     "label": "Typical yearly interest rate of a normal bank personal loan (assumption), as of 2026-10-01",
+     "value": "14%",
+     "kind": "offer",
+     "source": "Assumption \u00b7 as of 1 Oct 2026"
+    },
+    {
+     "id": "loan_emi",
+     "label": "Monthly instalment (EMI)",
+     "value": "\u20b95,167",
+     "kind": "offer",
+     "source": "Worked out by Kanakku"
+    },
+    {
+     "id": "loan_total_interest",
+     "label": "Total interest paid over the loan",
+     "value": "\u20b924,000",
+     "kind": "offer",
+     "source": "Worked out by Kanakku"
+    },
+    {
+     "id": "loan_effective_rate",
+     "label": "Real yearly interest rate (reducing balance) of this flat-rate loan",
+     "value": "21.6%",
+     "kind": "offer",
+     "source": "Worked out by Kanakku"
+    },
+    {
+     "id": "emi_share",
+     "label": "Share of monthly income going to loan EMIs after this",
+     "value": "16.8%",
+     "kind": "personal",
+     "source": "Worked out by Kanakku"
+    },
+    {
+     "id": "buffer_months_after",
+     "label": "Months your savings would cover all monthly costs after this",
+     "value": "4.4 months",
+     "kind": "personal",
+     "source": "Worked out by Kanakku"
+    },
+    {
+     "id": "surplus_after",
+     "label": "Money left each month after all costs and this",
+     "value": "\u20b98,433",
+     "kind": "personal",
+     "source": "Worked out by Kanakku"
+    },
+    {
+     "id": "cmp_effective_vs_quoted",
+     "label": "The loan's real yearly rate compared with the flat rate it was sold at",
+     "value": "higher than",
+     "kind": "offer",
+     "source": "Worked out by Kanakku"
+    },
+    {
+     "id": "cmp_effective_vs_typical",
+     "label": "The loan's real yearly rate compared with a normal bank personal loan (assumption)",
+     "value": "higher than",
+     "kind": "offer",
+     "source": "Worked out by Kanakku"
+    }
+   ],
+   "privacy_mode": "discreet",
+   "degraded": false,
+   "degraded_steps": [],
+   "llm_calls": 3,
+   "provider": "local",
+   "local_fallback": false,
+   "request_id": "bc91c12ff2cc44b1",
+   "language": "en",
+   "short_answer": {
+    "text": "Please don't go ahead with this as it is.",
+    "colour": "red"
+   },
+   "council": [
+    {
+     "speaker": "alfii",
+     "text": "Let me ask Sankz.",
+     "kind": "opener"
+    },
+    {
+     "speaker": "sankz",
+     "text": "This flat-rate loan really costs about 21.6 percent a year.",
+     "kind": "agent"
+    },
+    {
+     "speaker": "alfii",
+     "text": "Do not take this loan as offered; ask for the reducing-balance rate first.",
+     "kind": "conclusion"
+    }
+   ],
+   "council_words": 27,
+   "council_seconds": 10.8,
+   "suggested_followups": [
+    "What is the real interest rate?",
+    "What would my EMI be?",
+    "Can I afford this EMI?"
+   ],
+   "claims": []
+  }
+ }
+}

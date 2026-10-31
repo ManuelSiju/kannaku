@@ -108,6 +108,8 @@ class _TalkButtonState extends State<TalkButton> {
         const SizedBox(height: 6),
       ],
       Semantics(
+        // keyed: the zone labels appear above it while recording, and the gesture must survive that rebuild
+        key: const ValueKey('talk_button'),
         button: true,
         label: 'Hold and talk. Slide up for private, down to say it out loud.',
         child: GestureDetector(

@@ -170,7 +170,8 @@ else
   fi
   cd "$ROOT/server" || fail "no server/ directory"
   # The key reaches the server through its environment only. JSON logs: run/server.log; console: run/server.out.
-  export LLM_PROVIDER="$PROVIDER" KANAKKU_TOKEN="$TOKEN"
+  export LLM_PROVIDER="$PROVIDER" KANAKKU_TOKEN="$TOKEN" LOG_PATH="${LOG_PATH:-$RUN_DIR/server.log}"
+  export BACKUP_DIR="${BACKUP_DIR:-$RUN_DIR/backups}"
   if [[ "$PROVIDER" == meta ]]; then export META_API_KEY="$KEY"; fi
   launch "$SRV_PID" "$RUN_DIR/server.out" "$PY" -m uvicorn app.main:app --host "$HOST" --port "$PORT" \
     --timeout-graceful-shutdown 15 || fail "could not start the server"

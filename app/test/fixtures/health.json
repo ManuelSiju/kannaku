@@ -1,0 +1,38 @@
+{
+ "status": "ok",
+ "version": "0.2.0",
+ "provider": {
+  "name": "local",
+  "model": "qwen2.5:7b-instruct",
+  "vision_model": null,
+  "stt": "faster-whisper (local)",
+  "cache": false,
+  "spend_guard": null,
+  "fallback": "none",
+  "auth": false
+ },
+ "providers": {
+  "llm": {
+   "provider": "local",
+   "base_url": "http://localhost:11434/v1",
+   "model": "qwen2.5:7b-instruct",
+   "vision": false,
+   "reachable": true,
+   "model_available": true
+  },
+  "stt": {
+   "provider": "faster_whisper",
+   "model": "medium",
+   "reachable": true
+  },
+  "ocr": {
+   "provider": "tesseract",
+   "reachable": true,
+   "langs": "eng"
+  },
+  "tts": {
+   "provider": "device",
+   "reachable": true
+  }
+ }
+}
