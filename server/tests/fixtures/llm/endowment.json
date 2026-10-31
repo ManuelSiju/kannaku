@@ -60,7 +60,7 @@
             "cited_ids": []
           },
           {
-            "text": "The same {term.premium} a year in a fixed deposit would grow to about {fd_value}, more than the {term.maturity_low} illustrated.",
+            "text": "The same {term.premium} a year in a fixed deposit would grow to about {fd_value}, while the plan illustrates only {term.maturity_low}.",
             "cited_ids": [
               "{quote:page_2}"
             ]
@@ -95,15 +95,10 @@
     ]
   },
   "ExplainerOutput": {
-    "opener": {
-      "speaker": "alfii",
-      "text": "I asked Dani and Sankz to look at this plan.",
-      "cited_ids": []
-    },
     "agent_lines": [
       {
         "speaker": "dani",
-        "text": "This plan grows your money by only about {endowment_return} a year; a fixed deposit would do better.",
+        "text": "This plan grows your money by only about {endowment_return} a year, which is {cmp_return_low_vs_fd} than a fixed deposit.",
         "cited_ids": []
       },
       {
@@ -116,7 +111,8 @@
       "speaker": "alfii",
       "text": "Do not sign yet: this plan earns less than a fixed deposit, and the {term.maturity_high} is not guaranteed.",
       "cited_ids": [
-        "{quote:page_3}"
+        "{quote:page_3}",
+        "cmp_return_low_vs_fd"
       ]
     },
     "questions": [

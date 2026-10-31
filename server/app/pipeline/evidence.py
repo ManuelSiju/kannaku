@@ -4,6 +4,12 @@ check_argument(...) -> Kept(rendered, cited) | Dropped(reason). An argument is d
 - it contains a raw digit outside placeholders (the model wrote a number itself),
 - a placeholder or cited id is unknown (or, with kind_filter, a placeholder fact has the wrong kind),
 - it cites nothing at all (placeholders count as citations; quote ids back non-numeric claims).
+- it uses a comparison word (better, worse, higher, lower, more, less, beats, below, above) without citing a cmp_*
+  fact whose direction agrees (checked on the rendered text; "... than this plan" flips the direction).
+
+Before checking, two mechanical repairs are made and reported in `fixes` (trace key "auto_placeholder"):
+- short id: {sum_assured} -> {term.sum_assured} when exactly one fact id ends with ".sum_assured";
+- auto placeholder: a raw number that exactly equals the display of exactly one fact becomes that placeholder.
 
 numbers_in / value_matches are kept for the privacy check, which runs on the rendered text.
 """
@@ -29,15 +35,22 @@ PLACEHOLDER = re.compile(r"\{([A-Za-z][A-Za-z0-9_.]*)\}")
 _DIGIT = re.compile(r"\d")
 
 
+COMPARISON = re.compile(r"\b(better|worse|higher|lower|more|less|beats?|below|above)\b", re.I)
+_POSITIVE = {"better", "higher", "more", "beat", "beats", "above"}
+_FLIP = re.compile(r"\s*than\s+(?:this|the|your|that)\s+(?:plan|policy|offer|loan|scheme|investment|tip)\b", re.I)
+
+
 class Kept(BaseModel):
     kept: Literal[True] = True
     rendered: str  # placeholders replaced by Fact.display
     cited: list[str] = []  # cited ids plus placeholder ids
+    fixes: list[str] = []  # auto_placeholder / short-id repairs made before checking
 
 
 class Dropped(BaseModel):
     kept: Literal[False] = False
     reason: str
+    fixes: list[str] = []
 
 
 class TextNumber(BaseModel):
@@ -92,19 +105,59 @@ def placeholders(text: str) -> list[str]:
     return list(dict.fromkeys(PLACEHOLDER.findall(text)))
 
 
-def resolve_placeholders(text: str, fact_ids: Iterable[str]) -> str:
+def resolve_placeholders(text: str, fact_ids: Iterable[str]) -> tuple[str, list[str]]:
     """Small models often drop an id's prefix ({sum_assured} for {term.sum_assured}). Rewrite a placeholder to the
     full id only when exactly one fact id ends with ".<name>"; anything else is left for the check to reject."""
     ids = set(fact_ids)
+    fixes: list[str] = []
 
     def fix(m: re.Match[str]) -> str:
         name = m.group(1)
         if name in ids:
             return m.group(0)
         matches = [i for i in ids if i.endswith("." + name)]
-        return "{" + matches[0] + "}" if len(matches) == 1 else m.group(0)
+        if len(matches) != 1:
+            return m.group(0)
+        fixes.append(f"short id {{{name}}} -> {{{matches[0]}}}")
+        return "{" + matches[0] + "}"
 
-    return PLACEHOLDER.sub(fix, text)
+    return PLACEHOLDER.sub(fix, text), fixes
+
+
+def auto_placeholders(text: str, facts: Facts) -> tuple[str, list[str]]:
+    """Replace a raw number that exactly equals the display of exactly ONE known fact by that fact's placeholder.
+    Text inside existing placeholders is never touched. Ambiguous or non-matching numbers stay (and get dropped)."""
+    by_display: dict[str, list[str]] = {}
+    for f in as_fact_map(facts).values():
+        if f.status == "known" and _DIGIT.search(f.display):
+            by_display.setdefault(f.display, []).append(f.id)
+    fixes: list[str] = []
+    parts = re.split(r"(\{[A-Za-z][A-Za-z0-9_.]*\})", text)
+    for display in sorted(by_display, key=len, reverse=True):
+        ids = by_display[display]
+        pat = re.compile(r"(?<![\d.,])" + re.escape(display) + r"(?![\d.,])")
+        for k, part in enumerate(parts):
+            if k % 2 or not pat.search(part):
+                continue  # odd parts are existing placeholders
+            if len(ids) != 1:
+                continue
+            parts[k] = pat.sub("{" + ids[0] + "}", part)
+            fixes.append(f"auto_placeholder '{display}' -> {{{ids[0]}}}")
+        parts = re.split(r"(\{[A-Za-z][A-Za-z0-9_.]*\})", "".join(parts))
+    return "".join(parts), fixes
+
+
+def comparison_problem(rendered: str, cited: Iterable[str], fact_map: Mapping[str, Fact]) -> str | None:
+    """Every comparison word needs a cited cmp_* fact saying the same direction."""
+    directions = {fact_map[c].value_text for c in cited if c in fact_map and c.rsplit(".", 1)[-1].startswith("cmp_")}
+    for m in COMPARISON.finditer(rendered):
+        word = m.group(1).lower()
+        direction = "higher" if word in _POSITIVE else "lower"
+        if _FLIP.match(rendered, m.end()):
+            direction = "lower" if direction == "higher" else "higher"
+        if direction not in directions:
+            return f"comparison '{m.group(1)}' needs a cited cmp_* fact saying '{direction}'"
+    return None
 
 
 def render(text: str, facts: Facts) -> str:
@@ -127,24 +180,32 @@ def check_argument(
     facts: Facts,
     quotes: Quotes | None,
     kind_filter: FactKind | None = None,
+    *,
+    comparisons: bool = True,
 ) -> Kept | Dropped:
-    """kind_filter: if set, every placeholder must be a fact of that kind."""
+    """kind_filter: if set, every placeholder must be a fact of that kind. comparisons: run the comparison-word
+    check (off for questions to the seller)."""
     fact_map, quote_map = as_fact_map(facts), as_quote_map(quotes)
-    argument_text = resolve_placeholders(argument_text, fact_map)
+    argument_text, fixes = resolve_placeholders(argument_text, fact_map)
+    argument_text, autos = auto_placeholders(argument_text, fact_map)
+    fixes += autos
     ph = placeholders(argument_text)
     unknown_ph = [p for p in ph if p not in fact_map]
     if unknown_ph:
-        return Dropped(reason=f"unknown placeholder(s): {', '.join(unknown_ph)}")
+        return Dropped(reason=f"unknown placeholder(s): {', '.join(unknown_ph)}", fixes=fixes)
     if kind_filter is not None:
         wrong = [p for p in ph if fact_map[p].kind != kind_filter]
         if wrong:
-            return Dropped(reason=f"placeholder {wrong[0]} is not a {kind_filter} fact")
+            return Dropped(reason=f"placeholder {wrong[0]} is not a {kind_filter} fact", fixes=fixes)
     if (raw := raw_number(argument_text)) is not None:
-        return Dropped(reason=f"raw number in text ('{raw}'); numbers must be {{fact_id}} placeholders")
+        return Dropped(reason=f"raw number in text ('{raw}'); numbers must be {{fact_id}} placeholders", fixes=fixes)
     cited = list(dict.fromkeys([*cited_ids, *ph]))
     unknown_ids = [c for c in cited if c not in fact_map and c not in quote_map]
     if unknown_ids:
-        return Dropped(reason=f"unknown citation id(s): {', '.join(unknown_ids)}")
+        return Dropped(reason=f"unknown citation id(s): {', '.join(unknown_ids)}", fixes=fixes)
     if not cited:
-        return Dropped(reason="no evidence cited")
-    return Kept(rendered=render(argument_text, fact_map), cited=cited)
+        return Dropped(reason="no evidence cited", fixes=fixes)
+    rendered = render(argument_text, fact_map)
+    if comparisons and (problem := comparison_problem(rendered, cited, fact_map)):
+        return Dropped(reason=problem, fixes=fixes)
+    return Kept(rendered=rendered, cited=cited, fixes=fixes)

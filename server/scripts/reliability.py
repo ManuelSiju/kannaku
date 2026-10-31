@@ -118,6 +118,7 @@ async def one_run(text: str, files: list[Upload], llm: OpenAICompatibleLLM) -> d
         ],
         "spoken": [f"{ln['speaker']}: {ln['text']}" for ln in b.get("spoken_lines", [])],
         "step_ms": {t["step"]: t["ms"] for t in b.get("trace", [])},
+        "fixes": [f"{t['step']}: {x}" for t in b.get("trace", []) for x in t["detail"].get("auto_placeholder", [])],
         "step_errors": {t["step"]: t["detail"].get("error") for t in b.get("trace", []) if t["detail"].get("error")},
         "total_s": round(total, 1),
     }
@@ -247,6 +248,21 @@ async def main() -> None:
         llm_stats[name] = stats_dict(llm)
     md = report(title, groups, llm_stats, expect, model)
     if args.framing:
+        base = Counter(r["colour"] for r in groups["neutral"]).most_common(1)[0][0]
+        base_st = {
+            a: Counter(r["stances"].get(a, "-").split()[0] for r in groups["neutral"]).most_common(1)[0][0]
+            for r in groups["neutral"]
+            for a in r["stances"]
+        }
+        flips = []
+        for name, runs in groups.items():
+            for i, r in enumerate(runs, 1):
+                if r["colour"] != base:
+                    flips.append(f"- {name} run {i}: verdict {r['colour']} (neutral majority {base})")
+                for a, st in r["stances"].items():
+                    if a in base_st and st.split()[0] != base_st[a]:
+                        flips.append(f"- {name} run {i}: {a} {st.split()[0]} (neutral majority {base_st[a]})")
+        md += "\nFlips vs the neutral framing's majority:\n\n" + ("\n".join(flips) or "- none") + "\n"
         md += "\nStances per run (final round):\n\n| framing | run | verdict | stances |\n|---|---|---|---|\n"
         for name, runs in groups.items():
             for i, r in enumerate(runs, 1):
@@ -261,9 +277,15 @@ async def main() -> None:
                 for t in r["terms"]
             )
             md += f"- run {i}: {terms or 'no terms'}; confirmed by OCR: {', '.join(r['photo_confirmed']) or 'none'}\n"
-    md += "\nSample spoken lines (first run of each case):\n\n"
+    md += "\nAuto-placeholder / short-id rewrites (every one):\n\n"
+    rewrites = [
+        f"- {name} run {i}: {x}" for name, runs in groups.items() for i, r in enumerate(runs, 1) for x in r["fixes"]
+    ]
+    md += ("\n".join(rewrites) or "- none") + "\n"
+    md += "\nSample spoken lines (2 per case, from the first run; Alfii's opener is a fixed template):\n\n"
     for name, runs in groups.items():
-        md += f"**{name}**\n\n" + "\n".join(f"> {x}  " for x in runs[0]["spoken"]) + "\n\n"
+        lines = [x for x in runs[0]["spoken"] if not x.startswith("alfii: Let me ask")][:2]
+        md += f"**{name}**\n\n" + "\n".join(f"> {x}  " for x in lines) + "\n\n"
     (docs / f"{stem}.md").write_text(md)
     (docs / f"{stem}_raw.json").write_text(
         json.dumps({"groups": groups, "llm_stats": llm_stats}, indent=1, default=str)

@@ -11,7 +11,8 @@
  9 debate            LLM call 3, only if disagreement > 0.4
 10 consensus         code; weighted vote + safety overrides
 11 privacy           code; decide_mode
-12 explainer         LLM call 4 (+ one rewrite if budget allows); evidence + privacy check per line
+12 explainer         LLM call 4 (+ one rewrite if budget allows); evidence + privacy check per line.
+                    Alfii's opener is a code template, sent as an SSE event right after routing.
 13 save              everything incl. dropped arguments, blocked lines, trace; guardian alert
 Any failed step -> degraded=true with its name; the answer still returns what is known.
 """
@@ -35,6 +36,7 @@ from app.pipeline import explainer as explainer_mod
 from app.pipeline.compute import Computed, compute_facts
 from app.pipeline.consensus import ConsensusResult, override_inputs_from_facts, run_consensus
 from app.pipeline.events import BUS, DONE, EventBus
+from app.pipeline.flags import routing_flags
 from app.pipeline.ingest import Ingested, Upload, ingest
 from app.pipeline.labels import source_label, unverified_label
 from app.pipeline.privacy import decide_mode
@@ -55,7 +57,7 @@ CONTEXT_CUES = re.compile(
     re.I,
 )
 SCAM_SENTENCE = "This looks like a scam. Do not share any code, do not install anything, and do not pay anyone."
-CLARIFY = "I want to be sure I understand. Is this about a loan, an insurance plan, a savings plan, or a stock tip?"
+CLARIFY = "Is this about a loan, a policy, an investment or a payment?"
 OUT_OF_SCOPE = (
     "I help with money questions like loans, insurance, savings and stock tips. What would you like to check?"
 )
@@ -216,7 +218,7 @@ async def _pipeline(run: _Run, inp: AskInput, *, repo: Repo, llm: LLMProvider, s
             ms_llm=usage.ms,
             tokens=[usage.prompt_tokens, usage.completion_tokens],
         )
-    case_type = draft.case_type
+    flags, case_type, flag_why = routing_flags(draft, evidence)  # market_linked only with document support
     repo.update_case(case_id, case_type=case_type, language=draft.language)
 
     if case_type == "unknown":  # Alfii asks one clarifying question; no extra LLM call
@@ -238,9 +240,7 @@ async def _pipeline(run: _Run, inp: AskInput, *, repo: Repo, llm: LLMProvider, s
     # 5 compute facts ------------------------------------------------------------------------------------------
     computed = Computed(facts=[], missing_required=[], flags=[], commitment=None)
     async with run.step("compute") as info:
-        computed = compute_facts(
-            case_type, terms, inp.family_id, repo, stock_symbol=draft.stock_symbol, flags=draft.flags
-        )
+        computed = compute_facts(case_type, terms, inp.family_id, repo, stock_symbol=draft.stock_symbol, flags=flags)
         info.update(facts=[f.id for f in computed.facts], missing_required=computed.missing_required)
     facts = computed.facts
     repo.save_facts(case_id, facts)
@@ -248,7 +248,9 @@ async def _pipeline(run: _Run, inp: AskInput, *, repo: Repo, llm: LLMProvider, s
     # 6 router ---------------------------------------------------------------------------------------------------
     agents = route(case_type, computed.flags)
     async with run.step("router") as info:
-        info.update(case_type=case_type, flags=computed.flags, agents=agents)
+        info.update(case_type=case_type, flags=computed.flags, agents=agents, market_linked=flag_why)
+    opening = explainer_mod.CheckedLine(speaker="alfii", text=explainer_mod.opener(agents))
+    run.bus.publish(case_id, "alfii_opener", text=opening.text)  # spoken while the council works; no LLM
     for a in agents:
         run.bus.publish(case_id, "agent_called", agent=a)
 
@@ -270,6 +272,7 @@ async def _pipeline(run: _Run, inp: AskInput, *, repo: Repo, llm: LLMProvider, s
             rounds.append(first)
             info.update(
                 dropped=[a.drop_reason for a in first.arguments if not a.kept],
+                auto_placeholder=[x for a in first.arguments for x in a.fixes],
                 missing_agents=first.missing_agents,
                 abstained=first.abstained,
             )
@@ -284,7 +287,10 @@ async def _pipeline(run: _Run, inp: AskInput, *, repo: Repo, llm: LLMProvider, s
                 async with run.step("debate", disagreement=disagreement) as info:
                     second, _ = await council_mod.run_debate(llm, payload, rounds[0], agents, facts, quote_text)
                     rounds.append(second)
-                    info.update(dropped=[a.drop_reason for a in second.arguments if not a.kept])
+                    info.update(
+                        dropped=[a.drop_reason for a in second.arguments if not a.kept],
+                        auto_placeholder=[x for a in second.arguments for x in a.fixes],
+                    )
     final = rounds[-1] if rounds else None
     for r in rounds:
         for p in r.positions:
@@ -324,9 +330,13 @@ async def _pipeline(run: _Run, inp: AskInput, *, repo: Repo, llm: LLMProvider, s
             draft.language,
             candidate_qs,
         )
-        out, lines, rewrite_used = await explainer_mod.explain(llm, payload, facts, quote_text, mode)
+        out, lines, rewrite_used, fixes = await explainer_mod.explain(llm, payload, facts, quote_text, mode)
         questions = out.questions
-        info.update(rewrite_used=rewrite_used, blocked=[ln.blocked_reason for ln in lines if not ln.allowed])
+        info.update(
+            rewrite_used=rewrite_used,
+            blocked=[ln.blocked_reason for ln in lines if not ln.allowed],
+            auto_placeholder=fixes,
+        )
     if not lines:
         lines = explainer_mod.template_lines(consensus.verdict, agents, kept_args, facts, quote_text, mode)
     if not lines[-1].allowed:  # the verdict sentence must always be heard
@@ -339,6 +349,7 @@ async def _pipeline(run: _Run, inp: AskInput, *, repo: Repo, llm: LLMProvider, s
     final_questions = list(dict.fromkeys(pool))[:3]
 
     # 13 save -----------------------------------------------------------------------------------------------------
+    lines = [opening, *lines]
     for i, ln in enumerate(lines, start=1):
         repo.add_spoken_line(case_id, ln.speaker, i, ln.text, allowed=ln.allowed, blocked_reason=ln.blocked_reason)
     sentence = lines[-1].text

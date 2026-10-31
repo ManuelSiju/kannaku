@@ -24,9 +24,16 @@ def test_two_placeholders_and_a_quote():
     assert r.cited == ["q1", "endowment_return", "fd_value"]
 
 
-def test_raw_digit_is_dropped_even_if_correct():
-    r = check_argument("This plan returns about 3.8% a year.", ["endowment_return"], FACTS, QUOTES)
-    assert isinstance(r, Dropped) and "raw number" in r.reason and "3.8" in r.reason
+def test_raw_number_equal_to_one_fact_display_becomes_placeholder():
+    r = check_argument("This plan returns about 3.8% a year.", [], FACTS, QUOTES)
+    assert isinstance(r, Kept) and r.rendered == "This plan returns about 3.8% a year."
+    assert r.cited == ["endowment_return"]
+    assert r.fixes == ["auto_placeholder '3.8%' -> {endowment_return}"]
+
+
+def test_raw_number_not_matching_a_display_is_dropped():
+    r = check_argument("This plan returns about 3.75% a year.", ["endowment_return"], FACTS, QUOTES)
+    assert isinstance(r, Dropped) and "raw number" in r.reason
 
 
 def test_invented_number_dropped():
@@ -89,3 +96,71 @@ def test_small_amount_does_not_match_by_lakh_rounding():
 
     assert not value_matches(TextNumber(value=50_000, is_percent=False, text="50,000"), 45_000, "INR")
     assert value_matches(TextNumber(value=13_40_000, is_percent=False, text="13.4 lakh"), 13_44_402.68, "INR")
+
+
+# ---------------------------------------------------------------- comparison facts
+from app.engines.compare import compare_rates  # noqa: E402
+from app.engines.fact import Fact  # noqa: E402
+
+
+def _rate(id, v):
+    return Fact(id=id, label="", value=v, unit="fraction", kind="offer", formula="")
+
+
+FD = _rate("ref.fd_rate", 0.07)
+LOW, HIGH, GUAR = _rate("endowment_return", 0.0375), _rate("f_return_high", 0.083), _rate("f_return_guaranteed", 0.0)
+CMP = [
+    compare_rates("cmp_return_low_vs_fd", "", LOW, FD),
+    compare_rates("cmp_return_high_vs_fd", "", HIGH, FD),
+    compare_rates("cmp_guaranteed_vs_fd", "", GUAR, FD),
+]
+CFACTS = [FD, LOW, HIGH, GUAR, *CMP]
+
+
+def test_compare_rates_directions_and_tolerance():
+    assert [c.value_text for c in CMP] == ["lower", "higher", "lower"]
+    assert compare_rates("c", "", _rate("a", 0.074), FD).value_text == "about the same"  # +0.4 pp
+    assert compare_rates("c", "", _rate("a", 0.076), FD).value_text == "higher"  # +0.6 pp
+    assert compare_rates("c", "", _rate("a", None), FD).status == "unknown"
+
+
+def test_false_comparison_line_dropped():
+    text = "Even with the highest bonus rate, your maturity value would be lower"
+    assert not check_argument(text, ["q1"], CFACTS, QUOTES).kept
+    r = check_argument(text, ["cmp_return_high_vs_fd"], CFACTS, QUOTES)
+    assert isinstance(r, Dropped) and "lower" in r.reason
+
+
+def test_comparison_backed_by_agreeing_cmp_fact_kept():
+    assert check_argument("This plan earns less than a fixed deposit.", ["cmp_return_low_vs_fd"], CFACTS, QUOTES).kept
+    r = check_argument(
+        "At the higher bonus it would be {cmp_return_high_vs_fd} than a fixed deposit.", [], CFACTS, QUOTES
+    )
+    assert r.kept and r.rendered == "At the higher bonus it would be higher than a fixed deposit."
+
+
+def test_comparison_with_offer_as_object_flips_direction():
+    text = "A fixed deposit earns more than this plan."
+    assert check_argument(text, ["cmp_return_low_vs_fd"], CFACTS, QUOTES).kept
+    assert not check_argument("A fixed deposit would do better.", ["cmp_return_low_vs_fd"], CFACTS, QUOTES).kept
+
+
+def test_comparison_word_without_cmp_citation_dropped():
+    r = check_argument("This plan returns {endowment_return}, lower than you think.", [], CFACTS, QUOTES)
+    assert isinstance(r, Dropped) and "cmp_" in r.reason
+
+
+def test_comparisons_can_be_switched_off_for_questions():
+    assert check_argument("Is there a lower rate?", ["q1"], CFACTS, QUOTES, comparisons=False).kept
+
+
+def test_ambiguous_display_is_not_auto_replaced():
+    facts = [Fact(id=f"term.{n}", label="", value=15, unit="years", kind="offer", formula="") for n in ("a", "b")]
+    r = check_argument("You pay for 15 years.", ["q1"], facts, QUOTES)
+    assert isinstance(r, Dropped) and "raw number" in r.reason
+
+
+def test_short_id_fix_is_reported():
+    facts = [*FACTS, Fact(id="term.sum_assured", label="", value=750_000, unit="INR", kind="offer", formula="")]
+    r = check_argument("Only {sum_assured} is guaranteed.", [], facts, QUOTES)
+    assert r.fixes == ["short id {sum_assured} -> {term.sum_assured}"]

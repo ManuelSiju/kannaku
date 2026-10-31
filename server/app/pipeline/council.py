@@ -26,6 +26,7 @@ class CheckedArgument(BaseModel):
     rendered: str | None = None  # placeholders filled in (kept arguments only)
     cited_ids: list[str]
     kept: bool
+    fixes: list[str] = []  # auto_placeholder / short-id repairs
     drop_reason: str | None = None
 
 
@@ -54,7 +55,7 @@ def council_input(
         "case": summary,
         "facts": facts_table(facts),
         "quotes": [{"id": qid, "source": q["source"], "text": q["text"]} for qid, q in quotes.items()],
-        "agents": [{"agent": a, "role": prompts.ROLE_CARDS[a]} for a in agents],
+        "agents": [{"agent": a, "role": prompts.role_card(a, str(summary.get("case_type", "")))} for a in agents],
     }
 
 
@@ -76,7 +77,13 @@ def check_round(
             if isinstance(res, Kept):
                 checked.append(
                     CheckedArgument(
-                        agent=agent, round=round, text=arg.text, rendered=res.rendered, cited_ids=res.cited, kept=True
+                        agent=agent,
+                        round=round,
+                        text=arg.text,
+                        rendered=res.rendered,
+                        cited_ids=res.cited,
+                        kept=True,
+                        fixes=res.fixes,
                     )
                 )
             else:
@@ -88,6 +95,7 @@ def check_round(
                         cited_ids=arg.cited_ids,
                         kept=False,
                         drop_reason=res.reason,
+                        fixes=res.fixes,
                     )
                 )
             kept += int(res.kept)

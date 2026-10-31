@@ -1,5 +1,6 @@
-"""Step 12: Alfii's spoken lines. Numbers appear only as {fact_id} placeholders, filled in by code. Every line
-passes the evidence check (no raw digits, known ids) and then the privacy check on the filled-in text; failing
+"""Step 12: the agents' spoken lines and Alfii's verdict sentence (Alfii's opener is a code template, see run.py).
+Numbers appear only as {fact_id} placeholders, filled in by code. Every line passes the evidence check (no raw
+digits, known ids, comparison words backed by cmp_* facts) and then the privacy check on the filled-in text; failing
 lines are rewritten once (if the LLM budget allows), then replaced by ON_SCREEN. Templates if the LLM fails."""
 
 from __future__ import annotations
@@ -34,23 +35,36 @@ class CheckedLine(BaseModel):
     blocked_reason: str | None = None
 
 
-def check_line(line: Line, facts: list[Fact], quotes: dict[str, str], mode: PrivacyMode) -> tuple[str | None, str]:
-    """(problem or None, rendered text). Lines without numbers need no citation (e.g. Alfii's opener)."""
-    rendered, cited = line.text, list(line.cited_ids)
-    if placeholders(line.text) or raw_number(line.text) or line.cited_ids:
-        res = check_argument(line.text, line.cited_ids, facts, quotes)
+def opener(agents: list[str]) -> str:
+    """Alfii's opener, templated in code (no LLM): "Let me ask Dani and Sankz."."""
+    names = [NAMES[a] for a in agents]
+    if not names:
+        return "Let me look at this."
+    who = names[0] if len(names) == 1 else ", ".join(names[:-1]) + " and " + names[-1]
+    return f"Let me ask {who}."
+
+
+def check_line(
+    line: Line, facts: list[Fact], quotes: dict[str, str], mode: PrivacyMode, *, comparisons: bool = True
+) -> tuple[str | None, str, list[str]]:
+    """(problem or None, rendered text, fixes). Lines without numbers or comparisons need no citation."""
+    rendered, cited, fixes = line.text, list(line.cited_ids), []
+    needs_check = placeholders(line.text) or raw_number(line.text) or line.cited_ids or comparisons
+    if needs_check:
+        res = check_argument(line.text, line.cited_ids, facts, quotes, comparisons=comparisons)
+        fixes = res.fixes
         if isinstance(res, Dropped):
             if res.reason != "no evidence cited":
-                return f"evidence: {res.reason}", line.text
+                return f"evidence: {res.reason}", line.text, fixes
         elif isinstance(res, Kept):
             rendered, cited = res.rendered, res.cited
     priv = speech_allowed(rendered, cited, facts, mode)
-    return (None if priv.allowed else f"privacy: {priv.reason}"), rendered  # type: ignore[union-attr]
+    return (None if priv.allowed else f"privacy: {priv.reason}"), rendered, fixes  # type: ignore[union-attr]
 
 
 def render_question(q: str, facts: list[Fact], quotes: dict[str, str], mode: PrivacyMode) -> str | None:
-    """Questions are read aloud too: same rules as lines. The rendered question, or None if it fails."""
-    problem, rendered = check_line(Line(speaker="alfii", text=q), facts, quotes, mode)
+    """Questions are read aloud too (no comparison rule: "is there a lower rate?" is a fair question)."""
+    problem, rendered, _ = check_line(Line(speaker="alfii", text=q), facts, quotes, mode, comparisons=False)
     return None if problem else rendered
 
 
@@ -80,14 +94,16 @@ def explainer_input(
 
 async def explain(
     llm: LLMProvider, payload: dict[str, Any], facts: list[Fact], quotes: dict[str, str], mode: PrivacyMode
-) -> tuple[ExplainerOutput, list[CheckedLine], bool]:
-    """Returns (raw output, checked lines in order [opener, agents..., verdict], rewrite_used)."""
+) -> tuple[ExplainerOutput, list[CheckedLine], bool, list[str]]:
+    """Returns (raw output, checked lines [agents..., verdict], rewrite_used, fixes)."""
     out, _ = await llm.chat_json(prompts.EXPLAINER, json.dumps(payload, separators=(",", ":")), ExplainerOutput)
-    lines = [out.opener, *out.agent_lines, out.verdict_sentence]
+    lines = [*out.agent_lines, out.verdict_sentence]
     rendered: dict[int, str] = {}
     problems: dict[int, str] = {}
+    all_fixes: list[str] = []
     for i, ln in enumerate(lines):
-        p, rendered[i] = check_line(ln, facts, quotes, mode)
+        p, rendered[i], fixes = check_line(ln, facts, quotes, mode)
+        all_fixes += fixes
         if p:
             problems[i] = p
     rewrite_used = False
@@ -104,7 +120,8 @@ async def explain(
             fixed, _ = await llm.chat_json(prompts.REWRITE, json.dumps(req, separators=(",", ":")), RewriteOutput)
             for i, new in zip(list(problems), fixed.lines, strict=False):
                 new = new.model_copy(update={"speaker": lines[i].speaker})
-                p, text = check_line(new, facts, quotes, mode)
+                p, text, fixes = check_line(new, facts, quotes, mode)
+                all_fixes += fixes
                 if p is None:
                     lines[i], rendered[i] = new, text
                     problems.pop(i)
@@ -118,7 +135,7 @@ async def explain(
             checked.append(CheckedLine(speaker=ln.speaker, text=ON_SCREEN, allowed=False, blocked_reason=problems[i]))
         else:
             checked.append(CheckedLine(speaker=ln.speaker, text=rendered[i], cited_ids=ln.cited_ids))
-    return out, checked, rewrite_used
+    return out, checked, rewrite_used, all_fixes
 
 
 def template_lines(
@@ -129,15 +146,14 @@ def template_lines(
     quotes: dict[str, str],
     mode: PrivacyMode,
 ) -> list[CheckedLine]:
-    """No-LLM fallback: Alfii's opener, each agent's first kept argument (re-checked for privacy), verdict template."""
-    who = " and ".join(NAMES[a] for a in agents) or "the team"
-    lines = [CheckedLine(speaker="alfii", text=f"I asked {who} to look at this.")]
+    """No-LLM fallback: each agent's first kept argument (re-checked for privacy) and the verdict template."""
+    lines = []
     for a in agents:
         arg = next((x for x in kept_args if x["agent"] == a), None)
         if arg is None:
             continue
         ln = Line(speaker=a, text=arg["text"], cited_ids=arg["cited_ids"])
-        p, text = check_line(ln, facts, quotes, mode)
+        p, text, _ = check_line(ln, facts, quotes, mode)
         lines.append(
             CheckedLine(
                 speaker=a, text=ON_SCREEN if p else text, cited_ids=ln.cited_ids, allowed=p is None, blocked_reason=p

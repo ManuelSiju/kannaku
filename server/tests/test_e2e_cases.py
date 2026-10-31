@@ -78,7 +78,10 @@ def test_endowment_brochure_is_red(harness):
     assert [ln["speaker"] for ln in lines] == ["alfii", "dani", "sankz", "alfii"]
     assert lines[2]["text"] == ON_SCREEN
     assert all("9,433" not in ln["text"] for ln in lines)
-    assert lines[1]["text"] == "This plan grows your money by only about 3.8% a year; a fixed deposit would do better."
+    assert lines[0]["text"] == "Let me ask Dani and Sankz."
+    assert (
+        lines[1]["text"] == "This plan grows your money by only about 3.8% a year, which is lower than a fixed deposit."
+    )
     assert "₹15 lakh is not guaranteed" in lines[3]["text"]
     assert 1 <= len(res["verdict"]["questions"]) <= 3
 
@@ -145,7 +148,7 @@ def test_unknown_case_type_asks_one_clarifying_question(harness):
     state["llm"] = llm = FakeLLM(load_fixture("unknown"))
     res = ask(client, "What about this one?")
     assert res["case_type"] == "unknown" and res["called_agents"] == [] and res["verdict"]["colour"] is None
-    assert res["spoken_lines"][0]["text"].endswith("or a stock tip?")
+    assert res["spoken_lines"][0]["text"] == "Is this about a loan, a policy, an investment or a payment?"
     assert llm.calls == ["CaseDraft"]
 
 
@@ -284,3 +287,56 @@ def test_endowment_from_brochure_photos_uses_ocr(harness):
     assert details["endowment_return"]["value"] == "3.8%"
     assert details["term.premium"]["source"] == "Brochure page 1 · read twice"  # LLM + OCR agree
     assert not any(d["label"].startswith("Could not check") for d in res["screen_details"])
+
+
+def test_opener_is_templated_and_sent_as_event_before_council(harness):
+    client, state, _ = harness
+    state["llm"] = FakeLLM(load_fixture("stock_tip"))
+    res = ask(client, TIP_Q)
+    assert res["spoken_lines"][0] == {"speaker": "alfii", "text": "Let me ask Vick and Sankz."}
+    with client.stream("GET", f"/cases/{res['case_id']}/events") as r:
+        events = [json.loads(line[6:]) for line in r.iter_lines() if line.startswith("data: ")]
+    types = [e["type"] for e in events]
+    opener = next(e for e in events if e["type"] == "alfii_opener")
+    assert opener["text"] == "Let me ask Vick and Sankz."
+    council_start = next(i for i, e in enumerate(events) if e.get("step") == "council")
+    assert types.index("alfii_opener") < council_start
+
+
+def test_raw_number_auto_placeholder_recorded_in_trace(harness):
+    client, state, _ = harness
+    script = load_fixture("endowment")
+    script["CouncilOutput"]["opinions"][0]["arguments"][0]["text"] = "This plan returns only about 3.8% a year."
+    state["llm"] = FakeLLM(script)
+    res = ask(client, ENDOWMENT_Q, brochure_files())
+    bundle = client.get(f"/cases/{res['case_id']}").json()
+    council = next(t for t in bundle["trace"] if t["step"] == "council")
+    assert council["detail"]["auto_placeholder"] == ["auto_placeholder '3.8%' -> {endowment_return}"]
+    assert any(a["kept"] and a["text"] == "This plan returns only about 3.8% a year." for a in bundle["arguments"])
+
+
+def test_endowment_is_not_market_linked_even_if_builder_says_so(harness):
+    client, state, _ = harness
+    script = load_fixture("endowment")
+    script["CaseDraft"]["flags"] = ["market_linked"]
+    script["CaseDraft"]["market_linked_quote"] = "returns depend on the stock market"
+    state["llm"] = FakeLLM(script)
+    res = ask(client, ENDOWMENT_Q, brochure_files())
+    assert res["called_agents"] == ["dani", "sankz"]
+    script["CaseDraft"]["case_type"] = "ulip"
+    state["llm"] = FakeLLM(script)
+    res = ask(client, ENDOWMENT_Q, brochure_files())
+    assert res["called_agents"] == ["dani", "sankz"] and res["case_type"] == "insurance_offer"
+
+
+def test_comparison_facts_present(harness):
+    client, state, _ = harness
+    state["llm"] = FakeLLM(load_fixture("endowment"))
+    details = {d["id"]: d["value"] for d in ask(client, ENDOWMENT_Q, brochure_files())["screen_details"]}
+    assert details["cmp_return_low_vs_fd"] == "lower"
+    assert details["cmp_return_high_vs_fd"] == "higher"
+    assert details["cmp_guaranteed_vs_fd"] == "lower"
+    assert details["f_return_guaranteed"] == "0%"
+    state["llm"] = FakeLLM(load_fixture("flat_loan"))
+    details = {d["id"]: d["value"] for d in ask(client, LOAN_Q)["screen_details"]}
+    assert details["cmp_effective_vs_quoted"] == "higher"

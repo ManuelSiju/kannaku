@@ -51,10 +51,6 @@
     ]
   },
   "ExplainerOutput": {
-    "opener": {
-      "speaker": "alfii",
-      "text": "I asked Vick and Sankz about this tip."
-    },
     "agent_lines": [
       {
         "speaker": "vick",

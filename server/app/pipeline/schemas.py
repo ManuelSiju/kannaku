@@ -62,7 +62,8 @@ class CaseDraft(BaseModel):
     missing_terms: list[str] = []
     language: str = "en"
     stock_symbol: str | None = None
-    flags: list[str] = []  # e.g. "market_linked"
+    flags: list[str] = []  # e.g. "market_linked" (kept only with a supporting quote, see pipeline/flags.py)
+    market_linked_quote: str | None = None  # words from the document showing returns depend on the market
 
 
 # ---------------------------------------------------------------- LLM calls 2-3: council and debate
@@ -96,7 +97,6 @@ class Line(BaseModel):
 
 
 class ExplainerOutput(BaseModel):
-    opener: Line
     agent_lines: list[Line] = []
     verdict_sentence: Line
     questions: list[str] = []

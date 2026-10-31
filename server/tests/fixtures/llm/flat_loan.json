@@ -45,10 +45,6 @@
     ]
   },
   "ExplainerOutput": {
-    "opener": {
-      "speaker": "alfii",
-      "text": "I asked Sankz to check this loan."
-    },
     "agent_lines": [
       {
         "speaker": "sankz",
