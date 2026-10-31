@@ -69,6 +69,8 @@ WORDS_PER_MINUTE = 150
 # A red conclusion must say no plainly: "do not sign without written guarantees" invites signing once the paper comes.
 RED_NO = re.compile(r"\b(do not|don't|dont|not go ahead|avoid|stop|never|say no)\b", re.I)
 RED_LOOPHOLE = re.compile(r"\b(without|unless|until|carefully|first compare|more facts|more details)\b", re.I)
+# The model's own "ask them ..." sentences are removed from Alfii's conclusion: questions come only from the bank.
+MODEL_ASK = re.compile(r"\bask(?:s|ed|ing)?\b|\bquestions?\b|ചോദിക്ക|पूछ", re.I)
 ACTION_CUES = re.compile(r"\b(ask|wait|talk to|show me|call|do not sign|don't sign|before you)\b", re.I)
 CONTEXT_CUES = re.compile(
     r"\b(?:he|she|they) (?:says|said|is saying|is asking|wants)\b|\bthe agent is here\b|\b(?:agent|man|lady|he|she)"
@@ -439,13 +441,18 @@ async def _pipeline(run: _Run, inp: AskInput, *, repo: Repo, llm: LLMProvider, s
         )
 
     # Alfii's conclusion always ends with one next step ------------------------------------------------------------
-    verdict_text = conclusion.text if conclusion else t(lang, consensus.verdict)
-    if consensus.verdict == "red" and lang == "en":
-        from app.pipeline.lint import sentences
+    from app.pipeline.lint import sentences
 
-        parts = sentences(verdict_text)
-        if not parts or not RED_NO.search(parts[0]) or RED_LOOPHOLE.search(parts[0]):
-            verdict_text = " ".join([t(lang, "red"), *parts[1:]])
+    verdict_text = conclusion.text if conclusion else t(lang, consensus.verdict)
+    parts = sentences(verdict_text)
+    if (
+        consensus.verdict == "red"
+        and lang == "en"
+        and (not parts or not RED_NO.search(parts[0]) or RED_LOOPHOLE.search(parts[0]))
+    ):
+        parts = [t(lang, "red"), *parts[1:]]
+    parts = parts[:1] + [p for p in parts[1:] if not MODEL_ASK.search(p)]
+    verdict_text = " ".join(parts) or t(lang, consensus.verdict)
     if not ACTION_CUES.search(verdict_text):
         verdict_text = f"{verdict_text} {_next_step(consensus.verdict, picked.questions, guardian, lang)}"
     closing = explainer_mod.CheckedLine(speaker="alfii", text=verdict_text, kind="conclusion")

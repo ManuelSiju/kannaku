@@ -271,3 +271,17 @@ def test_vick_line_missing_the_strongest_signal_is_replaced(harness):  # noqa: F
         == "It rose 222 percent in 30 trading days on 4 times normal volume. That is how pump-and-dump schemes look."
     )
     assert "RewriteOutput" in llm.calls
+
+
+def test_model_ask_sentences_leave_the_conclusion(harness):  # noqa: F811
+    from tests.test_e2e_cases import LOAN_Q
+
+    client, state, _ = harness
+    script = load_fixture("flat_loan")
+    script["ExplainerOutput"]["verdict_sentence"]["text"] = (
+        "Please do not sign this loan. Ask them about the reducing-balance rate first."
+    )
+    state["llm"] = FakeLLM(script)
+    res = ask(client, LOAN_Q)
+    final = res["spoken_lines"][-1]["text"]
+    assert final == "Please do not sign this loan."  # "do not sign" is itself the next step (ACTION_CUES)

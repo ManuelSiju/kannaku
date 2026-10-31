@@ -61,7 +61,7 @@ CASE_HINTS = {
     "using {cmp_effective_vs_quoted}; compare with a normal bank loan using {cmp_effective_vs_typical}.",
     ("vick", "stock"): "Every argument must use at least one of {run_up_30d}, {volume_spike}, "
     "{upper_circuit_hits_30d} or {pump_risk}; lead with the strongest signal. Say the time window in words "
-    "(\"in the last month of trading\"), never as digits.",
+    '("in the last month of trading"), never as digits.',
 }
 _GROUP = {
     "insurance_offer": "insurance",
@@ -107,7 +107,7 @@ contradicted. In DISCREET mode the family's own figures are not given to you; do
 {STYLE_RULES}
 {NUMBERS_RULE}
 
-Example output for two listed agents: {{"opinions":[{{"agent":"dani","stance":"against","strength":0.7,"arguments":[{{"text":"Even at the higher bonus rate it grows {{cmp_return_high_vs_fd}} a fixed deposit.","cited_ids":[]}}]}},{{"agent":"sankz","stance":"against","strength":0.8,"arguments":[{{"text":"Only {{term.sum_assured}} is written as guaranteed.","cited_ids":[]}},{{"text":"The bonuses are not promised.","cited_ids":["q12"]}}]}}]}}"""
+Example output for two listed agents: {{"opinions":[{{"agent":"dani","stance":"against","strength":0.7,"arguments":[{{"text":"Even at the higher bonus rate it grows {{cmp_return_high_vs_fd}} a fixed deposit.","cited_ids":[]}}]}},{{"agent":"sankz","stance":"against","strength":0.8,"arguments":[{{"text":"The {{term.flat_rate}} flat rate really costs about {{loan_effective_rate}} a year, {{cmp_effective_vs_quoted}} the rate quoted.","cited_ids":[]}},{{"text":"Only {{term.sum_assured}} is written as guaranteed.","cited_ids":[]}}]}}]}}"""
 
 DEBATE = (
     COUNCIL
@@ -120,7 +120,7 @@ EXPLAINER = f"""You write what a council of money specialists says aloud to an o
 Alfii has already introduced them. The verdict colour is decided by code; do not change or contradict it.
 Write in the language given in "language" (English, Malayalam or Hindi); placeholders stay exactly as they are.
 Write one line per called agent in that agent's voice (speaker = agent name), then Alfii's verdict_sentence (speaker
-"alfii") that ends with one thing to do next. "question_bank" lists the only questions that may be asked: pick at
+"alfii"): one sentence with the decision only; code adds the next step and the questions. "question_bank" lists the only questions that may be asked: pick at
 most 3 by id, in the order you prefer; you may reword one lightly in the same language (same meaning, every key word
 kept, under 12 words). Never write a question that is not in the bank. If "claim_checks" has a contradicted claim, one line must say so, quoting the claim and the
 evidence ("You were told guaranteed; the brochure says bonuses may change"). In DISCREET mode the family's own figures
@@ -129,7 +129,7 @@ are not given to you and you must not mention income, savings, expenses, EMIs, b
 {PERSONAS}
 {NUMBERS_RULE}
 
-Example output: {{"agent_lines":[{{"speaker":"sankz","text":"This loan really costs you about {{loan_effective_rate}} a year, {{cmp_effective_vs_quoted}} the rate they told you.","cited_ids":[]}}],"verdict_sentence":{{"speaker":"alfii","text":"Please do not sign this loan as it is. Ask them for the reducing-balance rate first.","cited_ids":[]}},"questions":[{{"id":"loan_reducing_rate","text":"What is the interest rate on the reducing balance?"}}]}}"""
+Example output: {{"agent_lines":[{{"speaker":"sankz","text":"This loan really costs you about {{loan_effective_rate}} a year, {{cmp_effective_vs_quoted}} the rate they told you.","cited_ids":[]}}],"verdict_sentence":{{"speaker":"alfii","text":"Please do not sign this loan as it is.","cited_ids":[]}},"questions":[{{"id":"loan_reducing_rate","text":"What is the interest rate on the reducing balance?"}}]}}"""
 
 REWRITE = f"""Rewrite each line so it passes the check described in its "problem": keep the meaning, speaker and
 language. For a privacy problem, drop every mention of the family's own money (income, savings, expenses, EMIs, budget,
