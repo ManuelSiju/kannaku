@@ -204,7 +204,9 @@ class _MyDetailsScreenState extends State<MyDetailsScreen> {
         if (audio == null) return;
         proposal = await p.extract(audio: Upload('audio', 'details.m4a', audio, 'audio/mp4'));
       } else {
-        final up = await Pickers.pick('camera', 'file') ?? await Pickers.pick('pdf', 'file');
+        final choice = await askPaperSource(context);
+        if (choice == null) return;
+        final up = await Pickers.pick(choice, 'file');
         if (up == null) return;
         proposal = await p.extract(file: up);
       }

@@ -217,3 +217,27 @@ extension Appear on Widget {
 
 void toast(BuildContext context, String message) =>
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message, style: const TextStyle(fontSize: 16))));
+
+/// Camera, gallery or PDF: 'camera', 'gallery', 'pdf', or null when dismissed.
+Future<String?> askPaperSource(BuildContext context) => showShadSheet<String>(
+  context: context,
+  side: ShadSheetSide.bottom,
+  builder: (c) => ShadSheet(
+    title: const Text('Show a paper', style: TextStyle(fontSize: 20)),
+    child: Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        KButton('Take a photo', kind: 'outline', icon: LucideIcons.camera, onPressed: () => Navigator.pop(c, 'camera')),
+        const SizedBox(height: 8),
+        KButton(
+          'Choose a photo',
+          kind: 'outline',
+          icon: LucideIcons.image,
+          onPressed: () => Navigator.pop(c, 'gallery'),
+        ),
+        const SizedBox(height: 8),
+        KButton('Choose a PDF', kind: 'outline', icon: LucideIcons.fileText, onPressed: () => Navigator.pop(c, 'pdf')),
+      ],
+    ),
+  ),
+);

@@ -270,38 +270,7 @@ class _ChatPageState extends State<ChatPage> {
   }
 
   Future<void> _addPage() async {
-    final choice = await showShadSheet<String>(
-      context: context,
-      side: ShadSheetSide.bottom,
-      builder: (c) => ShadSheet(
-        title: const Text('Show a paper', style: TextStyle(fontSize: 20)),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            KButton(
-              'Take a photo',
-              kind: 'outline',
-              icon: LucideIcons.camera,
-              onPressed: () => Navigator.pop(c, 'camera'),
-            ),
-            const Gap(8),
-            KButton(
-              'Choose a photo',
-              kind: 'outline',
-              icon: LucideIcons.image,
-              onPressed: () => Navigator.pop(c, 'gallery'),
-            ),
-            const Gap(8),
-            KButton(
-              'Choose a PDF',
-              kind: 'outline',
-              icon: LucideIcons.fileText,
-              onPressed: () => Navigator.pop(c, 'pdf'),
-            ),
-          ],
-        ),
-      ),
-    );
+    final choice = await askPaperSource(context);
     if (choice == null) return;
     try {
       final up = await Pickers.pick(choice, 'files');
