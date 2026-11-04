@@ -50,16 +50,27 @@ make demo-replay
 
 ## Use of Meta AI
 
-Every row was run live. The model id is the one Meta returned, not our setting.
+Kanakku uses two Meta models and Muse Spark's vision, each where it does something the rest of the system cannot. Every row was
+run live, and the model id is the one Meta returned, not our setting.
 
 | step | Meta model | setting | why | proof | median time |
 |---|---|---|---|---|---|
+| Hearing the question | `muse-voice-transcribe-1.0` | keyword bias for lakh, EMI, KYC and the council's names | hears Indian money words a general model misses | [meta run](docs/reports/meta_run.md) | 3.7 s for a short question |
 | Case builder | `muse-spark-1.3` | `json_object`, `minimal` reasoning | classifies the case and copies the terms | [meta run](docs/reports/meta_run.md) | 2.8–5.5 s |
-| Reading photos | `muse-spark-1.3` vision | checked against Tesseract | both must agree for "read twice" | [meta run](docs/reports/meta_run.md) | within the case builder |
-| Council | `muse-spark-1.3` | `json_object`, `minimal` reasoning | each specialist argues from fact ids | [reliability](docs/reports/reliability_meta.md) | 9.6–12.8 s |
+| Reading photos | `muse-spark-1.3` vision | checked against Tesseract | two independent readings: both must agree for "read twice" | [meta run](docs/reports/meta_run.md) | within the case builder |
+| Council | `muse-spark-1.3` | `json_object`, `minimal` reasoning | specialists argue from fact ids, as one structured call | [reliability](docs/reports/reliability_meta.md) | 9.6–12.8 s |
 | Explainer | `muse-spark-1.3` | `json_object`, `minimal` reasoning | plain spoken lines, checked again by code | [reliability](docs/reports/reliability_meta.md) | 9.9–19.8 s |
 
-Reasoning levels were [chosen from measurements](docs/reports/effort_matrix.md). Speech-to-text runs on local faster-whisper.
+**What building on Muse Spark taught us:**
+
+- **Reasoning effort is a real dial.** A reasoning model spent 300 tokens to say "ok". Under a 20 second budget only `minimal`
+  gave every expected verdict with nothing degraded, while `low` and `high` timed out ([measurements](docs/reports/effort_matrix.md)).
+- **Structured output needs care.** `json_schema` ran to the token limit on the same request that `json_object` finished in
+  13 seconds, so the schema stays in the prompt and code validates the reply.
+- **Keyword biasing changed the result.** With our word list it heard "Dani and Sankz" where Whisper heard "Ghanian Sanks".
+- **The model argues, code decides.** Muse Spark never writes a number, and a safety rule can overrule its vote.
+
+If Muse Voice Transcribe fails, the local Whisper model takes over and the trace says so.
 
 ## How it works
 
@@ -100,13 +111,13 @@ The [project guide](docs/PROJECT_GUIDE.md) covers every step, function and setti
 
 | check | result | report |
 |---|---|---|
-| Live on Meta | All demo cases, no degraded step | [meta_run](docs/reports/meta_run.md) |
+| Live on Meta | All demo cases answered as expected; in the latest run one council call timed out and the answer was flagged | [meta_run](docs/reports/meta_run.md) |
 | Number audit | 22 figures recomputed without our engines, 0 mismatches | [numbers_audit](docs/reports/numbers_audit.md) |
 | Calibration on Meta, 3 runs each | Greens 12/12, reds 21/21, yellows 7 yellow and 5 red: no risky case came out green | [calibration](docs/reports/calibration.md) |
 | Reliability on Meta, 5 cases × 3 | 15 of 15 as expected, 1 run degraded | [reliability](docs/reports/reliability_meta.md) |
 | Framing on Meta, 3 framings × 2 | Never green; one framing gave yellow, not red | [framing](docs/reports/reliability_framing_meta.md) |
 | Prompt injection in a brochure | Never green; the text is treated as data | [QA report](docs/reports/qa_final.md) |
-| Automated tests | 530 server and 66 app tests | `make test`, `make app-test` |
+| Automated tests | 534 server and 66 app tests | `make test`, `make app-test` |
 | Real phone | Samsung A73, Android 16: install, asks, uploads, guardian note, voices recorded | [QA report](docs/reports/qa_final.md) |
 
 Every claim is listed with its status in the [claims audit](docs/reports/claims_audit.md). Early reactions, on the local
@@ -145,7 +156,7 @@ To install the app, connect an Android phone with USB debugging on and run `make
 |---|---|
 | App | Flutter, shadcn_ui, provider |
 | Server | Python 3.11, FastAPI, Pydantic, SQLite |
-| Models | Meta Muse Spark or Ollama (`qwen2.5:7b-instruct`), faster-whisper, Tesseract |
+| Models | Meta Muse Spark and Muse Voice Transcribe, or Ollama (`qwen2.5:7b-instruct`) and faster-whisper; Tesseract |
 | Tools | MCP server over the same functions the pipeline uses |
 
 ## Project layout
@@ -168,10 +179,12 @@ app text, and reaching families through co-operative banks.
 
 ## Known limits
 
-- Speech is English only, and the phone's microphone path has not been tried with a real voice.
+- Speech is English only, and the phone's microphone path has not been tried with a real voice. Transcription can repeat a
+  word or digit ("7.5 5 lakh" in one test).
 - Answers can be in Malayalam and Hindi, but the app's own text is English and native review is pending.
 - There are no push notifications: guardian alerts appear when the Alerts tab is opened.
 - A model can vary between runs, so the same case can move between yellow and red.
+- A Meta call can pass the 20 second limit. The answer then says "partly checked".
 - Android only.
 
 ## Prior work

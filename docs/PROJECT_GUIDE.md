@@ -207,7 +207,7 @@ Text-to-speech runs on the phone. The server only sends the text.
 | `server/app/core/` | `context.py` (request id), `logs.py` (JSON logs, secret redaction) |
 | `server/data/` | `reference_rates.json` (FD, inflation and index assumptions) |
 | `server/demo_assets/` | fictional brochure, `stocks/*.csv` price history, `owner_docs/` (6 sample family papers), `replay/` (recorded Meta replies) |
-| `server/tests/` | 530 offline tests; `fakes/` (scripted LLM, fake Meta server), `fixtures/llm/`, `calibration/` (scenarios, independent oracle, number audit) |
+| `server/tests/` | 534 offline tests; `fakes/` (scripted LLM, fake Meta server), `fixtures/llm/`, `calibration/` (scenarios, independent oracle, number audit) |
 | `server/scripts/` | `reliability.py`, `export_app_fixtures.py`, `meta_key.py`, `meta_live_check.py`, `check_models.py`, `print_qr.py`, `make_demo_assets.py` |
 | `app/lib/` | Flutter app: `core/`, `state/`, `screens/`, `widgets/`, `theme.dart` |
 | `app/test/`, `app/integration_test/` | widget and screenshot tests; on-device tests |
@@ -515,9 +515,11 @@ earlier are part of the council's input. Record again after any prompt change.
 raises `SpendCapReached`. `SpendGuard` holds the daily count (`calls_today`, `add`, `exhausted`, `status`) and cache
 (`cache_get`, `cache_put`). `cache_key` hashes system, user, schema, model and images.
 
-**Speech to text** (`providers/stt.py`). `get_stt()` returns `FasterWhisperSTT` (lazy load; `medium`; CUDA if available).
-`MetaTranscribeSTT` is not wired: the endpoint exists, but our requests were refused and we had no documentation. English
-only for now (`STT_LANGUAGE=en`).
+**Speech to text** (`providers/stt.py`). On Meta, `get_stt()` returns `MetaTranscribeSTT`: `to_wav` turns the recording into
+16 kHz mono WAV and `POST /v1/asr/transcribe` sends it with `muse-voice-transcribe-1.0` and the `STT_KEYWORDS` bias list. Any
+failure falls back to `FasterWhisperSTT` (lazy load; `medium`; CUDA if available), which is also the local path. The `ingest`
+trace records `stt: meta` or `stt: whisper (fallback: <reason>)`. `FEATURE_META_STT=false` turns it off. English only for now
+(`STT_LANGUAGE=en`).
 
 **OCR** (`providers/ocr.py`). `ocr_image` → `preprocess` (grayscale, upscale, `_deskew`, threshold) → Tesseract.
 `resolve_langs` drops languages that are not installed. `OcrUnavailable` is raised if the binary is missing.
@@ -725,7 +727,7 @@ reuses the same `Idempotency-Key`. Responses are parsed defensively.
 
 | what | command | notes |
 |---|---|---|
-| server: unit, API, end-to-end (offline) | `make test` | 530 tests; the LLM is scripted by `tests/fixtures/llm/*.json` |
+| server: unit, API, end-to-end (offline) | `make test` | 534 tests; the LLM is scripted by `tests/fixtures/llm/*.json` |
 | lint | `make lint` | ruff, line length 120 |
 | app: analyze, widgets, screenshots | `make app-test` | 66 tests |
 | app on a device against the real server | `make app-integration` | emulator or USB phone |

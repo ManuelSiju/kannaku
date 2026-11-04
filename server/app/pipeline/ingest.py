@@ -33,6 +33,7 @@ class Page(BaseModel):
 
 class Ingested(BaseModel):
     transcript: str
+    stt: str | None = None  # which speech path ran
     language: str | None
     pages: list[Page]
     problems: list[str] = []
@@ -92,13 +93,14 @@ async def _ocr(data: bytes, problems: list[str]) -> str:
 
 async def ingest(*, text: str | None, audio: Upload | None, files: list[Upload], stt: STTProvider | None) -> Ingested:
     problems: list[str] = []
-    parts, language = [], None
+    parts, language, engine = [], None, None
     if audio is not None:
         if stt is None:
             problems.append("stt: no speech-to-text provider")
         else:
             try:
                 t = await stt.transcribe(audio.data, audio.mime)
+                engine = t.engine
                 parts.append(t.text)
                 language = t.language
             except Exception as e:  # provider failures are reported, never fatal
@@ -128,5 +130,9 @@ async def ingest(*, text: str | None, audio: Upload | None, files: list[Upload],
         else:
             add(up.data.decode("utf-8", errors="replace"), "text")
     return Ingested(
-        transcript=" ".join(p for p in parts if p).strip(), language=language, pages=pages, problems=problems
+        transcript=" ".join(p for p in parts if p).strip(),
+        language=language,
+        pages=pages,
+        problems=problems,
+        stt=engine,
     )

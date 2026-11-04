@@ -123,7 +123,7 @@ Checked by regex on every spoken line; hits were then read by hand.
 1. The dark money card on My details is not blurred, so the snapshot blur protects little.
 2. Guardian alert says "From the document" for an amount the user said.
 3. Grammar in some model lines ("costs lower than a normal bank loan").
-4. Explainer median 19.8 s on the loan case, close to the 20 s limit: 1 of 15 reliability runs degraded.
+4. Calls can pass the 20 s limit: explainer median 19.8 s on the loan case, 1 of 15 reliability runs degraded, and one council timeout in the latest Meta run.
 5. No push notifications; guardian alerts show only when the tab is opened.
 6. One Meta connection failure run (12 steps, about a minute) had no clear cause. DNS returned IPv6; it did not repeat.
 7. No lump-sum FD engine, so G2 was green with no computed maturity value.

@@ -1,15 +1,19 @@
-"""Speech-to-text providers. Local faster-whisper now; Meta Muse Voice Transcribe later."""
+"""Speech-to-text providers: Meta Muse Voice Transcribe, with local faster-whisper as fallback and local path."""
 
 from __future__ import annotations
 
 import asyncio
+import io
+import json
 import logging
 import mimetypes
 import re
 import tempfile
+import wave
 from abc import ABC, abstractmethod
 from typing import Any
 
+import httpx
 from pydantic import BaseModel
 
 from app.config import Settings, get_settings
@@ -28,6 +32,7 @@ class Transcript(BaseModel):
     text: str
     language: str | None
     segments: list[Segment]
+    engine: str = "whisper"  # which path ran, for the trace: "meta" or "whisper (fallback: <reason>)"
 
 
 class STTProvider(ABC):
@@ -93,18 +98,103 @@ class FasterWhisperSTT(STTProvider):
         return await asyncio.to_thread(self._transcribe_sync, audio_bytes, mime)
 
 
+# Words a family says that a general model hears wrongly; Muse Voice Transcribe biases recognition towards them.
+STT_KEYWORDS = [
+    "Kanakku",
+    "Alfii",
+    "Sankz",
+    "Dani",
+    "Vick",
+    "lakh",
+    "crore",
+    "EMI",
+    "SIP",
+    "OTP",
+    "KYC",
+    "ULIP",
+    "demat",
+]
+
+
+def to_wav(audio: bytes) -> bytes:
+    """Any recording as the 16 kHz mono 16-bit WAV the file endpoint takes (the app records m4a)."""
+    import av
+
+    pcm = bytearray()
+    with av.open(io.BytesIO(audio)) as source:
+        resampler = av.AudioResampler(format="s16", layout="mono", rate=16000)
+        for frame in source.decode(audio=0):
+            for out in resampler.resample(frame):
+                pcm += out.to_ndarray().tobytes()
+        for out in resampler.resample(None):
+            pcm += out.to_ndarray().tobytes()
+    data = io.BytesIO()
+    with wave.open(data, "wb") as w:
+        w.setnchannels(1)
+        w.setsampwidth(2)
+        w.setframerate(16000)
+        w.writeframes(bytes(pcm))
+    return data.getvalue()
+
+
 class MetaTranscribeSTT(STTProvider):
+    """POST /v1/asr/transcribe. Any failure falls back to `fallback`, and the trace says so."""
+
     name = "meta"
 
-    async def transcribe(self, audio_bytes: bytes, mime: str) -> Transcript:
-        raise NotImplementedError(
-            "Meta Muse Voice Transcribe is not wired yet (endpoint format unconfirmed). "
-            "Set STT_PROVIDER=faster_whisper."
+    def __init__(
+        self,
+        settings: Settings | None = None,
+        fallback: STTProvider | None = None,
+        transport: httpx.AsyncBaseTransport | None = None,
+    ) -> None:
+        self.settings = settings or get_settings()
+        self.fallback = fallback
+        self.transport = transport
+
+    async def _ask(self, audio_bytes: bytes) -> Transcript:
+        s = self.settings
+        request: dict[str, Any] = {
+            "mode": "PUSH_TO_TALK",
+            "model": s.meta_stt_model,
+            "audioEncoding": "WAV",
+            "keywords": STT_KEYWORDS,
+        }
+        if s.stt_language:
+            request["languageBias"] = [s.stt_language]
+        wav = await asyncio.to_thread(to_wav, audio_bytes)
+        async with httpx.AsyncClient(timeout=s.meta_stt_timeout_s, transport=self.transport) as client:
+            r = await client.post(
+                s.meta_stt_url,
+                headers={"Authorization": f"Bearer {s.meta_api_key.get_secret_value()}"},
+                files={"request": (None, json.dumps(request), "application/json"), "audio": ("audio.wav", wav)},
+            )
+        if r.status_code != 200:
+            raise RuntimeError(f"HTTP {r.status_code}")
+        body = r.json()
+        turns = [
+            Segment(start=t.get("startMs", 0) / 1000, end=t.get("endMs", 0) / 1000, text=t.get("transcript", ""))
+            for t in body.get("turns") or []
+        ]
+        return Transcript(
+            text=body.get("transcript", "").strip(), language=s.stt_language or None, segments=turns, engine="meta"
         )
+
+    async def transcribe(self, audio_bytes: bytes, mime: str) -> Transcript:
+        try:
+            return await self._ask(audio_bytes)
+        except Exception as e:
+            reason = f"{type(e).__name__}: {e}"[:80]
+            log.warning("Muse Voice Transcribe failed (%s); using the fallback", reason)
+            if self.fallback is None:
+                raise
+            out = await self.fallback.transcribe(audio_bytes, mime)
+            return out.model_copy(update={"engine": f"whisper (fallback: {reason})"})
 
 
 def get_stt(settings: Settings | None = None) -> STTProvider:
     settings = settings or get_settings()
-    if settings.stt_provider == "meta":
-        return MetaTranscribeSTT()
-    return FasterWhisperSTT(settings)
+    whisper = FasterWhisperSTT(settings)
+    if settings.stt_provider == "meta" or (settings.meta and settings.feature_meta_stt):
+        return MetaTranscribeSTT(settings, fallback=whisper)
+    return whisper

@@ -229,7 +229,7 @@ async def _pipeline(run: _Run, inp: AskInput, *, repo: Repo, llm: LLMProvider, s
     ing = Ingested(transcript=inp.text or "", language=None, pages=[])
     async with run.step("ingest") as info:
         ing = await ingest(text=inp.text, audio=inp.audio, files=inp.files, stt=stt)
-        info.update(pages=len(ing.pages), transcript_chars=len(ing.transcript), problems=ing.problems)
+        info.update(pages=len(ing.pages), transcript_chars=len(ing.transcript), problems=ing.problems, stt=ing.stt)
         if ing.problems:
             info["degraded"] = True
     transcript = " ".join(x for x in (prior.get("transcript"), ing.transcript) if x).strip()

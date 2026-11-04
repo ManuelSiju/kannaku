@@ -614,26 +614,26 @@
  "spoken": {
   "endowment PDF": [
    "Let me ask Dani and Sankz.",
-   "What you get back grows at 3.8 percent at low bonus. That growth stays lower than a fixed deposit.",
-   "You were told guaranteed, but the paper says bonuses may change each year. Only 7.5 lakh rupees is sure for you to get back.",
-   "Please do not take this plan as it is. Talk to Arun before you decide."
+   "This plan grows lower than a fixed deposit. Only 7.5 lakh rupees is written as guaranteed for you.",
+   "You were told guaranteed, but the paper says bonuses may change. Only 7.5 lakh rupees is guaranteed for you because bonuses can change.",
+   "Please do not sign this plan as it is."
   ],
   "endowment brochure PNG (vision)": [
    "Let me ask Dani and Sankz.",
-   "You were told guaranteed, but the paper says bonuses may change. Only 7.5 lakh rupees is written as guaranteed for you.",
-   "It grows 3.8 percent a year at the lower bonus. This plan grows lower than a fixed deposit.",
+   "You were told guaranteed to give 15 lakh rupees, but the paper says bonuses may change every year. It grows lower than a fixed deposit.",
+   "Only 7.5 lakh rupees is written as guaranteed for you, so the rest can change.",
    "Please do not sign this plan as it is."
   ],
   "flat loan": [
    "Let me ask Sankz.",
-   "This loan really costs you about 21.6 percent a year, higher than the rate they told you.",
-   "Please do not sign this loan as it is."
+   "You will pay 24,000 rupees extra because flat interest counts on the full amount. That real cost is higher than a normal bank personal loan for you.",
+   "You should hold on and compare before you sign this loan."
   ],
   "ZEPHYRX tip": [
    "Let me ask Vick and Sankz.",
-   "Nobody can promise you a share will rise, so this guaranteed message is a trap. It already jumped 222 percent in a month, so you buy at the top.",
-   "Putting 1 lakh rupees here can leave you with nothing back, as tips vanish fast. A fixed deposit at 7 percent keeps your money safe for you.",
-   "Please do not put any money in this tip. Talk to Arun before you decide."
+   "You face a high pump-and-dump risk in the last month of trading. It already jumped 222 percent before you heard the tip.",
+   "You plan to risk 1 lakh rupees on a tip message. A fixed deposit at 7 percent keeps you calm while you decide.",
+   "Please do not put money in this tip. Talk to Arun before you decide."
   ],
   "OTP scam": [
    "You did the right thing by asking me.",

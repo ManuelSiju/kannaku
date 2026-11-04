@@ -52,6 +52,9 @@ class Settings(BaseSettings):
     meta_api_key: SecretStr = SecretStr("")
     meta_base_url: str = META_BASE_URL
     meta_model: str = META_MODEL
+    meta_stt_url: str = META_BASE_URL + "/asr/transcribe"
+    meta_stt_model: str = "muse-voice-transcribe-1.0"
+    meta_stt_timeout_s: float = 30.0
     # Muse Spark is a reasoning model: at its default effort the bigger steps run past llm_timeout_s.
     meta_reasoning_effort: Effort = "minimal"
     # Per pipeline step; empty = meta_reasoning_effort. See docs/reports/meta_run.md for why each is set.
@@ -75,6 +78,7 @@ class Settings(BaseSettings):
     feature_holdings: bool = True
     feature_trace_export: bool = True
     feature_snapshot: bool = True
+    feature_meta_stt: bool = True  # on Meta, speech goes to Muse Voice Transcribe, with Whisper as the fallback
 
     # LAN access token: every request except /health needs "Authorization: Bearer <token>" when it is set.
     kanakku_token: SecretStr = SecretStr("")

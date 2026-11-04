@@ -49,15 +49,13 @@ async def llm_status() -> dict[str, Any]:
 
 def stt_status() -> dict[str, Any]:
     s = get_settings()
-    if s.stt_provider == "meta":
-        return {"provider": "meta", "reachable": False, "error": "not implemented yet"}
+    if s.stt_provider == "meta" or (s.meta and s.feature_meta_stt):
+        return {"provider": "meta", "model": s.meta_stt_model, "reachable": True, "fallback": "faster_whisper"}
     out = {
         "provider": "faster_whisper",
         "model": s.whisper_model,
         "reachable": importlib.util.find_spec("faster_whisper") is not None,
     }
-    if s.meta:
-        out["note"] = "local faster-whisper: the Meta speech endpoint is not confirmed yet"
     return out
 
 
@@ -73,7 +71,7 @@ def provider_summary() -> dict[str, Any]:
         "name": s.llm_provider,
         "model": s.llm_model,
         "vision_model": (s.llm_vision_model or s.llm_model) if s.llm_vision_enabled else None,
-        "stt": "faster-whisper (local)" if s.stt_provider == "faster_whisper" else s.stt_provider,
+        "stt": s.meta_stt_model if s.meta and s.feature_meta_stt else "faster-whisper (local)",
         "cache": bool(s.meta and s.llm_cache),
         "spend_guard": guard,
         "fallback": s.llm_fallback if s.meta else "none",

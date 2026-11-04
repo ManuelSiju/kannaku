@@ -47,8 +47,8 @@ NOTES = """
   council or explainer run past the 20 s limit, so steps degrade. Only `minimal` gave 6 of 6 expected verdicts with no
   degraded run.
 - **Structured output: `json_object`.** On the same explainer request `json_schema` ran to the token limit.
-- **Muse Voice Transcribe: not used.** `POST /v1/asr/transcribe` exists and `muse-voice-transcribe-1.0` is listed, but
-  every request we tried was refused as malformed, with no documentation at hand. Speech stays on local whisper.
+- **Muse Voice Transcribe: used on Meta**, with keyword biasing for words like lakh, EMI and the council's names, and
+  local faster-whisper as the automatic fallback. The trace records which path ran. It can repeat a word or digit.
 - **SAM 3.1: not tried.** It is listed by `GET /models`; nothing in Kanakku calls it.
 """
 
@@ -68,6 +68,7 @@ def main() -> int:
     from app.pipeline.ingest import Upload
     from app.pipeline.run import AskInput, run_pipeline
     from app.providers.llm import OpenAICompatibleLLM, get_llm
+    from app.providers.stt import get_stt
 
     repo = Repo(settings.db_path)
     seed(repo)
@@ -111,6 +112,13 @@ def main() -> int:
         ]
         spoken[name] = [line.text for line in res.spoken_lines]
         print(rows[-1], flush=True)
+    speech = (ASSETS / "sample_speech.wav").read_bytes()
+    t0 = time.monotonic()
+    heard = asyncio.run(get_stt(settings).transcribe(speech, "audio/wav"))
+    details.append(
+        f"### Speech, 25 s of recorded audio\n\n- Path: {heard.engine}, model {settings.meta_stt_model}, "
+        f"{time.monotonic() - t0:.1f} s\n- Heard: {heard.text}\n"
+    )
     out = REPO_ROOT / "docs" / "reports" / "meta_run.md"
     out.parent.mkdir(parents=True, exist_ok=True)
     head = (
