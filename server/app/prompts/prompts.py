@@ -56,8 +56,8 @@ ROLE_CARDS = {
 }
 CASE_HINTS = {
     ("dani", "insurance"): "Say plainly that only the guaranteed amount ({term.sum_assured}) is certain and the "
-    "bonus-based amounts are not. Use {cmp_return_high_vs_fd} and {cmp_guaranteed_vs_fd} (whether the plan beats a "
-    "fixed deposit even at the higher bonus, and on the guaranteed amount alone).",
+    "bonus-based amounts are not. Lead with {endowment_return} and {cmp_return_low_vs_fd}, the lower bonus case. "
+    "{cmp_return_high_vs_fd} and {cmp_guaranteed_vs_fd} carry their own condition; keep it.",
     ("sankz", "insurance"): "Say what is guaranteed and how the plan compares with a bank FD.",
     (
         "sankz",

@@ -90,10 +90,13 @@ def compute_facts(
             )
         )
 
-    def compare(cmp_id: str, label: str, a_id: str, b_id: str) -> None:
+    def compare(cmp_id: str, label: str, a_id: str, b_id: str, condition: str = "") -> None:
         a, b = by_id(a_id), by_id(b_id)
         if a is not None and b is not None:
-            facts.append(compare_rates(cmp_id, label, a, b))
+            fact = compare_rates(cmp_id, label, a, b)
+            if condition and fact.phrase:  # said with its condition, so it can never be heard as a plain promise
+                fact = fact.model_copy(update={"phrase": f"{condition}, {fact.phrase}"})
+            facts.append(fact)
 
     if case_type in ("insurance_offer", "ulip"):
         years = t.get("pay_years") or t.get("policy_years")
@@ -123,6 +126,7 @@ def compute_facts(
                         f"This plan's yearly return {what}, compared with {bench_words}",
                         fid,
                         bench_id,
+                        "" if suffix == "return_low" else what,
                     )
             afford_commitment(premium / 12)
             facts += tools.holdings_facts(family_id, repo)

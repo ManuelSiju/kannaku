@@ -357,8 +357,8 @@ def test_comparison_facts_present(harness):
     state["llm"] = FakeLLM(load_fixture("endowment"))
     details = {d["id"]: d["value"] for d in ask(client, ENDOWMENT_Q, brochure_files())["screen_details"]}
     assert details["cmp_return_low_vs_fd"] == "lower than"
-    assert details["cmp_return_high_vs_fd"] == "higher than"
-    assert details["cmp_guaranteed_vs_fd"] == "lower than"
+    assert details["cmp_return_high_vs_fd"] == "at the higher bonus rate, higher than"
+    assert details["cmp_guaranteed_vs_fd"] == "on the guaranteed amount only, lower than"
     assert details["cmp_return_low_vs_inflation"] == "lower than"
     assert details["emi_share"] == "5.3%"  # the premium is not an EMI: only the scooter loan counts
     assert details["premium_share_of_income"] == "9.3%"
@@ -564,3 +564,23 @@ def test_replay_never_invents_an_answer(harness):
     state["llm"] = get_llm(Settings(_env_file=None, llm_provider="replay", db_path=repo.path))
     res = ask(client, "Should I buy a tractor on a loan of 3 lakh at 9% flat for 36 months?")
     assert res["degraded"] and "case_builder" in res["degraded_steps"]
+
+
+# ---------------------------------------------------------------- a comparison keeps its condition
+def test_a_higher_bonus_comparison_says_its_condition(harness):
+    client, state, repo = harness
+    state["llm"] = FakeLLM(load_fixture("endowment"))
+    ask(client, ENDOWMENT_Q, brochure_files())
+    from app.pipeline.compute import compute_facts
+    from app.pipeline.verify_terms import VerifiedTerm
+
+    values = {"premium": 50_000, "pay_years": 15, "policy_years": 15, "sum_assured": 750_000}
+    values |= {"maturity_low": 1_020_000, "maturity_high": 1_500_000}
+    terms = [
+        VerifiedTerm(name=k, value_text=str(v), value=v, unit="INR", source="page_1", quote_id="q1", verified=True)
+        for k, v in values.items()
+    ]
+    facts = {f.id: f for f in compute_facts("insurance_offer", terms, 1, repo).facts}
+    assert facts["cmp_return_high_vs_fd"].phrase == "at the higher bonus rate, higher than"
+    assert facts["cmp_guaranteed_vs_fd"].phrase == "on the guaranteed amount only, lower than"
+    assert facts["cmp_return_low_vs_fd"].phrase == "lower than"
