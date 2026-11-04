@@ -48,7 +48,7 @@ NOTES = """
   degraded run.
 - **Structured output: `json_object`.** On the same explainer request `json_schema` ran to the token limit.
 - **Muse Voice Transcribe: not used.** `POST /v1/asr/transcribe` exists and `muse-voice-transcribe-1.0` is listed, but
-  every request we tried was refused as malformed and no documentation was at hand. Speech stays on local faster-whisper.
+  every request we tried was refused as malformed, with no documentation at hand. Speech stays on local whisper.
 - **SAM 3.1: not tried.** It is listed by `GET /models`; nothing in Kanakku calls it.
 """
 
