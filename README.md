@@ -22,10 +22,10 @@ Built for the Meta AI Developer Hackathon (Oct 27 – Nov 4 2026). Decision supp
 
 | step | Meta model | setting | why | proof | median time |
 |---|---|---|---|---|---|
-| Case builder | `muse-spark-1.3` | `json_object`, EFFORT_CASE | classifies the case and copies the terms | [meta_run](docs/reports/meta_run.md) | 2.8–5.5 s |
+| Case builder | `muse-spark-1.3` | `json_object`, `minimal` reasoning | classifies the case and copies the terms | [meta_run](docs/reports/meta_run.md) | 2.8–5.5 s |
 | Reading photos | `muse-spark-1.3` vision | with OCR | second reading: both must agree for "read twice" | [meta_run](docs/reports/meta_run.md) | in the case builder |
-| Council | `muse-spark-1.3` | `json_object`, EFFORT_COUNCIL | each specialist argues from fact ids | [reliability](docs/reports/reliability_meta.md) | 9.6–12.8 s |
-| Explainer | `muse-spark-1.3` | `json_object`, EFFORT_EXPLAINER | plain spoken lines, checked again by code | [reliability](docs/reports/reliability_meta.md) | 9.9–19.8 s |
+| Council | `muse-spark-1.3` | `json_object`, `minimal` reasoning | each specialist argues from fact ids | [reliability](docs/reports/reliability_meta.md) | 9.6–12.8 s |
+| Explainer | `muse-spark-1.3` | `json_object`, `minimal` reasoning | plain spoken lines, checked again by code | [reliability](docs/reports/reliability_meta.md) | 9.9–19.8 s |
 
 Speech-to-text runs on local faster-whisper, not on Meta. `json_schema` mode is not used: on Muse Spark it ran to the token
 limit. Effort levels were picked from [this table](docs/reports/effort_matrix.md).
@@ -56,10 +56,10 @@ its own is dropped. Each term must be found in the paper, and each figure is rec
 **Known limits.** Speech is English only. The app has no push notifications: guardian alerts appear when the Alerts tab is
 opened. A model can vary between runs, so the same case can move between yellow and red; see the calibration table.
 
-**Next steps, not built yet.** Consent-based family data through Account Aggregators. Malayalam and Hindi speech and app text.
-Distribution through co-operative banks and families.
+**From prototype to product (next steps, not built yet).** Consent-based family data through Account Aggregators. Malayalam
+and Hindi speech and app text. Distribution through co-operative banks and families.
 
-**User feedback.** Real reactions go in [user_feedback.md](docs/user_feedback.md).
+**User feedback.** Early reactions, on the local models, are in [user_feedback.md](docs/user_feedback.md).
 
 ## Features
 

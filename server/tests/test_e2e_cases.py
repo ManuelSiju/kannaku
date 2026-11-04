@@ -8,9 +8,11 @@ import pytest
 from fastapi.testclient import TestClient
 
 from app.api import deps
-from app.config import SERVER_ROOT, get_settings
+from app.config import SERVER_ROOT, Settings, get_settings
 from app.main import app
+from app.pipeline.demo_cases import DEMO_CASES, upload_for
 from app.pipeline.events import EventBus
+from app.providers.llm import get_llm
 from tests.fakes import TIMEOUT, FakeLLM, FakeSTT, load_fixture
 
 BROCHURE = SERVER_ROOT / "demo_assets" / "kanakavalli_brochure.pdf"
@@ -539,3 +541,26 @@ def test_reducing_loan_is_not_computed_as_flat_and_does_not_ask_the_rate_again(h
     assert facts["loan_emi"] == pytest.approx(4707.35, abs=0.01)
     assert facts["term.reducing_rate"] == 0.12 and "term.flat_rate" not in facts
     assert not any("reducing-balance interest rate" in q for q in res["verdict"]["questions"])
+
+
+# ---------------------------------------------------------------- replay of recorded Meta replies
+@pytest.mark.parametrize(
+    ("name", "colour"), [("endowment", "red"), ("stock_tip", "red"), ("otp_scam", "red"), ("out_of_scope", None)]
+)
+def test_replay_answers_the_demo_cases_without_a_key(harness, name, colour):
+    client, state, repo = harness
+    settings = Settings(_env_file=None, llm_provider="replay", db_path=repo.path)
+    state["llm"] = get_llm(settings)
+    question, filename = DEMO_CASES[name]
+    files = [("files", (filename, upload_for(filename).data, "application/pdf"))] if filename else None
+    res = ask(client, question, files)
+    assert res["verdict"]["colour"] == colour and not res["degraded"]
+    if name != "otp_scam":  # the scam rules answer without a model
+        assert res["provider"].startswith("replay of recorded Meta call 2026-")
+
+
+def test_replay_never_invents_an_answer(harness):
+    client, state, repo = harness
+    state["llm"] = get_llm(Settings(_env_file=None, llm_provider="replay", db_path=repo.path))
+    res = ask(client, "Should I buy a tractor on a loan of 3 lakh at 9% flat for 36 months?")
+    assert res["degraded"] and "case_builder" in res["degraded_steps"]

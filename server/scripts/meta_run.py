@@ -40,6 +40,19 @@ CASES = [
 ]
 
 
+NOTES = """
+## Settings and what was tried
+
+- **Reasoning effort: `minimal` on every step**, from [effort_matrix.md](effort_matrix.md). `low` and `high` on the
+  council or explainer run past the 20 s limit, so steps degrade. Only `minimal` gave 6 of 6 expected verdicts with no
+  degraded run.
+- **Structured output: `json_object`.** On the same explainer request `json_schema` ran to the token limit.
+- **Muse Voice Transcribe: not used.** `POST /v1/asr/transcribe` exists and `muse-voice-transcribe-1.0` is listed, but
+  every request we tried was refused as malformed and no documentation was at hand. Speech stays on local faster-whisper.
+- **SAM 3.1: not tried.** It is listed by `GET /models`; nothing in Kanakku calls it.
+"""
+
+
 def main() -> int:
     from app.config import REPO_ROOT, Settings
 
@@ -107,7 +120,7 @@ def main() -> int:
         "| case | trace (case id) | started (UTC) | model id returned | verdict | model calls | total | degraded |\n"
         "|---|---|---|---|---|---|---|---|\n"
     )
-    out.write_text(head + "\n".join(rows) + "\n\n" + "\n".join(details))
+    out.write_text(head + "\n".join(rows) + "\n\n" + "\n".join(details) + NOTES)
     (out.parent / "meta_run_facts.json").write_text(
         json.dumps({"facts": facts, "spoken": spoken}, indent=1, ensure_ascii=False)
     )
