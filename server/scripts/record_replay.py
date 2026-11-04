@@ -20,7 +20,7 @@ from app.pipeline.demo_cases import DEMO_CASES, upload_for  # noqa: E402
 from app.pipeline.events import EventBus  # noqa: E402
 from app.pipeline.run import AskInput, run_pipeline  # noqa: E402
 from app.providers.guard import cache_key  # noqa: E402
-from app.providers.llm import LLMProvider, OpenAICompatibleLLM  # noqa: E402
+from app.providers.llm import LLMProvider, LLMUsage, OpenAICompatibleLLM  # noqa: E402
 
 TRIES = 3
 
@@ -28,16 +28,18 @@ TRIES = 3
 class Recording(LLMProvider):
     name = "recording"
 
-    def __init__(self, inner: OpenAICompatibleLLM) -> None:
-        self.inner, self.calls = inner, {}
+    def __init__(self, inner: OpenAICompatibleLLM, known: dict[str, dict]) -> None:
+        self.inner, self.calls, self.known = inner, {}, known
 
     def _keep(self, key: str, response: str, model_hint: str) -> None:
         at = datetime.now(UTC).strftime("%Y-%m-%d %H:%M UTC")
         self.calls[key] = {"at": at, "model": model_hint, "response": response}
 
     async def chat_json(self, system, user, schema, images=None):
-        out, usage = await self.inner.chat_json(system, user, schema, images)
         key = cache_key(system, user, schema.__name__, self.inner.model, images)
+        if key in self.known:  # one reply per input, or a later reply would break the chain recorded after the first
+            return schema.model_validate_json(self.known[key]["response"]), LLMUsage(calls=1)
+        out, usage = await self.inner.chat_json(system, user, schema, images)
         self._keep(key, out.model_dump_json(), self.inner.model)
         return out, usage
 
@@ -72,14 +74,14 @@ async def main() -> int:
     # order on one family, the way a judge asks them. A run with a failed step is not a recording.
     for name in DEMO_CASES:
         for _ in range(TRIES):
-            llm = Recording(OpenAICompatibleLLM(settings))
+            llm = Recording(OpenAICompatibleLLM(settings), kept)
             if await ask(fresh_family(), llm, settings, name):
                 kept.update(llm.calls)
                 break
         else:
             return 1
     for _ in range(TRIES):
-        repo, llm = fresh_family(), Recording(OpenAICompatibleLLM(settings))
+        repo, llm = fresh_family(), Recording(OpenAICompatibleLLM(settings), kept)
         if all([await ask(repo, llm, settings, name) for name in DEMO_CASES]):
             kept.update(llm.calls)
             break

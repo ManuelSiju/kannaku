@@ -1,84 +1,79 @@
 {
 "calls": {
 "5239fe88beb8df8c867c2816918c63f58aab8960daa788ea6f3593f7b549bab4": {
-"at": "2026-11-04 16:16 UTC",
+"at": "2026-11-04 19:42 UTC",
 "model": "muse-spark-1.3",
 "response": "{\"case_type\":\"insurance_offer\",\"terms\":[{\"name\":\"premium\",\"value_text\":\"Rs. 50,000\",\"evidence_quote\":\"Annual premium: Rs. 50,000\",\"source\":\"page_1\"},{\"name\":\"pay_years\",\"value_text\":\"15 years\",\"evidence_quote\":\"Premium paying term: 15 years\",\"source\":\"page_1\"},{\"name\":\"policy_years\",\"value_text\":\"15 years\",\"evidence_quote\":\"Policy term: 15 years\",\"source\":\"page_1\"},{\"name\":\"sum_assured\",\"value_text\":\"Rs. 7,50,000\",\"evidence_quote\":\"Sum assured: Rs. 7,50,000 (guaranteed)\",\"source\":\"page_1\"},{\"name\":\"maturity_low\",\"value_text\":\"Rs. 10,20,000\",\"evidence_quote\":\"Illustrated maturity value at 4% bonus rate: Rs. 10,20,000\",\"source\":\"page_2\"},{\"name\":\"maturity_high\",\"value_text\":\"Rs. 15,00,000\",\"evidence_quote\":\"Illustrated maturity value at 8% bonus rate: Rs. 15,00,000\",\"source\":\"page_2\"},{\"name\":\"bonus_rate_low\",\"value_text\":\"4%\",\"evidence_quote\":\"Illustrated maturity value at 4% bonus rate\",\"source\":\"page_2\"},{\"name\":\"bonus_rate_high\",\"value_text\":\"8%\",\"evidence_quote\":\"Illustrated maturity value at 8% bonus rate\",\"source\":\"page_2\"}],\"seller_claims\":[{\"text\":\"guaranteed to give 15 lakh\",\"quote\":\"says this plan is guaranteed to give 15 lakh\"}],\"missing_terms\":[],\"language\":\"en\",\"stock_symbol\":null,\"flags\":[],\"market_linked_quote\":null}"
 },
 "8811ca7fb1ca05535d886f5dfda6871c929468aacec187513cb921e741c8e4ef": {
-"at": "2026-11-04 16:17 UTC",
+"at": "2026-11-04 19:42 UTC",
 "model": "muse-spark-1.3",
-"response": "{\"opinions\":[{\"agent\":\"dani\",\"stance\":\"against\",\"strength\":0.75,\"arguments\":[{\"text\":\"It grows {endowment_return} a year at the lower bonus rate. This plan grows {cmp_return_low_vs_fd} a fixed deposit.\",\"cited_ids\":[]},{\"text\":\"Only {term.sum_assured} is promised for you since bonuses change yearly. It grows {cmp_guaranteed_vs_inflation} rising prices.\",\"cited_ids\":[\"q4\"]}],\"questions_for_seller\":[]},{\"agent\":\"sankz\",\"stance\":\"against\",\"strength\":0.8,\"arguments\":[{\"text\":\"Only {term.sum_assured} is guaranteed for you as per papers. The top figure is not promised since bonuses change yearly.\",\"cited_ids\":[\"q4\"]},{\"text\":\"Same yearly saving in a fixed deposit grows to {fd_value}. This plan at lower bonus grows {cmp_return_low_vs_fd} a fixed deposit.\",\"cited_ids\":[]}],\"questions_for_seller\":[]}]}"
+"response": "{\"opinions\":[{\"agent\":\"dani\",\"stance\":\"against\",\"strength\":0.8,\"arguments\":[{\"text\":\"It grows {endowment_return} a year at the lower bonus for you. This plan grows {cmp_return_low_vs_fd} a fixed deposit.\",\"cited_ids\":[]},{\"text\":\"Only {term.sum_assured} is written as guaranteed for you. Bonus can change yearly so high payout is not sure.\",\"cited_ids\":[\"q4\"]}],\"questions_for_seller\":[]},{\"agent\":\"sankz\",\"stance\":\"against\",\"strength\":0.85,\"arguments\":[{\"text\":\"Only {term.sum_assured} is promised to you in writing. On the guaranteed amount it grows {cmp_guaranteed_vs_fd} a fixed deposit.\",\"cited_ids\":[]},{\"text\":\"You get back {term.maturity_high} only at the higher bonus for you.\",\"cited_ids\":[\"q4\"]}],\"questions_for_seller\":[]}]}"
 },
-"00688eee8ebdc75d1431f93dcc5d1e5e1647f3811577ea70190cf6dc3207aade": {
-"at": "2026-11-04 16:16 UTC",
+"989089ab01db638629ffea01cfe68c5d986b3cd77300884844fb7687ba5c80dd": {
+"at": "2026-11-04 19:42 UTC",
 "model": "muse-spark-1.3",
-"response": "{\"agent_lines\":[{\"speaker\":\"dani\",\"text\":\"It grows {endowment_return} a year at the lower bonus rate. That growth is {cmp_return_low_vs_fd} a fixed deposit.\",\"cited_ids\":[\"endowment_return\",\"cmp_return_low_vs_fd\"]},{\"speaker\":\"sankz\",\"text\":\"On the guaranteed amount only it grows {cmp_guaranteed_vs_fd} a fixed deposit, so you get back very little. You were told guaranteed to give 15 lakh; paper says Bonus rates are not guaranteed and may change every year.\",\"cited_ids\":[\"cmp_guaranteed_vs_fd\",\"q4\"]}],\"verdict_sentence\":{\"speaker\":\"alfii\",\"text\":\"Please do not sign this plan as it is.\",\"cited_ids\":[]},\"questions\":[{\"id\":\"ins_guaranteed\",\"text\":\"How much is guaranteed in writing?\"},{\"id\":\"ins_lower_bonus\",\"text\":\"What do I get at the lower bonus rate?\"},{\"id\":\"ins_stop_early\",\"text\":\"What do I get if I stop after 3 years?\"}]}"
-},
-"a6f08c32149c442594608b29c1bdc9f63eff5c8e480c3e9daea843fcd4ca926f": {
-"at": "2026-11-04 16:16 UTC",
-"model": "muse-spark-1.3",
-"response": "{\"lines\":[{\"speaker\":\"sankz\",\"text\":\"On the guaranteed part alone, this plan grows {cmp_guaranteed_vs_fd} a fixed deposit, so you get back very little.\",\"cited_ids\":[\"cmp_guaranteed_vs_fd\"]}]}"
+"response": "{\"agent_lines\":[{\"speaker\":\"dani\",\"text\":\"You were told guaranteed to give 15 lakh. The paper says Bonus rates are not guaranteed and may change every year.\",\"cited_ids\":[\"q4\"]},{\"speaker\":\"sankz\",\"text\":\"Same money in a fixed deposit becomes {fd_value} for you. This plan on guaranteed money grows {cmp_guaranteed_vs_fd} a fixed deposit.\",\"cited_ids\":[\"fd_value\",\"cmp_guaranteed_vs_fd\"]}],\"verdict_sentence\":{\"speaker\":\"alfii\",\"text\":\"Please do not sign this plan as it is.\",\"cited_ids\":[]},\"questions\":[{\"id\":\"ins_guaranteed\",\"text\":\"How much is guaranteed in writing?\"},{\"id\":\"ins_lower_bonus\",\"text\":\"What do I get at the lower bonus rate?\"},{\"id\":\"ins_stop_early\",\"text\":\"What do I get if I stop after 3 years?\"}]}"
 },
 "09b1d0a01e85d7af8da4e03cb1601bf528e2535a0e7044b7bd580ff166574f31": {
-"at": "2026-11-04 16:17 UTC",
+"at": "2026-11-04 19:43 UTC",
 "model": "muse-spark-1.3",
 "response": "{\"case_type\":\"loan_offer\",\"terms\":[{\"name\":\"loan_amount\",\"value_text\":\"1,00,000\",\"evidence_quote\":\"loan of 1,00,000 at 12% flat\",\"source\":\"transcript\"},{\"name\":\"flat_rate\",\"value_text\":\"12%\",\"evidence_quote\":\"at 12% flat\",\"source\":\"transcript\"},{\"name\":\"tenure_months\",\"value_text\":\"24 months\",\"evidence_quote\":\"for 24 months\",\"source\":\"transcript\"}],\"seller_claims\":[],\"missing_terms\":[],\"language\":\"en\",\"stock_symbol\":null,\"flags\":[],\"market_linked_quote\":null}"
 },
-"55b8e29eb26c3d89944e57afaa1da920e162857c827bf985d7e9800916448307": {
-"at": "2026-11-04 16:16 UTC",
+"97cbc9ef074938a631754b779b9eea9b0200adc4597389f52731b6fc8c4c42d6": {
+"at": "2026-11-04 19:42 UTC",
 "model": "muse-spark-1.3",
-"response": "{\"opinions\":[{\"agent\":\"sankz\",\"stance\":\"against\",\"strength\":0.8,\"arguments\":[{\"text\":\"You are offered flat {term.flat_rate} for you. It really costs you {loan_effective_rate} a year {cmp_effective_vs_quoted} the paper rate.\",\"cited_ids\":[]},{\"text\":\"You pay {loan_emi} each month for you. That real cost stays {cmp_effective_vs_typical} a normal bank loan for you.\",\"cited_ids\":[]}],\"questions_for_seller\":[]}]}"
+"response": "{\"opinions\":[{\"agent\":\"sankz\",\"stance\":\"against\",\"strength\":0.8,\"arguments\":[{\"text\":\"You were quoted {term.flat_rate} but you pay on full balance. The true yearly cost is {loan_effective_rate} for you to repay.\",\"cited_ids\":[]},{\"text\":\"That true cost stays {cmp_effective_vs_quoted} what you were told. That true cost stays {cmp_effective_vs_typical} a normal bank loan.\",\"cited_ids\":[]}],\"questions_for_seller\":[]}]}"
 },
-"9dba697a3057ae8fa3df029ad3e6caa8b17ecfc84384c511a6f602aa1ec9ecb9": {
-"at": "2026-11-04 16:16 UTC",
+"f6335e60e7ccf2bb35ddf6cf83539db39d2ea7c6c3ebe3b95e7d01e6994c6153": {
+"at": "2026-11-04 19:42 UTC",
 "model": "muse-spark-1.3",
-"response": "{\"agent_lines\":[{\"speaker\":\"sankz\",\"text\":\"This loan really costs you {loan_effective_rate} a year for you. That is {cmp_effective_vs_quoted} the paper rate you were told.\",\"cited_ids\":[\"loan_effective_rate\",\"cmp_effective_vs_quoted\"]}],\"verdict_sentence\":{\"speaker\":\"alfii\",\"text\":\"Please do not take this loan as it is.\",\"cited_ids\":[]},\"questions\":[{\"id\":\"loan_reducing_rate\",\"text\":\"What is the reducing-balance interest rate?\"},{\"id\":\"loan_charges\",\"text\":\"What are the processing and prepayment charges?\"}]}"
+"response": "{\"agent_lines\":[{\"speaker\":\"sankz\",\"text\":\"This loan really costs you {loan_effective_rate} a year because you pay on the full amount. That true cost stays {cmp_effective_vs_quoted} what you were told and {cmp_effective_vs_typical} a normal bank loan.\",\"cited_ids\":[\"loan_effective_rate\",\"cmp_effective_vs_quoted\",\"cmp_effective_vs_typical\"]}],\"verdict_sentence\":{\"speaker\":\"alfii\",\"text\":\"Please do not take this loan as it is.\",\"cited_ids\":[]},\"questions\":[{\"id\":\"loan_reducing_rate\",\"text\":\"What is the reducing-balance interest rate?\"},{\"id\":\"loan_charges\",\"text\":\"What are the processing and prepayment charges?\"}]}"
 },
 "4c41b00b28184251d8d68def58c855669b3dc647144f88df0713e5b929cd10b6": {
-"at": "2026-11-04 16:17 UTC",
+"at": "2026-11-04 19:43 UTC",
 "model": "muse-spark-1.3",
 "response": "{\"case_type\":\"stock_tip\",\"terms\":[{\"name\":\"invest_amount\",\"value_text\":\"1 lakh\",\"evidence_quote\":\"put 1 lakh in it\",\"source\":\"transcript\"}],\"seller_claims\":[{\"text\":\"Target Rs. 180 in 2 weeks\",\"quote\":\"Target Rs. 180 in 2 weeks\"},{\"text\":\"Upper circuit guaranteed\",\"quote\":\"Upper circuit guaranteed\"}],\"missing_terms\":[],\"language\":\"en\",\"stock_symbol\":\"ZEPHYRX\",\"flags\":[],\"market_linked_quote\":null}"
 },
-"f7414391d622c0f7a5f688c0f9fe565883dd3d2102b627c1ab19e8b36f8f8bd4": {
-"at": "2026-11-04 16:16 UTC",
+"f393b006d93f0aeaa6b03bb51cc9b4c05b05276ef9b2af60ae5b06803c9c6879": {
+"at": "2026-11-04 19:42 UTC",
 "model": "muse-spark-1.3",
-"response": "{\"opinions\":[{\"agent\":\"vick\",\"stance\":\"against\",\"strength\":0.9,\"arguments\":[{\"text\":\"It carries {pump_risk}, so you could get trapped fast. It jumped {run_up_30d} in the last month of trading for you.\",\"cited_ids\":[]},{\"text\":\"Trading volume jumped {volume_spike} in the last month of trading, which shows hype for you.\",\"cited_ids\":[]}],\"questions_for_seller\":[]},{\"agent\":\"sankz\",\"stance\":\"against\",\"strength\":0.85,\"arguments\":[{\"text\":\"Your {term.invest_amount} stays protected in a bank for you. A fixed deposit grows at {ref.fd_rate} for you.\",\"cited_ids\":[]}],\"questions_for_seller\":[]}]}"
+"response": "{\"opinions\":[{\"agent\":\"vick\",\"stance\":\"against\",\"strength\":0.9,\"arguments\":[{\"text\":\"It carries {pump_risk}, so you may get stuck after you buy.\",\"cited_ids\":[]},{\"text\":\"It already jumped {run_up_30d} in the last month of trading, which leaves late buyers holding the loss.\",\"cited_ids\":[]}],\"questions_for_seller\":[]},{\"agent\":\"sankz\",\"stance\":\"against\",\"strength\":0.85,\"arguments\":[{\"text\":\"You want to put {term.invest_amount} in this tip, but a quick fall can wipe you out.\",\"cited_ids\":[]},{\"text\":\"A fixed deposit at {ref.fd_rate} keeps you safe because your money stays protected.\",\"cited_ids\":[]}],\"questions_for_seller\":[]}]}"
 },
-"aa1ebd2655af17229161a119ae8037d83710594ec2221fa5bde3d0a8e66c2f65": {
-"at": "2026-11-04 16:16 UTC",
+"4138ee8c802a188ba694ed16975f1bc44c1cdaba69e9995c5ab92ab283906e34": {
+"at": "2026-11-04 19:42 UTC",
 "model": "muse-spark-1.3",
-"response": "{\"agent_lines\":[{\"speaker\":\"vick\",\"text\":\"This tip carries {pump_risk}, so you could get trapped fast. It already jumped {run_up_30d} in the last month, so you buy late.\",\"cited_ids\":[\"pump_risk\",\"run_up_30d\"]},{\"speaker\":\"sankz\",\"text\":\"Your {term.invest_amount} stays safe in a bank for you. A fixed deposit grows at {ref.fd_rate} for you without this trap.\",\"cited_ids\":[\"term.invest_amount\",\"ref.fd_rate\"]}],\"verdict_sentence\":{\"speaker\":\"alfii\",\"text\":\"Please do not put money in this tip.\",\"cited_ids\":[]},\"questions\":[{\"id\":\"stock_who\",\"text\":\"Who sent this tip, and do they own the stock?\"},{\"id\":\"stock_why_rising\",\"text\":\"Why is it rising this fast?\"},{\"id\":\"stock_lose\",\"text\":\"Can you afford to lose this money?\"}]}"
+"response": "{\"agent_lines\":[{\"speaker\":\"vick\",\"text\":\"This tip carries {pump_risk}, so you may get stuck after you buy. It already jumped {run_up_30d} in a month, so you buy late.\",\"cited_ids\":[\"pump_risk\",\"run_up_30d\"]},{\"speaker\":\"sankz\",\"text\":\"You want to put {term.invest_amount} in this tip, but a quick fall can take it from you. A fixed deposit at {ref.fd_rate} keeps your money protected for you.\",\"cited_ids\":[\"term.invest_amount\",\"ref.fd_rate\"]}],\"verdict_sentence\":{\"speaker\":\"alfii\",\"text\":\"Please do not put money in this tip.\",\"cited_ids\":[]},\"questions\":[{\"id\":\"stock_who\",\"text\":\"Who sent this tip, and do they own the stock?\"},{\"id\":\"stock_why_rising\",\"text\":\"Why is it rising this fast?\"}]}"
 },
 "239976423a2c9f5706331920eda825c90263b2b9753ce0fb6e41077ef60d65a5": {
-"at": "2026-11-04 16:18 UTC",
+"at": "2026-11-04 19:44 UTC",
 "model": "muse-spark-1.3",
 "response": "{\"case_type\":\"out_of_scope\",\"terms\":[],\"seller_claims\":[],\"missing_terms\":[],\"language\":\"en\",\"stock_symbol\":null,\"flags\":[],\"market_linked_quote\":null}"
 },
-"4707f556d76f528c2cfcfb7a7869e06b16d354250d2ee9a132d664a62a0d1222": {
-"at": "2026-11-04 16:17 UTC",
+"fe4d6eda14bd867681882060d3c5b1dc1ad4607045d1f1fb58dd80a176d98cee": {
+"at": "2026-11-04 19:43 UTC",
 "model": "muse-spark-1.3",
-"response": "{\"agent_lines\":[{\"speaker\":\"dani\",\"text\":\"This plan grows {cmp_return_low_vs_fd} a fixed deposit. It returns {endowment_return} a year at the lower bonus.\",\"cited_ids\":[\"endowment_return\",\"cmp_return_low_vs_fd\"]},{\"speaker\":\"sankz\",\"text\":\"You were told guaranteed to give {term.maturity_high} but papers say bonuses change yearly. Only {term.sum_assured} is promised for you.\",\"cited_ids\":[\"q4\",\"term.maturity_high\",\"term.sum_assured\"]}],\"verdict_sentence\":{\"speaker\":\"alfii\",\"text\":\"Please do not take this plan as it is.\",\"cited_ids\":[]},\"questions\":[{\"id\":\"ins_guaranteed\",\"text\":\"How much is guaranteed in writing?\"},{\"id\":\"ins_lower_bonus\",\"text\":\"What do I get at the lower bonus rate?\"},{\"id\":\"ins_stop_early\",\"text\":\"What do I get if I stop after 3 years?\"}]}"
+"response": "{\"agent_lines\":[{\"speaker\":\"dani\",\"text\":\"You were told guaranteed to give 15 lakh. The paper says bonuses may change every year.\",\"cited_ids\":[\"q4\"]},{\"speaker\":\"sankz\",\"text\":\"Only {term.sum_assured} is promised to you in writing, so the big amount is not sure.\",\"cited_ids\":[\"q2\",\"q4\"]}],\"verdict_sentence\":{\"speaker\":\"alfii\",\"text\":\"Please do not take this plan as it is.\",\"cited_ids\":[]},\"questions\":[{\"id\":\"ins_guaranteed\",\"text\":\"How much is guaranteed in writing?\"},{\"id\":\"ins_lower_bonus\",\"text\":\"What do I get at the lower bonus rate?\"},{\"id\":\"ins_stop_early\",\"text\":\"What do I get if I stop after 3 years?\"}]}"
 },
-"405d0146ff6fe9f188a2fa79d4b8884c5260ed4acb493adf5b42cc1392e5f2a9": {
-"at": "2026-11-04 16:17 UTC",
+"4a86467b7600f8c9620e51f6222dddb9d573927dbee9d8956547db5ec072f0d4": {
+"at": "2026-11-04 19:43 UTC",
 "model": "muse-spark-1.3",
-"response": "{\"opinions\":[{\"agent\":\"sankz\",\"stance\":\"against\",\"strength\":0.85,\"arguments\":[{\"text\":\"You are told it is {term.flat_rate} for you. You really pay {loan_effective_rate} a year {cmp_effective_vs_quoted} what they tell you.\",\"cited_ids\":[]},{\"text\":\"This true cost stays {cmp_effective_vs_typical} a normal bank loan for you. You pay {loan_emi} every month from your pocket.\",\"cited_ids\":[]}],\"questions_for_seller\":[]}]}"
+"response": "{\"opinions\":[{\"agent\":\"sankz\",\"stance\":\"against\",\"strength\":0.85,\"arguments\":[{\"text\":\"You are told {term.flat_rate} flat on this loan. You really pay {loan_effective_rate} a year {cmp_effective_vs_quoted} the paper rate.\",\"cited_ids\":[]},{\"text\":\"It costs you {cmp_effective_vs_typical} a normal bank loan so ask your bank first. You pay {loan_emi} each month so keep kitchen money safe.\",\"cited_ids\":[]}],\"questions_for_seller\":[]}]}"
 },
-"be3c3925a37ca90ac212141dae3f934fcf4a716bc58dcd4ef0f979ee84d75330": {
-"at": "2026-11-04 16:17 UTC",
+"5b341a3f0755426f38f9c76343a461a1de3bd4b9832281270c644fe40efd30b5": {
+"at": "2026-11-04 19:43 UTC",
 "model": "muse-spark-1.3",
-"response": "{\"agent_lines\":[{\"speaker\":\"sankz\",\"text\":\"You are told it is {term.flat_rate} for you. You really pay {loan_effective_rate} a year {cmp_effective_vs_quoted} what they tell you.\",\"cited_ids\":[\"term.flat_rate\",\"loan_effective_rate\",\"cmp_effective_vs_quoted\"]},{\"speaker\":\"sankz\",\"text\":\"This true cost stays {cmp_effective_vs_typical} a normal bank loan for you. You pay {loan_emi} every month from your pocket.\",\"cited_ids\":[\"cmp_effective_vs_typical\",\"loan_emi\"]}],\"verdict_sentence\":{\"speaker\":\"alfii\",\"text\":\"Please do not take this loan as it is.\",\"cited_ids\":[]},\"questions\":[{\"id\":\"loan_reducing_rate\",\"text\":\"What is the reducing-balance interest rate?\"},{\"id\":\"loan_charges\",\"text\":\"What are the processing and prepayment charges?\"}]}"
+"response": "{\"agent_lines\":[{\"speaker\":\"sankz\",\"text\":\"You are told {term.flat_rate} flat on this loan. You really pay {loan_effective_rate} a year {cmp_effective_vs_quoted} the paper rate.\",\"cited_ids\":[\"term.flat_rate\",\"loan_effective_rate\",\"cmp_effective_vs_quoted\"]}],\"verdict_sentence\":{\"speaker\":\"alfii\",\"text\":\"Please do not take this loan.\",\"cited_ids\":[]},\"questions\":[{\"id\":\"loan_reducing_rate\",\"text\":\"What is the reducing-balance interest rate?\"},{\"id\":\"loan_charges\",\"text\":\"What are the processing and prepayment charges?\"}]}"
 },
-"0dc342f25b4625b37cc95c2a2c48c2d274e2bbebc207d9787c11359c9ace3dd4": {
-"at": "2026-11-04 16:18 UTC",
+"9e1fa6cd7dd236f2f15ec348fa1f4e247cb932be846394e6d023bfde0056268f": {
+"at": "2026-11-04 19:43 UTC",
 "model": "muse-spark-1.3",
-"response": "{\"opinions\":[{\"agent\":\"vick\",\"stance\":\"against\",\"strength\":0.95,\"arguments\":[{\"text\":\"It carries {pump_risk} in the last month of trading, so you could lose quickly.\",\"cited_ids\":[]},{\"text\":\"It already jumped {run_up_30d} in the last month of trading, so late buyers often get hurt.\",\"cited_ids\":[]}],\"questions_for_seller\":[]},{\"agent\":\"sankz\",\"stance\":\"against\",\"strength\":0.85,\"arguments\":[{\"text\":\"Your {term.invest_amount} stays safe in a fixed deposit for you. It grows at {ref.fd_rate} without sudden shocks for you.\",\"cited_ids\":[]},{\"text\":\"No paper promises you get back {term.invest_amount} from this tip for you.\",\"cited_ids\":[]}],\"questions_for_seller\":[]}]}"
+"response": "{\"opinions\":[{\"agent\":\"vick\",\"stance\":\"against\",\"strength\":0.95,\"arguments\":[{\"text\":\"You face {pump_risk} when tips promise quick gains.\",\"cited_ids\":[]},{\"text\":\"It already jumped {run_up_30d} in the last month of trading, so late buyers often get hurt.\",\"cited_ids\":[]}],\"questions_for_seller\":[]},{\"agent\":\"sankz\",\"stance\":\"against\",\"strength\":0.8,\"arguments\":[{\"text\":\"Putting {term.invest_amount} in this tip can wipe you out. A fixed deposit at {ref.fd_rate} keeps you safe for daily needs.\",\"cited_ids\":[]}],\"questions_for_seller\":[]}]}"
 },
-"a6bec56a9baa513e4a70ff77b57e3eaaa99d39d08f535f2fb833e747fdbe0d2e": {
-"at": "2026-11-04 16:18 UTC",
+"a8eb07ef9f26ef70bb2c078e79213a2f010530b99911119a797c017ba60cb02a": {
+"at": "2026-11-04 19:44 UTC",
 "model": "muse-spark-1.3",
-"response": "{\"agent_lines\":[{\"speaker\":\"vick\",\"text\":\"This share already jumped {run_up_30d} in the last month, so late buyers like you often get hurt.\",\"cited_ids\":[\"run_up_30d\"]},{\"speaker\":\"sankz\",\"text\":\"Your {term.invest_amount} stays safe in a fixed deposit for you. It grows at {ref.fd_rate} without sudden shocks for you.\",\"cited_ids\":[\"term.invest_amount\",\"ref.fd_rate\"]}],\"verdict_sentence\":{\"speaker\":\"alfii\",\"text\":\"Please do not put money in this tip.\",\"cited_ids\":[]},\"questions\":[{\"id\":\"stock_who\",\"text\":\"Who sent this tip, and do they own the stock?\"},{\"id\":\"stock_why_rising\",\"text\":\"Why is it rising this fast?\"}]}"
+"response": "{\"agent_lines\":[{\"speaker\":\"vick\",\"text\":\"You face {pump_risk} when strangers push quick gains, so you could lose fast. It already jumped {run_up_30d} in last month, so late buyers often get trapped.\",\"cited_ids\":[\"pump_risk\",\"run_up_30d\"]},{\"speaker\":\"sankz\",\"text\":\"Putting {term.invest_amount} in this tip can leave you with nothing, so keep it safe for daily needs. A fixed deposit at {ref.fd_rate} grows slowly for your daily needs.\",\"cited_ids\":[\"term.invest_amount\",\"ref.fd_rate\"]}],\"verdict_sentence\":{\"speaker\":\"alfii\",\"text\":\"Please do not put money in this tip.\",\"cited_ids\":[]},\"questions\":[{\"id\":\"stock_who\",\"text\":\"Who sent this tip, and do they own the stock?\"},{\"id\":\"stock_why_rising\",\"text\":\"Why is it rising this fast?\"}]}"
 }
 }
 }
