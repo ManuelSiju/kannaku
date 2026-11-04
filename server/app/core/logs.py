@@ -90,3 +90,5 @@ def setup_logging(log_path: Path | None, secrets: Iterable[str] = (), level: int
     for name in ("uvicorn", "uvicorn.error", "uvicorn.access"):
         lg = logging.getLogger(name)
         lg.handlers, lg.propagate = [], True
+    logging.getLogger("uvicorn.access").setLevel(logging.WARNING)  # kanakku.access logs every request, with its id
+    logging.getLogger("httpx").setLevel(logging.WARNING)  # one line per model call adds nothing

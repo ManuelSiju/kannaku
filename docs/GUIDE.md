@@ -82,7 +82,7 @@ make doctor           # in a second terminal: every line ✔ (· lines are optio
 
 `scripts/setup.sh` (run by every `make start`, under 2 s when nothing changed): creates `.env`; installs `uv` if missing;
 creates `.venv` and installs the server when `.venv` is missing or the hash of `server/pyproject.toml` differs from
-`run/setup.stamp`; installs missing system packages (tesseract + eng + mal, ffmpeg, adb; "you may be asked for your
+`run/setup.stamp`; seeds the fictional demo family when there is no database yet; installs missing system packages (tesseract + eng + mal, ffmpeg, adb; "you may be asked for your
 password once"). A refused install is remembered in `run/system.declined` and not asked again until the list changes;
 Malayalam is optional, the others stop the start. With the local provider `up.sh` installs Ollama if missing and
 downloads the model if missing, saying its size.

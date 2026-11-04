@@ -79,18 +79,16 @@ cleanup() {
   [[ $STOPPING == 1 ]] && return
   STOPPING=1
   trap '' INT TERM HUP PIPE               # a second Ctrl+C must not interrupt the clean-up
-  [[ "${1:-}" == HUP ]] && exec >/dev/null 2>&1  # the terminal is gone: nothing to print to
   [[ -n "$VIEW" ]] && kill "$VIEW" 2>/dev/null
-  echo
-  echo "Stopping Kanakku…"
+  echo 2>/dev/null
+  echo "Stopping Kanakku…" 2>/dev/null   # the terminal may be gone: printing must not stop the clean-up
   "$ROOT/scripts/down.sh" >/dev/null 2>&1
   remove_reverse
   rm -f "$START_PID"
-  echo "Kanakku stopped"
+  echo "Kanakku stopped" 2>/dev/null
   exit 0
 }
-trap 'cleanup' INT TERM
-trap 'cleanup HUP' HUP
+trap cleanup INT TERM HUP
 
 if ! PROVIDER="${PROVIDER:-}" "$ROOT/scripts/up.sh"; then
   rm -f "$START_PID"
@@ -99,11 +97,12 @@ fi
 reverse_tunnels
 box
 echo "Live log (time, level, request, message):"
+TTY="$(tty 2>/dev/null)"; [[ "$TTY" == /dev/* ]] || TTY=""
 "$PY" "$ROOT/scripts/log_view.py" "$RUN_DIR/server.log" &
 VIEW=$!
 while alive "$RUN_DIR/server.pid" "uvicorn app.main:app" || [[ -f "$RUN_DIR/demo.reset" ]]; do  # make demo restarts it
-  sleep 1 &
-  wait $!
+  sleep 1   # in the foreground: a trap inside `wait` deadlocks when the terminal closes
+  if [[ -n "$TTY" && ! -e "$TTY" ]]; then cleanup; fi  # the terminal vanished without a signal
 done
 echo
 echo "✘ The server stopped by itself. The last lines are above; run make doctor."

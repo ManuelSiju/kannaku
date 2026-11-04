@@ -112,6 +112,7 @@ def main() -> int:
 
     if not a.keep_data:
         p.sh("pm", "clear", PACKAGE)
+    p.sh("am", "force-stop", PACKAGE)  # start from the first screen, wherever the app was left
     p.sh("monkey", "-p", PACKAGE, "-c", "android.intent.category.LAUNCHER", "1")
     if not a.keep_data:
         p.wait(r"Hello, I'm Alfii", 60)

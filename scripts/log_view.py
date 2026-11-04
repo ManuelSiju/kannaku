@@ -4,6 +4,7 @@ Colours only on a real terminal. Survives log rotation. Standard library only.""
 
 from __future__ import annotations
 
+import datetime as dt
 import json
 import os
 import sys
@@ -19,7 +20,10 @@ def line(raw: str, colour: bool) -> str:
         r = json.loads(raw)
     except ValueError:
         return raw.rstrip()
-    ts = str(r.get("ts", ""))[11:19]
+    try:
+        ts = dt.datetime.fromisoformat(str(r.get("ts"))).astimezone().strftime("%H:%M:%S")  # the laptop's own clock
+    except ValueError:
+        ts = ""
     level, rid = str(r.get("level", "")), str(r.get("request_id", ""))[:8]
     msg = str(r.get("msg", ""))
     if "ms" in r:

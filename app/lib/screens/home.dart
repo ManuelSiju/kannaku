@@ -342,7 +342,7 @@ class _NotesBannerState extends State<NotesBanner> {
       final n = await s.api.notes(s.familyId);
       if (mounted && n.isNotEmpty) setState(() => _note = n.first);
     } catch (_) {
-      if (mounted) Future<void>.delayed(const Duration(seconds: 3), () => mounted ? _load() : null);
+      // not shown; the timer tries again
     }
   }
 

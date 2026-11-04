@@ -159,7 +159,8 @@ class Rehearsal:
                 cwd = os.readlink(p / "cwd")
             except OSError:
                 continue
-            if cmd and (str(self.dir) in cmd or cwd.startswith(str(self.dir))) and "gradle" not in cmd.lower():
+            mine = "gradle" in cmd.lower() or "tests.fakes.meta_server" in cmd  # test helpers, not Kanakku
+            if cmd and (str(self.dir) in cmd or cwd.startswith(str(self.dir))) and not mine:
                 out.append(f"{p.name} {cmd[:100]}")
         return out
 

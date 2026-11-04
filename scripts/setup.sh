@@ -25,6 +25,13 @@ if [[ ! -x "$PY" || "$(cat "$STAMP" 2>/dev/null)" != "$want" ]]; then
   echo "✔ Server parts ready"
 fi
 
+# ---------------------------------------------------------------- demo family (first run only)
+DB="$(envget DB_PATH server/kanakku.db)"
+[[ "$DB" == /* ]] || DB="$ROOT/$DB"
+if [[ ! -f "$DB" ]]; then
+  (cd "$ROOT/server" && "$PY" -m app.db.seed_demo >/dev/null) && echo "✔ Demo family ready"
+fi
+
 # ---------------------------------------------------------------- system packages
 missing=()
 command -v tesseract >/dev/null || missing+=(tesseract-ocr tesseract-ocr-eng)

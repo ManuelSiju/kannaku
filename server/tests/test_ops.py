@@ -8,6 +8,7 @@ import asyncio
 import datetime as dt
 import json
 import logging
+import re
 import sqlite3
 
 import httpx
@@ -508,6 +509,7 @@ def test_log_viewer_is_one_readable_line():
     spec.loader.exec_module(mod)
     raw = json.dumps({"ts": "2026-11-04T10:36:12.123+00:00", "level": "INFO", "request_id": "abcdef123456",
                       "msg": "POST /v1/cases -> 202", "ms": 12.4})  # fmt: skip
-    assert mod.line(raw, False) == "10:36:12 INFO    abcdef12 POST /v1/cases -> 202  (12 ms)"
+    assert mod.line(raw, False).endswith(" INFO    abcdef12 POST /v1/cases -> 202  (12 ms)")
+    assert re.match(r"\d\d:\d\d:\d\d ", mod.line(raw, False))
     assert "\033[" in mod.line(raw, True)
     assert mod.line("not json", False) == "not json"
