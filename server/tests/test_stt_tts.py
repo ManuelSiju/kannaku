@@ -57,6 +57,12 @@ async def test_meta_stt_failure_falls_back_to_whisper_and_says_so():
     assert out.engine == "whisper (fallback: RuntimeError: HTTP 500)"
 
 
+async def test_an_empty_meta_transcript_gets_a_second_try_on_whisper():
+    stt, _ = stt_with(httpx.Response(200, json={"transcript": ""}), FakeSTT("Is this plan safe?"))
+    out = await stt.transcribe(SPEECH, "audio/wav")
+    assert (out.text, out.engine) == ("Is this plan safe?", "whisper (fallback: empty transcript)")
+
+
 async def test_meta_stt_error_never_carries_the_key():
     stt, _ = stt_with(httpx.Response(401, json={}), FakeSTT("x"))
     assert (await stt.transcribe(SPEECH, "audio/wav")).engine == "whisper (fallback: RuntimeError: HTTP 401)"

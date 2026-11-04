@@ -57,6 +57,16 @@ void main() {
     expect(find.text('Press and hold the mic, talk, then let go.'), findsOneWidget);
   });
 
+  testWidgets('a lost gesture leaves nothing on screen and sends nothing', (tester) async {
+    bool? sent;
+    final g = await hold(tester, (v) => sent = v);
+    expect(find.text('Listening… answer private'), findsOneWidget);
+    await g.cancel();
+    await tester.pumpAndSettle();
+    expect(find.text('Listening… answer private'), findsNothing);
+    expect(sent, isNull);
+  });
+
   testWidgets('back at the centre undoes a slide', (tester) async {
     bool? sent;
     final g = await hold(tester, (v) => sent = v);

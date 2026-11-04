@@ -182,14 +182,17 @@ class MetaTranscribeSTT(STTProvider):
 
     async def transcribe(self, audio_bytes: bytes, mime: str) -> Transcript:
         try:
-            return await self._ask(audio_bytes)
+            heard = await self._ask(audio_bytes)
+            if heard.text or self.fallback is None:
+                return heard
+            reason = "empty transcript"
         except Exception as e:
-            reason = f"{type(e).__name__}: {e}"[:80]
-            log.warning("Muse Voice Transcribe failed (%s); using the fallback", reason)
             if self.fallback is None:
                 raise
-            out = await self.fallback.transcribe(audio_bytes, mime)
-            return out.model_copy(update={"engine": f"whisper (fallback: {reason})"})
+            reason = f"{type(e).__name__}: {e}"[:80]
+        log.warning("Muse Voice Transcribe gave nothing (%s); using the fallback", reason)
+        out = await self.fallback.transcribe(audio_bytes, mime)
+        return out.model_copy(update={"engine": f"whisper (fallback: {reason})"})
 
 
 def get_stt(settings: Settings | None = None) -> STTProvider:

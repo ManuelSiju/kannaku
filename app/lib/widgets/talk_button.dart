@@ -50,6 +50,7 @@ class _TalkButtonState extends State<TalkButton> {
   /// The overlay comes first, so the finger gets an answer at once; the microphone starts behind it.
   Future<void> _start(LongPressStartDetails _) async {
     HapticFeedback.mediumImpact();
+    _closeOverlay(); // never two overlays: one left behind could not be removed
     _held = true;
     _zone.value = _pill;
     _finger.value = Offset.zero;
@@ -82,6 +83,17 @@ class _TalkButtonState extends State<TalkButton> {
       _setZone(TalkZone.private);
     } else if (o.dy.abs() < _centre && o.dx.abs() < _sideways - _centre) {
       _setZone(_pill); // back at the centre: changed your mind
+    }
+  }
+
+  /// The system took the gesture away (a rotation, a call): nothing is sent and nothing stays on screen.
+  Future<void> _lost() async {
+    _held = false;
+    _closeOverlay();
+    await _started;
+    if (_recording) {
+      _recording = false;
+      await _rec.cancel();
     }
   }
 
@@ -130,7 +142,8 @@ class _TalkButtonState extends State<TalkButton> {
           (r) => r
             ..onLongPressStart = _start
             ..onLongPressMoveUpdate = _move
-            ..onLongPressEnd = _end,
+            ..onLongPressEnd = _end
+            ..onLongPressCancel = _lost,
         ),
         TapGestureRecognizer: GestureRecognizerFactoryWithHandlers<TapGestureRecognizer>(
           TapGestureRecognizer.new,
