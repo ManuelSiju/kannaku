@@ -139,7 +139,9 @@ class _MyDetailsScreenState extends State<MyDetailsScreen> {
                             Text(
                               [
                                 inr(it.amount),
-                                if (it.units != null) '${it.units!.toStringAsFixed(it.units! % 1 == 0 ? 0 : 3)} units',
+                                if (it.units != null)
+                                  '${it.units!.toStringAsFixed(it.units! % 1 == 0 ? 0 : 3)} '
+                                      '${it.kind == 'stock_holding' ? 'shares' : 'units'}',
                                 if (it.frequency != 'once') it.frequency,
                                 if (p.members.isNotEmpty) p.ownerOf(it),
                               ].join(' · '),
