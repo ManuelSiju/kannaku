@@ -53,8 +53,8 @@ void main() {
   });
 
   test('the code printed by make start is understood', () {
-    final l = ConnectLink.parse('kanakku://connect?url=http%3A%2F%2F192.168.1.10%3A8013&token=abc-_1');
-    expect(l?.url, 'http://192.168.1.10:8013');
+    final l = ConnectLink.parse('kanakku://connect?url=http%3A%2F%2F192.0.2.10%3A8013&token=abc-_1');
+    expect(l?.url, 'http://192.0.2.10:8013');
     expect(l?.token, 'abc-_1');
     for (final bad in [
       null,

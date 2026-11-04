@@ -495,8 +495,8 @@ def test_meta_key_never_appears_in_logs_traces_errors_or_health(tmp_path, demo_r
 def test_qr_link_matches_what_the_app_parses():
     from scripts.print_qr import connect_link
 
-    link = connect_link("http://192.168.1.10:8013", "abc-_1")
-    assert link == "kanakku://connect?url=http%3A%2F%2F192.168.1.10%3A8013&token=abc-_1"  # app/test/models_test.dart
+    link = connect_link("http://192.0.2.10:8013", "abc-_1")
+    assert link == "kanakku://connect?url=http%3A%2F%2F192.0.2.10%3A8013&token=abc-_1"  # app/test/models_test.dart
 
 
 def test_log_viewer_is_one_readable_line():

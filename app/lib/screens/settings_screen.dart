@@ -73,7 +73,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           TextField(
             controller: _url,
             keyboardType: TextInputType.url,
-            decoration: const InputDecoration(labelText: 'Server address', hintText: 'http://192.168.1.10:8013'),
+            decoration: const InputDecoration(labelText: 'Server address', hintText: 'http://192.0.2.10:8013'),
           ),
           const SizedBox(height: 10),
           TextField(

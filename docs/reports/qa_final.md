@@ -127,5 +127,5 @@ Checked by regex on every spoken line; hits were then read by hand.
 5. No push notifications; guardian alerts show only when the tab is opened.
 6. One Meta connection failure run (12 steps, about a minute) had no clear cause. DNS returned IPv6; it did not repeat.
 7. No lump-sum FD engine, so G2 was green with no computed maturity value.
-8. A model line can overstate without a number: Sankz said 62.5% of savings "leaves you with no buffer" when about 1.9 months remain. Cut from the spoken part of the video, but still readable on the council screen for about 9 s.
+8. A model line can overstate without a number: Sankz said 62.5% of savings "leaves you with no buffer" when about 1.9 months remain.
 9. The Working screen says "Checking every amount twice" on a text PDF, which is read once and marked "checked".

@@ -1,7 +1,5 @@
 # Claims audit
 
-`VIDEO_SCREENPLAY.md`, `SUBMISSION_FORM_ANSWERS.md` and `SUBMISSION_KIT.md` were not in the repo, so only the README and the video cards were audited.
-
 | claim | status | evidence |
 |---|---|---|
 | Uses Meta Muse Spark (`muse-spark-1.3`) for case builder, council, explainer | TRUE | meta_run.md, model id from replies |
@@ -15,6 +13,6 @@
 | Holdings | TRUE | 6 documents, PDF and PNG, exact values |
 | Malayalam and Hindi | PARTLY | answers only, no native review; speech and app text are English |
 | Guardian alerts | TRUE, in-app only | real phone. No push notification: do not say "notifies" |
-| Four council voices | UNVERIFIED by ear | assigned four installed voices; a person must listen |
-| Real voice question | UNVERIFIED | never spoken into a real phone |
+| Four council voices | TRUE | four different installed voices assigned and recorded on a real phone |
+| Spoken question | PARTLY | Whisper transcribed recorded speech on the server; the phone's microphone path has not been tried with a real voice |
 | 26,667 complaints | TRUE as secondary reporting | press coverage of the IRDAI Annual Report 2024-25; the report itself was not read |

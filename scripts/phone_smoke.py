@@ -3,7 +3,7 @@
 fresh start -> Welcome -> Start -> Skip -> Settings (server address + token) -> Save and test connection ->
 back -> type a question -> wait for the answer. Saves screenshots. Exit code 0 when the answer has the expected word.
 
-usage: phone_smoke.py --url http://192.168.1.10:8013 --token XXX [--question "..."] [--expect Stop] [--shots DIR]
+usage: phone_smoke.py --url http://192.0.2.10:8013 --token XXX [--question "..."] [--expect Stop] [--shots DIR]
        [--serial emulator-5554] [--keep-data] [--connect-only]
 """
 

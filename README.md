@@ -12,7 +12,7 @@ Built for the Meta AI Developer Hackathon (Oct 27 – Nov 4 2026). Decision supp
   <img src="docs/screens/home_answers@1.0.png" width="230" alt="Chat with answers">
 </p>
 
-[Demo recording](docs/demo_run.mp4) · [All screens](docs/screens/)
+[All screens](docs/screens/)
 
 ## For judges
 
@@ -53,7 +53,7 @@ its own is dropped. Each term must be found in the paper, and each figure is rec
 2. "A finance company is offering me a loan of 1,00,000 at 12% flat for 24 months." Expect Stop or Careful, real rate 21.6%.
 3. "A man from the bank called. My KYC has expired and he asks me to tell him the OTP." Expect Stop with no model call.
 
-**Known limits.** Speech is English only. The app has no push notifications: guardian alerts appear when the Alerts tab is
+**Known limits.** Speech is English only, and the phone's microphone path has not been tried with a real voice. The app has no push notifications: guardian alerts appear when the Alerts tab is
 opened. A model can vary between runs, so the same case can move between yellow and red; see the calibration table.
 
 **From prototype to product (next steps, not built yet).** Consent-based family data through Account Aggregators. Malayalam
@@ -158,8 +158,7 @@ saved key, and `make meta-run` repeats the live proof.
 app/        Flutter app (Android)
 server/     FastAPI server, pipeline, engines, providers, tests
 scripts/    Scripts behind the Makefile
-docs/       Reports, rehearsals, screenshots
-video/      Demo video cards, edit list and render script
+docs/       Reports, screenshots
 ```
 
 ## Testing
@@ -168,9 +167,8 @@ video/      Demo video cards, edit list and render script
 |---|---|---|
 | Server: unit, API, end-to-end (offline) | `make test` | 530 tests |
 | App: analysis, widgets, screenshots | `make app-test` | [screens](docs/screens/) |
-| App on a device against the real server | `make app-integration` | [recording](docs/demo_run.mp4) |
-| Real-model reliability | `make reliability` | [Meta](docs/reports/reliability_meta.md), [local discreet](docs/reliability_final.md), [local full](docs/reliability_full_final.md) |
-| Fresh-clone rehearsals | `scripts/rehearsal.py <n>` | [run 1](docs/rehearsal_1.md), [run 2](docs/rehearsal_2.md) |
+| App on a device against the real server | `make app-integration` | emulator run |
+| Real-model reliability | `make reliability` | [Meta](docs/reports/reliability_meta.md) |
 
 ## Status
 
@@ -183,3 +181,7 @@ real Samsung A73 (Android 16).
 All code in this repository was written during the hackathon. The consensus idea, a weighted vote of specialists with
 safety overrides, comes from our earlier project **IFA** (patent pending), which is not in this repository; no code was
 copied from it. The demo family, brochure, loan offer and share (ZEPHYRX) are fictional.
+
+## Licence
+
+[MIT](LICENSE)
