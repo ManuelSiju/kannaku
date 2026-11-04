@@ -18,8 +18,8 @@ import xml.etree.ElementTree as ET
 from pathlib import Path
 
 PACKAGE = "dev.kanakku.kanakku"
-TIP_Q = (
-    "I got this message: ZEPHYRX LTD big news coming, target Rs 180 in 2 weeks, upper circuit guaranteed. "
+TIP_Q = (  # demo question 3 of docs/OWNER_GUIDE.md, word for word
+    "I got this message: ZEPHYRX LTD - BIG NEWS COMING! Target Rs. 180 in 2 weeks. Upper circuit guaranteed. "
     "Should I put 1 lakh in it?"
 )
 

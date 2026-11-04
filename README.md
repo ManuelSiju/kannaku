@@ -65,7 +65,7 @@ example: [docs/GUIDE.md](docs/GUIDE.md).
 | `make up` paths vs a fake Meta server | `cd server && ../.venv/bin/python -m pytest tests/test_make_up.py` | key never in any log |
 | app: analyze, widgets, screenshots | `make app-test` | [docs/screens/](docs/screens/) |
 | app on a device vs the real server | `make app-integration` | [docs/demo_run.mp4](docs/demo_run.mp4) |
-| real-model reliability | `make reliability` | [docs/reliability_confirm.md](docs/reliability_confirm.md), [full mode](docs/reliability_full_confirm.md), [model setup](docs/model_setup.md) |
+| real-model reliability | `make reliability` | [docs/reliability_final.md](docs/reliability_final.md), [full mode](docs/reliability_full_final.md), [model setup](docs/model_setup.md) |
 | fresh-clone rehearsals | | [docs/rehearsal_1.md](docs/rehearsal_1.md), [docs/rehearsal_2.md](docs/rehearsal_2.md) |
 
 ## Built during the hackathon vs prior work

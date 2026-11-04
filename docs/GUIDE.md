@@ -148,7 +148,7 @@ half-configured. `make up` also creates the LAN access token (`KANAKKU_TOKEN` in
 | 5 | compute | — | facts from code (`engines/`, via `mcp_server/tools.py`): returns, FD comparison, EMI, effective rate, affordability, pump signals; `cmp_*` comparison facts |
 | 6 | router | — | which specialists (table in §9); `unknown` → one clarifying question |
 | 7 | council | **2** | one batched call for all called agents: stance, strength, ≤2 arguments each with `{fact_id}` placeholders |
-| 8 | evidence | — | every argument: known placeholders only, no raw digits, comparison words need a matching `cmp_*` fact, Vick must cite a pump signal; failures are dropped with the reason |
+| 8 | evidence | — | every argument: known placeholders only, no raw digits, comparison words need a matching `cmp_*` fact, Vick must cite a pump signal; failures are dropped with the reason. A decorated citation (`#run_up_30d`) is repaired only to an id that exists exactly once; an invented id is ignored and logged, and the argument stands only on real evidence |
 | 9 | debate | **3** (only if D > 0.4) | one rebuttal round |
 | 10 | consensus | — | weighted vote S = Σ w·s·c / Σ w (voters); S < −0.2 red, > 0.2 green; then overrides (code beats the vote): scam → red; savings cover < 1 month → red, < 3 → at most yellow; EMIs > 60 % → red, > 40 % → at most yellow; monthly shortfall → red; "guaranteed" not in the document → at least yellow; unverified required terms → at most yellow |
 | 11 | privacy | — | DISCREET (default) unless earphones or "out loud": no personal amount or word (income, savings, EMI, budget…) may be spoken; those go to on-screen notes |

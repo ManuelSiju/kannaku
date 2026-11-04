@@ -1,0 +1,2182 @@
+{
+ "groups": {
+  "endowment": [
+   {
+    "colour": "red",
+    "case_type": "insurance_offer",
+    "agents": [
+     "dani",
+     "sankz"
+    ],
+    "llm_calls": 3,
+    "degraded_steps": [],
+    "kept": 3,
+    "dropped": 1,
+    "drop_reasons": [
+     "unknown placeholder(s): term.flat_rate, loan_effective_rate, cmp_effective_vs_quoted"
+    ],
+    "blocked_lines": [],
+    "stances": {
+     "dani": "against 0.8",
+     "sankz": "against 0.9"
+    },
+    "terms": [
+     {
+      "name": "premium",
+      "value": 50000.0,
+      "verified": true,
+      "reason": null
+     },
+     {
+      "name": "pay_years",
+      "value": 15.0,
+      "verified": true,
+      "reason": null
+     },
+     {
+      "name": "policy_years",
+      "value": 15.0,
+      "verified": true,
+      "reason": null
+     },
+     {
+      "name": "sum_assured",
+      "value": 750000.0,
+      "verified": true,
+      "reason": null
+     },
+     {
+      "name": "maturity_high",
+      "value": 1500000.0,
+      "verified": true,
+      "reason": null
+     },
+     {
+      "name": "bonus_rate_high",
+      "value": 0.08,
+      "verified": true,
+      "reason": null
+     }
+    ],
+    "photo_confirmed": [],
+    "spoken": [
+     "alfii: Let me ask Dani and Sankz.",
+     "dani: Only 7.5 lakh rupees is certain; bonus-based amounts are not.",
+     "sankz: Only 7.5 lakh rupees is written as guaranteed.",
+     "alfii: Do not sign this plan as it is not guaranteed to give 15 lakh rupees."
+    ],
+    "step_ms": {
+     "request": 0.0,
+     "ingest": 75.7,
+     "scam_rules": 0.3,
+     "case_builder": 12463.6,
+     "verify_terms": 2.4,
+     "compute": 1.2,
+     "router": 0.0,
+     "council": 8874.3,
+     "consensus": 0.0,
+     "privacy": 0.0,
+     "explainer": 6845.8,
+     "questions": 0.0
+    },
+    "fixes": [
+     "council: ignored unknown citation f_return_high_vs_fd",
+     "explainer: auto_placeholder '\u20b97.5 lakh' -> {term.sum_assured}",
+     "explainer: auto_placeholder '\u20b97.5 lakh' -> {term.sum_assured}",
+     "explainer: auto_placeholder '15 lakh' -> {term.maturity_high}"
+    ],
+    "lint": [],
+    "dropped_turns": [],
+    "mode": "discreet",
+    "short_answer": "Please don't go ahead with this as it is.",
+    "council": [
+     "alfii (opener): Let me ask Dani and Sankz.",
+     "dani (agent): Only 7.5 lakh rupees is certain; bonus-based amounts are not.",
+     "sankz (agent): Only 7.5 lakh rupees is written as guaranteed.",
+     "alfii (conclusion): Do not sign this plan as it is not guaranteed to give 15 lakh rupees."
+    ],
+    "council_words": 39,
+    "council_seconds": 15.6,
+    "notes": [
+     "This premium is 31.2% of your savings each year.",
+     "Each month this premium is 9.3% of your income.",
+     "After this, you would have \u20b99,433 left each month.",
+     "Your savings would cover 4.5 months of costs."
+    ],
+    "followups": [
+     "What would an FD give me instead?",
+     "How much of this is guaranteed?",
+     "Can I afford this premium?"
+    ],
+    "questions": [
+     "How much is guaranteed in writing?",
+     "What do I get at the lower bonus rate?"
+    ],
+    "conclusion": "Do not sign this plan as it is not guaranteed to give 15 lakh rupees.",
+    "question_trace": {
+     "bank": [
+      "ins_guaranteed",
+      "ins_lower_bonus",
+      "ins_higher_bonus",
+      "ins_stop_early",
+      "ins_bonus_rate"
+     ],
+     "picked": [
+      "ins_guaranteed",
+      "ins_lower_bonus"
+     ],
+     "reworded": [],
+     "rejected": []
+    },
+    "claims": [
+     "contradicted: guaranteed to give 15 lakh \u2014 Bonus rates are not guaranteed and may change every year"
+    ],
+    "step_errors": {},
+    "total_s": 28.3
+   },
+   {
+    "colour": "red",
+    "case_type": "insurance_offer",
+    "agents": [
+     "dani",
+     "sankz"
+    ],
+    "llm_calls": 3,
+    "degraded_steps": [],
+    "kept": 4,
+    "dropped": 0,
+    "drop_reasons": [],
+    "blocked_lines": [],
+    "stances": {
+     "dani": "against 0.8",
+     "sankz": "against 0.9"
+    },
+    "terms": [
+     {
+      "name": "premium",
+      "value": 50000.0,
+      "verified": true,
+      "reason": null
+     },
+     {
+      "name": "pay_years",
+      "value": 15.0,
+      "verified": true,
+      "reason": null
+     },
+     {
+      "name": "policy_years",
+      "value": 15.0,
+      "verified": true,
+      "reason": null
+     },
+     {
+      "name": "sum_assured",
+      "value": 750000.0,
+      "verified": true,
+      "reason": null
+     },
+     {
+      "name": "maturity_low",
+      "value": 1020000.0,
+      "verified": true,
+      "reason": null
+     },
+     {
+      "name": "maturity_high",
+      "value": 1500000.0,
+      "verified": true,
+      "reason": null
+     },
+     {
+      "name": "bonus_rate_low",
+      "value": 0.04,
+      "verified": true,
+      "reason": null
+     },
+     {
+      "name": "bonus_rate_high",
+      "value": 0.08,
+      "verified": true,
+      "reason": null
+     }
+    ],
+    "photo_confirmed": [],
+    "spoken": [
+     "alfii: Let me ask Dani and Sankz.",
+     "dani: Only 7.5 lakh rupees is certain; bonus-based amounts are not guaranteed.",
+     "sankz: Only 7.5 lakh rupees is guaranteed; bonus-based amounts are not.",
+     "alfii: Do not sign this plan; only 7.5 lakh rupees is certain."
+    ],
+    "step_ms": {
+     "request": 0.0,
+     "ingest": 16.3,
+     "scam_rules": 0.2,
+     "case_builder": 15992.8,
+     "verify_terms": 3.1,
+     "compute": 0.9,
+     "router": 0.0,
+     "council": 10489.5,
+     "consensus": 0.0,
+     "privacy": 0.0,
+     "explainer": 7975.0,
+     "questions": 0.0
+    },
+    "fixes": [],
+    "lint": [],
+    "dropped_turns": [],
+    "mode": "discreet",
+    "short_answer": "Please don't go ahead with this as it is.",
+    "council": [
+     "alfii (opener): Let me ask Dani and Sankz.",
+     "dani (agent): Only 7.5 lakh rupees is certain; bonus-based amounts are not guaranteed.",
+     "sankz (agent): Only 7.5 lakh rupees is guaranteed; bonus-based amounts are not.",
+     "alfii (conclusion): Do not sign this plan; only 7.5 lakh rupees is certain."
+    ],
+    "council_words": 38,
+    "council_seconds": 15.2,
+    "notes": [
+     "This premium is 31.2% of your savings each year.",
+     "Each month this premium is 9.3% of your income.",
+     "After this, you would have \u20b99,433 left each month.",
+     "Your savings would cover 4.5 months of costs."
+    ],
+    "followups": [
+     "What would an FD give me instead?",
+     "How much of this is guaranteed?",
+     "Can I afford this premium?"
+    ],
+    "questions": [
+     "How much is guaranteed in writing?",
+     "What do I get at the lower bonus rate?",
+     "What do I get at the higher bonus rate?"
+    ],
+    "conclusion": "Do not sign this plan; only 7.5 lakh rupees is certain.",
+    "question_trace": {
+     "bank": [
+      "ins_guaranteed",
+      "ins_lower_bonus",
+      "ins_higher_bonus",
+      "ins_stop_early",
+      "ins_bonus_rate"
+     ],
+     "picked": [
+      "ins_guaranteed",
+      "ins_lower_bonus",
+      "ins_higher_bonus"
+     ],
+     "reworded": [],
+     "rejected": []
+    },
+    "claims": [
+     "contradicted: guaranteed to give 15 lakh \u2014 Bonus rates are not guaranteed and may change every year"
+    ],
+    "step_errors": {},
+    "total_s": 34.5
+   },
+   {
+    "colour": "red",
+    "case_type": "insurance_offer",
+    "agents": [
+     "dani",
+     "sankz"
+    ],
+    "llm_calls": 3,
+    "degraded_steps": [],
+    "kept": 4,
+    "dropped": 0,
+    "drop_reasons": [],
+    "blocked_lines": [],
+    "stances": {
+     "dani": "against 0.8",
+     "sankz": "against 0.9"
+    },
+    "terms": [
+     {
+      "name": "premium",
+      "value": 50000.0,
+      "verified": true,
+      "reason": null
+     },
+     {
+      "name": "pay_years",
+      "value": 15.0,
+      "verified": true,
+      "reason": null
+     },
+     {
+      "name": "policy_years",
+      "value": 15.0,
+      "verified": true,
+      "reason": null
+     },
+     {
+      "name": "sum_assured",
+      "value": 750000.0,
+      "verified": true,
+      "reason": null
+     },
+     {
+      "name": "maturity_low",
+      "value": 1020000.0,
+      "verified": true,
+      "reason": null
+     },
+     {
+      "name": "maturity_high",
+      "value": 1500000.0,
+      "verified": true,
+      "reason": null
+     }
+    ],
+    "photo_confirmed": [],
+    "spoken": [
+     "alfii: Let me ask Dani and Sankz.",
+     "dani: Only 7.5 lakh rupees is certain; bonus-based amounts are not.",
+     "sankz: Only 7.5 lakh rupees is guaranteed; maturity value depends on bonus rates, not certain.",
+     "alfii: My advice: do not go ahead with this as it is. Talk to Arun before you decide."
+    ],
+    "step_ms": {
+     "request": 0.0,
+     "ingest": 15.9,
+     "scam_rules": 0.2,
+     "case_builder": 12739.7,
+     "verify_terms": 2.3,
+     "compute": 1.0,
+     "router": 0.0,
+     "council": 8212.5,
+     "consensus": 0.0,
+     "privacy": 0.0,
+     "explainer": 7012.5,
+     "questions": 0.0
+    },
+    "fixes": [],
+    "lint": [],
+    "dropped_turns": [],
+    "mode": "discreet",
+    "short_answer": "Please don't go ahead with this as it is.",
+    "council": [
+     "alfii (opener): Let me ask Dani and Sankz.",
+     "dani (agent): Only 7.5 lakh rupees is certain; bonus-based amounts are not.",
+     "sankz (agent): Only 7.5 lakh rupees is guaranteed; maturity value depends on bonus rates, not certain.",
+     "alfii (conclusion): My advice: do not go ahead with this as it is. Talk to Arun before you decide."
+    ],
+    "council_words": 47,
+    "council_seconds": 18.8,
+    "notes": [
+     "This premium is 31.2% of your savings each year.",
+     "Each month this premium is 9.3% of your income.",
+     "After this, you would have \u20b99,433 left each month.",
+     "Your savings would cover 4.5 months of costs."
+    ],
+    "followups": [
+     "What would an FD give me instead?",
+     "How much of this is guaranteed?",
+     "Can I afford this premium?"
+    ],
+    "questions": [
+     "How much is guaranteed in writing?"
+    ],
+    "conclusion": "My advice: do not go ahead with this as it is. Talk to Arun before you decide.",
+    "question_trace": {
+     "bank": [
+      "ins_guaranteed",
+      "ins_lower_bonus",
+      "ins_higher_bonus",
+      "ins_stop_early",
+      "ins_bonus_rate"
+     ],
+     "picked": [
+      "ins_guaranteed"
+     ],
+     "reworded": [],
+     "rejected": []
+    },
+    "claims": [
+     "contradicted: guaranteed to give 15 lakh \u2014 Bonus rates are not guaranteed and may change every year"
+    ],
+    "step_errors": {},
+    "total_s": 28.0
+   },
+   {
+    "colour": "red",
+    "case_type": "insurance_offer",
+    "agents": [
+     "dani",
+     "sankz"
+    ],
+    "llm_calls": 3,
+    "degraded_steps": [],
+    "kept": 3,
+    "dropped": 1,
+    "drop_reasons": [
+     "comparison 'higher' needs a cited cmp_* fact saying 'higher'"
+    ],
+    "blocked_lines": [],
+    "stances": {
+     "dani": "against 0.8",
+     "sankz": "against 0.9"
+    },
+    "terms": [
+     {
+      "name": "premium",
+      "value": 50000.0,
+      "verified": true,
+      "reason": null
+     },
+     {
+      "name": "pay_years",
+      "value": 15.0,
+      "verified": true,
+      "reason": null
+     },
+     {
+      "name": "policy_years",
+      "value": 15.0,
+      "verified": true,
+      "reason": null
+     },
+     {
+      "name": "sum_assured",
+      "value": 750000.0,
+      "verified": true,
+      "reason": null
+     },
+     {
+      "name": "maturity_low",
+      "value": 1020000.0,
+      "verified": true,
+      "reason": null
+     },
+     {
+      "name": "bonus_rate_low",
+      "value": 0.04,
+      "verified": true,
+      "reason": null
+     },
+     {
+      "name": "maturity_high",
+      "value": 1500000.0,
+      "verified": true,
+      "reason": null
+     },
+     {
+      "name": "bonus_rate_high",
+      "value": 0.08,
+      "verified": true,
+      "reason": null
+     }
+    ],
+    "photo_confirmed": [],
+    "spoken": [
+     "alfii: Let me ask Dani and Sankz.",
+     "dani: Only 7.5 lakh rupees is certain; bonus-based amounts are not.",
+     "sankz: Only 7.5 lakh rupees is guaranteed; the rest depends on bonuses.",
+     "alfii: My advice: do not go ahead with this as it is. Talk to Arun before you decide."
+    ],
+    "step_ms": {
+     "request": 0.0,
+     "ingest": 15.9,
+     "scam_rules": 0.2,
+     "case_builder": 16298.5,
+     "verify_terms": 3.1,
+     "compute": 0.9,
+     "router": 0.0,
+     "council": 8548.1,
+     "consensus": 0.0,
+     "privacy": 0.0,
+     "explainer": 7116.2,
+     "questions": 0.0
+    },
+    "fixes": [
+     "council: ignored unknown citation q10"
+    ],
+    "lint": [],
+    "dropped_turns": [],
+    "mode": "discreet",
+    "short_answer": "Please don't go ahead with this as it is.",
+    "council": [
+     "alfii (opener): Let me ask Dani and Sankz.",
+     "dani (agent): Only 7.5 lakh rupees is certain; bonus-based amounts are not.",
+     "sankz (agent): Only 7.5 lakh rupees is guaranteed; the rest depends on bonuses.",
+     "alfii (conclusion): My advice: do not go ahead with this as it is. Talk to Arun before you decide."
+    ],
+    "council_words": 44,
+    "council_seconds": 17.6,
+    "notes": [
+     "This premium is 31.2% of your savings each year.",
+     "Each month this premium is 9.3% of your income.",
+     "After this, you would have \u20b99,433 left each month.",
+     "Your savings would cover 4.5 months of costs."
+    ],
+    "followups": [
+     "What would an FD give me instead?",
+     "How much of this is guaranteed?",
+     "Can I afford this premium?"
+    ],
+    "questions": [
+     "How much is guaranteed in writing?"
+    ],
+    "conclusion": "My advice: do not go ahead with this as it is. Talk to Arun before you decide.",
+    "question_trace": {
+     "bank": [
+      "ins_guaranteed",
+      "ins_lower_bonus",
+      "ins_higher_bonus",
+      "ins_stop_early",
+      "ins_bonus_rate"
+     ],
+     "picked": [
+      "ins_guaranteed"
+     ],
+     "reworded": [],
+     "rejected": []
+    },
+    "claims": [
+     "contradicted: guaranteed to give 15 lakh \u2014 Bonus rates are not guaranteed and may change every year"
+    ],
+    "step_errors": {},
+    "total_s": 32.0
+   },
+   {
+    "colour": "red",
+    "case_type": "insurance_offer",
+    "agents": [
+     "dani",
+     "sankz"
+    ],
+    "llm_calls": 3,
+    "degraded_steps": [],
+    "kept": 4,
+    "dropped": 0,
+    "drop_reasons": [],
+    "blocked_lines": [],
+    "stances": {
+     "dani": "against 0.8",
+     "sankz": "against 0.9"
+    },
+    "terms": [
+     {
+      "name": "premium",
+      "value": 50000.0,
+      "verified": true,
+      "reason": null
+     },
+     {
+      "name": "pay_years",
+      "value": 15.0,
+      "verified": true,
+      "reason": null
+     },
+     {
+      "name": "policy_years",
+      "value": 15.0,
+      "verified": true,
+      "reason": null
+     },
+     {
+      "name": "sum_assured",
+      "value": 750000.0,
+      "verified": true,
+      "reason": null
+     },
+     {
+      "name": "maturity_high",
+      "value": 1500000.0,
+      "verified": true,
+      "reason": null
+     },
+     {
+      "name": "bonus_rate_high",
+      "value": 0.08,
+      "verified": true,
+      "reason": null
+     }
+    ],
+    "photo_confirmed": [],
+    "spoken": [
+     "alfii: Let me ask Dani and Sankz.",
+     "dani: Only 7.5 lakh rupees is certain; bonus-based amounts are not.",
+     "sankz: Only 7.5 lakh rupees is written as guaranteed.",
+     "alfii: My advice: do not go ahead with this as it is. Talk to Arun before you decide."
+    ],
+    "step_ms": {
+     "request": 0.0,
+     "ingest": 16.5,
+     "scam_rules": 0.2,
+     "case_builder": 12595.5,
+     "verify_terms": 2.3,
+     "compute": 0.8,
+     "router": 0.0,
+     "council": 9029.7,
+     "consensus": 0.0,
+     "privacy": 0.0,
+     "explainer": 6822.1,
+     "questions": 0.0
+    },
+    "fixes": [
+     "council: ignored unknown citation f_return_high_vs_fd",
+     "council: ignored unknown citation f_return_guaranteed_vs_fd"
+    ],
+    "lint": [],
+    "dropped_turns": [],
+    "mode": "discreet",
+    "short_answer": "Please don't go ahead with this as it is.",
+    "council": [
+     "alfii (opener): Let me ask Dani and Sankz.",
+     "dani (agent): Only 7.5 lakh rupees is certain; bonus-based amounts are not.",
+     "sankz (agent): Only 7.5 lakh rupees is written as guaranteed.",
+     "alfii (conclusion): My advice: do not go ahead with this as it is. Talk to Arun before you decide."
+    ],
+    "council_words": 41,
+    "council_seconds": 16.4,
+    "notes": [
+     "This premium is 31.2% of your savings each year.",
+     "Each month this premium is 9.3% of your income.",
+     "After this, you would have \u20b99,433 left each month.",
+     "Your savings would cover 4.5 months of costs."
+    ],
+    "followups": [
+     "What would an FD give me instead?",
+     "How much of this is guaranteed?",
+     "Can I afford this premium?"
+    ],
+    "questions": [
+     "How much is guaranteed in writing?",
+     "What do I get at the lower bonus rate?"
+    ],
+    "conclusion": "My advice: do not go ahead with this as it is. Talk to Arun before you decide.",
+    "question_trace": {
+     "bank": [
+      "ins_guaranteed",
+      "ins_lower_bonus",
+      "ins_higher_bonus",
+      "ins_stop_early",
+      "ins_bonus_rate"
+     ],
+     "picked": [
+      "ins_guaranteed",
+      "ins_lower_bonus"
+     ],
+     "reworded": [],
+     "rejected": []
+    },
+    "claims": [
+     "contradicted: guaranteed to give 15 lakh \u2014 Bonus rates are not guaranteed and may change every year"
+    ],
+    "step_errors": {},
+    "total_s": 28.5
+   }
+  ],
+  "flat_loan": [
+   {
+    "colour": "red",
+    "case_type": "loan_offer",
+    "agents": [
+     "sankz"
+    ],
+    "llm_calls": 4,
+    "degraded_steps": [],
+    "kept": 1,
+    "dropped": 1,
+    "drop_reasons": [
+     "comparison 'less' needs a cited cmp_* fact saying 'lower'"
+    ],
+    "blocked_lines": [],
+    "stances": {
+     "sankz": "against 0.8"
+    },
+    "terms": [
+     {
+      "name": "loan_amount",
+      "value": 100000.0,
+      "verified": true,
+      "reason": null
+     },
+     {
+      "name": "flat_rate",
+      "value": 0.12,
+      "verified": true,
+      "reason": null
+     },
+     {
+      "name": "tenure_months",
+      "value": 24.0,
+      "verified": true,
+      "reason": null
+     }
+    ],
+    "photo_confirmed": [],
+    "spoken": [
+     "alfii: Let me ask Sankz.",
+     "sankz: The real cost is 21.6 percent, higher than the quoted rate.",
+     "alfii: Do not take this loan; it costs more than a normal bank loan. Talk to Arun before you decide."
+    ],
+    "step_ms": {
+     "request": 0.0,
+     "ingest": 0.0,
+     "scam_rules": 0.0,
+     "case_builder": 5643.0,
+     "verify_terms": 1.2,
+     "compute": 0.8,
+     "router": 0.0,
+     "council": 5300.4,
+     "consensus": 0.0,
+     "privacy": 0.0,
+     "explainer": 7491.0,
+     "questions": 0.0
+    },
+    "fixes": [
+     "council: auto_placeholder '21.6%' -> {loan_effective_rate}",
+     "council: auto_placeholder '12%' -> {term.flat_rate}",
+     "council: auto_placeholder '14%' -> {ref.typical_personal_loan_rate}",
+     "explainer: auto_placeholder '21.6%' -> {loan_effective_rate}",
+     "explainer: auto_placeholder '12%' -> {term.flat_rate}"
+    ],
+    "lint": [],
+    "dropped_turns": [],
+    "mode": "discreet",
+    "short_answer": "Please don't go ahead with this as it is.",
+    "council": [
+     "alfii (opener): Let me ask Sankz.",
+     "sankz (agent): The real cost is 21.6 percent, higher than the quoted rate.",
+     "alfii (conclusion): Do not take this loan; it costs more than a normal bank loan. Talk to Arun before you decide."
+    ],
+    "council_words": 34,
+    "council_seconds": 13.6,
+    "notes": [
+     "Your EMIs would take 16.8% of your income.",
+     "After this, you would have \u20b98,433 left each month.",
+     "Your savings would cover 4.4 months of costs."
+    ],
+    "followups": [
+     "What is the real interest rate?",
+     "What would my EMI be?",
+     "Can I afford this EMI?"
+    ],
+    "questions": [
+     "What is the reducing-balance interest rate?"
+    ],
+    "conclusion": "Do not take this loan; it costs more than a normal bank loan. Talk to Arun before you decide.",
+    "question_trace": {
+     "bank": [
+      "loan_reducing_rate",
+      "loan_charges"
+     ],
+     "picked": [
+      "loan_reducing_rate"
+     ],
+     "reworded": [],
+     "rejected": []
+    },
+    "claims": [],
+    "step_errors": {},
+    "total_s": 18.5
+   },
+   {
+    "colour": "red",
+    "case_type": "loan_offer",
+    "agents": [
+     "sankz"
+    ],
+    "llm_calls": 4,
+    "degraded_steps": [],
+    "kept": 2,
+    "dropped": 0,
+    "drop_reasons": [],
+    "blocked_lines": [],
+    "stances": {
+     "sankz": "against 0.8"
+    },
+    "terms": [
+     {
+      "name": "loan_amount",
+      "value": 100000.0,
+      "verified": true,
+      "reason": null
+     },
+     {
+      "name": "flat_rate",
+      "value": 0.12,
+      "verified": true,
+      "reason": null
+     },
+     {
+      "name": "tenure_months",
+      "value": 24.0,
+      "verified": true,
+      "reason": null
+     }
+    ],
+    "photo_confirmed": [],
+    "spoken": [
+     "alfii: Let me ask Sankz.",
+     "sankz: The real cost is higher than the quoted rate, so be cautious.",
+     "alfii: Do not take this loan; it costs more than a normal bank loan. Talk to Arun before you decide."
+    ],
+    "step_ms": {
+     "request": 0.0,
+     "ingest": 0.0,
+     "scam_rules": 0.0,
+     "case_builder": 5615.2,
+     "verify_terms": 1.2,
+     "compute": 0.7,
+     "router": 0.0,
+     "council": 4979.2,
+     "consensus": 0.0,
+     "privacy": 0.0,
+     "explainer": 9363.8,
+     "questions": 0.0
+    },
+    "fixes": [
+     "council: auto_placeholder '21.6%' -> {loan_effective_rate}",
+     "council: auto_placeholder '12%' -> {term.flat_rate}",
+     "explainer: auto_placeholder '21.6%' -> {loan_effective_rate}",
+     "explainer: auto_placeholder '12%' -> {term.flat_rate}"
+    ],
+    "lint": [
+     "too_many_numbers"
+    ],
+    "dropped_turns": [],
+    "mode": "discreet",
+    "short_answer": "Please don't go ahead with this as it is.",
+    "council": [
+     "alfii (opener): Let me ask Sankz.",
+     "sankz (agent): The real cost is higher than the quoted rate, so be cautious.",
+     "alfii (conclusion): Do not take this loan; it costs more than a normal bank loan. Talk to Arun before you decide."
+    ],
+    "council_words": 35,
+    "council_seconds": 14.0,
+    "notes": [
+     "Your EMIs would take 16.8% of your income.",
+     "After this, you would have \u20b98,433 left each month.",
+     "Your savings would cover 4.4 months of costs."
+    ],
+    "followups": [
+     "What is the real interest rate?",
+     "What would my EMI be?",
+     "Can I afford this EMI?"
+    ],
+    "questions": [
+     "What is the reducing-balance interest rate?"
+    ],
+    "conclusion": "Do not take this loan; it costs more than a normal bank loan. Talk to Arun before you decide.",
+    "question_trace": {
+     "bank": [
+      "loan_reducing_rate",
+      "loan_charges"
+     ],
+     "picked": [
+      "loan_reducing_rate"
+     ],
+     "reworded": [],
+     "rejected": []
+    },
+    "claims": [],
+    "step_errors": {},
+    "total_s": 20.0
+   },
+   {
+    "colour": "red",
+    "case_type": "loan_offer",
+    "agents": [
+     "sankz"
+    ],
+    "llm_calls": 4,
+    "degraded_steps": [],
+    "kept": 2,
+    "dropped": 0,
+    "drop_reasons": [],
+    "blocked_lines": [],
+    "stances": {
+     "sankz": "against 0.8"
+    },
+    "terms": [
+     {
+      "name": "loan_amount",
+      "value": 100000.0,
+      "verified": true,
+      "reason": null
+     },
+     {
+      "name": "flat_rate",
+      "value": 0.12,
+      "verified": true,
+      "reason": null
+     },
+     {
+      "name": "tenure_months",
+      "value": 24.0,
+      "verified": true,
+      "reason": null
+     }
+    ],
+    "photo_confirmed": [],
+    "spoken": [
+     "alfii: Let me ask Sankz.",
+     "alfii: Do not take this loan; it costs more than a normal bank loan. Talk to Arun before you decide."
+    ],
+    "step_ms": {
+     "request": 0.0,
+     "ingest": 0.0,
+     "scam_rules": 0.0,
+     "case_builder": 5627.4,
+     "verify_terms": 1.1,
+     "compute": 0.7,
+     "router": 0.0,
+     "council": 5416.1,
+     "consensus": 0.0,
+     "privacy": 0.0,
+     "explainer": 8972.6,
+     "questions": 0.0
+    },
+    "fixes": [
+     "council: auto_placeholder '12%' -> {term.flat_rate}",
+     "explainer: auto_placeholder '12%' -> {term.flat_rate}",
+     "explainer: auto_placeholder '12%' -> {term.flat_rate}"
+    ],
+    "lint": [
+     "too_many_numbers"
+    ],
+    "dropped_turns": [
+     "sankz"
+    ],
+    "mode": "discreet",
+    "short_answer": "Please don't go ahead with this as it is.",
+    "council": [
+     "alfii (opener): Let me ask Sankz.",
+     "alfii (conclusion): Do not take this loan; it costs more than a normal bank loan. Talk to Arun before you decide."
+    ],
+    "council_words": 23,
+    "council_seconds": 9.2,
+    "notes": [
+     "Your EMIs would take 16.8% of your income.",
+     "After this, you would have \u20b98,433 left each month.",
+     "Your savings would cover 4.4 months of costs."
+    ],
+    "followups": [
+     "What is the real interest rate?",
+     "What would my EMI be?",
+     "Can I afford this EMI?"
+    ],
+    "questions": [
+     "What is the reducing-balance interest rate?"
+    ],
+    "conclusion": "Do not take this loan; it costs more than a normal bank loan. Talk to Arun before you decide.",
+    "question_trace": {
+     "bank": [
+      "loan_reducing_rate",
+      "loan_charges"
+     ],
+     "picked": [
+      "loan_reducing_rate"
+     ],
+     "reworded": [],
+     "rejected": []
+    },
+    "claims": [],
+    "step_errors": {},
+    "total_s": 20.0
+   },
+   {
+    "colour": "red",
+    "case_type": "loan_offer",
+    "agents": [
+     "sankz"
+    ],
+    "llm_calls": 4,
+    "degraded_steps": [],
+    "kept": 1,
+    "dropped": 1,
+    "drop_reasons": [
+     "comparison 'less' needs a cited cmp_* fact saying 'lower'"
+    ],
+    "blocked_lines": [],
+    "stances": {
+     "sankz": "against 0.8"
+    },
+    "terms": [
+     {
+      "name": "loan_amount",
+      "value": 100000.0,
+      "verified": true,
+      "reason": null
+     },
+     {
+      "name": "flat_rate",
+      "value": 0.12,
+      "verified": true,
+      "reason": null
+     },
+     {
+      "name": "tenure_months",
+      "value": 24.0,
+      "verified": true,
+      "reason": null
+     }
+    ],
+    "photo_confirmed": [],
+    "spoken": [
+     "alfii: Let me ask Sankz.",
+     "sankz: The real yearly cost is 21.6 percent, higher than the quoted rate.",
+     "alfii: Do not take this loan; it costs more than a normal bank loan. Talk to Arun before you decide."
+    ],
+    "step_ms": {
+     "request": 0.0,
+     "ingest": 0.0,
+     "scam_rules": 0.0,
+     "case_builder": 5658.0,
+     "verify_terms": 1.1,
+     "compute": 0.7,
+     "router": 0.0,
+     "council": 5317.8,
+     "consensus": 0.0,
+     "privacy": 0.0,
+     "explainer": 7498.1,
+     "questions": 0.0
+    },
+    "fixes": [
+     "council: auto_placeholder '21.6%' -> {loan_effective_rate}",
+     "council: auto_placeholder '12%' -> {term.flat_rate}",
+     "council: auto_placeholder '14%' -> {ref.typical_personal_loan_rate}",
+     "explainer: auto_placeholder '21.6%' -> {loan_effective_rate}",
+     "explainer: auto_placeholder '12%' -> {term.flat_rate}"
+    ],
+    "lint": [],
+    "dropped_turns": [],
+    "mode": "discreet",
+    "short_answer": "Please don't go ahead with this as it is.",
+    "council": [
+     "alfii (opener): Let me ask Sankz.",
+     "sankz (agent): The real yearly cost is 21.6 percent, higher than the quoted rate.",
+     "alfii (conclusion): Do not take this loan; it costs more than a normal bank loan. Talk to Arun before you decide."
+    ],
+    "council_words": 35,
+    "council_seconds": 14.0,
+    "notes": [
+     "Your EMIs would take 16.8% of your income.",
+     "After this, you would have \u20b98,433 left each month.",
+     "Your savings would cover 4.4 months of costs."
+    ],
+    "followups": [
+     "What is the real interest rate?",
+     "What would my EMI be?",
+     "Can I afford this EMI?"
+    ],
+    "questions": [
+     "What is the reducing-balance interest rate?"
+    ],
+    "conclusion": "Do not take this loan; it costs more than a normal bank loan. Talk to Arun before you decide.",
+    "question_trace": {
+     "bank": [
+      "loan_reducing_rate",
+      "loan_charges"
+     ],
+     "picked": [
+      "loan_reducing_rate"
+     ],
+     "reworded": [],
+     "rejected": []
+    },
+    "claims": [],
+    "step_errors": {},
+    "total_s": 18.5
+   },
+   {
+    "colour": "red",
+    "case_type": "loan_offer",
+    "agents": [
+     "sankz"
+    ],
+    "llm_calls": 4,
+    "degraded_steps": [],
+    "kept": 1,
+    "dropped": 1,
+    "drop_reasons": [
+     "comparison 'higher' needs a cited cmp_* fact saying 'higher'"
+    ],
+    "blocked_lines": [],
+    "stances": {
+     "sankz": "against 0.8"
+    },
+    "terms": [
+     {
+      "name": "loan_amount",
+      "value": 100000.0,
+      "verified": true,
+      "reason": null
+     },
+     {
+      "name": "flat_rate",
+      "value": 0.12,
+      "verified": true,
+      "reason": null
+     },
+     {
+      "name": "tenure_months",
+      "value": 24.0,
+      "verified": true,
+      "reason": null
+     }
+    ],
+    "photo_confirmed": [],
+    "spoken": [
+     "alfii: Let me ask Sankz.",
+     "sankz: The real cost is 21.6 percent, higher than the quoted rate.",
+     "alfii: Do not take this loan; it costs more than a normal bank loan. Talk to Arun before you decide."
+    ],
+    "step_ms": {
+     "request": 0.0,
+     "ingest": 0.0,
+     "scam_rules": 0.0,
+     "case_builder": 5651.3,
+     "verify_terms": 1.2,
+     "compute": 1.0,
+     "router": 0.0,
+     "council": 4914.7,
+     "consensus": 0.0,
+     "privacy": 0.0,
+     "explainer": 7513.3,
+     "questions": 0.0
+    },
+    "fixes": [
+     "council: auto_placeholder '21.6%' -> {loan_effective_rate}",
+     "council: auto_placeholder '12%' -> {term.flat_rate}",
+     "council: auto_placeholder '14%' -> {ref.typical_personal_loan_rate}",
+     "explainer: auto_placeholder '21.6%' -> {loan_effective_rate}",
+     "explainer: auto_placeholder '12%' -> {term.flat_rate}"
+    ],
+    "lint": [],
+    "dropped_turns": [],
+    "mode": "discreet",
+    "short_answer": "Please don't go ahead with this as it is.",
+    "council": [
+     "alfii (opener): Let me ask Sankz.",
+     "sankz (agent): The real cost is 21.6 percent, higher than the quoted rate.",
+     "alfii (conclusion): Do not take this loan; it costs more than a normal bank loan. Talk to Arun before you decide."
+    ],
+    "council_words": 34,
+    "council_seconds": 13.6,
+    "notes": [
+     "Your EMIs would take 16.8% of your income.",
+     "After this, you would have \u20b98,433 left each month.",
+     "Your savings would cover 4.4 months of costs."
+    ],
+    "followups": [
+     "What is the real interest rate?",
+     "What would my EMI be?",
+     "Can I afford this EMI?"
+    ],
+    "questions": [
+     "What is the reducing-balance interest rate?"
+    ],
+    "conclusion": "Do not take this loan; it costs more than a normal bank loan. Talk to Arun before you decide.",
+    "question_trace": {
+     "bank": [
+      "loan_reducing_rate",
+      "loan_charges"
+     ],
+     "picked": [
+      "loan_reducing_rate"
+     ],
+     "reworded": [],
+     "rejected": []
+    },
+    "claims": [],
+    "step_errors": {},
+    "total_s": 18.1
+   }
+  ],
+  "stock_tip": [
+   {
+    "colour": "red",
+    "case_type": "stock_tip",
+    "agents": [
+     "vick",
+     "sankz"
+    ],
+    "llm_calls": 4,
+    "degraded_steps": [],
+    "kept": 3,
+    "dropped": 1,
+    "drop_reasons": [
+     "comparison 'better' needs a cited cmp_* fact saying 'higher'"
+    ],
+    "blocked_lines": [],
+    "stances": {
+     "vick": "against 0.9",
+     "sankz": "against 0.8"
+    },
+    "terms": [
+     {
+      "name": "invest_amount",
+      "value": 100000.0,
+      "verified": true,
+      "reason": null
+     },
+     {
+      "name": "stock_symbol",
+      "value": null,
+      "verified": false,
+      "reason": "unknown term name 'stock_symbol'"
+     }
+    ],
+    "photo_confirmed": [],
+    "spoken": [
+     "alfii: Let me ask Vick and Sankz.",
+     "vick: This stock rose 222 percent recently, a sign of pump-and-dump activity.",
+     "sankz: A personal loan costs more than the risk here; choose a fixed deposit instead.",
+     "alfii: My advice: do not go ahead with this as it is. Talk to Arun before you decide."
+    ],
+    "step_ms": {
+     "request": 0.0,
+     "ingest": 0.0,
+     "scam_rules": 0.1,
+     "case_builder": 4602.0,
+     "verify_terms": 0.9,
+     "compute": 1.2,
+     "router": 0.0,
+     "council": 10991.1,
+     "consensus": 0.0,
+     "privacy": 0.0,
+     "explainer": 8033.8,
+     "questions": 0.0
+    },
+    "fixes": [
+     "explainer: ignored unknown citation cmp_return_low_vs_fd"
+    ],
+    "lint": [
+     "vague"
+    ],
+    "dropped_turns": [],
+    "mode": "discreet",
+    "short_answer": "Please don't go ahead with this as it is.",
+    "council": [
+     "alfii (opener): Let me ask Vick and Sankz.",
+     "vick (agent): This stock rose 222 percent recently, a sign of pump-and-dump activity.",
+     "sankz (agent): A personal loan costs more than the risk here; choose a fixed deposit instead.",
+     "alfii (conclusion): My advice: do not go ahead with this as it is. Talk to Arun before you decide."
+    ],
+    "council_words": 48,
+    "council_seconds": 19.2,
+    "notes": [
+     "This amount is 62.5% of your savings."
+    ],
+    "followups": [
+     "What are the warning signs?",
+     "How much of my savings is this?"
+    ],
+    "questions": [
+     "Who sent this tip, and do they own the stock?",
+     "Why is it rising this fast?"
+    ],
+    "conclusion": "My advice: do not go ahead with this as it is. Talk to Arun before you decide.",
+    "question_trace": {
+     "bank": [
+      "stock_who",
+      "stock_why_rising",
+      "stock_lose"
+     ],
+     "picked": [
+      "stock_who",
+      "stock_why_rising"
+     ],
+     "reworded": [],
+     "rejected": []
+    },
+    "claims": [],
+    "step_errors": {},
+    "total_s": 23.6
+   },
+   {
+    "colour": "red",
+    "case_type": "stock_tip",
+    "agents": [
+     "vick",
+     "sankz"
+    ],
+    "llm_calls": 4,
+    "degraded_steps": [],
+    "kept": 1,
+    "dropped": 1,
+    "drop_reasons": [
+     "unknown placeholder(s): cmp_effective_vs_quoted"
+    ],
+    "blocked_lines": [],
+    "stances": {
+     "vick": "against 0.9",
+     "sankz": "unsure 0.0"
+    },
+    "terms": [
+     {
+      "name": "invest_amount",
+      "value": 100000.0,
+      "verified": true,
+      "reason": null
+     }
+    ],
+    "photo_confirmed": [],
+    "spoken": [
+     "alfii: Let me ask Vick and Sankz.",
+     "vick: The stock has risen 222 percent in the last month of trading, showing high volatility.",
+     "sankz: A fixed deposit at 7 percent would be safer for your money.",
+     "alfii: My advice: do not go ahead with this as it is. Talk to Arun before you decide."
+    ],
+    "step_ms": {
+     "request": 0.0,
+     "ingest": 0.0,
+     "scam_rules": 0.0,
+     "case_builder": 4037.5,
+     "verify_terms": 0.5,
+     "compute": 1.2,
+     "router": 0.0,
+     "council": 5956.7,
+     "consensus": 0.0,
+     "privacy": 0.0,
+     "explainer": 8851.7,
+     "questions": 0.0
+    },
+    "fixes": [
+     "council: ignored unknown citation cmp_run_up_30d_vs_long_run",
+     "council: auto_placeholder '14%' -> {ref.typical_personal_loan_rate}",
+     "explainer: ignored unknown citation cmp_return_low_vs_fd"
+    ],
+    "lint": [
+     "vague",
+     "vague"
+    ],
+    "dropped_turns": [],
+    "mode": "discreet",
+    "short_answer": "Please don't go ahead with this as it is.",
+    "council": [
+     "alfii (opener): Let me ask Vick and Sankz.",
+     "vick (agent): The stock has risen 222 percent in the last month of trading, showing high volatility.",
+     "sankz (agent): A fixed deposit at 7 percent would be safer for your money.",
+     "alfii (conclusion): My advice: do not go ahead with this as it is. Talk to Arun before you decide."
+    ],
+    "council_words": 50,
+    "council_seconds": 20.0,
+    "notes": [
+     "This amount is 62.5% of your savings."
+    ],
+    "followups": [
+     "What are the warning signs?",
+     "How much of my savings is this?"
+    ],
+    "questions": [
+     "Who sent this tip, and do they own the stock?"
+    ],
+    "conclusion": "My advice: do not go ahead with this as it is. Talk to Arun before you decide.",
+    "question_trace": {
+     "bank": [
+      "stock_who",
+      "stock_why_rising",
+      "stock_lose"
+     ],
+     "picked": [
+      "stock_who"
+     ],
+     "reworded": [],
+     "rejected": []
+    },
+    "claims": [],
+    "step_errors": {},
+    "total_s": 18.9
+   },
+   {
+    "colour": "red",
+    "case_type": "stock_tip",
+    "agents": [
+     "vick",
+     "sankz"
+    ],
+    "llm_calls": 4,
+    "degraded_steps": [],
+    "kept": 1,
+    "dropped": 1,
+    "drop_reasons": [
+     "comparison 'more' needs a cited cmp_* fact saying 'higher'"
+    ],
+    "blocked_lines": [],
+    "stances": {
+     "vick": "against 0.9",
+     "sankz": "unsure 0.0"
+    },
+    "terms": [
+     {
+      "name": "invest_amount",
+      "value": 100000.0,
+      "verified": true,
+      "reason": null
+     }
+    ],
+    "photo_confirmed": [],
+    "spoken": [
+     "alfii: Let me ask Vick and Sankz.",
+     "vick: This stock has risen 222 percent, very risky.",
+     "sankz: A fixed deposit at 7 percent would be safer.",
+     "alfii: My advice: do not go ahead with this as it is. Talk to Arun before you decide."
+    ],
+    "step_ms": {
+     "request": 0.0,
+     "ingest": 0.0,
+     "scam_rules": 0.0,
+     "case_builder": 4032.4,
+     "verify_terms": 0.5,
+     "compute": 1.2,
+     "router": 0.0,
+     "council": 5485.7,
+     "consensus": 0.0,
+     "privacy": 0.0,
+     "explainer": 7474.5,
+     "questions": 0.0
+    },
+    "fixes": [],
+    "lint": [
+     "vague",
+     "vague"
+    ],
+    "dropped_turns": [],
+    "mode": "discreet",
+    "short_answer": "Please don't go ahead with this as it is.",
+    "council": [
+     "alfii (opener): Let me ask Vick and Sankz.",
+     "vick (agent): This stock has risen 222 percent, very risky.",
+     "sankz (agent): A fixed deposit at 7 percent would be safer.",
+     "alfii (conclusion): My advice: do not go ahead with this as it is. Talk to Arun before you decide."
+    ],
+    "council_words": 40,
+    "council_seconds": 16.0,
+    "notes": [
+     "This amount is 62.5% of your savings."
+    ],
+    "followups": [
+     "What are the warning signs?",
+     "How much of my savings is this?"
+    ],
+    "questions": [
+     "Who sent this tip, and do they own the stock?"
+    ],
+    "conclusion": "My advice: do not go ahead with this as it is. Talk to Arun before you decide.",
+    "question_trace": {
+     "bank": [
+      "stock_who",
+      "stock_why_rising",
+      "stock_lose"
+     ],
+     "picked": [
+      "stock_who"
+     ],
+     "reworded": [],
+     "rejected": []
+    },
+    "claims": [],
+    "step_errors": {},
+    "total_s": 17.0
+   },
+   {
+    "colour": "red",
+    "case_type": "stock_tip",
+    "agents": [
+     "vick",
+     "sankz"
+    ],
+    "llm_calls": 4,
+    "degraded_steps": [],
+    "kept": 1,
+    "dropped": 2,
+    "drop_reasons": [
+     "comparison 'more' needs a cited cmp_* fact saying 'higher'",
+     "comparison 'less' needs a cited cmp_* fact saying 'lower'"
+    ],
+    "blocked_lines": [],
+    "stances": {
+     "vick": "against 0.9",
+     "sankz": "unsure 0.0"
+    },
+    "terms": [
+     {
+      "name": "invest_amount",
+      "value": 100000.0,
+      "verified": true,
+      "reason": null
+     },
+     {
+      "name": "stock_symbol",
+      "value": null,
+      "verified": false,
+      "reason": "unknown term name 'stock_symbol'"
+     }
+    ],
+    "photo_confirmed": [],
+    "spoken": [
+     "alfii: Let me ask Vick and Sankz.",
+     "vick: ZEPHYRX rose 222 percent, showing big gains recently.",
+     "sankz: A bank deposit would be safer for your money.",
+     "alfii: Do not invest in tips like these, please. Talk to Arun before you decide."
+    ],
+    "step_ms": {
+     "request": 0.0,
+     "ingest": 0.0,
+     "scam_rules": 0.0,
+     "case_builder": 4643.5,
+     "verify_terms": 0.9,
+     "compute": 1.1,
+     "router": 0.0,
+     "council": 6884.0,
+     "consensus": 0.0,
+     "privacy": 0.0,
+     "explainer": 7080.8,
+     "questions": 0.0
+    },
+    "fixes": [
+     "council: ignored unknown citation cmp_pump_risk",
+     "council: ignored unknown citation cmp_return_high_vs_fd"
+    ],
+    "lint": [],
+    "dropped_turns": [],
+    "mode": "discreet",
+    "short_answer": "Please don't go ahead with this as it is.",
+    "council": [
+     "alfii (opener): Let me ask Vick and Sankz.",
+     "vick (agent): ZEPHYRX rose 222 percent, showing big gains recently.",
+     "sankz (agent): A bank deposit would be safer for your money.",
+     "alfii (conclusion): Do not invest in tips like these, please. Talk to Arun before you decide."
+    ],
+    "council_words": 37,
+    "council_seconds": 14.8,
+    "notes": [
+     "This amount is 62.5% of your savings."
+    ],
+    "followups": [
+     "What are the warning signs?",
+     "How much of my savings is this?"
+    ],
+    "questions": [
+     "Who sent this tip, and do they own the stock?"
+    ],
+    "conclusion": "Do not invest in tips like these, please. Talk to Arun before you decide.",
+    "question_trace": {
+     "bank": [
+      "stock_who",
+      "stock_why_rising",
+      "stock_lose"
+     ],
+     "picked": [
+      "stock_who"
+     ],
+     "reworded": [],
+     "rejected": [
+      {
+       "id": "stock_who",
+       "text": "Who sent this tip?",
+       "why": "lost key word(s): own"
+      }
+     ]
+    },
+    "claims": [],
+    "step_errors": {},
+    "total_s": 18.6
+   },
+   {
+    "colour": "red",
+    "case_type": "stock_tip",
+    "agents": [
+     "vick",
+     "sankz"
+    ],
+    "llm_calls": 4,
+    "degraded_steps": [],
+    "kept": 1,
+    "dropped": 1,
+    "drop_reasons": [
+     "comparison 'more' needs a cited cmp_* fact saying 'higher'"
+    ],
+    "blocked_lines": [],
+    "stances": {
+     "vick": "against 0.9",
+     "sankz": "unsure 0.0"
+    },
+    "terms": [
+     {
+      "name": "invest_amount",
+      "value": 100000.0,
+      "verified": true,
+      "reason": null
+     },
+     {
+      "name": "stock_symbol",
+      "value": null,
+      "verified": false,
+      "reason": "unknown term name 'stock_symbol'"
+     }
+    ],
+    "photo_confirmed": [],
+    "spoken": [
+     "alfii: Let me ask Vick and Sankz.",
+     "vick: The stock has risen 222 percent in the last month of trading, showing strong pump-and-dump activity.",
+     "sankz: A bank deposit would be safer for your money.",
+     "alfii: Do not invest in tips like these, please. Talk to Arun before you decide."
+    ],
+    "step_ms": {
+     "request": 0.0,
+     "ingest": 0.0,
+     "scam_rules": 0.0,
+     "case_builder": 4654.2,
+     "verify_terms": 0.8,
+     "compute": 1.0,
+     "router": 0.0,
+     "council": 5634.9,
+     "consensus": 0.0,
+     "privacy": 0.0,
+     "explainer": 7493.7,
+     "questions": 0.0
+    },
+    "fixes": [
+     "explainer: ignored unknown citation cmp_return_low_vs_fd"
+    ],
+    "lint": [
+     "vague"
+    ],
+    "dropped_turns": [],
+    "mode": "discreet",
+    "short_answer": "Please don't go ahead with this as it is.",
+    "council": [
+     "alfii (opener): Let me ask Vick and Sankz.",
+     "vick (agent): The stock has risen 222 percent in the last month of trading, showing strong pump-and-dump activity.",
+     "sankz (agent): A bank deposit would be safer for your money.",
+     "alfii (conclusion): Do not invest in tips like these, please. Talk to Arun before you decide."
+    ],
+    "council_words": 45,
+    "council_seconds": 18.0,
+    "notes": [
+     "This amount is 62.5% of your savings."
+    ],
+    "followups": [
+     "What are the warning signs?",
+     "How much of my savings is this?"
+    ],
+    "questions": [
+     "Why is it rising this fast?"
+    ],
+    "conclusion": "Do not invest in tips like these, please. Talk to Arun before you decide.",
+    "question_trace": {
+     "bank": [
+      "stock_who",
+      "stock_why_rising",
+      "stock_lose"
+     ],
+     "picked": [
+      "stock_why_rising"
+     ],
+     "reworded": [],
+     "rejected": []
+    },
+    "claims": [],
+    "step_errors": {},
+    "total_s": 17.8
+   }
+  ],
+  "otp_scam": [
+   {
+    "colour": "red",
+    "case_type": "scam_or_payment_request",
+    "agents": [],
+    "llm_calls": 0,
+    "degraded_steps": [],
+    "kept": 0,
+    "dropped": 0,
+    "drop_reasons": [],
+    "blocked_lines": [],
+    "stances": {},
+    "terms": [],
+    "photo_confirmed": [],
+    "spoken": [
+     "alfii: You did the right thing by asking me.",
+     "alfii: No real bank ever asks for your OTP or PIN.",
+     "alfii: Please don't share any code or pay anyone. Hang up and call your bank yourself."
+    ],
+    "step_ms": {
+     "request": 0.0,
+     "ingest": 0.0,
+     "scam_rules": 0.1
+    },
+    "fixes": [],
+    "lint": [],
+    "dropped_turns": [],
+    "mode": "discreet",
+    "short_answer": "No real bank ever asks for your OTP or PIN.",
+    "council": [
+     "alfii (opener): You did the right thing by asking me.",
+     "alfii (agent): No real bank ever asks for your OTP or PIN.",
+     "alfii (conclusion): Please don't share any code or pay anyone. Hang up and call your bank yourself."
+    ],
+    "council_words": 33,
+    "council_seconds": 13.2,
+    "notes": [],
+    "followups": [
+     "Is this message real?"
+    ],
+    "questions": [],
+    "conclusion": "Please don't share any code or pay anyone. Hang up and call your bank yourself.",
+    "question_trace": {},
+    "claims": [],
+    "step_errors": {},
+    "total_s": 0.0
+   },
+   {
+    "colour": "red",
+    "case_type": "scam_or_payment_request",
+    "agents": [],
+    "llm_calls": 0,
+    "degraded_steps": [],
+    "kept": 0,
+    "dropped": 0,
+    "drop_reasons": [],
+    "blocked_lines": [],
+    "stances": {},
+    "terms": [],
+    "photo_confirmed": [],
+    "spoken": [
+     "alfii: You did the right thing by asking me.",
+     "alfii: No real bank ever asks for your OTP or PIN.",
+     "alfii: Please don't share any code or pay anyone. Hang up and call your bank yourself."
+    ],
+    "step_ms": {
+     "request": 0.0,
+     "ingest": 0.0,
+     "scam_rules": 0.1
+    },
+    "fixes": [],
+    "lint": [],
+    "dropped_turns": [],
+    "mode": "discreet",
+    "short_answer": "No real bank ever asks for your OTP or PIN.",
+    "council": [
+     "alfii (opener): You did the right thing by asking me.",
+     "alfii (agent): No real bank ever asks for your OTP or PIN.",
+     "alfii (conclusion): Please don't share any code or pay anyone. Hang up and call your bank yourself."
+    ],
+    "council_words": 33,
+    "council_seconds": 13.2,
+    "notes": [],
+    "followups": [
+     "Is this message real?"
+    ],
+    "questions": [],
+    "conclusion": "Please don't share any code or pay anyone. Hang up and call your bank yourself.",
+    "question_trace": {},
+    "claims": [],
+    "step_errors": {},
+    "total_s": 0.0
+   },
+   {
+    "colour": "red",
+    "case_type": "scam_or_payment_request",
+    "agents": [],
+    "llm_calls": 0,
+    "degraded_steps": [],
+    "kept": 0,
+    "dropped": 0,
+    "drop_reasons": [],
+    "blocked_lines": [],
+    "stances": {},
+    "terms": [],
+    "photo_confirmed": [],
+    "spoken": [
+     "alfii: You did the right thing by asking me.",
+     "alfii: No real bank ever asks for your OTP or PIN.",
+     "alfii: Please don't share any code or pay anyone. Hang up and call your bank yourself."
+    ],
+    "step_ms": {
+     "request": 0.0,
+     "ingest": 0.0,
+     "scam_rules": 0.1
+    },
+    "fixes": [],
+    "lint": [],
+    "dropped_turns": [],
+    "mode": "discreet",
+    "short_answer": "No real bank ever asks for your OTP or PIN.",
+    "council": [
+     "alfii (opener): You did the right thing by asking me.",
+     "alfii (agent): No real bank ever asks for your OTP or PIN.",
+     "alfii (conclusion): Please don't share any code or pay anyone. Hang up and call your bank yourself."
+    ],
+    "council_words": 33,
+    "council_seconds": 13.2,
+    "notes": [],
+    "followups": [
+     "Is this message real?"
+    ],
+    "questions": [],
+    "conclusion": "Please don't share any code or pay anyone. Hang up and call your bank yourself.",
+    "question_trace": {},
+    "claims": [],
+    "step_errors": {},
+    "total_s": 0.0
+   },
+   {
+    "colour": "red",
+    "case_type": "scam_or_payment_request",
+    "agents": [],
+    "llm_calls": 0,
+    "degraded_steps": [],
+    "kept": 0,
+    "dropped": 0,
+    "drop_reasons": [],
+    "blocked_lines": [],
+    "stances": {},
+    "terms": [],
+    "photo_confirmed": [],
+    "spoken": [
+     "alfii: You did the right thing by asking me.",
+     "alfii: No real bank ever asks for your OTP or PIN.",
+     "alfii: Please don't share any code or pay anyone. Hang up and call your bank yourself."
+    ],
+    "step_ms": {
+     "request": 0.0,
+     "ingest": 0.0,
+     "scam_rules": 0.1
+    },
+    "fixes": [],
+    "lint": [],
+    "dropped_turns": [],
+    "mode": "discreet",
+    "short_answer": "No real bank ever asks for your OTP or PIN.",
+    "council": [
+     "alfii (opener): You did the right thing by asking me.",
+     "alfii (agent): No real bank ever asks for your OTP or PIN.",
+     "alfii (conclusion): Please don't share any code or pay anyone. Hang up and call your bank yourself."
+    ],
+    "council_words": 33,
+    "council_seconds": 13.2,
+    "notes": [],
+    "followups": [
+     "Is this message real?"
+    ],
+    "questions": [],
+    "conclusion": "Please don't share any code or pay anyone. Hang up and call your bank yourself.",
+    "question_trace": {},
+    "claims": [],
+    "step_errors": {},
+    "total_s": 0.0
+   },
+   {
+    "colour": "red",
+    "case_type": "scam_or_payment_request",
+    "agents": [],
+    "llm_calls": 0,
+    "degraded_steps": [],
+    "kept": 0,
+    "dropped": 0,
+    "drop_reasons": [],
+    "blocked_lines": [],
+    "stances": {},
+    "terms": [],
+    "photo_confirmed": [],
+    "spoken": [
+     "alfii: You did the right thing by asking me.",
+     "alfii: No real bank ever asks for your OTP or PIN.",
+     "alfii: Please don't share any code or pay anyone. Hang up and call your bank yourself."
+    ],
+    "step_ms": {
+     "request": 0.0,
+     "ingest": 0.0,
+     "scam_rules": 0.1
+    },
+    "fixes": [],
+    "lint": [],
+    "dropped_turns": [],
+    "mode": "discreet",
+    "short_answer": "No real bank ever asks for your OTP or PIN.",
+    "council": [
+     "alfii (opener): You did the right thing by asking me.",
+     "alfii (agent): No real bank ever asks for your OTP or PIN.",
+     "alfii (conclusion): Please don't share any code or pay anyone. Hang up and call your bank yourself."
+    ],
+    "council_words": 33,
+    "council_seconds": 13.2,
+    "notes": [],
+    "followups": [
+     "Is this message real?"
+    ],
+    "questions": [],
+    "conclusion": "Please don't share any code or pay anyone. Hang up and call your bank yourself.",
+    "question_trace": {},
+    "claims": [],
+    "step_errors": {},
+    "total_s": 0.0
+   }
+  ],
+  "out_of_scope": [
+   {
+    "colour": null,
+    "case_type": "out_of_scope",
+    "agents": [],
+    "llm_calls": 1,
+    "degraded_steps": [],
+    "kept": 0,
+    "dropped": 0,
+    "drop_reasons": [],
+    "blocked_lines": [],
+    "stances": {},
+    "terms": [],
+    "photo_confirmed": [],
+    "spoken": [
+     "alfii: I can only help with money questions. You could ask me one of these."
+    ],
+    "step_ms": {
+     "request": 0.0,
+     "ingest": 0.0,
+     "scam_rules": 0.0,
+     "case_builder": 2243.6
+    },
+    "fixes": [],
+    "lint": [],
+    "dropped_turns": [],
+    "mode": "discreet",
+    "short_answer": "I can only help with money questions. You could ask me one of these.",
+    "council": [
+     "alfii (conclusion): I can only help with money questions. You could ask me one of these."
+    ],
+    "council_words": 14,
+    "council_seconds": 5.6,
+    "notes": [],
+    "followups": [
+     "Is this insurance plan good for me?",
+     "Should I take this loan?",
+     "Is this stock tip safe?"
+    ],
+    "questions": [],
+    "conclusion": "I can only help with money questions. You could ask me one of these.",
+    "question_trace": {},
+    "claims": [],
+    "step_errors": {},
+    "total_s": 2.2
+   },
+   {
+    "colour": null,
+    "case_type": "out_of_scope",
+    "agents": [],
+    "llm_calls": 1,
+    "degraded_steps": [],
+    "kept": 0,
+    "dropped": 0,
+    "drop_reasons": [],
+    "blocked_lines": [],
+    "stances": {},
+    "terms": [],
+    "photo_confirmed": [],
+    "spoken": [
+     "alfii: I can only help with money questions. You could ask me one of these."
+    ],
+    "step_ms": {
+     "request": 0.0,
+     "ingest": 0.0,
+     "scam_rules": 0.0,
+     "case_builder": 1423.2
+    },
+    "fixes": [],
+    "lint": [],
+    "dropped_turns": [],
+    "mode": "discreet",
+    "short_answer": "I can only help with money questions. You could ask me one of these.",
+    "council": [
+     "alfii (conclusion): I can only help with money questions. You could ask me one of these."
+    ],
+    "council_words": 14,
+    "council_seconds": 5.6,
+    "notes": [],
+    "followups": [
+     "Is this insurance plan good for me?",
+     "Should I take this loan?",
+     "Is this stock tip safe?"
+    ],
+    "questions": [],
+    "conclusion": "I can only help with money questions. You could ask me one of these.",
+    "question_trace": {},
+    "claims": [],
+    "step_errors": {},
+    "total_s": 1.4
+   },
+   {
+    "colour": null,
+    "case_type": "out_of_scope",
+    "agents": [],
+    "llm_calls": 1,
+    "degraded_steps": [],
+    "kept": 0,
+    "dropped": 0,
+    "drop_reasons": [],
+    "blocked_lines": [],
+    "stances": {},
+    "terms": [],
+    "photo_confirmed": [],
+    "spoken": [
+     "alfii: I can only help with money questions. You could ask me one of these."
+    ],
+    "step_ms": {
+     "request": 0.0,
+     "ingest": 0.0,
+     "scam_rules": 0.0,
+     "case_builder": 1437.0
+    },
+    "fixes": [],
+    "lint": [],
+    "dropped_turns": [],
+    "mode": "discreet",
+    "short_answer": "I can only help with money questions. You could ask me one of these.",
+    "council": [
+     "alfii (conclusion): I can only help with money questions. You could ask me one of these."
+    ],
+    "council_words": 14,
+    "council_seconds": 5.6,
+    "notes": [],
+    "followups": [
+     "Is this insurance plan good for me?",
+     "Should I take this loan?",
+     "Is this stock tip safe?"
+    ],
+    "questions": [],
+    "conclusion": "I can only help with money questions. You could ask me one of these.",
+    "question_trace": {},
+    "claims": [],
+    "step_errors": {},
+    "total_s": 1.4
+   },
+   {
+    "colour": null,
+    "case_type": "out_of_scope",
+    "agents": [],
+    "llm_calls": 1,
+    "degraded_steps": [],
+    "kept": 0,
+    "dropped": 0,
+    "drop_reasons": [],
+    "blocked_lines": [],
+    "stances": {},
+    "terms": [],
+    "photo_confirmed": [],
+    "spoken": [
+     "alfii: I can only help with money questions. You could ask me one of these."
+    ],
+    "step_ms": {
+     "request": 0.0,
+     "ingest": 0.0,
+     "scam_rules": 0.0,
+     "case_builder": 1414.0
+    },
+    "fixes": [],
+    "lint": [],
+    "dropped_turns": [],
+    "mode": "discreet",
+    "short_answer": "I can only help with money questions. You could ask me one of these.",
+    "council": [
+     "alfii (conclusion): I can only help with money questions. You could ask me one of these."
+    ],
+    "council_words": 14,
+    "council_seconds": 5.6,
+    "notes": [],
+    "followups": [
+     "Is this insurance plan good for me?",
+     "Should I take this loan?",
+     "Is this stock tip safe?"
+    ],
+    "questions": [],
+    "conclusion": "I can only help with money questions. You could ask me one of these.",
+    "question_trace": {},
+    "claims": [],
+    "step_errors": {},
+    "total_s": 1.4
+   },
+   {
+    "colour": null,
+    "case_type": "out_of_scope",
+    "agents": [],
+    "llm_calls": 1,
+    "degraded_steps": [],
+    "kept": 0,
+    "dropped": 0,
+    "drop_reasons": [],
+    "blocked_lines": [],
+    "stances": {},
+    "terms": [],
+    "photo_confirmed": [],
+    "spoken": [
+     "alfii: I can only help with money questions. You could ask me one of these."
+    ],
+    "step_ms": {
+     "request": 0.0,
+     "ingest": 0.0,
+     "scam_rules": 0.0,
+     "case_builder": 1423.6
+    },
+    "fixes": [],
+    "lint": [],
+    "dropped_turns": [],
+    "mode": "discreet",
+    "short_answer": "I can only help with money questions. You could ask me one of these.",
+    "council": [
+     "alfii (conclusion): I can only help with money questions. You could ask me one of these."
+    ],
+    "council_words": 14,
+    "council_seconds": 5.6,
+    "notes": [],
+    "followups": [
+     "Is this insurance plan good for me?",
+     "Should I take this loan?",
+     "Is this stock tip safe?"
+    ],
+    "questions": [],
+    "conclusion": "I can only help with money questions. You could ask me one of these.",
+    "question_trace": {},
+    "claims": [],
+    "step_errors": {},
+    "total_s": 1.4
+   }
+  ]
+ },
+ "llm_stats": {
+  "endowment": {
+   "steps": 15,
+   "attempts": 15,
+   "valid_first_try": 15,
+   "valid_after_retry": 0,
+   "invalid_twice": 0,
+   "transport_failures": 0
+  },
+  "flat_loan": {
+   "steps": 20,
+   "attempts": 20,
+   "valid_first_try": 20,
+   "valid_after_retry": 0,
+   "invalid_twice": 0,
+   "transport_failures": 0
+  },
+  "stock_tip": {
+   "steps": 20,
+   "attempts": 20,
+   "valid_first_try": 20,
+   "valid_after_retry": 0,
+   "invalid_twice": 0,
+   "transport_failures": 0
+  },
+  "otp_scam": {
+   "steps": 0,
+   "attempts": 0,
+   "valid_first_try": 0,
+   "valid_after_retry": 0,
+   "invalid_twice": 0,
+   "transport_failures": 0
+  },
+  "out_of_scope": {
+   "steps": 5,
+   "attempts": 5,
+   "valid_first_try": 5,
+   "valid_after_retry": 0,
+   "invalid_twice": 0,
+   "transport_failures": 0
+  }
+ }
+}
