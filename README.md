@@ -14,6 +14,43 @@ Built for the Meta AI Developer Hackathon (Oct 27 – Nov 4 2026). Decision supp
 
 [Demo recording](docs/demo_run.mp4) · [All screens](docs/screens/)
 
+## For judges
+
+**Built during the hackathon:** every commit from `de71ad7` (28 Oct 2026) to `HEAD`; nothing in this repository is older.
+
+**Meta models, with proof.** All replies below carry the model id Meta returned, recorded in [meta_run.md](docs/reports/meta_run.md).
+
+| use | model | where |
+|---|---|---|
+| Case builder, council, explainer | `muse-spark-1.3` | every ask, at most 4 calls of 20 s |
+| Reading brochure photos | `muse-spark-1.3` vision | checked against Tesseract; both must agree for "read twice" |
+
+Speech-to-text runs on local faster-whisper, not on Meta.
+
+**How numbers are guaranteed.** The model writes `{fact_id}` placeholders and code fills in the value. A line with a digit of
+its own is dropped. Each term must be found in the paper, and each figure is recomputed by an
+[independent audit](docs/reports/numbers_audit.md): 22 figures, 0 mismatches.
+
+**Privacy.** Discreet is the default: personal figures stay on screen and are never spoken. Tests cover this on every case.
+
+**Evidence.**
+
+| check | result |
+|---|---|
+| Reliability on Meta, 5 cases × 3 | [15 of 15 as expected](docs/reports/reliability_meta.md), 1 run degraded |
+| Framing on Meta, 3 framings × 2 | [no green; one framing gave yellow, not red](docs/reports/reliability_framing_meta.md) |
+| Financial calibration, 3 runs each | [calibration table](docs/reports/calibration.md) |
+| Full QA report | [qa_final.md](docs/reports/qa_final.md) |
+
+**Verify in 5 minutes.** `make start` (paste a Meta key), `make phone`, `make demo`, then ask:
+
+1. Attach `kanakavalli_brochure.pdf`: "An agent says this plan is guaranteed to give 15 lakh. Should I take it?" Expect Stop.
+2. "A finance company is offering me a loan of 1,00,000 at 12% flat for 24 months." Expect Stop or Careful, real rate 21.6%.
+3. "A man from the bank called. My KYC has expired and he asks me to tell him the OTP." Expect Stop with no model call.
+
+**Known limits.** Speech is English only. The app has no push notifications: guardian alerts appear when the Alerts tab is
+opened. A model can vary between runs, so the same case can move between yellow and red; see the calibration table.
+
 ## Features
 
 - **Code owns the numbers.** Returns, real interest rates, affordability and pump-and-dump signals come from deterministic
@@ -24,6 +61,8 @@ Built for the Meta AI Developer Hackathon (Oct 27 – Nov 4 2026). Decision supp
 - **Guardian alerts.** A red answer alerts a family member, who can leave a note.
 - **Bounded model use.** At most 4 model calls per question, 20 seconds each, with a visible flag if a step fails.
 - **Runs locally or on Meta.** Local Ollama or the Meta Model API, with no code change.
+- **Family members and holdings.** Each value has an owner, and another member's money stays out of the family budget unless
+  the family says so. Mutual fund, share and SIP statements are read into facts.
 
 ## Quick start
 
@@ -90,8 +129,9 @@ Each question goes through these steps. Only the three marked steps always use t
 ## Meta Model API
 
 Paste a key when `make start` asks for it. Kanakku then uses `muse-spark-1.3` at `https://api.meta.ai/v1`, with vision,
-in place of the local model. A response cache and a daily cap (`META_MAX_CALLS_PER_DAY`, default 300) protect the credit.
-`make forget-key` removes the saved key.
+in place of the local model. Calls use `json_object` and `minimal` reasoning, which keep each step inside the 20 second limit.
+A response cache and a daily cap (`META_MAX_CALLS_PER_DAY`, default 300) protect the credit. `make forget-key` removes the
+saved key, and `make meta-run` repeats the live proof.
 
 ## Tech stack
 
@@ -108,23 +148,25 @@ in place of the local model. A response cache and a daily cap (`META_MAX_CALLS_P
 app/        Flutter app (Android)
 server/     FastAPI server, pipeline, engines, providers, tests
 scripts/    Scripts behind the Makefile
-docs/       Reliability reports, rehearsals, screenshots
+docs/       Reports, rehearsals, screenshots
+video/      Demo video cards, edit list and render script
 ```
 
 ## Testing
 
 | suite | command | evidence |
 |---|---|---|
-| Server: unit, API, end-to-end (offline) | `make test` | 414 tests |
+| Server: unit, API, end-to-end (offline) | `make test` | 523 tests |
 | App: analysis, widgets, screenshots | `make app-test` | [screens](docs/screens/) |
 | App on a device against the real server | `make app-integration` | [recording](docs/demo_run.mp4) |
-| Real-model reliability | `make reliability` | [discreet](docs/reliability_final.md), [full](docs/reliability_full_final.md) |
+| Real-model reliability | `make reliability` | [Meta](docs/reports/reliability_meta.md), [local discreet](docs/reliability_final.md), [local full](docs/reliability_full_final.md) |
 | Fresh-clone rehearsals | `scripts/rehearsal.py <n>` | [run 1](docs/rehearsal_1.md), [run 2](docs/rehearsal_2.md) |
 
 ## Status
 
 Speech-to-text is English for now. Answers can be in Malayalam and Hindi, but the app's own text is English and native
-review is pending. The Meta path has been tested against a fake server, not a live key. Android is the supported platform.
+review is pending. The Meta path has run live on `muse-spark-1.3`. Android is the supported platform, and the app has run on a
+real Samsung A73 (Android 16).
 
 ## Prior work
 

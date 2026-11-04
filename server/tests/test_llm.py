@@ -12,6 +12,7 @@ from app.providers.llm import (
     OpenAICompatibleLLM,
     extract_json,
     use_budget,
+    use_step,
 )
 
 
@@ -67,6 +68,16 @@ async def test_meta_asks_for_plain_json_at_low_reasoning_and_records_the_reply_m
     assert fake.calls[0]["reasoning_effort"] == "minimal"
     assert '"verdict"' in fake.calls[0]["messages"][0]["content"]
     assert llm.stats.models == {"muse-spark-1.3": 1}
+
+
+async def test_each_step_can_have_its_own_reasoning_effort():
+    settings = Settings(_env_file=None, llm_provider="meta", meta_api_key="k", meta_effort_council="high")
+    llm, fake = make_llm(settings, ['{"verdict": "red", "score": 3}'] * 2)
+    with use_step("council"):
+        await llm.chat_json("sys", "user", Answer)
+    with use_step("explainer"):
+        await llm.chat_json("sys", "user", Answer)
+    assert [c["reasoning_effort"] for c in fake.calls] == ["high", "minimal"]
 
 
 async def test_local_models_get_no_reasoning_effort(settings):

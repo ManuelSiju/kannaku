@@ -59,7 +59,7 @@ from app.pipeline.schemas import (
 from app.pipeline.templates import NOTES, SCAM_SHORT, followups, lang_of, opener, t
 from app.pipeline.verify_terms import EvidenceText, VerifiedTerm, verify_terms
 from app.prompts import prompts
-from app.providers.llm import AskBudget, LLMProvider, LLMStepFailed, use_budget
+from app.providers.llm import AskBudget, LLMProvider, LLMStepFailed, use_budget, use_step
 from app.providers.stt import STTProvider
 
 log = logging.getLogger(__name__)
@@ -93,9 +93,12 @@ class AskInput(BaseModel):
     request_id: str = ""
 
 
+LLM_STEPS = ("case_builder", "council", "debate", "explainer")
+
+
 class _Run:
-    def __init__(self, case_id: int, repo: Repo, bus: EventBus) -> None:
-        self.case_id, self.repo, self.bus = case_id, repo, bus
+    def __init__(self, case_id: int, repo: Repo, bus: EventBus, settings: Settings) -> None:
+        self.case_id, self.repo, self.bus, self.settings = case_id, repo, bus, settings
         self.degraded_steps: list[str] = []
 
     @asynccontextmanager
@@ -103,10 +106,13 @@ class _Run:
         """Times the step, records the trace, publishes events. LLM/tool failures mark the step degraded and are
         swallowed so later steps still run with what is known."""
         info: dict[str, Any] = dict(detail)
+        if self.settings.meta and name in LLM_STEPS:
+            info["reasoning_effort"] = self.settings.reasoning_effort(name)
         self.bus.publish(self.case_id, "step_started", step=name)
         t0, outcome = time.perf_counter(), "ok"
         try:
-            yield info
+            with use_step(name):
+                yield info
         except Exception as e:
             outcome = "failed"
             info["error"] = f"{type(e).__name__}: {e}"
@@ -158,7 +164,7 @@ async def run_pipeline(
 ) -> CaseResult:
     settings = settings or get_settings()
     budget = AskBudget(settings.llm_max_calls_per_ask)
-    run = _Run(case_id, repo, bus)
+    run = _Run(case_id, repo, bus, settings)
     provider = settings.llm_provider
     models = {"text": settings.llm_model, "vision": settings.llm_vision_model or settings.llm_model}
     if not settings.llm_vision_enabled:
@@ -189,6 +195,9 @@ async def run_pipeline(
             )
     result.llm_calls = budget.used
     result.provider = "local fallback" if budget.fallback_used else provider
+    if budget.replay_at:
+        result.provider = f"replay of recorded Meta call {budget.replay_at}"
+        repo.add_trace(case_id, "replay", 0.0, "ok", {"provider": result.provider})
     result.local_fallback = budget.fallback_used
     result.request_id = inp.request_id
     if budget.fallback_used or budget.cache_hits or budget.retries:

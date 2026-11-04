@@ -25,7 +25,7 @@ endif
 
 .PHONY: help setup-system env doctor run-server health llm-up llm-down llm-pull llm-list \
         check-models test test-fast smoke lint fmt clean run-mcp seed-demo reset-demo demo-assets run-app demo \
-        reliability reliability-framing reliability-vision lan-url firewall-open phone-devices phone-usb phone-usb-off up down status app-release provider forget-key app-test start stop phone app-fixtures app-goldens app-integration meta-check meta-run
+        reliability reliability-framing reliability-vision lan-url firewall-open phone-devices phone-usb phone-usb-off up down status app-release provider forget-key app-test start stop phone app-fixtures app-goldens app-integration meta-check meta-run demo-replay
 
 help: ##! Show this list (owner commands first)
 	@echo "Start here:"
@@ -51,6 +51,9 @@ phone: ##! Build the app and put it on the phone (USB), or show the file to send
 
 demo: ##! Reset the demo family and show the 4 demo questions
 	@scripts/demo.sh
+
+demo-replay: ##! The 5 demo cases and the app on recorded real Meta replies (no key needed)
+	@scripts/demo_replay.sh
 
 # ---------------------------------------------------------------- setup (make start runs scripts/setup.sh)
 env: ## Copy .env.example to .env if .env does not exist

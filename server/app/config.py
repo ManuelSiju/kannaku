@@ -15,12 +15,16 @@ META_BASE_URL = "https://api.meta.ai/v1"
 META_MODEL = "muse-spark-1.3"
 
 
+Effort = Literal["minimal", "low", "medium", "high"]
+
+
 class Settings(BaseSettings):
     # .env.local (gitignored, mode 600) holds secrets written by `make up`: META_API_KEY, KANAKKU_TOKEN.
     model_config = SettingsConfigDict(env_file=(REPO_ROOT / ".env", REPO_ROOT / ".env.local"), extra="ignore")
 
-    # "local" = the LLM_* settings below (Ollama / llama-server); "meta" = Meta Model API (set by `make up`).
-    llm_provider: Literal["local", "meta"] = "local"
+    # "local" = the LLM_* settings below (Ollama / llama-server); "meta" = Meta Model API (set by `make up`);
+    # "replay" = recorded real Meta replies from replay_dir, no key needed (make demo-replay).
+    llm_provider: Literal["local", "meta", "replay"] = "local"
     llm_base_url: str = "http://localhost:8080/v1"
     llm_api_key: SecretStr = SecretStr("local")
     llm_model: str = "local-model"
@@ -49,7 +53,12 @@ class Settings(BaseSettings):
     meta_base_url: str = META_BASE_URL
     meta_model: str = META_MODEL
     # Muse Spark is a reasoning model: at its default effort the bigger steps run past llm_timeout_s.
-    meta_reasoning_effort: Literal["minimal", "low", "medium", "high"] = "minimal"
+    meta_reasoning_effort: Effort = "minimal"
+    # Per pipeline step; empty = meta_reasoning_effort. See docs/reports/meta_run.md for why each is set.
+    meta_effort_case_builder: Effort | None = None
+    meta_effort_council: Effort | None = None
+    meta_effort_debate: Effort | None = None
+    meta_effort_explainer: Effort | None = None
     # Meta only: response cache and a daily call cap (counter kept in SQLite). LLM_FALLBACK=local answers with the
     # local models once the cap is reached (shown as a "local fallback" badge and in the trace); none = fail fast.
     llm_cache: bool = True
@@ -81,6 +90,7 @@ class Settings(BaseSettings):
     backup_dir: Path = RUN_DIR / "backups"
     backups_kept: int = 3
     reference_rates_path: Path = SERVER_ROOT / "data" / "reference_rates.json"
+    replay_dir: Path = SERVER_ROOT / "demo_assets" / "replay"
 
     @field_validator("db_path", "reference_rates_path", "log_path", "backup_dir")
     @classmethod
@@ -99,6 +109,8 @@ class Settings(BaseSettings):
                 raise ValueError("LLM_PROVIDER=meta needs META_API_KEY (run make up and type the key, or set it)")
             self.llm_base_url, self.llm_model, self.llm_api_key = self.meta_base_url, self.meta_model, self.meta_api_key
             self.llm_vision_enabled, self.llm_vision_model = True, ""
+        if self.llm_provider == "replay":  # the recording's keys hold the Meta model and its vision setting
+            self.llm_model, self.llm_vision_enabled, self.llm_vision_model = self.meta_model, True, ""
         if self.meta_max_calls_per_day < 1 or self.llm_timeout_s <= 0 or self.llm_max_calls_per_ask < 1:
             raise ValueError("META_MAX_CALLS_PER_DAY, LLM_TIMEOUT_S and LLM_MAX_CALLS_PER_ASK must be positive")
         return self
@@ -106,6 +118,9 @@ class Settings(BaseSettings):
     @property
     def meta(self) -> bool:
         return self.llm_provider == "meta"
+
+    def reasoning_effort(self, step: str | None) -> str:
+        return getattr(self, f"meta_effort_{step}", None) or self.meta_reasoning_effort
 
     def local_settings(self) -> "Settings":
         """The same settings pointed at the local models (for LLM_FALLBACK=local)."""

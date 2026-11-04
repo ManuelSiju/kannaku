@@ -10,6 +10,7 @@ from fastapi import APIRouter
 from fastapi.responses import JSONResponse
 
 from app.config import VERSION, get_settings
+from app.pipeline.run import LLM_STEPS
 from app.providers import ocr
 
 router = APIRouter()
@@ -23,6 +24,8 @@ async def llm_status() -> dict[str, Any]:
         "model": s.llm_model,
         "vision": s.llm_vision_enabled,
     }
+    if s.llm_provider == "replay":
+        return {**out, "base_url": "", "reachable": True}
     try:
         async with httpx.AsyncClient(timeout=2.0) as client:
             r = await client.get(
@@ -76,6 +79,8 @@ def provider_summary() -> dict[str, Any]:
         "fallback": s.llm_fallback if s.meta else "none",
         "auth": bool(s.kanakku_token.get_secret_value()),
         "features": {"trace_export": s.feature_trace_export},
+        "effort": {step: s.reasoning_effort(step) for step in LLM_STEPS} if s.meta else {},
+        "replay_of": getattr(llm, "recorded_at", None),
     }
 
 

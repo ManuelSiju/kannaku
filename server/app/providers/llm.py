@@ -52,6 +52,7 @@ class AskBudget:
         self.fallback_used = False  # the Meta daily cap was hit and the local models answered (shown to the user)
         self.cache_hits = 0
         self.retries = 0
+        self.replay_at: str | None = None  # when the replayed reply was recorded (make demo-replay)
 
     @property
     def left(self) -> int:
@@ -73,6 +74,19 @@ def use_budget(budget: AskBudget) -> Iterator[AskBudget]:
         yield budget
     finally:
         _current_budget.reset(token)
+
+
+_step: ContextVar[str | None] = ContextVar("llm_step", default=None)
+
+
+@contextlib.contextmanager
+def use_step(name: str) -> Iterator[None]:
+    """The pipeline step the next calls belong to; it picks the reasoning effort on Meta."""
+    token = _step.set(name)
+    try:
+        yield
+    finally:
+        _step.reset(token)
 
 
 def current_budget() -> AskBudget | None:
@@ -230,7 +244,7 @@ class OpenAICompatibleLLM(LLMProvider):
             "temperature": self.settings.llm_temperature,
         }
         if self.settings.meta:
-            kwargs["reasoning_effort"] = self.settings.meta_reasoning_effort
+            kwargs["reasoning_effort"] = self.settings.reasoning_effort(_step.get())
         loop = asyncio.get_running_loop()
         t0 = loop.time()
         try:
@@ -313,6 +327,10 @@ def get_llm(settings: Settings | None = None) -> LLMProvider:
     """Local: the OpenAI-compatible client. Meta: the same client wrapped in the spend guard (cache + daily cap,
     with the local models as a visible fallback if LLM_FALLBACK=local)."""
     settings = settings or get_settings()
+    if settings.llm_provider == "replay":
+        from app.providers.replay import ReplayLLM
+
+        return ReplayLLM(settings)
     base = OpenAICompatibleLLM(settings)
     if not settings.meta:
         return base
