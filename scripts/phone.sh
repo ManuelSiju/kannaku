@@ -29,6 +29,8 @@ if [[ -n "$SERIAL" ]]; then
   if adb -s "$SERIAL" install -r "$APK" >/dev/null 2>&1; then
     echo "✔ Installed on the phone ($SERIAL). Open 'Kanakku' on the phone."
     adb -s "$SERIAL" push "$ROOT/server/demo_assets/kanakavalli_brochure.pdf" /sdcard/Download/ >/dev/null 2>&1 &&
+      adb -s "$SERIAL" shell am broadcast -a android.intent.action.MEDIA_SCANNER_SCAN_FILE \
+        -d file:///sdcard/Download/kanakavalli_brochure.pdf >/dev/null 2>&1  # so the file picker lists it
       echo "✔ Demo brochure copied to the phone's Download folder (kanakavalli_brochure.pdf)."
   else
     echo "✘ Could not install on the phone. If an older Kanakku is installed from another laptop, uninstall it first."

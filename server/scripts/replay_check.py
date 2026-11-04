@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import os
 import sys
 from pathlib import Path
 
@@ -16,11 +17,9 @@ EXPECT = {"endowment": "red", "stock_tip": "red", "otp_scam": "red", "out_of_sco
 
 
 def main() -> int:
-    if sys.argv[1] == "--reset-note":
-        print("Ask these same questions in the app. Anything else is outside the recording and says so.")
-        return 0
     bad = 0
-    with httpx.Client(base_url=sys.argv[1], timeout=120) as client:
+    headers = {"Authorization": f"Bearer {os.environ.get('KANAKKU_TOKEN', '')}"}
+    with httpx.Client(base_url=sys.argv[1], timeout=120, headers=headers) as client:
         for name, (question, filename) in DEMO_CASES.items():
             files = None
             if filename:

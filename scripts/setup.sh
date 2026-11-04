@@ -40,7 +40,6 @@ command -v adb >/dev/null || missing+=(adb)
 if command -v tesseract >/dev/null; then
   langs=" $(tesseract --list-langs 2>/dev/null | tail -n +2 | tr '\n' ' ')"
   [[ "$langs" == *" eng "* ]] || missing+=(tesseract-ocr-eng)
-  [[ "$langs" == *" mal "* ]] || missing+=(tesseract-ocr-mal)
 fi
 if (( ${#missing[@]} )); then
   key="${missing[*]}"
@@ -55,7 +54,6 @@ if (( ${#missing[@]} )); then
       echo "! Not installed. Run make doctor to see what this affects."
     fi
   fi
-  # Malayalam is optional; everything else is needed
   if ! command -v tesseract >/dev/null || ! command -v ffmpeg >/dev/null; then
     rm -f "$SYS_STAMP"
     echo "✘ Kanakku cannot start without these. Run make start again and type your password when asked."

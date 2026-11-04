@@ -155,7 +155,21 @@ key is present. `make meta-run` runs the demo cases and writes [docs/reports/met
 `server/demo_assets/replay/`. Every answer is labelled "replay of recorded Meta call". A question outside the recording
 fails its step rather than inventing an answer.
 
-### 2.7 Try it
+### 2.7 The talk button
+
+Press and hold the mic, talk, then let go. A quick tap only shows a tip. The top-right button sets the default, Private or Out
+loud, and a slide changes it for that one question: up for Private, down for Out loud, sideways to cancel, back to the middle to
+undo. The screen shows what will happen while you hold. `app/lib/widgets/talk_button.dart` holds the gesture.
+
+Replay answers typed demo questions only. Voice needs `make start`.
+
+### 2.8 Better answers from more details
+
+Personal facts come from what the family confirmed in My Details, typed, spoken or read from a paper. With none, Kanakku still
+checks the offer; affordability facts such as `surplus_after` and `buffer_months_after` stay unknown, never zero. With them, the
+budget checks and the safety rules can run. Details stay on the laptop and no model is trained on them.
+
+### 2.9 Try it
 
 `make demo` resets the demo family and prints the four questions. Kanakku can stay running; use a second terminal.
 
