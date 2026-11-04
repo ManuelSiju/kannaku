@@ -48,19 +48,21 @@ def irdai() -> None:
     image, d = card()
     centred(d, 300, "26,667", font(190, True), ACCENT)
     centred(d, 560, "complaints of unfair selling\nagainst life insurers in one year", font(58))
-    centred(d, 850, "Source: IRDAI Annual Report 2024-25 (FY25)", font(32), MUTED)
+    centred(d, 740, "Source: IRDAI Annual Report 2024-25 (FY25)", font(32), MUTED)
     image.save(OUT / "irdai.png")
 
 
 def title() -> None:
     image, d = card()
-    centred(d, 370, "Kanakku · ask before you sign", font(86, True))
-    centred(d, 530, "A council of AI specialists on Meta Muse Spark", font(46), ACCENT)
+    centred(d, 300, "Kanakku", font(110, True))
+    centred(d, 470, "A money adviser for Indian families", font(62, True))
+    centred(d, 580, "Checks insurance, loans, stock tips and scam calls before you pay", font(42), WHITE)
+    centred(d, 690, "A council of AI specialists on Meta Muse Spark", font(38), ACCENT)
     image.save(OUT / "title.png")
 
 
 def architecture() -> None:
-    box, gap, top = 270, 34, 400
+    box, gap, top = 244, 30, 400
     left = (W - 6 * box - 5 * gap) // 2
     for shown in range(1, len(STEPS) + 1):
         image, d = card()
@@ -68,7 +70,7 @@ def architecture() -> None:
         for i, text in enumerate(STEPS[:shown]):
             x = left + i * (box + gap)
             d.rounded_rectangle((x, top, x + box, top + 230), 24, outline=ACCENT, width=4)
-            d.multiline_text((x + box / 2, top + 115), text, font=font(30), fill=WHITE, anchor="mm", align="center")
+            d.multiline_text((x + box / 2, top + 115), text, font=font(27), fill=WHITE, anchor="mm", align="center")
             if i:
                 d.text((x - gap / 2, top + 115), "›", font=font(44, True), fill=ACCENT, anchor="mm")
         image.save(OUT / f"arch_{shown}.png")

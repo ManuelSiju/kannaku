@@ -50,38 +50,64 @@ def panel(shot: dict, path: Path) -> None:
     image.save(path)
 
 
-def pad(seconds: float, path: Path) -> None:
-    """A quiet self-made chord for moments with no voice."""
-    chord = "+".join(f"0.2*sin(2*PI*{f}*t)" for f in (110, 164.8, 220, 277.2))
-    run("-f", "lavfi", "-i", f"aevalsrc={chord}:s=48000:c=stereo:d={seconds}", "-af",
-        f"lowpass=f=700,volume=0.28,afade=t=in:d=0.6,afade=t=out:st={max(seconds - 0.6, 0)}:d=0.6", *AUD, str(path))  # fmt: skip
+def sound(shot: dict, seconds: float, out: Path) -> None:
+    """Narration where the shot has it, otherwise true silence. Nothing else is ever added."""
+    silence = ["-f", "lavfi", "-t", str(seconds), "-i", "anullsrc=r=48000:cl=stereo"]
+    if shot.get("narration"):
+        delay = int(shot.get("narration_at", 0.3) * 1000)
+        run(*silence, "-i", str(HERE / "narration" / shot["narration"]), "-filter_complex",
+            f"[1:a]aformat=sample_rates=48000:channel_layouts=stereo,adelay={delay}|{delay}[n];[0:a][n]amix=2:duration=first:normalize=0",
+            "-t", str(seconds), *AUD, str(out))  # fmt: skip
+    else:
+        run(*silence, *AUD, str(out))
+
+
+def push(seconds: float) -> str:
+    """A slow push in, so no frame stands still."""
+    return (
+        "scale=w='trunc((1920+12.8*t)/2)*2':h='trunc((1080+7.2*t)/2)*2':eval=frame:flags=lanczos,"
+        "crop=1920:1080:(iw-1920)/2:(ih-1080)/2,setsar=1"
+    )
 
 
 def card(shot: dict, out: Path, seconds: float) -> None:
-    sound = out.with_suffix(".m4a")
-    pad(seconds, sound)
-    run("-loop", "1", "-t", str(seconds), "-i", str(HERE / "cards" / shot["card"]), "-i", str(sound),
-        "-vf", "scale=1920:1080", *ENC, *AUD, "-shortest", str(out))  # fmt: skip
+    audio = out.with_suffix(".m4a")
+    sound(shot, seconds, audio)
+    if "%d" in shot["card"]:  # numbered cards, one after another over the shot
+        count = len(list((HERE / "cards").glob(shot["card"].replace("%d", "*"))))
+        image = ["-framerate", f"{count}/{seconds}", "-i", str(HERE / "cards" / shot["card"].replace("%d", "%d"))]
+        image[0:0] = ["-start_number", "1"]
+    else:
+        image = ["-loop", "1", "-framerate", "30", "-t", str(seconds), "-i", str(HERE / "cards" / shot["card"])]
+    run(*image, "-i", str(audio), "-vf", f"fps=30,scale=1920:1080,{push(seconds)}", *ENC, *AUD, "-t", str(seconds),
+        str(out))  # fmt: skip
 
 
 def clip(shot: dict, out: Path, background: Path) -> float:
     start, end, speed = shot["in"], shot["out"], shot.get("speed", 1)
     seconds = (end - start) / speed
     source = str(HERE / "raw" / shot["clip"])
-    crop = shot.get("crop_top", 120)  # the status bar stays out of the film
-    video = (
-        f"[1:v]trim={start}:{end},setpts=(PTS-STARTPTS)/{speed},fps=30,crop=1080:{2400 - crop}:0:{crop},"
-        f"scale={PHONE_W}:-2:flags=lanczos[p];[0:v][p]overlay={PHONE_X}:(H-h)/2[v]"
-    )
-    if shot.get("voice"):
-        args = ["-filter_complex", f"{video};[1:a]atrim={start}:{end},asetpts=PTS-STARTPTS[a]",
-                "-map", "[v]", "-map", "[a]"]  # fmt: skip
-        inputs = ["-loop", "1", "-t", str(seconds), "-i", str(background), "-i", source]
+    trim = f"trim={start}:{end},setpts=(PTS-STARTPTS)/{speed},fps=30"
+    if "zoom" in shot:  # a part of the phone fills the frame, with a box around it for the first 1.5 s
+        y = shot["zoom"]
+        box = f"drawbox=x=14:y=14:w=iw-28:h=ih-28:color=0x4FD1B2:t=10:enable='lt(t,1.5)'"
+        video = (
+            f"[1:v]{trim},crop=1080:608:0:{y},scale=1920:1080:flags=lanczos,setsar=1,{push(seconds)},{box}[v]"
+        )
     else:
-        sound = out.with_suffix(".m4a")
-        pad(seconds, sound)
+        crop = shot.get("crop_top", 120)  # the status bar stays out of the film
+        video = (
+            f"[1:v]{trim},crop=1080:{2400 - crop}:0:{crop},scale={PHONE_W}:-2:flags=lanczos[p];"
+            f"[0:v][p]overlay={PHONE_X}:(H-h)/2,{push(seconds)}[v]"
+        )
+    inputs = ["-loop", "1", "-framerate", "30", "-t", str(seconds), "-i", str(background), "-i", source]
+    if shot.get("voice"):
+        args = ["-filter_complex", f"{video};[1:a]atrim={start}:{end},asetpts=PTS-STARTPTS[a]", "-map", "[v]", "-map", "[a]"]
+    else:
+        audio = out.with_suffix(".m4a")
+        sound(shot, seconds, audio)
         args = ["-filter_complex", video, "-map", "[v]", "-map", "2:a"]
-        inputs = ["-loop", "1", "-t", str(seconds), "-i", str(background), "-i", source, "-i", str(sound)]
+        inputs += ["-i", str(audio)]
     run(*inputs, *args, *ENC, *AUD, "-t", str(seconds), str(out))
     return seconds
 
@@ -100,6 +126,8 @@ def main() -> None:
         if "card" in shot:
             seconds = shot["seconds"]
             card(shot, out, seconds)
+        elif "zoom" in shot:
+            seconds = clip(shot, out, HERE / "cards" / "title.png")
         else:
             background = WORK / f"panel_{i:02}.png"
             panel(shot, background)
@@ -115,7 +143,7 @@ def main() -> None:
     wrap = lambda t: "\n".join(textwrap.wrap(t, 42)[:2])  # noqa: E731
     srt.write_text("\n".join(f"{n}\n{stamp(a)} --> {stamp(b)}\n{wrap(t)}\n" for n, (a, b, t) in enumerate(subs, 1)))
     style = (  # right of the phone, under the panel text; sizes are on the subtitle canvas of 384 x 288
-        "FontName=Noto Sans,FontSize=11,PrimaryColour=&HFFFFFF&,BackColour=&H99000000&,BorderStyle=4,"
+        "FontName=Noto Sans,FontSize=11,PrimaryColour=&HFFFFFF&,BackColour=&H10000000&,BorderStyle=4,"
         "Alignment=1,MarginL=152,MarginR=16,MarginV=26"
     )
     vf = f"subtitles={srt}:force_style='{style}'" if subs else "null"

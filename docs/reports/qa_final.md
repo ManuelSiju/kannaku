@@ -10,7 +10,7 @@ Provider: Meta `muse-spark-1.3`. Phone: Samsung A73, Android 16. Engine maths, w
 | B Advice safety | PASS with P2 notes |
 | C Adversarial | PASS for 1-6; C7 partly tested |
 | D Product QA | PARTIAL: see below |
-| Counts | P0 found 2, fixed 2. P1 found 5, fixed 5. P2 open 9 |
+| Counts | P0 found 3, fixed 3. P1 found 5, fixed 5. P2 open 9 |
 
 ## 2. Calibration
 
@@ -84,6 +84,7 @@ Checked by regex on every spoken line; hits were then read by hand.
 | Reducing-balance loans computed as flat: wrong EMI, wrong red | P0 | `5be16bf` |
 | "Grows higher than a fixed deposit" spoken without "at the higher bonus rate" | P0 | `d399e0e` |
 | Meta answers degraded: `json_schema` never finished on Muse Spark | P1 | `36cf91e` |
+| Voice misread amounts before lakh ("7.5 lakh" came out as a long number); found by a reviewer | P0 | `c6b657f` |
 | Scheme offer classed unknown, no verdict | P1 | `5be16bf` |
 | Silence or noise opened a clarifying question | P1 | `5cb0dc4` |
 | Vick left out the held shares in 2 of 3 full-mode runs | P1 | `657d4f7` |
