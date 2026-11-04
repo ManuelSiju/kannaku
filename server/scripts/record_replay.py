@@ -47,27 +47,44 @@ class Recording(LLMProvider):
         return text, usage
 
 
+def fresh_family() -> Repo:
+    repo = Repo(Path(tempfile.mkdtemp()) / "k.db")
+    seed(repo)
+    return repo
+
+
+async def ask(repo: Repo, llm: Recording, settings: Settings, name: str) -> bool:
+    question, filename = DEMO_CASES[name]
+    files = [upload_for(filename)] if filename else []
+    res = await run_pipeline(
+        repo.create_case(1),
+        AskInput(family_id=1, text=question, files=files),
+        repo=repo, llm=llm, stt=None, settings=settings, bus=EventBus(),
+    )  # fmt: skip
+    print(name, res.verdict.colour, res.degraded_steps or "clean", flush=True)
+    return not res.degraded_steps
+
+
 async def main() -> int:
     settings = Settings(llm_provider="meta", db_path=Path(tempfile.mkdtemp()) / "k.db", llm_cache=False)
     kept: dict[str, dict] = {}
-    for name, (question, filename) in DEMO_CASES.items():
-        for attempt in range(TRIES):  # a run with a failed step is not a demo recording
-            repo = Repo(Path(tempfile.mkdtemp()) / "k.db")
-            seed(repo)
+    # Papers a family showed earlier are part of the council's input, so each case is recorded on its own and also in
+    # order on one family, the way a judge asks them. A run with a failed step is not a recording.
+    for name in DEMO_CASES:
+        for _ in range(TRIES):
             llm = Recording(OpenAICompatibleLLM(settings))
-            files = [upload_for(filename)] if filename else []
-            res = await run_pipeline(
-                repo.create_case(1),
-                AskInput(family_id=1, text=question, files=files),
-                repo=repo, llm=llm, stt=None, settings=settings, bus=EventBus(),
-            )  # fmt: skip
-            print(name, f"try {attempt + 1}:", res.verdict.colour, res.degraded_steps or "clean", flush=True)
-            if not res.degraded_steps:
+            if await ask(fresh_family(), llm, settings, name):
                 kept.update(llm.calls)
                 break
         else:
-            print(f"{name}: no clean run")
             return 1
+    for _ in range(TRIES):
+        repo, llm = fresh_family(), Recording(OpenAICompatibleLLM(settings))
+        if all([await ask(repo, llm, settings, name) for name in DEMO_CASES]):
+            kept.update(llm.calls)
+            break
+    else:
+        return 1
     out = settings.replay_dir / "meta_recording.json"
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(json.dumps({"calls": kept}, indent=0, ensure_ascii=False))
