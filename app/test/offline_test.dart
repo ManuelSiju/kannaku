@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
+import 'package:kanakku/app.dart';
 import 'package:kanakku/state/cases.dart';
 import 'package:kanakku/state/settings.dart';
 import 'package:kanakku/theme.dart';
@@ -61,15 +62,16 @@ void main() {
         return http.Response('event: done\ndata: {"type":"done"}\n\n', 200);
       }
       return http.Response(
-          jsonEncode({
-            'result': {
-              'case_id': 9,
-              'verdict': {'colour': 'red', 'sentence': 'Please do not sign.'},
-              'short_answer': {'text': "Please don't go ahead with this as it is."}
-            }
-          }),
-          200,
-          headers: {'content-type': 'application/json; charset=utf-8'});
+        jsonEncode({
+          'result': {
+            'case_id': 9,
+            'verdict': {'colour': 'red', 'sentence': 'Please do not sign.'},
+            'short_answer': {'text': "Please don't go ahead with this as it is."},
+          },
+        }),
+        200,
+        headers: {'content-type': 'application/json; charset=utf-8'},
+      );
     });
     final cases = CaseProvider(FakeSettings(client));
     final entry = await cases.ask(AskRequest(text: 'Is this loan ok?'));
@@ -82,9 +84,12 @@ void main() {
   });
 
   testWidgets('verdict chip always shows icon and word', (tester) async {
-    await tester.pumpWidget(MaterialApp(
+    await tester.pumpWidget(
+      MaterialApp(
         theme: ThemeData(),
-        home: const Scaffold(body: Column(children: [VerdictChip('red'), VerdictChip('yellow'), VerdictChip('green')]))));
+        home: const Scaffold(body: Column(children: [VerdictChip('red'), VerdictChip('yellow'), VerdictChip('green')])),
+      ),
+    );
     expect(find.text('Stop'), findsOneWidget);
     expect(find.text('Careful'), findsOneWidget);
     expect(find.text('Looks fine'), findsOneWidget);
@@ -93,8 +98,9 @@ void main() {
 
   testWidgets('error card offers Retry', (tester) async {
     var tapped = false;
-    await tester.pumpWidget(MaterialApp(
-        home: Scaffold(body: ErrorCard('The connection dropped. Tap Retry.', onRetry: () => tapped = true))));
+    await tester.pumpWidget(KanakkuFrame(home: Scaffold(body: ErrorCard('The connection dropped. Tap Retry.', onRetry: () => tapped = true)),
+      ),
+    );
     await tester.tap(find.text('Retry'));
     expect(tapped, isTrue);
   });

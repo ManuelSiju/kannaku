@@ -15,7 +15,10 @@ class Pickers {
       return Upload(field, picked.first.name, await picked.first.readAsBytes(), 'application/pdf');
     }
     final x = await ImagePicker().pickImage(
-        source: how == 'camera' ? ImageSource.camera : ImageSource.gallery, maxWidth: 2400, imageQuality: 85);
+      source: how == 'camera' ? ImageSource.camera : ImageSource.gallery,
+      maxWidth: 2400,
+      imageQuality: 85,
+    );
     if (x == null) return null;
     return Upload(field, x.name, await x.readAsBytes(), 'image/jpeg');
   }

@@ -303,12 +303,12 @@ the team; the Info.plist already has microphone / camera / photo texts and local
 1. `make start` (choose Meta or Enter for local) · in a second terminal `make demo` (resets the family, prints the 4
    questions).
 2. Phone: Settings → Save and test connection → "Connected ✔ Provider: …".
-3. Question 1 with the brochure (camera button → Choose a PDF) → Working (live steps) → **Stop** → the council speaks
+3. Question 1 with the brochure (camera button → Choose a PDF) → Working (live steps) → **Stop** → Hear the council
    → Why (sources, "read twice") → Help me say no.
 4. Question 2 (loan), question 3 (stock tip: Vick names the 222 % jump), question 4 (OTP scam: instant red).
 5. Long-press "Kanakku" → Under the hood: router decision, facts tagged offer/personal, dropped arguments, vote maths,
    overrides, privacy blocks, provider.
-6. Settings → Guardian view → the alert → Note for Amma → back to Amma's Home: "A note from Arun".
+6. Settings tab → Guardian view → Alerts tab → Note for Amma → switch it off: Chat shows "A note from Arun".
 
 ## 15. Built during the hackathon vs prior work
 

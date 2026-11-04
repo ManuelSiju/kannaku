@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import 'app.dart';
 import 'screens/home.dart';
 import 'screens/welcome.dart';
 import 'state/cases.dart';
 import 'state/profile.dart';
 import 'state/settings.dart';
-import 'theme.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -24,16 +24,11 @@ class KanakkuApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => MultiProvider(
-        providers: [
-          ChangeNotifierProvider.value(value: settings),
-          ChangeNotifierProvider.value(value: cases),
-          ChangeNotifierProvider(create: (_) => ProfileProvider(settings)),
-        ],
-        child: MaterialApp(
-          title: 'Kanakku',
-          debugShowCheckedModeBanner: false,
-          theme: buildTheme(),
-          home: settings.welcomed ? const HomeScreen() : const WelcomeScreen(),
-        ),
-      );
+    providers: [
+      ChangeNotifierProvider.value(value: settings),
+      ChangeNotifierProvider.value(value: cases),
+      ChangeNotifierProvider(create: (_) => ProfileProvider(settings)),
+    ],
+    child: KanakkuFrame(home: settings.welcomed ? const HomeScreen() : const WelcomeScreen()),
+  );
 }

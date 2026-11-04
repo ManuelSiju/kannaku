@@ -11,6 +11,7 @@ class ProfileProvider extends ChangeNotifier {
 
   List<ProfileValue> values = [];
   List<FamilyItem> items = [];
+  List<Document> documents = [];
   bool loading = false;
   String? error;
 
@@ -23,6 +24,7 @@ class ProfileProvider extends ChangeNotifier {
       final p = await api.profile(settings.familyId);
       values = objs(p['values']).map(ProfileValue.from).toList();
       items = await api.items(settings.familyId);
+      documents = await api.documents(settings.familyId);
     } on ApiException catch (e) {
       error = e.friendly;
     } catch (_) {

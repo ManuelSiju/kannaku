@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shadcn_ui/shadcn_ui.dart';
 
 import '../core/models.dart';
 import '../core/speech.dart';
@@ -73,82 +74,106 @@ class _CouncilScreenState extends State<CouncilScreen> {
     final conclusion = _lines.lastIndexWhere((l) => l.kind == 'conclusion');
     return Scaffold(
       appBar: AppBar(title: const Text('The council')),
-      body: Column(children: [
-        LinearProgressIndicator(value: _lines.isEmpty ? 0 : (_index + 1) / _lines.length, minHeight: 6),
-        Expanded(
-          child: ListView.builder(
-            padding: const EdgeInsets.all(16),
-            itemCount: _lines.length,
-            itemBuilder: (_, i) {
-              final l = _lines[i];
-              final active = i == _index;
-              return Padding(
-                padding: const EdgeInsets.only(bottom: 10),
-                child: InkWell(
-                  onTap: () => _jump(i),
-                  borderRadius: BorderRadius.circular(18),
-                  child: AnimatedContainer(
-                    duration: Duration(milliseconds: reduceMotion ? 0 : 200),
-                    padding: const EdgeInsets.all(14),
-                    decoration: BoxDecoration(
-                      color: active ? K.agent(l.speaker).withValues(alpha: 0.08) : K.surface,
-                      borderRadius: BorderRadius.circular(18),
-                      border: Border.all(color: active ? K.agent(l.speaker) : K.line, width: active ? 2 : 1),
-                    ),
-                    child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                      AgentAvatar(l.speaker, size: 40, dimmed: i > _index),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                          Row(children: [
-                            Text(K.agentName(l.speaker),
-                                style: TextStyle(fontWeight: FontWeight.w800, color: K.agent(l.speaker), fontSize: 17)),
-                            const SizedBox(width: 8),
-                            if (active && _playing) _VoiceBar(color: K.agent(l.speaker), still: reduceMotion),
-                          ]),
-                          const SizedBox(height: 4),
-                          Text(l.text, style: TextStyle(fontSize: 18, color: i > _index ? K.muted : K.ink)),
-                        ]),
+      body: Column(
+        children: [
+          LinearProgressIndicator(value: _lines.isEmpty ? 0 : (_index + 1) / _lines.length, minHeight: 6),
+          Expanded(
+            child: ListView.builder(
+              padding: const EdgeInsets.all(16),
+              itemCount: _lines.length,
+              itemBuilder: (_, i) {
+                final l = _lines[i];
+                final active = i == _index;
+                return Padding(
+                  padding: const EdgeInsets.only(bottom: 10),
+                  child: InkWell(
+                    onTap: () => _jump(i),
+                    borderRadius: BorderRadius.circular(18),
+                    child: AnimatedContainer(
+                      duration: Duration(milliseconds: reduceMotion ? 0 : 200),
+                      padding: const EdgeInsets.all(14),
+                      decoration: BoxDecoration(
+                        color: active ? K.agent(l.speaker).withValues(alpha: 0.08) : K.surface,
+                        borderRadius: BorderRadius.circular(18),
+                        border: Border.all(color: active ? K.agent(l.speaker) : K.line, width: active ? 2 : 1),
                       ),
-                    ]),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          AgentAvatar(l.speaker, size: 40, dimmed: i > _index),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  children: [
+                                    Text(
+                                      K.agentName(l.speaker),
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.w800,
+                                        color: K.agent(l.speaker),
+                                        fontSize: 17,
+                                      ),
+                                    ),
+                                    const SizedBox(width: 8),
+                                    if (active && _playing) _VoiceBar(color: K.agent(l.speaker), still: reduceMotion),
+                                  ],
+                                ),
+                                const SizedBox(height: 4),
+                                Text(l.text, style: TextStyle(fontSize: 18, color: i > _index ? K.muted : K.ink)),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
                   ),
-                ),
-              );
-            },
+                );
+              },
+            ),
           ),
-        ),
-        SafeArea(
-          top: false,
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(16, 8, 16, 12),
-            child: Wrap(spacing: 8, runSpacing: 8, crossAxisAlignment: WrapCrossAlignment.center, children: [
-              IconButton.filled(
-                iconSize: 32,
-                tooltip: _playing ? 'Pause' : 'Play',
-                onPressed: _playing ? _pause : _play,
-                icon: Icon(_playing ? Icons.pause : Icons.play_arrow),
-              ),
-              PopupMenuButton<double>(
-                tooltip: 'Speed',
-                initialValue: settings.speechSpeed,
-                onSelected: (s) {
-                  settings.set(speechSpeed: s);
-                  _speaker.speed = s;
-                },
-                itemBuilder: (_) => [
-                  for (final s in const [0.75, 1.0, 1.25]) PopupMenuItem(value: s, child: Text('${s}x')),
+          SafeArea(
+            top: false,
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(16, 8, 16, 12),
+              child: Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                crossAxisAlignment: WrapCrossAlignment.center,
+                children: [
+                  IconButton.filled(
+                    iconSize: 32,
+                    tooltip: _playing ? 'Pause' : 'Play',
+                    onPressed: _playing ? _pause : _play,
+                    icon: Icon(_playing ? LucideIcons.pause : LucideIcons.play),
+                  ),
+                  PopupMenuButton<double>(
+                    tooltip: 'Speed',
+                    initialValue: settings.speechSpeed,
+                    onSelected: (s) {
+                      settings.set(speechSpeed: s);
+                      _speaker.speed = s;
+                    },
+                    itemBuilder: (_) => [
+                      for (final s in const [0.75, 1.0, 1.25]) PopupMenuItem(value: s, child: Text('${s}x')),
+                    ],
+                    child: Pill('${settings.speechSpeed}x', icon: LucideIcons.gauge),
+                  ),
+                  if (conclusion >= 0)
+                    KButton(
+                      'Skip to Alfii',
+                      wide: false,
+                      kind: 'secondary',
+                      icon: LucideIcons.skipForward,
+                      onPressed: () => _jump(conclusion),
+                    ),
                 ],
-                child: Pill('${settings.speechSpeed}x', icon: Icons.speed),
               ),
-              if (conclusion >= 0)
-                FilledButton.tonalIcon(
-                    onPressed: () => _jump(conclusion),
-                    icon: const Icon(Icons.skip_next),
-                    label: const Text('Skip to Alfii')),
-            ]),
+            ),
           ),
-        ),
-      ]),
+        ],
+      ),
     );
   }
 }
@@ -162,8 +187,7 @@ class _VoiceBar extends StatefulWidget {
 }
 
 class _VoiceBarState extends State<_VoiceBar> with SingleTickerProviderStateMixin {
-  late final AnimationController _c =
-      AnimationController(vsync: this, duration: const Duration(milliseconds: 700));
+  late final AnimationController _c = AnimationController(vsync: this, duration: const Duration(milliseconds: 700));
 
   @override
   void initState() {
@@ -179,18 +203,20 @@ class _VoiceBarState extends State<_VoiceBar> with SingleTickerProviderStateMixi
 
   @override
   Widget build(BuildContext context) => Semantics(
-        label: 'speaking',
-        child: AnimatedBuilder(
-          animation: _c,
-          builder: (_, _) => Row(children: [
-            for (var i = 0; i < 4; i++)
-              Container(
-                width: 4,
-                height: 6 + 12 * (widget.still ? 0.5 : ((_c.value + i * 0.25) % 1.0)),
-                margin: const EdgeInsets.symmetric(horizontal: 1.5),
-                decoration: BoxDecoration(color: widget.color, borderRadius: BorderRadius.circular(2)),
-              ),
-          ]),
-        ),
-      );
+    label: 'speaking',
+    child: AnimatedBuilder(
+      animation: _c,
+      builder: (_, _) => Row(
+        children: [
+          for (var i = 0; i < 4; i++)
+            Container(
+              width: 4,
+              height: 6 + 12 * (widget.still ? 0.5 : ((_c.value + i * 0.25) % 1.0)),
+              margin: const EdgeInsets.symmetric(horizontal: 1.5),
+              decoration: BoxDecoration(color: widget.color, borderRadius: BorderRadius.circular(2)),
+            ),
+        ],
+      ),
+    ),
+  );
 }

@@ -195,7 +195,7 @@
   "llm_calls": 3,
   "provider": "local",
   "local_fallback": false,
-  "request_id": "bc91c12ff2cc44b1",
+  "request_id": "6d071087c0ac48b3",
   "language": "en",
   "short_answer": {
    "text": "Please don't go ahead with this as it is.",
@@ -236,7 +236,7 @@
    "transcript": "A finance company is offering me a loan of 1,00,000 at 12% flat for 24 months. Should I take it?",
    "language": "en",
    "privacy_mode": "discreet",
-   "created_at": "2026-10-31 14:15:17"
+   "created_at": "2026-11-04 06:22:14"
   },
   "quotes": [
    {
@@ -342,7 +342,7 @@
     "inputs": {
      "source": "voice",
      "source_ref": "onboarding voice note",
-     "updated_at": "2026-10-31 14:15:17"
+     "updated_at": "2026-11-04 06:22:14"
     },
     "status": "known",
     "value_text": null,
@@ -358,7 +358,7 @@
     "inputs": {
      "source": "typed",
      "source_ref": "onboarding",
-     "updated_at": "2026-10-31 14:15:17"
+     "updated_at": "2026-11-04 06:22:14"
     },
     "status": "known",
     "value_text": null,
@@ -374,7 +374,7 @@
     "inputs": {
      "source": "document",
      "source_ref": "passbook photo",
-     "updated_at": "2026-10-31 14:15:17"
+     "updated_at": "2026-11-04 06:22:14"
     },
     "status": "known",
     "value_text": null,
@@ -660,6 +660,7 @@
     "What is the reducing-balance interest rate?"
    ]
   },
+  "documents": [],
   "spoken_lines": [
    {
     "id": 9,
@@ -697,7 +698,7 @@
     "ms": 0.0,
     "outcome": "ok",
     "detail": {
-     "request_id": "bc91c12ff2cc44b1",
+     "request_id": "6d071087c0ac48b3",
      "provider": "local"
     }
    },
@@ -759,7 +760,7 @@
     "id": 30,
     "case_id": 3,
     "step": "compute",
-    "ms": 0.6,
+    "ms": 0.7,
     "outcome": "ok",
     "detail": {
      "facts": [
@@ -807,7 +808,7 @@
     "id": 32,
     "case_id": 3,
     "step": "council",
-    "ms": 1.1,
+    "ms": 1.0,
     "outcome": "ok",
     "detail": {
      "agents": [
@@ -854,7 +855,7 @@
     "id": 35,
     "case_id": 3,
     "step": "explainer",
-    "ms": 0.8,
+    "ms": 0.9,
     "outcome": "ok",
     "detail": {
      "rewrite_used": false,
@@ -1085,7 +1086,7 @@
    "llm_calls": 3,
    "provider": "local",
    "local_fallback": false,
-   "request_id": "bc91c12ff2cc44b1",
+   "request_id": "6d071087c0ac48b3",
    "language": "en",
    "short_answer": {
     "text": "Please don't go ahead with this as it is.",

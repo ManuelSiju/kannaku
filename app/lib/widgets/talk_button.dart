@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:shadcn_ui/shadcn_ui.dart';
 
 import '../core/speech.dart';
 import '../theme.dart';
 
 enum TalkZone { private, outLoud, cancel }
 
-/// Hold to talk. While holding: slide UP = Private (default), slide DOWN = Out loud, slide sideways = cancel.
-/// Releasing without sliding sends a Private question. A haptic tick marks each zone change.
+/// Hold the mic to talk. A full-screen overlay shows the three choices: slide UP = Private (the default, also when
+/// you do not slide), slide DOWN = Out loud, slide SIDEWAYS = cancel. A haptic tick marks each change.
 class TalkButton extends StatefulWidget {
   final void Function(List<int> audio, bool outLoud) onSend;
-  final bool earphones;
-  const TalkButton({super.key, required this.onSend, this.earphones = false});
+  const TalkButton({super.key, required this.onSend});
 
   @override
   State<TalkButton> createState() => _TalkButtonState();
@@ -19,15 +19,21 @@ class TalkButton extends StatefulWidget {
 
 class _TalkButtonState extends State<TalkButton> {
   final _rec = Recorder();
+  final _zone = ValueNotifier(TalkZone.private);
+  OverlayEntry? _overlay;
   bool _recording = false;
-  TalkZone _zone = TalkZone.private;
   static const _slide = 50.0, _sideways = 110.0;
 
   void _setZone(TalkZone z) {
-    if (z != _zone) {
+    if (z != _zone.value) {
       HapticFeedback.selectionClick();
-      setState(() => _zone = z);
+      _zone.value = z;
     }
+  }
+
+  void _closeOverlay() {
+    _overlay?.remove();
+    _overlay = null;
   }
 
   Future<void> _start(LongPressStartDetails _) async {
@@ -36,13 +42,14 @@ class _TalkButtonState extends State<TalkButton> {
     if (!mounted) return;
     if (!ok) {
       ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Please allow the microphone in your phone settings, or type instead.')));
+        const SnackBar(content: Text('Please allow the microphone in your phone settings, or type instead.')),
+      );
       return;
     }
-    setState(() {
-      _recording = true;
-      _zone = TalkZone.private;
-    });
+    _recording = true;
+    _zone.value = TalkZone.private;
+    _overlay = OverlayEntry(builder: (_) => _GestureOverlay(zone: _zone));
+    Overlay.of(context).insert(_overlay!);
   }
 
   void _move(LongPressMoveUpdateDetails d) {
@@ -59,8 +66,9 @@ class _TalkButtonState extends State<TalkButton> {
 
   Future<void> _end(LongPressEndDetails _) async {
     if (!_recording) return;
-    final zone = _zone;
-    setState(() => _recording = false);
+    _recording = false;
+    final zone = _zone.value;
+    _closeOverlay();
     if (zone == TalkZone.cancel) {
       await _rec.cancel();
       return;
@@ -68,8 +76,9 @@ class _TalkButtonState extends State<TalkButton> {
     final audio = await _rec.stop();
     if (!mounted) return;
     if (audio == null) {
-      ScaffoldMessenger.of(context)
-          .showSnackBar(const SnackBar(content: Text('I did not hear anything. Hold the button while you talk.')));
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('I did not hear anything. Hold the button while you talk.')));
       return;
     }
     widget.onSend(audio, zone == TalkZone.outLoud);
@@ -77,72 +86,114 @@ class _TalkButtonState extends State<TalkButton> {
 
   @override
   void dispose() {
+    _closeOverlay();
+    _zone.dispose();
     _rec.dispose();
     super.dispose();
   }
 
-  Widget _zoneLabel(String text, IconData icon, bool active, {Color color = K.alfii}) => AnimatedContainer(
-        duration: const Duration(milliseconds: 120),
-        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 14),
-        decoration: BoxDecoration(
-          color: active ? color : K.surface,
-          borderRadius: BorderRadius.circular(14),
-          border: Border.all(color: active ? color : K.line, width: 2),
-        ),
-        child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-          Icon(icon, color: active ? Colors.white : K.muted),
-          const SizedBox(width: 8),
-          Text(text,
-              style: TextStyle(fontSize: 17, fontWeight: FontWeight.w700, color: active ? Colors.white : K.muted)),
-        ]),
-      );
+  @override
+  Widget build(BuildContext context) => Semantics(
+    key: const ValueKey('talk_button'),
+    button: true,
+    label: 'Hold and talk. Slide up for private, down to say it out loud.',
+    child: GestureDetector(
+      onLongPressStart: _start,
+      onLongPressMoveUpdate: _move,
+      onLongPressEnd: _end,
+      child: Container(
+        width: 56,
+        height: 56,
+        decoration: BoxDecoration(color: K.alfii, borderRadius: BorderRadius.circular(14)),
+        child: const Icon(LucideIcons.mic, color: Colors.white, size: 28),
+      ),
+    ),
+  );
+}
+
+/// The three choices while the finger is down. It only shows; the finger stays on the mic button's detector.
+class _GestureOverlay extends StatelessWidget {
+  final ValueNotifier<TalkZone> zone;
+  const _GestureOverlay({required this.zone});
+
+  Widget _target(TalkZone me, TalkZone now, String title, String sub, IconData icon, Color color) {
+    final active = me == now;
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 120),
+      width: double.infinity,
+      padding: const EdgeInsets.all(18),
+      decoration: BoxDecoration(
+        color: active ? color : const Color(0xFF18181B),
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(color: color, width: 2),
+      ),
+      child: Column(
+        children: [
+          Icon(icon, color: Colors.white, size: 26),
+          const SizedBox(height: 6),
+          Text(
+            title,
+            style: const TextStyle(color: Colors.white, fontSize: 19, fontWeight: FontWeight.w700),
+          ),
+          Text(
+            sub,
+            textAlign: TextAlign.center,
+            style: const TextStyle(color: Color(0xFFD4D4D8), fontSize: 16),
+          ),
+        ],
+      ),
+    );
+  }
 
   @override
-  Widget build(BuildContext context) {
-    final label = _recording
-        ? (_zone == TalkZone.cancel ? 'Let go to cancel' : 'Listening… let go to send')
-        : 'Hold and talk';
-    return Column(mainAxisSize: MainAxisSize.min, children: [
-      if (_recording) ...[
-        _zoneLabel('↑ Private (only on screen)', Icons.lock_outline, _zone == TalkZone.private),
-        const SizedBox(height: 6),
-      ],
-      Semantics(
-        // keyed: the zone labels appear above it while recording, and the gesture must survive that rebuild
-        key: const ValueKey('talk_button'),
-        button: true,
-        label: 'Hold and talk. Slide up for private, down to say it out loud.',
-        child: GestureDetector(
-          onLongPressStart: _start,
-          onLongPressMoveUpdate: _move,
-          onLongPressEnd: _end,
-          child: AnimatedContainer(
-            duration: const Duration(milliseconds: 150),
-            height: 64,
-            decoration: BoxDecoration(
-              color: _zone == TalkZone.cancel && _recording ? K.muted : K.alfii,
-              borderRadius: BorderRadius.circular(32),
-              boxShadow: _recording ? [BoxShadow(color: K.alfii.withValues(alpha: 0.4), blurRadius: 18)] : null,
+  Widget build(BuildContext context) => IgnorePointer(
+    child: Material(
+      color: const Color(0xE6090909),
+      child: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(20),
+          child: ValueListenableBuilder(
+            valueListenable: zone,
+            builder: (_, now, _) => Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                _target(
+                  TalkZone.private,
+                  now,
+                  'Slide UP: Private',
+                  'The answer stays on the screen',
+                  LucideIcons.lock,
+                  K.alfii,
+                ),
+                Column(
+                  children: [
+                    Container(
+                      width: 88,
+                      height: 88,
+                      decoration: const BoxDecoration(color: K.alfii, shape: BoxShape.circle),
+                      child: const Icon(LucideIcons.mic, color: Colors.white, size: 40),
+                    ),
+                    const SizedBox(height: 14),
+                    Text(
+                      now == TalkZone.cancel ? 'Let go to cancel' : 'Listening… let go to send',
+                      style: const TextStyle(color: Colors.white, fontSize: 21, fontWeight: FontWeight.w700),
+                    ),
+                    const Text('Slide sideways to cancel', style: TextStyle(color: Color(0xFFA1A1AA), fontSize: 16)),
+                  ],
+                ),
+                _target(
+                  TalkZone.outLoud,
+                  now,
+                  'Slide DOWN: Out loud',
+                  'Alfii and the helpers will speak',
+                  LucideIcons.volume2,
+                  const Color(0xFFD97706),
+                ),
+              ],
             ),
-            child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-              Icon(_recording ? Icons.graphic_eq : Icons.mic, color: Colors.white, size: 30),
-              const SizedBox(width: 10),
-              Text(label, style: const TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.w700)),
-            ]),
           ),
         ),
       ),
-      if (_recording) ...[
-        const SizedBox(height: 6),
-        _zoneLabel('↓ Out loud (say everything)', Icons.volume_up_outlined, _zone == TalkZone.outLoud,
-            color: K.vick),
-        const SizedBox(height: 4),
-        const Text('Slide sideways to cancel', style: TextStyle(color: K.muted, fontSize: 15)),
-      ] else if (widget.earphones)
-        const Padding(
-          padding: EdgeInsets.only(top: 6),
-          child: Text('🎧 Earphones: private answers spoken', style: TextStyle(color: K.muted, fontSize: 15)),
-        ),
-    ]);
-  }
+    ),
+  );
 }

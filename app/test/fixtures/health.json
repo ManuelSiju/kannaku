@@ -17,8 +17,8 @@
    "base_url": "http://localhost:11434/v1",
    "model": "qwen2.5:7b-instruct",
    "vision": false,
-   "reachable": true,
-   "model_available": true
+   "reachable": false,
+   "error": "ReadTimeout: start it with make llm-up"
   },
   "stt": {
    "provider": "faster_whisper",

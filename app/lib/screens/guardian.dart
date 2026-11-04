@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shadcn_ui/shadcn_ui.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../core/api_client.dart';
@@ -7,11 +8,11 @@ import '../core/models.dart';
 import '../state/settings.dart';
 import '../theme.dart';
 import '../widgets/common.dart';
-import 'settings_screen.dart';
 
 /// Guardian view (switched on in Settings): alerts for red answers and big yellow ones.
 class GuardianScreen extends StatefulWidget {
-  const GuardianScreen({super.key});
+  final bool embedded;
+  const GuardianScreen({super.key, this.embedded = false});
   @override
   State<GuardianScreen> createState() => _GuardianScreenState();
 }
@@ -32,39 +33,40 @@ class _GuardianScreenState extends State<GuardianScreen> {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-        appBar: AppBar(title: const Text('Guardian'), actions: [
-          IconButton(
-              tooltip: 'Settings',
-              icon: const Icon(Icons.settings_outlined),
-              onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const SettingsScreen()))),
-        ]),
-        body: RefreshIndicator(
-          onRefresh: () async => setState(_load),
-          child: FutureBuilder<List<Alert>>(
-            future: _alerts,
-            builder: (_, s) {
-              if (s.hasError) {
-                return ListView(padding: const EdgeInsets.all(16), children: [
-                  ErrorCard(s.error is ApiException ? (s.error as ApiException).friendly : 'Could not load alerts.',
-                      onRetry: () => setState(_load)),
-                ]);
-              }
-              if (!s.hasData) return const Center(child: CircularProgressIndicator());
-              if (s.data!.isEmpty) {
-                return ListView(padding: const EdgeInsets.all(24), children: const [
-                  Text('No alerts. Amma has not met anything risky.', style: TextStyle(fontSize: 18)),
-                ]);
-              }
-              return ListView.separated(
-                padding: const EdgeInsets.all(16),
-                itemCount: s.data!.length,
-                separatorBuilder: (_, _) => const SizedBox(height: 12),
-                itemBuilder: (_, i) => _AlertCard(s.data![i], onChanged: () => setState(_load)),
-              );
-            },
-          ),
-        ),
-      );
+    appBar: widget.embedded ? null : AppBar(title: const Text('Guardian')),
+    body: RefreshIndicator(
+      onRefresh: () async => setState(_load),
+      child: FutureBuilder<List<Alert>>(
+        future: _alerts,
+        builder: (_, s) {
+          if (s.hasError) {
+            return ListView(
+              padding: const EdgeInsets.all(16),
+              children: [
+                ErrorCard(
+                  s.error is ApiException ? (s.error as ApiException).friendly : 'Could not load alerts.',
+                  onRetry: () => setState(_load),
+                ),
+              ],
+            );
+          }
+          if (!s.hasData) return const Center(child: CircularProgressIndicator());
+          if (s.data!.isEmpty) {
+            return ListView(
+              padding: const EdgeInsets.all(24),
+              children: const [Text('No alerts. Amma has not met anything risky.', style: TextStyle(fontSize: 18))],
+            );
+          }
+          return ListView.separated(
+            padding: const EdgeInsets.all(16),
+            itemCount: s.data!.length,
+            separatorBuilder: (_, _) => const SizedBox(height: 12),
+            itemBuilder: (_, i) => _AlertCard(s.data![i], onChanged: () => setState(_load)),
+          );
+        },
+      ),
+    ),
+  );
 }
 
 class _AlertCard extends StatelessWidget {
@@ -98,52 +100,64 @@ class _AlertCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final v = VerdictStyle.of(a.colour);
     final handled = a.status == 'handled';
-    return Card(
+    return KCard(
       color: handled ? K.surface : v.bg,
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Wrap(spacing: 8, runSpacing: 6, crossAxisAlignment: WrapCrossAlignment.center, children: [
-            VerdictChip(a.colour),
-            Text(a.caseType.replaceAll('_', ' '), style: const TextStyle(fontSize: 16, color: K.muted)),
-            if (handled) const Pill('handled', icon: Icons.check),
-          ]),
-          const SizedBox(height: 10),
-          Text(a.sentence.isNotEmpty ? a.sentence : a.message, style: const TextStyle(fontSize: 18)),
-          if (a.keyFacts.isNotEmpty) ...[
-            const SizedBox(height: 10),
-            for (final f in a.keyFacts)
-              Text('• ${str(f['label'])}: ${_display(f)}', style: const TextStyle(fontSize: 16)),
-          ],
-          for (final l in a.agentLines)
-            Padding(
-              padding: const EdgeInsets.only(top: 6),
-              child: Text('${K.agentName(str(l['speaker']))}: ${str(l['text'])}',
-                  style: TextStyle(fontSize: 16, color: K.agent(str(l['speaker'])))),
+      child: SizedBox(
+        width: double.infinity,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Wrap(
+              spacing: 8,
+              runSpacing: 6,
+              crossAxisAlignment: WrapCrossAlignment.center,
+              children: [
+                VerdictChip(a.colour),
+                Text(a.caseType.replaceAll('_', ' '), style: const TextStyle(fontSize: 16, color: K.muted)),
+                if (handled) const Pill('handled', icon: LucideIcons.check),
+              ],
             ),
-          if (a.note.isNotEmpty)
-            Padding(padding: const EdgeInsets.only(top: 8), child: Text('Your note: ${a.note}')),
-          const SizedBox(height: 12),
-          Wrap(spacing: 8, runSpacing: 8, children: [
-            FilledButton.icon(
-                onPressed: () => launchUrl(Uri.parse('tel:')), icon: const Icon(Icons.call), label: const Text('Call')),
-            if (!handled)
-              OutlinedButton.icon(
-                onPressed: () async {
-                  try {
-                    await context.read<SettingsProvider>().api.updateAlert(a.id, status: 'handled');
-                    onChanged();
-                  } on ApiException catch (e) {
-                    if (context.mounted) toast(context, e.friendly);
-                  }
-                },
-                icon: const Icon(Icons.done),
-                label: const Text('Mark handled'),
+            const SizedBox(height: 10),
+            Text(a.sentence.isNotEmpty ? a.sentence : a.message, style: const TextStyle(fontSize: 18)),
+            if (a.keyFacts.isNotEmpty) ...[
+              const SizedBox(height: 10),
+              for (final f in a.keyFacts)
+                Text('• ${str(f['label'])}: ${_display(f)}', style: const TextStyle(fontSize: 16)),
+            ],
+            for (final l in a.agentLines)
+              Padding(
+                padding: const EdgeInsets.only(top: 6),
+                child: Text(
+                  '${K.agentName(str(l['speaker']))}: ${str(l['text'])}',
+                  style: TextStyle(fontSize: 16, color: K.agent(str(l['speaker']))),
+                ),
               ),
-            OutlinedButton.icon(
-                onPressed: () => _note(context), icon: const Icon(Icons.edit_note), label: const Text('Note for Amma')),
-          ]),
-        ]),
+            if (a.note.isNotEmpty) Padding(padding: const EdgeInsets.only(top: 8), child: Text('Your note: ${a.note}')),
+            const SizedBox(height: 12),
+            Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: [
+                KButton('Call', icon: LucideIcons.phone, onPressed: () => launchUrl(Uri.parse('tel:'))),
+                if (!handled)
+                  KButton(
+                    'Mark handled',
+                    kind: 'outline',
+                    icon: LucideIcons.check,
+                    onPressed: () async {
+                      try {
+                        await context.read<SettingsProvider>().api.updateAlert(a.id, status: 'handled');
+                        onChanged();
+                      } on ApiException catch (e) {
+                        if (context.mounted) toast(context, e.friendly);
+                      }
+                    },
+                  ),
+                KButton('Note for Amma', kind: 'outline', icon: LucideIcons.squarePen, onPressed: () => _note(context)),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }

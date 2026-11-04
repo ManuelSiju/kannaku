@@ -99,7 +99,7 @@ It takes a few seconds. Leave this window open while you use Kanakku.
 
 ### 3.2 Connect the phone (the first time, or when the Wi-Fi changes)
 
-Open the Kanakku app, then **Settings** (the gear at the top right). Tap **Scan code** and point the phone at the
+Open the Kanakku app, then the **Settings** tab at the bottom. Tap **Scan code** and point the phone at the
 square on the laptop. Or type the **Server address** and **Access token** from the box and tap
 **Save and test connection**.
 
@@ -210,12 +210,16 @@ cd ~/kanakku && make demo
 
 | question (type it, or hold the talk button and say it) | what the answer should look like |
 |---|---|
-| Tap the camera button → **Choose a PDF** → `kanakavalli_brochure.pdf`, then type: "An agent from the company says this plan is guaranteed to give 15 lakh. Should I take it?" | **Stop** (red). Dani and Sankz speak. "Ask him this: How much is guaranteed in writing?" A box "Only on your screen". |
+| Tap the camera button next to the text box → **Choose a PDF** → `kanakavalli_brochure.pdf`, then type: "An agent from the company says this plan is guaranteed to give 15 lakh. Should I take it?" | **Stop** (red). Dani and Sankz speak. "Ask him this: How much is guaranteed in writing?" A box "Only on your screen". |
 | "A finance company is offering me a loan of 1,00,000 at 12% flat for 24 months. Should I take it?" | **Stop** or **Careful**. Sankz: it really costs about 21.6 percent a year. |
 | "I got this message: ZEPHYRX LTD - BIG NEWS COMING! Target Rs. 180 in 2 weeks. Upper circuit guaranteed. Should I put 1 lakh in it?" | **Stop**. Vick: it rose 222 percent in 30 trading days; that is how pump-and-dump schemes look. |
 | "A man from the bank called. My KYC has expired and he asks me to tell him the OTP." | **Stop** at once: "No real bank ever asks for your OTP or PIN." |
 
 ![A red answer](screens/verdict_endowment_red@1.0.png)
+
+**Answers:** a typed or Private question stays silent on the screen; tap **View full verdict**, then **Hear the council**. Slide the mic down (Out loud) and the helpers speak by themselves.
+
+**Papers:** the **My Details** tab lists every paper you showed and what kind it is (Insurance, Loan…). Kanakku remembers it, so you can ask about it again later.
 
 **Under the hood:** press and hold the word **Kanakku** at the top of the app. It shows how the answer was made.
 
@@ -251,11 +255,11 @@ make doctor
 | before | `make start`, then `make demo` in a second terminal. Phone on the same Wi-Fi. Phone in "Do not disturb". Volume up. |
 | 0:00 | Show the app's first screen: "Hello, I'm Alfii". Say what Kanakku is in one sentence. |
 | 0:30 | Question 1 with the brochure. Show the checking screen with the helpers. |
-| 1:30 | The red answer. Let the council speak. Tap **Why?** to show where each number came from. |
+| 1:30 | The red answer. Tap **Hear the council**. Tap **Why?** to show where each number came from. |
 | 2:30 | Question 4 (the OTP call): the instant red answer. |
 | 3:00 | Question 3 (shares tip): Vick's warning. |
 | 3:30 | Hold the word Kanakku: "Under the hood". |
-| 4:00 | Settings → Guardian view → the alert → **Note for Amma**. Switch back: "A note from Arun". |
+| 4:00 | Settings tab → Guardian view → Alerts tab → **Note for Amma**. Switch it off: "A note from Arun". |
 | 4:45 | End: "Every number is worked out by code; Kanakku never tells you to buy shares." |
 
 ---

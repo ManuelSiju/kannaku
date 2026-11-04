@@ -18,12 +18,21 @@ class FakeRecorder extends Recorder {
 void main() {
   setUp(() => Recorder.create = FakeRecorder.new);
 
-  for (final (name, dy, outLoud) in const [('slide up = private', -120.0, false), ('slide down = out loud', 120.0, true), ('no slide = private', 0.0, false)]) {
+  for (final (name, dy, outLoud) in const [
+    ('slide up = private', -120.0, false),
+    ('slide down = out loud', 120.0, true),
+    ('no slide = private', 0.0, false),
+  ]) {
     testWidgets(name, (tester) async {
       bool? sent;
-      await tester.pumpWidget(MaterialApp(
-          home: Scaffold(body: Center(child: TalkButton(onSend: (audio, loud) => sent = loud)))));
-      final g = await tester.startGesture(tester.getCenter(find.text('Hold and talk')));
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: Center(child: TalkButton(onSend: (audio, loud) => sent = loud)),
+          ),
+        ),
+      );
+      final g = await tester.startGesture(tester.getCenter(find.byKey(const ValueKey('talk_button'))));
       await tester.pump(const Duration(milliseconds: 700));
       await tester.pump();
       expect(find.text('Listening… let go to send'), findsOneWidget);
@@ -39,8 +48,14 @@ void main() {
 
   testWidgets('slide sideways cancels', (tester) async {
     var sent = false;
-    await tester.pumpWidget(MaterialApp(home: Scaffold(body: Center(child: TalkButton(onSend: (_, _) => sent = true)))));
-    final g = await tester.startGesture(tester.getCenter(find.text('Hold and talk')));
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: Center(child: TalkButton(onSend: (_, _) => sent = true)),
+        ),
+      ),
+    );
+    final g = await tester.startGesture(tester.getCenter(find.byKey(const ValueKey('talk_button'))));
     await tester.pump(const Duration(milliseconds: 700));
     await g.moveBy(const Offset(160, 0));
     await tester.pump();

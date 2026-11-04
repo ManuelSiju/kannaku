@@ -21,7 +21,7 @@
   "llm_calls": 1,
   "provider": "local",
   "local_fallback": false,
-  "request_id": "d8fb9cb2d7f94eef",
+  "request_id": "2ec746825ba44a46",
   "language": "en",
   "short_answer": {
    "text": "I can only help with money questions. You could ask me one of these.",
@@ -52,7 +52,7 @@
    "transcript": "Can you tell me a good recipe for sambar?",
    "language": "en",
    "privacy_mode": "discreet",
-   "created_at": "2026-10-31 14:15:17"
+   "created_at": "2026-11-04 06:22:14"
   },
   "quotes": [
    {
@@ -66,6 +66,7 @@
   "positions": [],
   "arguments": [],
   "verdict": null,
+  "documents": [],
   "spoken_lines": [
    {
     "id": 19,
@@ -85,7 +86,7 @@
     "ms": 0.0,
     "outcome": "ok",
     "detail": {
-     "request_id": "d8fb9cb2d7f94eef",
+     "request_id": "2ec746825ba44a46",
      "provider": "local"
     }
    },
@@ -151,7 +152,7 @@
    "llm_calls": 1,
    "provider": "local",
    "local_fallback": false,
-   "request_id": "d8fb9cb2d7f94eef",
+   "request_id": "2ec746825ba44a46",
    "language": "en",
    "short_answer": {
     "text": "I can only help with money questions. You could ask me one of these.",

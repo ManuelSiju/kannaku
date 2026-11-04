@@ -280,7 +280,7 @@
   "llm_calls": 4,
   "provider": "local",
   "local_fallback": false,
-  "request_id": "9aa8edda5faa4cfc",
+  "request_id": "c6708d5c3cac4468",
   "language": "en",
   "short_answer": {
    "text": "Do not sign yet: this plan earns less than a fixed deposit, and the 15 lakh rupees is not guaranteed.",
@@ -336,7 +336,7 @@
    "transcript": "An agent from the company says this plan is guaranteed to give 15 lakh. Should I take it?",
    "language": "en",
    "privacy_mode": "discreet",
-   "created_at": "2026-10-31 14:15:17"
+   "created_at": "2026-11-04 06:22:14"
   },
   "quotes": [
    {
@@ -541,7 +541,7 @@
     "inputs": {
      "source": "voice",
      "source_ref": "onboarding voice note",
-     "updated_at": "2026-10-31 14:15:17"
+     "updated_at": "2026-11-04 06:22:14"
     },
     "status": "known",
     "value_text": null,
@@ -557,7 +557,7 @@
     "inputs": {
      "source": "typed",
      "source_ref": "onboarding",
-     "updated_at": "2026-10-31 14:15:17"
+     "updated_at": "2026-11-04 06:22:14"
     },
     "status": "known",
     "value_text": null,
@@ -573,7 +573,7 @@
     "inputs": {
      "source": "document",
      "source_ref": "passbook photo",
-     "updated_at": "2026-10-31 14:15:17"
+     "updated_at": "2026-11-04 06:22:14"
     },
     "status": "known",
     "value_text": null,
@@ -944,6 +944,27 @@
     "What do I get if I stop after 3 years?"
    ]
   },
+  "documents": [
+   {
+    "id": 1,
+    "family_id": 1,
+    "case_id": 7,
+    "filename": "kanakavalli_brochure.pdf",
+    "sha256": "50c794d90cb4a3202934299125018e273a839129d4d995faa8bffe321cebed5e",
+    "doc_type": "insurance_offer",
+    "times_seen": 3,
+    "first_seen": "2026-11-04 06:22:14",
+    "last_seen": "2026-11-04 06:22:14",
+    "terms": {
+     "premium": "\u20b950,000",
+     "pay_years": "15 years",
+     "policy_years": "15 years",
+     "sum_assured": "\u20b97,50,000",
+     "maturity_low": "\u20b910,20,000",
+     "maturity_high": "\u20b915,00,000"
+    }
+   }
+  ],
   "spoken_lines": [
    {
     "id": 20,
@@ -990,7 +1011,7 @@
     "ms": 0.0,
     "outcome": "ok",
     "detail": {
-     "request_id": "9aa8edda5faa4cfc",
+     "request_id": "c6708d5c3cac4468",
      "provider": "local"
     }
    },
@@ -998,7 +1019,7 @@
     "id": 57,
     "case_id": 7,
     "step": "ingest",
-    "ms": 16.1,
+    "ms": 17.2,
     "outcome": "ok",
     "detail": {
      "pages": 3,
@@ -1010,7 +1031,7 @@
     "id": 58,
     "case_id": 7,
     "step": "scam_rules",
-    "ms": 0.2,
+    "ms": 0.3,
     "outcome": "ok",
     "detail": {
      "signals": []
@@ -1020,7 +1041,7 @@
     "id": 59,
     "case_id": 7,
     "step": "case_builder",
-    "ms": 0.2,
+    "ms": 0.1,
     "outcome": "ok",
     "detail": {
      "case_type": "insurance_offer",
@@ -1037,7 +1058,7 @@
     "id": 60,
     "case_id": 7,
     "step": "verify_terms",
-    "ms": 2.3,
+    "ms": 2.1,
     "outcome": "ok",
     "detail": {
      "unverified": [],
@@ -1055,7 +1076,7 @@
     "id": 61,
     "case_id": 7,
     "step": "compute",
-    "ms": 1.1,
+    "ms": 0.9,
     "outcome": "ok",
     "detail": {
      "facts": [
@@ -1126,7 +1147,7 @@
     "id": 63,
     "case_id": 7,
     "step": "council",
-    "ms": 0.3,
+    "ms": 0.2,
     "outcome": "failed",
     "detail": {
      "agents": [
@@ -1175,7 +1196,7 @@
     "id": 66,
     "case_id": 7,
     "step": "explainer",
-    "ms": 1.5,
+    "ms": 1.6,
     "outcome": "ok",
     "detail": {
      "rewrite_used": true,
@@ -1505,7 +1526,7 @@
    "llm_calls": 4,
    "provider": "local",
    "local_fallback": false,
-   "request_id": "9aa8edda5faa4cfc",
+   "request_id": "c6708d5c3cac4468",
    "language": "en",
    "short_answer": {
     "text": "Do not sign yet: this plan earns less than a fixed deposit, and the 15 lakh rupees is not guaranteed.",

@@ -118,8 +118,15 @@ class HealthInfo {
   HealthInfo(this.version, this.provider, this.model, this.stt, this.cache, this.auth, this.spend);
   factory HealthInfo.from(Map<String, dynamic> j) {
     final p = obj(j['provider']);
-    return HealthInfo(str(j['version'], '?'), str(p['name'], '?'), str(p['model'], '?'), str(p['stt']),
-        boolean(p['cache']), boolean(p['auth']), obj(p['spend_guard']));
+    return HealthInfo(
+      str(j['version'], '?'),
+      str(p['name'], '?'),
+      str(p['model'], '?'),
+      str(p['stt']),
+      boolean(p['cache']),
+      boolean(p['auth']),
+      obj(p['spend_guard']),
+    );
   }
 }
 
@@ -136,8 +143,32 @@ class FamilyItem {
   final String kind, name, frequency, source;
   final double amount;
   FamilyItem(this.id, this.kind, this.name, this.amount, this.frequency, this.source);
-  factory FamilyItem.from(Map<String, dynamic> j) => FamilyItem(integer(j['id']), str(j['kind'], 'other'),
-      str(j['name']), number(j['amount']) ?? 0, str(j['frequency'], 'monthly'), str(j['source'], 'typed'));
+  factory FamilyItem.from(Map<String, dynamic> j) => FamilyItem(
+    integer(j['id']),
+    str(j['kind'], 'other'),
+    str(j['name']),
+    number(j['amount']) ?? 0,
+    str(j['frequency'], 'monthly'),
+    str(j['source'], 'typed'),
+  );
+}
+
+/// A paper the family showed, with the category the server gave it.
+class Document {
+  final String filename, docType;
+  final int timesSeen;
+  Document(this.filename, this.docType, this.timesSeen);
+  factory Document.from(Map<String, dynamic> j) =>
+      Document(str(j['filename']), str(j['doc_type'], 'unknown'), integer(j['times_seen'], 1));
+  String get typeLabel => switch (docType) {
+    'insurance_offer' || 'ulip' => 'Insurance',
+    'loan_offer' => 'Loan',
+    'stock_tip' || 'shares' || 'ipo' => 'Share tip',
+    'sip_or_fund_question' => 'Savings',
+    'chit_fund' => 'Chit fund',
+    'scam_or_payment_request' => 'Scam warning',
+    _ => 'Not sure yet',
+  };
 }
 
 /// A value or item the server read from what the user said / typed / showed, waiting for confirmation.
@@ -158,36 +189,47 @@ class Proposal {
   final String heard;
   Proposal(this.values, this.heard);
   factory Proposal.from(Map<String, dynamic> j) => Proposal([
-        ...objs(j['values']).map((v) => Proposed(false, v)),
-        ...objs(j['items']).map((v) => Proposed(true, v)),
-      ], str(j['heard']));
+    ...objs(j['values']).map((v) => Proposed(false, v)),
+    ...objs(j['items']).map((v) => Proposed(true, v)),
+  ], str(j['heard']));
 }
 
 class Alert {
   final int id, caseId;
   final String status, message, colour, sentence, caseType, note; // note = the guardian's note for Amma
   final List<Map<String, dynamic>> keyFacts, agentLines;
-  Alert(this.id, this.caseId, this.status, this.message, this.colour, this.sentence, this.caseType, this.note,
-      this.keyFacts, this.agentLines);
+  Alert(
+    this.id,
+    this.caseId,
+    this.status,
+    this.message,
+    this.colour,
+    this.sentence,
+    this.caseType,
+    this.note,
+    this.keyFacts,
+    this.agentLines,
+  );
   factory Alert.from(Map<String, dynamic> j) => Alert(
-      integer(j['id']),
-      integer(j['case_id']),
-      str(j['status'], 'new'),
-      str(j['note']),
-      str(j['colour']),
-      str(j['sentence']),
-      str(j['case_type']),
-      str(j['guardian_note']),
-      objs(j['key_facts']),
-      objs(j['agent_lines']));
+    integer(j['id']),
+    integer(j['case_id']),
+    str(j['status'], 'new'),
+    str(j['note']),
+    str(j['colour']),
+    str(j['sentence']),
+    str(j['case_type']),
+    str(j['guardian_note']),
+    objs(j['key_facts']),
+    objs(j['agent_lines']),
+  );
 }
 
 String fieldLabel(String field) => switch (field) {
-      'monthly_income' => 'Income each month',
-      'monthly_expenses' => 'Household spending each month',
-      'savings' => 'Savings',
-      _ => field.replaceAll('_', ' '),
-    };
+  'monthly_income' => 'Income each month',
+  'monthly_expenses' => 'Household spending each month',
+  'savings' => 'Savings',
+  _ => field.replaceAll('_', ' '),
+};
 
 /// ₹ with Indian grouping: 1234567 -> ₹12,34,567.
 String inr(double? v) {

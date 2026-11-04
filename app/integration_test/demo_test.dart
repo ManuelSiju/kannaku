@@ -28,7 +28,7 @@ void main() {
     await tapAndSettle(tester, find.text('Start'));
     await waitFor(tester, find.text('Skip all'));
     await tapAndSettle(tester, find.text('Skip all'));
-    await waitFor(tester, find.text('Hold and talk'));
+    await waitFor(tester, talkHint);
 
     log('Home: attach the brochure PDF and type the endowment question');
     await tapAndSettle(tester, find.byTooltip('Show a paper or photo'));
@@ -41,25 +41,23 @@ void main() {
     await waitFor(tester, find.text('Checking'));
     await waitFor(tester, find.byWidgetPredicate((w) => w is Text && stepWords.values.contains(w.data)));
 
-    log('Verdict: red; the council opens and is spoken through the TTS fake');
-    await waitFor(tester, find.text('The council'), timeout: const Duration(seconds: 180));
+    log('Verdict: red; a private question stays on the screen; the council is played on request (TTS fake)');
+    await waitFor(tester, find.text("Alfii's answer"), timeout: const Duration(seconds: 180));
     final first = casesOf(tester).chat.last.result!;
     expect(first.colour, 'red');
     expect(first.council, isNotEmpty);
+    expect(find.text('Stop'), findsOneWidget);
+    await tapAndSettle(tester, find.text('Hear the council'));
     await waitFor(tester, find.text('Skip to Alfii'));
-    expect(FakeSpeaker.said.where((s) => !s.startsWith('alfii: Let me')).length, greaterThanOrEqualTo(first.council.length));
+    expect(FakeSpeaker.said.length, greaterThanOrEqualTo(first.council.length));
     await back(tester);
     await waitFor(tester, find.text("Alfii's answer"));
-    expect(find.text('Stop'), findsOneWidget);
 
     log('Why: numbers with their sources');
     await tapAndSettle(tester, find.text('Why?'));
     await waitFor(tester, find.textContaining('Brochure page'));
-    await back(tester);
-    await waitFor(tester, find.text("Alfii's answer"));
 
     log('Follow-up on the same case');
-    await tester.ensureVisible(find.byKey(const Key('followup_field')));
     await typeInto(tester, find.byKey(const Key('followup_field')), 'What if I pay for 10 years?');
     await tapAndSettle(tester, find.byKey(const Key('followup_send')));
     await waitFor(tester, find.text('Checking'));
@@ -70,47 +68,40 @@ void main() {
     expect(second.status, AskStatus.done);
     expect(second.caseId, first.caseId, reason: 'the follow-up continues the same case');
     log('follow-up verdict: ${second.result!.colour} — ${second.result!.shortAnswer}');
-    if (second.result!.council.isNotEmpty) {
-      await waitFor(tester, find.text('Skip to Alfii')); // the council opens by itself
-      await back(tester);
-    }
-    await waitFor(tester, find.text("Alfii's answer"));
     await back(tester);
-    await waitFor(tester, find.text('Hold and talk'));
+    await waitFor(tester, talkHint);
 
     log('My details: type a value -> Confirm -> saved');
-    await tapAndSettle(tester, find.byTooltip('My details'));
-    await waitFor(tester, find.text('Type it'));
+    await tapAndSettle(tester, find.byKey(const Key('tab_details')));
+    await waitFor(tester, find.text('kanakavalli_brochure.pdf'));
+    expect(find.text('Insurance'), findsOneWidget, reason: 'the paper keeps its category');
     await tapAndSettle(tester, find.text('Type it'));
     await typeInto(tester, find.byType(TextField).last, 'My pension is 47,500 a month.');
     await tapAndSettle(tester, find.text('OK'));
     await waitFor(tester, find.text('Is this right?'));
     await tapAndSettle(tester, find.textContaining('Save 1'));
     await waitFor(tester, find.text('₹47,500'));
-    await back(tester);
-    await waitFor(tester, find.text('Hold and talk'));
 
     log('Guardian view: the alert, then a note for Amma');
-    await tapAndSettle(tester, find.byTooltip('Settings'));
-    await tapAndSettle(tester, find.text('Guardian view'));
-    await back(tester);
+    await tapAndSettle(tester, find.byKey(const Key('tab_settings')));
+    await tapSwitch(tester, find.byKey(const Key('guardian_switch')));
+    await tapAndSettle(tester, find.byKey(const Key('tab_chat')));
     await waitFor(tester, find.text('Note for Amma'));
-    expect(find.text('Mark handled'), findsWidgets);
     await tapAndSettle(tester, find.text('Note for Amma').first);
     await typeInto(tester, find.byType(TextField).last, 'Please wait for me before you sign. I will call tonight.');
     await tapAndSettle(tester, find.text('Save'));
     await waitFor(tester, find.textContaining('Your note: Please wait'));
 
     log('Back to Amma: Home shows the note');
-    await tapAndSettle(tester, find.byTooltip('Settings'));
-    await tapAndSettle(tester, find.text('Guardian view'));
-    await back(tester);
+    await tapAndSettle(tester, find.byKey(const Key('tab_settings')));
+    await tapSwitch(tester, find.byKey(const Key('guardian_switch')));
+    await tapAndSettle(tester, find.byKey(const Key('tab_chat')));
     await waitFor(tester, find.text('A note from Arun'));
 
     for (final (dy, expected) in const [(140.0, 'full'), (-140.0, 'discreet')]) {
       log('Hold and talk, slide ${dy > 0 ? 'down (out loud)' : 'up (private)'}, release');
-      await waitFor(tester, find.text('Hold and talk'));
-      final gesture = await tester.startGesture(tester.getCenter(find.text('Hold and talk')));
+      await waitFor(tester, talkHint);
+      final gesture = await tester.startGesture(tester.getCenter(find.byKey(const ValueKey('talk_button'))));
       await Future<void>.delayed(const Duration(milliseconds: 900));
       await tester.pump(const Duration(milliseconds: 100));
       await gesture.moveBy(Offset(0, dy / 2));
@@ -119,12 +110,15 @@ void main() {
       await tester.pump(const Duration(milliseconds: 100));
       await gesture.up();
       await waitFor(tester, find.text('Checking'));
-      await waitFor(tester, find.byWidgetPredicate((w) => w is Text && (w.data == "Alfii's answer" || w.data == 'The council')),
-          timeout: const Duration(seconds: 180));
+      await waitFor(
+        tester,
+        find.byWidgetPredicate((w) => w is Text && (w.data == "Alfii's answer" || w.data == 'The council')),
+        timeout: const Duration(seconds: 180),
+      );
       final r = casesOf(tester).chat.last.result!;
       expect(r.privacyMode, expected, reason: 'slide ${dy > 0 ? 'down' : 'up'}');
       log('privacy_mode=${r.privacyMode} verdict=${r.colour}');
-      while (find.text('Hold and talk').evaluate().isEmpty) {
+      while (talkHint.evaluate().isEmpty) {
         await back(tester);
         await tester.pump(const Duration(milliseconds: 500));
       }

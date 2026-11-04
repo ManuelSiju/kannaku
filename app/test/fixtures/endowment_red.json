@@ -278,7 +278,7 @@
   "llm_calls": 4,
   "provider": "local",
   "local_fallback": false,
-  "request_id": "1ae42e2045e048e3",
+  "request_id": "7ba0d5288068462d",
   "language": "en",
   "short_answer": {
    "text": "Please don't go ahead with this as it is.",
@@ -334,7 +334,7 @@
    "transcript": "An agent from the company says this plan is guaranteed to give 15 lakh. Should I take it?",
    "language": "en",
    "privacy_mode": "discreet",
-   "created_at": "2026-10-31 14:15:17"
+   "created_at": "2026-11-04 06:22:14"
   },
   "quotes": [
    {
@@ -539,7 +539,7 @@
     "inputs": {
      "source": "voice",
      "source_ref": "onboarding voice note",
-     "updated_at": "2026-10-31 14:15:17"
+     "updated_at": "2026-11-04 06:22:14"
     },
     "status": "known",
     "value_text": null,
@@ -555,7 +555,7 @@
     "inputs": {
      "source": "typed",
      "source_ref": "onboarding",
-     "updated_at": "2026-10-31 14:15:17"
+     "updated_at": "2026-11-04 06:22:14"
     },
     "status": "known",
     "value_text": null,
@@ -571,7 +571,7 @@
     "inputs": {
      "source": "document",
      "source_ref": "passbook photo",
-     "updated_at": "2026-10-31 14:15:17"
+     "updated_at": "2026-11-04 06:22:14"
     },
     "status": "known",
     "value_text": null,
@@ -1012,6 +1012,27 @@
     "What do I get if I stop after 3 years?"
    ]
   },
+  "documents": [
+   {
+    "id": 1,
+    "family_id": 1,
+    "case_id": 1,
+    "filename": "kanakavalli_brochure.pdf",
+    "sha256": "50c794d90cb4a3202934299125018e273a839129d4d995faa8bffe321cebed5e",
+    "doc_type": "insurance_offer",
+    "times_seen": 1,
+    "first_seen": "2026-11-04 06:22:14",
+    "last_seen": "2026-11-04 06:22:14",
+    "terms": {
+     "premium": "\u20b950,000",
+     "pay_years": "15 years",
+     "policy_years": "15 years",
+     "sum_assured": "\u20b97,50,000",
+     "maturity_low": "\u20b910,20,000",
+     "maturity_high": "\u20b915,00,000"
+    }
+   }
+  ],
   "spoken_lines": [
    {
     "id": 1,
@@ -1058,7 +1079,7 @@
     "ms": 0.0,
     "outcome": "ok",
     "detail": {
-     "request_id": "1ae42e2045e048e3",
+     "request_id": "7ba0d5288068462d",
      "provider": "local"
     }
    },
@@ -1066,7 +1087,7 @@
     "id": 2,
     "case_id": 1,
     "step": "ingest",
-    "ms": 37.7,
+    "ms": 41.4,
     "outcome": "ok",
     "detail": {
      "pages": 3,
@@ -1105,7 +1126,7 @@
     "id": 5,
     "case_id": 1,
     "step": "verify_terms",
-    "ms": 2.3,
+    "ms": 2.4,
     "outcome": "ok",
     "detail": {
      "unverified": [],
@@ -1123,7 +1144,7 @@
     "id": 6,
     "case_id": 1,
     "step": "compute",
-    "ms": 1.2,
+    "ms": 1.3,
     "outcome": "ok",
     "detail": {
      "facts": [
@@ -1194,7 +1215,7 @@
     "id": 8,
     "case_id": 1,
     "step": "council",
-    "ms": 1.6,
+    "ms": 1.7,
     "outcome": "ok",
     "detail": {
      "agents": [
@@ -1251,7 +1272,7 @@
     "id": 11,
     "case_id": 1,
     "step": "explainer",
-    "ms": 4.3,
+    "ms": 2.6,
     "outcome": "ok",
     "detail": {
      "rewrite_used": true,
@@ -1575,7 +1596,7 @@
    "llm_calls": 4,
    "provider": "local",
    "local_fallback": false,
-   "request_id": "1ae42e2045e048e3",
+   "request_id": "7ba0d5288068462d",
    "language": "en",
    "short_answer": {
     "text": "Please don't go ahead with this as it is.",

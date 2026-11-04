@@ -36,14 +36,14 @@ class ApiClient {
   static const uploadTimeout = Duration(seconds: 90);
 
   ApiClient({required String baseUrl, required this.token, required this.deviceId, http.Client? client})
-      : baseUrl = baseUrl.trim().replaceAll(RegExp(r'/+$'), ''),
-        _http = client ?? http.Client();
+    : baseUrl = baseUrl.trim().replaceAll(RegExp(r'/+$'), ''),
+      _http = client ?? http.Client();
 
   Map<String, String> get _headers => {
-        if (token.isNotEmpty) 'Authorization': 'Bearer $token',
-        'X-Device-ID': deviceId,
-        'Accept': 'application/json',
-      };
+    if (token.isNotEmpty) 'Authorization': 'Bearer $token',
+    'X-Device-ID': deviceId,
+    'Accept': 'application/json',
+  };
 
   Uri _u(String path, [Map<String, String>? q]) => Uri.parse('$baseUrl$path').replace(queryParameters: q);
 
@@ -73,8 +73,11 @@ class ApiClient {
     }
     if (r.statusCode >= 200 && r.statusCode < 300) {
       if (body == null && r.body.isNotEmpty) {
-        throw ApiException('bad_response', 'The server sent an answer I could not read. Please try again.',
-            status: r.statusCode);
+        throw ApiException(
+          'bad_response',
+          'The server sent an answer I could not read. Please try again.',
+          status: r.statusCode,
+        );
       }
       return body;
     }
@@ -97,15 +100,22 @@ class ApiClient {
       _send(() => _http.get(_u(path, query), headers: _headers), timeout);
 
   Future<dynamic> postJson(String path, Object body, {Duration timeout = shortTimeout}) => _send(
-      () => _http.post(_u(path), headers: {..._headers, 'Content-Type': 'application/json'}, body: jsonEncode(body)),
-      timeout);
+    () => _http.post(_u(path), headers: {..._headers, 'Content-Type': 'application/json'}, body: jsonEncode(body)),
+    timeout,
+  );
 
   Future<dynamic> patchJson(String path, Object body) => _send(
-      () => _http.patch(_u(path), headers: {..._headers, 'Content-Type': 'application/json'}, body: jsonEncode(body)),
-      shortTimeout);
+    () => _http.patch(_u(path), headers: {..._headers, 'Content-Type': 'application/json'}, body: jsonEncode(body)),
+    shortTimeout,
+  );
 
-  Future<dynamic> postForm(String path, Map<String, String> fields,
-      {List<Upload> files = const [], Map<String, String> headers = const {}, Duration timeout = uploadTimeout}) {
+  Future<dynamic> postForm(
+    String path,
+    Map<String, String> fields, {
+    List<Upload> files = const [],
+    Map<String, String> headers = const {},
+    Duration timeout = uploadTimeout,
+  }) {
     return _send(() async {
       final req = http.MultipartRequest('POST', _u(path))
         ..headers.addAll({..._headers, ...headers})
@@ -140,20 +150,22 @@ class ApiClient {
     required String idempotencyKey,
     int? caseId,
   }) async {
-    final body = obj(await postForm(
-      '/v1/cases',
-      {
-        'family_id': '$familyId',
-        if (text != null && text.trim().isNotEmpty) 'text': text.trim(),
-        'wait': 'false',
-        'earphones': '$earphones',
-        'user_says_alone': '$outLoud',
-        if (caseId != null) 'case_id': '$caseId',
-      },
-      files: [?audio, ...files],
-      headers: {'Idempotency-Key': idempotencyKey},
-      timeout: askTimeout,
-    ));
+    final body = obj(
+      await postForm(
+        '/v1/cases',
+        {
+          'family_id': '$familyId',
+          if (text != null && text.trim().isNotEmpty) 'text': text.trim(),
+          'wait': 'false',
+          'earphones': '$earphones',
+          'user_says_alone': '$outLoud',
+          if (caseId != null) 'case_id': '$caseId',
+        },
+        files: [?audio, ...files],
+        headers: {'Idempotency-Key': idempotencyKey},
+        timeout: askTimeout,
+      ),
+    );
     if (body.containsKey('case_id') && body['status'] == null && body['verdict'] != null) {
       return integer(body['case_id']); // a replay of a finished case
     }
@@ -202,15 +214,23 @@ class ApiClient {
   }
 
   Future<Proposal> extract(int familyId, {String? text, String? field, Upload? audio, Upload? file}) async =>
-      Proposal.from(obj(await postForm('/v1/families/$familyId/profile/extract', {
-        'text': ?text,
-        'field': ?field,
-      }, files: [?audio, ?file])));
+      Proposal.from(
+        obj(
+          await postForm(
+            '/v1/families/$familyId/profile/extract',
+            {'text': ?text, 'field': ?field},
+            files: [?audio, ?file],
+          ),
+        ),
+      );
 
   Future<void> confirm(int familyId, List<Proposed> chosen) => postJson('/v1/families/$familyId/profile/confirm', {
-        'values': [for (final p in chosen.where((p) => !p.isItem)) p.confirmed()],
-        'items': [for (final p in chosen.where((p) => p.isItem)) p.confirmed()],
-      });
+    'values': [for (final p in chosen.where((p) => !p.isItem)) p.confirmed()],
+    'items': [for (final p in chosen.where((p) => p.isItem)) p.confirmed()],
+  });
+
+  Future<List<Document>> documents(int familyId) async =>
+      objs(obj(await get('/v1/families/$familyId/documents'))['documents']).map(Document.from).toList();
 
   /// The guardian's notes for Amma, newest first: [{from, note, at, case_id}].
   Future<List<Map<String, dynamic>>> notes(int familyId) async => objs(await get('/v1/families/$familyId/notes'));

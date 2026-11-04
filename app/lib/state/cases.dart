@@ -25,7 +25,7 @@ class AskRequest {
   final bool outLoud;
   final int? caseId; // a follow-up continues this case (its documents still count)
   AskRequest({required this.text, this.audio, this.files = const [], this.outLoud = false, this.caseId, String? key})
-      : key = key ?? newKey();
+    : key = key ?? newKey();
 
   String get label {
     final bits = [
@@ -120,8 +120,10 @@ class CaseProvider extends ChangeNotifier {
 
   Future<void> _saveQueue() async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setStringList(
-        'ask_queue', [for (final q in _queue) if (q.toJson() != null) jsonEncode(q.toJson())]);
+    await prefs.setStringList('ask_queue', [
+      for (final q in _queue)
+        if (q.toJson() != null) jsonEncode(q.toJson()),
+    ]);
   }
 
   Future<void> _flush() async {
@@ -129,11 +131,14 @@ class CaseProvider extends ChangeNotifier {
     _queue.clear();
     await _saveQueue();
     for (final req in pending) {
-      final entry = chat.firstWhere((e) => e.request.key == req.key, orElse: () {
-        final e = ChatEntry(req);
-        chat.add(e);
-        return e;
-      });
+      final entry = chat.firstWhere(
+        (e) => e.request.key == req.key,
+        orElse: () {
+          final e = ChatEntry(req);
+          chat.add(e);
+          return e;
+        },
+      );
       await _run(entry);
     }
   }
@@ -217,11 +222,14 @@ class CaseProvider extends ChangeNotifier {
           case 'step_started':
             steps.add(StepInfo(ev.step, 'running'));
           case 'step_finished':
-            final s = steps.lastWhere((s) => s.name == ev.step, orElse: () {
-              final n = StepInfo(ev.step, 'running');
-              steps.add(n);
-              return n;
-            });
+            final s = steps.lastWhere(
+              (s) => s.name == ev.step,
+              orElse: () {
+                final n = StepInfo(ev.step, 'running');
+                steps.add(n);
+                return n;
+              },
+            );
             s.state = str(ev.data['outcome'], 'ok');
           case 'alfii_opener':
             opener = str(ev.data['text']);

@@ -18,10 +18,10 @@ const voices = <String, Voice>{
 };
 
 String ttsLocale(String lang) => switch (lang) {
-      'ml' => 'ml-IN',
-      'hi' => 'hi-IN',
-      _ => 'en-IN',
-    };
+  'ml' => 'ml-IN',
+  'hi' => 'hi-IN',
+  _ => 'en-IN',
+};
 
 /// Text-to-speech. Tests replace [Speaker.create] with a fake that records what was said.
 class Speaker {
@@ -77,8 +77,10 @@ class Recorder {
       if (!await _rec.hasPermission()) return false;
       final dir = await getTemporaryDirectory();
       _path = '${dir.path}/ask_${DateTime.now().millisecondsSinceEpoch}.m4a';
-      await _rec.start(const RecordConfig(encoder: AudioEncoder.aacLc, sampleRate: 16000, numChannels: 1),
-          path: _path!);
+      await _rec.start(
+        const RecordConfig(encoder: AudioEncoder.aacLc, sampleRate: 16000, numChannels: 1),
+        path: _path!,
+      );
       return true;
     } catch (_) {
       return false;

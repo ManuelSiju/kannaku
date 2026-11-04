@@ -8,13 +8,13 @@ make app-test           # flutter analyze + flutter test
 make app-release        # versioned release APK in dist/ (the token is NOT baked in: type it in Settings)
 ```
 
-Screens: Welcome (language) → Onboarding (5 skippable questions, every number read back) → Home (chat, camera,
-text, **Hold and talk**: slide up = Private, down = Out loud, sideways = cancel) → Working (live steps from the
-server, "Alfii, just tell me") → Verdict (colour + icon + word, on-screen-only notes, "Ask him this", Help me say no)
-→ Council (one voice per speaker, pause, speed, Skip to Alfii) → Why (numbers with sources). Long-press the
-"Kanakku" title for **Under the hood**. My details (Say it / Show paper / Type it → Confirm). Settings: server
-address, access token (secure storage), Test connection (provider + server version), app version, language,
-earphones, Guardian view (alerts).
+UI: `shadcn_ui` components with zinc + emerald tokens (`lib/theme.dart`, `lib/widgets/common.dart`), Lucide icons,
+bundled Noto / Baloo fonts, `flutter_animate` (off when the phone asks for less motion).
+
+Tabs: Chat (council strip, bubbles, camera, text, mic), Verdict (latest answer), My Details (money, items, papers with
+their category), Settings (Scan code, address, token, Test connection, versions, language, earphones, Guardian view).
+Hold the mic: full-screen overlay, slide up = Private, down = Out loud, sideways = cancel. Private answers stay silent;
+out loud or with earphones the council plays by itself. Long-press "Kanakku" for **Under the hood**.
 
 Reliability: every call has a timeout and a friendly message with Retry; no connection → the question is queued
 ("I'll check this when the internet is back") and sent when the network returns; a resend uses the same

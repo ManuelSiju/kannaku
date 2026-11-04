@@ -136,7 +136,8 @@ def main() -> int:
     for want in (r"App version", r"Server version", r"Model provider"):
         row = p.find(want, nodes)
         step(f"  {p.label(row) if row else want + ': not visible'}")
-    p.back()
+    p.hide_keyboard()
+    p.tap_text(r"^Chat$")
     p.wait(r"Hold and talk", 20)
     if a.connect_only:
         return 0
@@ -144,9 +145,7 @@ def main() -> int:
     p.hide_keyboard()
     p.tap_text(r"^Send$")
     step("question sent")
-    answer = p.wait(r"Alfii's answer|The council|Stop|Careful|Looks fine|Retry", 240)
-    if "The council" in p.label(answer) or p.find(r"Skip to Alfii"):
-        p.back()
+    p.wait(r"Alfii's answer|Retry", 240)
     verdict = p.wait(r"(^|Verdict: )(Stop|Careful|Looks fine)\b|^Retry", 30)
     word = re.search(r"Stop|Careful|Looks fine|Retry", p.label(verdict)).group(0)  # type: ignore[union-attr]
     step(f"answer on the phone: {word}")

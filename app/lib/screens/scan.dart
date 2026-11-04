@@ -27,13 +27,15 @@ class _ScanScreenState extends State<ScanScreen> {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-        appBar: AppBar(title: const Text('Scan the code')),
-        body: Column(children: [
-          const Padding(
-            padding: EdgeInsets.all(16),
-            child: Text('Point the phone at the square on the laptop screen.', style: TextStyle(fontSize: 18)),
-          ),
-          Expanded(child: MobileScanner(onDetect: _found)),
-        ]),
-      );
+    appBar: AppBar(title: const Text('Scan the code')),
+    body: Column(
+      children: [
+        const Padding(
+          padding: EdgeInsets.all(16),
+          child: Text('Point the phone at the square on the laptop screen.', style: TextStyle(fontSize: 18)),
+        ),
+        Expanded(child: MobileScanner(onDetect: _found)),
+      ],
+    ),
+  );
 }

@@ -158,7 +158,7 @@
   "llm_calls": 4,
   "provider": "local",
   "local_fallback": false,
-  "request_id": "0784f0b6aa574798",
+  "request_id": "0f8c5ef8d29b409b",
   "language": "en",
   "short_answer": {
    "text": "Please don't go ahead with this as it is.",
@@ -210,7 +210,7 @@
    "transcript": "I got this message: ZEPHYRX LTD - BIG NEWS COMING! Target Rs. 180 in 2 weeks. Upper circuit guaranteed. Should I put 1 lakh in it?",
    "language": "en",
    "privacy_mode": "discreet",
-   "created_at": "2026-10-31 14:15:17"
+   "created_at": "2026-11-04 06:22:14"
   },
   "quotes": [
    {
@@ -260,7 +260,7 @@
     "inputs": {
      "source": "voice",
      "source_ref": "onboarding voice note",
-     "updated_at": "2026-10-31 14:15:17"
+     "updated_at": "2026-11-04 06:22:14"
     },
     "status": "known",
     "value_text": null,
@@ -276,7 +276,7 @@
     "inputs": {
      "source": "typed",
      "source_ref": "onboarding",
-     "updated_at": "2026-10-31 14:15:17"
+     "updated_at": "2026-11-04 06:22:14"
     },
     "status": "known",
     "value_text": null,
@@ -292,7 +292,7 @@
     "inputs": {
      "source": "document",
      "source_ref": "passbook photo",
-     "updated_at": "2026-10-31 14:15:17"
+     "updated_at": "2026-11-04 06:22:14"
     },
     "status": "known",
     "value_text": null,
@@ -558,6 +558,7 @@
     "Who sent this tip, and does that person own the stock?"
    ]
   },
+  "documents": [],
   "spoken_lines": [
    {
     "id": 12,
@@ -604,7 +605,7 @@
     "ms": 0.0,
     "outcome": "ok",
     "detail": {
-     "request_id": "0784f0b6aa574798",
+     "request_id": "0f8c5ef8d29b409b",
      "provider": "local"
     }
    },
@@ -624,7 +625,7 @@
     "id": 39,
     "case_id": 4,
     "step": "scam_rules",
-    "ms": 0.1,
+    "ms": 0.0,
     "outcome": "ok",
     "detail": {
      "signals": []
@@ -634,7 +635,7 @@
     "id": 40,
     "case_id": 4,
     "step": "case_builder",
-    "ms": 0.1,
+    "ms": 0.0,
     "outcome": "ok",
     "detail": {
      "case_type": "stock_tip",
@@ -664,7 +665,7 @@
     "id": 42,
     "case_id": 4,
     "step": "compute",
-    "ms": 1.0,
+    "ms": 1.2,
     "outcome": "ok",
     "detail": {
      "facts": [
@@ -720,7 +721,7 @@
     "id": 44,
     "case_id": 4,
     "step": "council",
-    "ms": 0.5,
+    "ms": 0.6,
     "outcome": "ok",
     "detail": {
      "agents": [
@@ -769,7 +770,7 @@
     "id": 47,
     "case_id": 4,
     "step": "explainer",
-    "ms": 1.0,
+    "ms": 1.2,
     "outcome": "ok",
     "detail": {
      "rewrite_used": true,
@@ -968,7 +969,7 @@
    "llm_calls": 4,
    "provider": "local",
    "local_fallback": false,
-   "request_id": "0784f0b6aa574798",
+   "request_id": "0f8c5ef8d29b409b",
    "language": "en",
    "short_answer": {
     "text": "Please don't go ahead with this as it is.",

@@ -10,14 +10,18 @@ void main() {
   test('a case result with missing and wrong-typed fields still parses', () {
     final r = CaseResult.from({
       'case_id': '7',
-      'verdict': {'colour': 'purple', 'sentence': 5, 'questions': ['Ask this?', null]},
+      'verdict': {
+        'colour': 'purple',
+        'sentence': 5,
+        'questions': ['Ask this?', null],
+      },
       'council': 'not a list',
       'spoken_lines': [
-        {'speaker': 'vick', 'text': 'It rose 222 percent.'}
+        {'speaker': 'vick', 'text': 'It rose 222 percent.'},
       ],
       'screen_details': [
         {'id': 'note.x', 'label': 'Only for you', 'kind': 'personal'},
-        {'id': 'term.premium', 'label': 'Premium', 'value': '₹50,000', 'source': 'Brochure page 1 · read twice'}
+        {'id': 'term.premium', 'label': 'Premium', 'value': '₹50,000', 'source': 'Brochure page 1 · read twice'},
       ],
     });
     expect(r.caseId, 7);
@@ -39,7 +43,11 @@ void main() {
   });
 
   test('the local fallback badge is read', () {
-    final r = CaseResult.from({'provider': 'local fallback', 'local_fallback': true, 'verdict': {'colour': 'red'}});
+    final r = CaseResult.from({
+      'provider': 'local fallback',
+      'local_fallback': true,
+      'verdict': {'colour': 'red'},
+    });
     expect(r.localFallback, isTrue);
     expect(r.colour, 'red');
   });
@@ -48,7 +56,13 @@ void main() {
     final l = ConnectLink.parse('kanakku://connect?url=http%3A%2F%2F192.168.1.10%3A8013&token=abc-_1');
     expect(l?.url, 'http://192.168.1.10:8013');
     expect(l?.token, 'abc-_1');
-    for (final bad in [null, '', 'https://example.com', 'kanakku://connect?url=x&token=y', 'kanakku://connect?url=http%3A%2F%2Fa']) {
+    for (final bad in [
+      null,
+      '',
+      'https://example.com',
+      'kanakku://connect?url=x&token=y',
+      'kanakku://connect?url=http%3A%2F%2Fa',
+    ]) {
       expect(ConnectLink.parse(bad), isNull);
     }
   });
@@ -61,14 +75,16 @@ void main() {
   });
 
   group('standard error format', () {
-    http.Response resp(int status, Object body) => http.Response(jsonEncode(body), status,
-        headers: {'content-type': 'application/json', 'x-request-id': 'rid1'});
+    http.Response resp(int status, Object body) =>
+        http.Response(jsonEncode(body), status, headers: {'content-type': 'application/json', 'x-request-id': 'rid1'});
 
     test('413 keeps the server message and request id', () {
       try {
-        ApiClient.decode(resp(413, {
-          'error': {'code': 'file_too_large', 'message': 'p.png: 9.0 MB is over the 8 MB limit', 'request_id': 'abc'}
-        }));
+        ApiClient.decode(
+          resp(413, {
+            'error': {'code': 'file_too_large', 'message': 'p.png: 9.0 MB is over the 8 MB limit', 'request_id': 'abc'},
+          }),
+        );
         fail('should throw');
       } on ApiException catch (e) {
         expect(e.code, 'file_too_large');
@@ -78,15 +94,25 @@ void main() {
     });
 
     test('401 tells the user where the token goes', () {
-      expect(() => ApiClient.decode(resp(401, {'error': {'code': 'unauthorized', 'message': 'x'}})),
-          throwsA(isA<ApiException>().having((e) => e.friendly, 'friendly', contains('Settings'))));
+      expect(
+        () => ApiClient.decode(
+          resp(401, {
+            'error': {'code': 'unauthorized', 'message': 'x'},
+          }),
+        ),
+        throwsA(isA<ApiException>().having((e) => e.friendly, 'friendly', contains('Settings'))),
+      );
     });
 
     test('500 and garbage bodies never leak details', () {
-      expect(() => ApiClient.decode(http.Response('Traceback (most recent call last)', 500)),
-          throwsA(isA<ApiException>().having((e) => e.friendly, 'friendly', isNot(contains('Traceback')))));
-      expect(() => ApiClient.decode(http.Response('<html>', 200)),
-          throwsA(isA<ApiException>().having((e) => e.code, 'code', 'bad_response')));
+      expect(
+        () => ApiClient.decode(http.Response('Traceback (most recent call last)', 500)),
+        throwsA(isA<ApiException>().having((e) => e.friendly, 'friendly', isNot(contains('Traceback')))),
+      );
+      expect(
+        () => ApiClient.decode(http.Response('<html>', 200)),
+        throwsA(isA<ApiException>().having((e) => e.code, 'code', 'bad_response')),
+      );
     });
   });
 }

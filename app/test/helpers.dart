@@ -7,13 +7,13 @@ import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
+import 'package:kanakku/app.dart';
 import 'package:kanakku/core/api_client.dart';
 import 'package:kanakku/core/models.dart';
 import 'package:kanakku/core/speech.dart';
 import 'package:kanakku/state/cases.dart';
 import 'package:kanakku/state/profile.dart';
 import 'package:kanakku/state/settings.dart';
-import 'package:kanakku/theme.dart';
 import 'package:provider/provider.dart';
 
 /// Real server responses exported by `make app-fixtures` (server/scripts/export_app_fixtures.py).
@@ -62,44 +62,47 @@ class FakeSpeaker extends Speaker {
 
 /// A fake server answering from the fixtures; [caseFixture] is what GET /v1/cases/{id} returns.
 MockClient fakeServer({String caseFixture = 'endowment_red', bool hangCase = false}) => MockClient((req) async {
-      final p = req.url.path;
-      String body;
-      if (p.endsWith('/health')) {
-        body = jsonEncode(fixture('health'));
-      } else if (p.endsWith('/profile')) {
-        body = jsonEncode(fixture('profile'));
-      } else if (p.endsWith('/items')) {
-        body = jsonEncode(fixture('items'));
-      } else if (p.endsWith('/alerts')) {
-        body = jsonEncode(fixture('alerts'));
-      } else if (p.endsWith('/notes')) {
-        body = jsonEncode(fixture('notes'));
-      } else if (p.endsWith('/extract')) {
-        body = jsonEncode(fixture('proposal'));
-      } else if (p.endsWith('/events')) {
-        return http.Response(
-            [
-              'event: step_started\ndata: {"type":"step_started","step":"case_builder"}\n',
-              'event: step_finished\ndata: {"type":"step_finished","step":"case_builder","outcome":"ok"}\n',
-              'event: alfii_opener\ndata: {"type":"alfii_opener","text":"Let me ask Dani and Sankz."}\n',
-              'event: agent_called\ndata: {"type":"agent_called","agent":"dani"}\n',
-              'event: agent_called\ndata: {"type":"agent_called","agent":"sankz"}\n',
-              'event: step_started\ndata: {"type":"step_started","step":"council"}\n',
-              'event: done\ndata: {"type":"done"}\n',
-            ].join('\n'),
-            200);
-      } else if (req.method == 'POST' && p.endsWith('/cases')) {
-        body = jsonEncode({'case_id': 1, 'status': 'running'});
-        return http.Response(body, 202, headers: {'content-type': 'application/json'});
-      } else if (p.contains('/cases/')) {
-        if (hangCase) await Completer<void>().future;
-        final f = obj(fixture(caseFixture));
-        body = jsonEncode({...obj(f['bundle']), 'result': f['result']});
-      } else {
-        return http.Response('{"error":{"code":"not_found","message":"no route","request_id":"t"}}', 404);
-      }
-      return http.Response.bytes(utf8.encode(body), 200, headers: {'content-type': 'application/json; charset=utf-8'});
-    });
+  final p = req.url.path;
+  String body;
+  if (p.endsWith('/health')) {
+    body = jsonEncode(fixture('health'));
+  } else if (p.endsWith('/profile')) {
+    body = jsonEncode(fixture('profile'));
+  } else if (p.endsWith('/items')) {
+    body = jsonEncode(fixture('items'));
+  } else if (p.endsWith('/documents')) {
+    body = jsonEncode(fixture('documents'));
+  } else if (p.endsWith('/alerts')) {
+    body = jsonEncode(fixture('alerts'));
+  } else if (p.endsWith('/notes')) {
+    body = jsonEncode(fixture('notes'));
+  } else if (p.endsWith('/extract')) {
+    body = jsonEncode(fixture('proposal'));
+  } else if (p.endsWith('/events')) {
+    return http.Response(
+      [
+        'event: step_started\ndata: {"type":"step_started","step":"case_builder"}\n',
+        'event: step_finished\ndata: {"type":"step_finished","step":"case_builder","outcome":"ok"}\n',
+        'event: alfii_opener\ndata: {"type":"alfii_opener","text":"Let me ask Dani and Sankz."}\n',
+        'event: agent_called\ndata: {"type":"agent_called","agent":"dani"}\n',
+        'event: agent_called\ndata: {"type":"agent_called","agent":"sankz"}\n',
+        'event: step_started\ndata: {"type":"step_started","step":"council"}\n',
+        'event: done\ndata: {"type":"done"}\n',
+      ].join('\n'),
+      200,
+    );
+  } else if (req.method == 'POST' && p.endsWith('/cases')) {
+    body = jsonEncode({'case_id': 1, 'status': 'running'});
+    return http.Response(body, 202, headers: {'content-type': 'application/json'});
+  } else if (p.contains('/cases/')) {
+    if (hangCase) await Completer<void>().future;
+    final f = obj(fixture(caseFixture));
+    body = jsonEncode({...obj(f['bundle']), 'result': f['result']});
+  } else {
+    return http.Response('{"error":{"code":"not_found","message":"no route","request_id":"t"}}', 404);
+  }
+  return http.Response.bytes(utf8.encode(body), 200, headers: {'content-type': 'application/json; charset=utf-8'});
+});
 
 bool _fontsLoaded = false;
 
@@ -111,35 +114,44 @@ Future<void> loadFonts() async {
   for (final family in manifest) {
     final loader = FontLoader(family['family'] as String);
     for (final font in family['fonts'] as List) {
-      loader.addFont(rootBundle.load(font['asset'] as String));
+      loader.addFont(rootBundle.load(Uri.decodeFull(font['asset'] as String)));
     }
     await loader.load();
   }
 }
 
 /// Pumps [screen] at phone size (390x844 logical) with the providers the app uses.
-Future<FakeSettings> pumpScreen(WidgetTester tester, Widget screen,
-    {double textScale = 1.0, http.Client? client, String lang = 'en', CaseProvider? cases, bool settle = true}) async {
+Future<FakeSettings> pumpScreen(
+  WidgetTester tester,
+  Widget screen, {
+  double textScale = 1.0,
+  http.Client? client,
+  String lang = 'en',
+  CaseProvider? cases,
+  bool settle = true,
+}) async {
   await loadFonts();
   Speaker.create = FakeSpeaker.new;
   tester.view.physicalSize = const Size(780, 1688);
   tester.view.devicePixelRatio = 2.0;
   addTearDown(tester.view.reset);
   final settings = FakeSettings(client ?? fakeServer(), lang: lang);
-  await tester.pumpWidget(MultiProvider(
-    providers: [
-      ChangeNotifierProvider<SettingsProvider>.value(value: settings),
-      ChangeNotifierProvider<CaseProvider>.value(value: cases ?? CaseProvider(settings)),
-      ChangeNotifierProvider(create: (_) => ProfileProvider(settings)),
-    ],
-    child: MaterialApp(
-      debugShowCheckedModeBanner: false,
-      theme: buildTheme(),
-      builder: (context, child) =>
-          MediaQuery(data: MediaQuery.of(context).copyWith(textScaler: TextScaler.linear(textScale)), child: child!),
-      home: screen,
+  await tester.pumpWidget(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider<SettingsProvider>.value(value: settings),
+        ChangeNotifierProvider<CaseProvider>.value(value: cases ?? CaseProvider(settings)),
+        ChangeNotifierProvider(create: (_) => ProfileProvider(settings)),
+      ],
+      child: KanakkuFrame(
+        builder: (context, child) => MediaQuery(
+          data: MediaQuery.of(context).copyWith(textScaler: TextScaler.linear(textScale)),
+          child: child!,
+        ),
+        home: screen,
+      ),
     ),
-  ));
+  );
   if (settle) {
     await tester.pumpAndSettle();
   } else {
@@ -151,6 +163,17 @@ Future<FakeSettings> pumpScreen(WidgetTester tester, Widget screen,
 }
 
 /// Golden file name for a screen at a text scale, e.g. goldens/verdict_endowment_red@1.3.png.
+/// Scrolls the page until [f] is built and on screen (lists build lazily).
+Future<void> seen(WidgetTester tester, Finder f) async {
+  for (var i = 0; i < 40 && f.evaluate().isEmpty; i++) {
+    await tester.drag(find.byType(Scrollable).first, const Offset(0, -200));
+    await tester.pumpAndSettle();
+  }
+  expect(f, findsWidgets);
+  await tester.ensureVisible(f.first);
+  await tester.pumpAndSettle();
+}
+
 String golden(String name, double scale) => 'goldens/$name@$scale.png';
 
 /// An ApiClient-level upload for tests.

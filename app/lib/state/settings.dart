@@ -28,11 +28,16 @@ class SettingsProvider extends ChangeNotifier {
   double speechSpeed = 1.0;
   String appVersion = '';
   HealthInfo? server; // from the last successful connection test
+  bool outLoud = false; // the header pill; Private is the default and is not remembered between runs
+
+  void setOutLoud(bool v) {
+    outLoud = v;
+    notifyListeners();
+  }
 
   http.Client? httpClient; // tests inject a fake
   ApiClient? _api;
-  ApiClient get api =>
-      _api ??= ApiClient(baseUrl: serverUrl, token: token, deviceId: deviceId, client: httpClient);
+  ApiClient get api => _api ??= ApiClient(baseUrl: serverUrl, token: token, deviceId: deviceId, client: httpClient);
 
   Future<void> load() async {
     _prefs = await SharedPreferences.getInstance();

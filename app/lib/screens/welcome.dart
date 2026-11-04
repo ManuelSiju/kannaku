@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shadcn_ui/shadcn_ui.dart';
 
 import '../core/api_client.dart';
 import '../core/models.dart';
@@ -19,39 +20,49 @@ class WelcomeScreen extends StatelessWidget {
     final s = context.watch<SettingsProvider>();
     return Scaffold(
       body: SafeArea(
-        child: ListView(padding: const EdgeInsets.all(24), children: [
-          Align(
-            alignment: Alignment.topRight,
-            child: IconButton(
+        child: ListView(
+          padding: const EdgeInsets.all(24),
+          children: [
+            Align(
+              alignment: Alignment.topRight,
+              child: IconButton(
                 tooltip: 'Settings',
-                icon: const Icon(Icons.settings_outlined),
-                onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const SettingsScreen()))),
-          ),
-          const SizedBox(height: 20),
-          const Center(child: AgentAvatar('alfii', size: 110)),
-          const SizedBox(height: 20),
-          Text("Hello, I'm Alfii", textAlign: TextAlign.center, style: Theme.of(context).textTheme.headlineSmall),
-          const SizedBox(height: 8),
-          const Text('I check money offers with my friends Sankz, Dani and Vick, and tell you plainly.',
-              textAlign: TextAlign.center, style: TextStyle(fontSize: 18, color: K.muted)),
-          const SizedBox(height: 30),
-          const Text('Choose your language', textAlign: TextAlign.center, style: TextStyle(fontSize: 18)),
-          const SizedBox(height: 10),
-          for (final (code, label) in const [('ml', 'മലയാളം'), ('hi', 'हिन्दी'), ('en', 'English')])
-            Padding(
-              padding: const EdgeInsets.only(bottom: 10),
-              child: s.language == code
-                  ? FilledButton(onPressed: () {}, child: Text(label, style: const TextStyle(fontSize: 22)))
-                  : OutlinedButton(
-                      onPressed: () => s.set(language: code), child: Text(label, style: const TextStyle(fontSize: 22))),
+                icon: const Icon(LucideIcons.settings),
+                onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const SettingsScreen())),
+              ),
             ),
-          const SizedBox(height: 20),
-          FilledButton(
-            onPressed: () => Navigator.of(context)
-                .pushReplacement(MaterialPageRoute(builder: (_) => const OnboardingScreen())),
-            child: const Text('Start'),
-          ),
-        ]),
+            const SizedBox(height: 20),
+            const Center(child: AgentAvatar('alfii', size: 110)),
+            const SizedBox(height: 20),
+            Text("Hello, I'm Alfii", textAlign: TextAlign.center, style: Theme.of(context).textTheme.headlineSmall),
+            const SizedBox(height: 8),
+            const Text(
+              'I check money offers with my friends Sankz, Dani and Vick, and tell you plainly.',
+              textAlign: TextAlign.center,
+              style: TextStyle(fontSize: 18, color: K.muted),
+            ),
+            const SizedBox(height: 30),
+            const Text('Choose your language', textAlign: TextAlign.center, style: TextStyle(fontSize: 18)),
+            const SizedBox(height: 10),
+            for (final (code, label) in const [('ml', 'മലയാളം'), ('hi', 'हिन्दी'), ('en', 'English')])
+              Padding(
+                padding: const EdgeInsets.only(bottom: 10),
+                child: s.language == code
+                    ? KButton(label, icon: LucideIcons.check, onPressed: () {})
+                    : KButton(
+                        label,
+                        kind: 'outline',
+                        onPressed: () => s.set(language: code),
+                      ),
+              ),
+            const SizedBox(height: 20),
+            KButton(
+              'Start',
+              onPressed: () =>
+                  Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (_) => const OnboardingScreen())),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -129,10 +140,10 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     setState(() => _busy = true);
     try {
       final p = await context.read<ProfileProvider>().extract(
-            text: text,
-            field: q.field == 'items' ? null : q.field,
-            audio: audio == null ? null : Upload('audio', 'answer.m4a', audio, 'audio/mp4'),
-          );
+        text: text,
+        field: q.field == 'items' ? null : q.field,
+        audio: audio == null ? null : Upload('audio', 'answer.m4a', audio, 'audio/mp4'),
+      );
       if (!mounted) return;
       if (p.values.isEmpty) {
         toast(context, 'I did not catch an amount. Say it again or type it.');
@@ -180,65 +191,79 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text('${_i + 1} of ${_questions.length}'),
-        actions: [TextButton(onPressed: _finish, child: const Text('Skip all', style: TextStyle(fontSize: 17)))],
-      ),
-      body: ListView(padding: const EdgeInsets.all(24), children: [
-        LinearProgressIndicator(value: (_i + 1) / _questions.length, minHeight: 6),
-        const SizedBox(height: 24),
-        Row(children: [
-          const AgentAvatar('alfii', size: 52),
-          const SizedBox(width: 12),
-          Expanded(child: Text(q.question, style: Theme.of(context).textTheme.titleMedium)),
-        ]),
-        const SizedBox(height: 24),
-        if (_heard != null) ...[
-          Card(
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                for (final v in _heard!.values)
-                  Text('${v.readback}${v.uncertain ? '  ⚠' : ''}', style: const TextStyle(fontSize: 19)),
-                const SizedBox(height: 6),
-                const Text('Is that right?', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700)),
-              ]),
-            ),
+        actions: [
+          TextButton(
+            onPressed: _finish,
+            child: const Text('Skip all', style: TextStyle(fontSize: 17)),
           ),
-          const SizedBox(height: 12),
-          FilledButton(onPressed: _busy ? null : _yes, child: const Text('Yes')),
-          const SizedBox(height: 8),
-          OutlinedButton(
+        ],
+      ),
+      body: ListView(
+        padding: const EdgeInsets.all(24),
+        children: [
+          LinearProgressIndicator(value: (_i + 1) / _questions.length, minHeight: 6),
+          const SizedBox(height: 24),
+          Row(
+            children: [
+              const AgentAvatar('alfii', size: 52),
+              const SizedBox(width: 12),
+              Expanded(child: Text(q.question, style: Theme.of(context).textTheme.titleMedium)),
+            ],
+          ),
+          const SizedBox(height: 24),
+          if (_heard != null) ...[
+            Card(
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    for (final v in _heard!.values)
+                      Text('${v.readback}${v.uncertain ? '  ⚠' : ''}', style: const TextStyle(fontSize: 19)),
+                    const SizedBox(height: 6),
+                    const Text('Is that right?', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700)),
+                  ],
+                ),
+              ),
+            ),
+            const SizedBox(height: 12),
+            KButton('Yes', onPressed: _busy ? null : _yes),
+            const SizedBox(height: 8),
+            OutlinedButton(
               onPressed: _busy
                   ? null
                   : () {
                       setState(() => _heard = null);
                       _toggleRecord();
                     },
-              child: const Text('Say again')),
-          const SizedBox(height: 8),
-          OutlinedButton(onPressed: _busy ? null : () => setState(() => _heard = null), child: const Text('Type it')),
-        ] else ...[
-          TextField(
-            controller: _text,
-            style: const TextStyle(fontSize: 19),
-            decoration: InputDecoration(hintText: q.hint),
-            onSubmitted: (t) => _submit(text: t),
-          ),
-          const SizedBox(height: 12),
-          FilledButton(
-            onPressed: _busy ? null : () => _submit(text: _text.text),
-            child: _busy ? const CircularProgressIndicator() : const Text('Next'),
-          ),
-          const SizedBox(height: 10),
-          if (q.field != 'name')
-            OutlinedButton.icon(
-              onPressed: _busy ? null : _toggleRecord,
-              icon: Icon(_recording ? Icons.stop : Icons.mic),
-              label: Text(_recording ? 'Done talking' : 'Say it instead'),
+              child: const Text('Say again'),
             ),
-          const SizedBox(height: 10),
-          TextButton(onPressed: _next, child: const Text('Skip this question', style: TextStyle(fontSize: 17))),
+            const SizedBox(height: 8),
+            OutlinedButton(onPressed: _busy ? null : () => setState(() => _heard = null), child: const Text('Type it')),
+          ] else ...[
+            TextField(
+              controller: _text,
+              style: const TextStyle(fontSize: 19),
+              decoration: InputDecoration(hintText: q.hint),
+              onSubmitted: (t) => _submit(text: t),
+            ),
+            const SizedBox(height: 12),
+            KButton(_busy ? 'Checking…' : 'Next', onPressed: _busy ? null : () => _submit(text: _text.text)),
+            const SizedBox(height: 10),
+            if (q.field != 'name')
+              OutlinedButton.icon(
+                onPressed: _busy ? null : _toggleRecord,
+                icon: Icon(_recording ? LucideIcons.square : LucideIcons.mic),
+                label: Text(_recording ? 'Done talking' : 'Say it instead'),
+              ),
+            const SizedBox(height: 10),
+            TextButton(
+              onPressed: _next,
+              child: const Text('Skip this question', style: TextStyle(fontSize: 17)),
+            ),
+          ],
         ],
-      ]),
+      ),
     );
   }
 }

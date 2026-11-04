@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shadcn_ui/shadcn_ui.dart';
 
 import '../core/api_client.dart';
 import '../core/connect_link.dart';
@@ -11,7 +12,8 @@ import 'scan.dart';
 /// Server address + access token (saved securely), Test connection (provider + server version), app version,
 /// language, earphones, guardian view.
 class SettingsScreen extends StatefulWidget {
-  const SettingsScreen({super.key});
+  final bool embedded;
+  const SettingsScreen({super.key, this.embedded = false});
   @override
   State<SettingsScreen> createState() => _SettingsScreenState();
 }
@@ -61,76 +63,97 @@ class _SettingsScreenState extends State<SettingsScreen> {
   Widget build(BuildContext context) {
     final s = context.watch<SettingsProvider>();
     return Scaffold(
-      appBar: AppBar(title: const Text('Settings')),
-      body: ListView(padding: const EdgeInsets.all(16), children: [
-        const SectionTitle('Server'),
-        OutlinedButton.icon(onPressed: _scan, icon: const Icon(Icons.qr_code_scanner), label: const Text('Scan code')),
-        const SizedBox(height: 10),
-        TextField(
-          controller: _url,
-          keyboardType: TextInputType.url,
-          decoration: const InputDecoration(labelText: 'Server address', hintText: 'http://192.168.1.10:8013'),
-        ),
-        const SizedBox(height: 10),
-        TextField(
-          controller: _token,
-          obscureText: _hide,
-          decoration: InputDecoration(
-            labelText: 'Access token (from make up)',
-            suffixIcon: IconButton(
+      appBar: widget.embedded ? null : AppBar(title: const Text('Settings')),
+      body: ListView(
+        padding: const EdgeInsets.all(16),
+        children: [
+          const SectionTitle('Server'),
+          KButton('Scan code', kind: 'outline', icon: LucideIcons.qrCode, onPressed: _scan),
+          const SizedBox(height: 10),
+          TextField(
+            controller: _url,
+            keyboardType: TextInputType.url,
+            decoration: const InputDecoration(labelText: 'Server address', hintText: 'http://192.168.1.10:8013'),
+          ),
+          const SizedBox(height: 10),
+          TextField(
+            controller: _token,
+            obscureText: _hide,
+            decoration: InputDecoration(
+              labelText: 'Access token (from make up)',
+              suffixIcon: IconButton(
                 tooltip: _hide ? 'Show' : 'Hide',
-                icon: Icon(_hide ? Icons.visibility : Icons.visibility_off),
-                onPressed: () => setState(() => _hide = !_hide)),
+                icon: Icon(_hide ? LucideIcons.eye : LucideIcons.eyeOff),
+                onPressed: () => setState(() => _hide = !_hide),
+              ),
+            ),
           ),
-        ),
-        if (_result != null)
-          Padding(
-            padding: const EdgeInsets.only(top: 10),
-            child: Text(_result!,
+          if (_result != null)
+            Padding(
+              padding: const EdgeInsets.only(top: 10),
+              child: Text(
+                _result!,
                 key: const Key('connection_result'),
-                style: TextStyle(fontSize: 17, color: _ok ? K.alfii : VerdictStyle.red.solid, fontWeight: FontWeight.w600)),
+                style: TextStyle(
+                  fontSize: 17,
+                  color: _ok ? K.alfii : VerdictStyle.red.solid,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+          const SizedBox(height: 10),
+          KButton(
+            _testing ? 'Testing…' : 'Save and test connection',
+            icon: LucideIcons.wifi,
+            onPressed: _testing ? null : _test,
           ),
-        const SizedBox(height: 10),
-        FilledButton.icon(
-          onPressed: _testing ? null : _test,
-          icon: _testing
-              ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2))
-              : const Icon(Icons.wifi_tethering),
-          label: const Text('Save and test connection'),
-        ),
-        const SectionTitle('Voice and language'),
-        SegmentedButton<String>(
-          segments: const [
-            ButtonSegment(value: 'ml', label: Text('മലയാളം')),
-            ButtonSegment(value: 'hi', label: Text('हिन्दी')),
-            ButtonSegment(value: 'en', label: Text('English')),
-          ],
-          selected: {s.language},
-          onSelectionChanged: (v) => s.set(language: v.first),
-        ),
-        SwitchListTile(
-          value: s.earphones,
-          onChanged: (v) => s.set(earphones: v),
-          title: const Text('I use earphones'),
-          subtitle: const Text('Private answers can then be spoken'),
-        ),
-        SwitchListTile(
-          value: s.guardianView,
-          onChanged: (v) => s.set(guardianView: v),
-          title: const Text('Guardian view'),
-          subtitle: const Text('Show alerts for the family instead of the chat'),
-        ),
-        const SectionTitle('About'),
-        ListTile(title: const Text('App version'), trailing: Text(s.appVersion, style: const TextStyle(fontSize: 17))),
-        ListTile(
+          const SectionTitle('Voice and language'),
+          SegmentedButton<String>(
+            segments: const [
+              ButtonSegment(value: 'ml', label: Text('മലയാളം')),
+              ButtonSegment(value: 'hi', label: Text('हिन्दी')),
+              ButtonSegment(value: 'en', label: Text('English')),
+            ],
+            selected: {s.language},
+            onSelectionChanged: (v) => s.set(language: v.first),
+          ),
+          const SizedBox(height: 12),
+          ShadSwitch(
+            value: s.earphones,
+            onChanged: (v) => s.set(earphones: v),
+            label: const Text('I use earphones', style: TextStyle(fontSize: 17)),
+            sublabel: const Text('Private answers can then be spoken', style: TextStyle(fontSize: 15)),
+          ),
+          const SizedBox(height: 14),
+          ShadSwitch(
+            key: const Key('guardian_switch'),
+            value: s.guardianView,
+            onChanged: (v) => s.set(guardianView: v),
+            label: const Text('Guardian view', style: TextStyle(fontSize: 17)),
+            sublabel: const Text('Show alerts for the family instead of the chat', style: TextStyle(fontSize: 15)),
+          ),
+          const SectionTitle('About'),
+          ListTile(
+            title: const Text('App version'),
+            trailing: Text(s.appVersion, style: const TextStyle(fontSize: 17)),
+          ),
+          ListTile(
             title: const Text('Server version'),
-            trailing: Text(s.server?.version ?? 'test the connection', style: const TextStyle(fontSize: 17))),
-        ListTile(
+            trailing: Text(s.server?.version ?? 'test the connection', style: const TextStyle(fontSize: 17)),
+          ),
+          ListTile(
             title: const Text('Model provider'),
-            trailing: Text(s.server == null ? '—' : '${s.server!.provider} · ${s.server!.model}',
-                style: const TextStyle(fontSize: 17))),
-        ListTile(title: const Text('Family'), trailing: Text('#${s.familyId}', style: const TextStyle(fontSize: 17))),
-      ]),
+            trailing: Text(
+              s.server == null ? '—' : '${s.server!.provider} · ${s.server!.model}',
+              style: const TextStyle(fontSize: 17),
+            ),
+          ),
+          ListTile(
+            title: const Text('Family'),
+            trailing: Text('#${s.familyId}', style: const TextStyle(fontSize: 17)),
+          ),
+        ],
+      ),
     );
   }
 }

@@ -81,6 +81,7 @@ def main() -> None:
             "items": client.get("/v1/families/1/items").json(),
             "alerts": client.get("/v1/families/1/alerts").json(),
             "notes": client.get("/v1/families/1/notes").json(),
+            "documents": client.get("/v1/families/1/documents").json(),
             "proposal": client.post(
                 "/v1/families/1/profile/extract", data={"text": "My pension is 45,000 a month."}
             ).json(),
