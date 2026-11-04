@@ -228,6 +228,13 @@ void main() {
         expect(tester.widget<SwitchListTile>(find.byType(SwitchListTile)).value, isFalse);
       });
 
+      testWidgets('a replayed answer says so', (tester) async {
+        final raw = obj(fixture('endowment_red'));
+        final replay = CaseResult.from({...raw, 'provider': 'replay of recorded Meta call 2026-11-04 15:30 UTC'});
+        await pumpScreen(tester, VerdictScreen(result: replay), textScale: scale);
+        expect(find.textContaining('replay of recorded Meta call'), findsOneWidget);
+      });
+
       testWidgets('confirm asks nothing for the primary member', (tester) async {
         await pumpScreen(tester, ConfirmScreen(proposal: Proposal.from(obj(fixture('proposal')))), textScale: scale);
         expect(find.text('Count this in the family budget?'), findsNothing);

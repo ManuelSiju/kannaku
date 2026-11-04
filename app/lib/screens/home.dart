@@ -543,6 +543,7 @@ class _AnswerCard extends StatelessWidget {
             children: [
               if (r.colour != null) VerdictChip(r.colour),
               if (r.localFallback) const Pill('local fallback', icon: LucideIcons.laptop),
+              if (r.provider.startsWith('replay')) Pill(r.provider, icon: LucideIcons.history),
             ],
           ),
           if (r.colour != null) const Gap(8),

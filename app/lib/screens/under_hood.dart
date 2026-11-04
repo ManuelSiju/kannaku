@@ -73,7 +73,9 @@ class _UnderHoodScreenState extends State<UnderHoodScreen> {
                 leading: const Icon(LucideIcons.cpu),
                 title: Text(
                   s.hasData
-                      ? '${s.data!.provider == 'meta' ? 'Meta' : s.data!.provider} · ${s.data!.model}'
+                      ? s.data!.replayOf.isNotEmpty
+                            ? 'Replay of recorded Meta calls · ${s.data!.model}'
+                            : '${s.data!.provider == 'meta' ? 'Meta' : s.data!.provider} · ${s.data!.model}'
                       : 'Provider: …',
                   style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
                 ),
@@ -83,6 +85,8 @@ class _UnderHoodScreenState extends State<UnderHoodScreen> {
                       : s.hasData
                       ? 'Server ${s.data!.version} · cache ${s.data!.cache ? 'on' : 'off'}'
                             '${s.data!.spend.isNotEmpty ? ' · ${s.data!.spend['calls_today']}/${s.data!.spend['cap']} calls today' : ''}'
+                            '${s.data!.replayOf.isNotEmpty ? '\nRecorded ${s.data!.replayOf}' : ''}'
+                            '${s.data!.effort.isNotEmpty ? '\nReasoning: ${s.data!.effort.entries.map((e) => '${e.key} ${e.value}').join(', ')}' : ''}'
                       : '',
                 ),
               ),

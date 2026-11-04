@@ -131,6 +131,7 @@ class _VerdictScreenState extends State<VerdictScreen> {
             if (r.colour != null && !r.degraded)
               const Pill('Verified by Alfii', color: K.alfii, icon: LucideIcons.badgeCheck),
             if (r.localFallback) const Pill('local fallback', icon: LucideIcons.laptop),
+            if (r.provider.startsWith('replay')) Pill(r.provider, icon: LucideIcons.history),
             if (r.degraded) const Pill('partly checked', icon: LucideIcons.info),
           ],
         ),

@@ -18,14 +18,17 @@ Built for the Meta AI Developer Hackathon (Oct 27 – Nov 4 2026). Decision supp
 
 **Built during the hackathon:** every commit from `de71ad7` (28 Oct 2026) to `HEAD`; nothing in this repository is older.
 
-**Meta models, with proof.** All replies below carry the model id Meta returned, recorded in [meta_run.md](docs/reports/meta_run.md).
+**Use of Meta AI.** Every row was run live; the model id is the one Meta returned, not our setting.
 
-| use | model | where |
-|---|---|---|
-| Case builder, council, explainer | `muse-spark-1.3` | every ask, at most 4 calls of 20 s |
-| Reading brochure photos | `muse-spark-1.3` vision | checked against Tesseract; both must agree for "read twice" |
+| step | Meta model | setting | why | proof | median time |
+|---|---|---|---|---|---|
+| Case builder | `muse-spark-1.3` | `json_object`, EFFORT_CASE | classifies the case and copies the terms | [meta_run](docs/reports/meta_run.md) | 2.8–5.5 s |
+| Reading photos | `muse-spark-1.3` vision | with OCR | second reading: both must agree for "read twice" | [meta_run](docs/reports/meta_run.md) | in the case builder |
+| Council | `muse-spark-1.3` | `json_object`, EFFORT_COUNCIL | each specialist argues from fact ids | [reliability](docs/reports/reliability_meta.md) | 9.6–12.8 s |
+| Explainer | `muse-spark-1.3` | `json_object`, EFFORT_EXPLAINER | plain spoken lines, checked again by code | [reliability](docs/reports/reliability_meta.md) | 9.9–19.8 s |
 
-Speech-to-text runs on local faster-whisper, not on Meta.
+Speech-to-text runs on local faster-whisper, not on Meta. `json_schema` mode is not used: on Muse Spark it ran to the token
+limit. Effort levels were picked from [this table](docs/reports/effort_matrix.md).
 
 **How numbers are guaranteed.** The model writes `{fact_id}` placeholders and code fills in the value. A line with a digit of
 its own is dropped. Each term must be found in the paper, and each figure is recomputed by an
@@ -42,7 +45,9 @@ its own is dropped. Each term must be found in the paper, and each figure is rec
 | Financial calibration, 3 runs each | [calibration table](docs/reports/calibration.md) |
 | Full QA report | [qa_final.md](docs/reports/qa_final.md) |
 
-**Verify in 5 minutes.** `make start` (paste a Meta key), `make phone`, `make demo`, then ask:
+**Verify in 5 minutes, no key needed.** `make demo-replay` runs the 5 demo cases and serves the app from
+[recorded real Meta replies](server/demo_assets/replay/), each labelled "replay of recorded Meta call". For a live run:
+`make start` (paste a Meta key), `make phone`, `make demo`, then ask:
 
 1. Attach `kanakavalli_brochure.pdf`: "An agent says this plan is guaranteed to give 15 lakh. Should I take it?" Expect Stop.
 2. "A finance company is offering me a loan of 1,00,000 at 12% flat for 24 months." Expect Stop or Careful, real rate 21.6%.
@@ -50,6 +55,11 @@ its own is dropped. Each term must be found in the paper, and each figure is rec
 
 **Known limits.** Speech is English only. The app has no push notifications: guardian alerts appear when the Alerts tab is
 opened. A model can vary between runs, so the same case can move between yellow and red; see the calibration table.
+
+**Next steps, not built yet.** Consent-based family data through Account Aggregators. Malayalam and Hindi speech and app text.
+Distribution through co-operative banks and families.
+
+**User feedback.** Real reactions go in [user_feedback.md](docs/user_feedback.md).
 
 ## Features
 

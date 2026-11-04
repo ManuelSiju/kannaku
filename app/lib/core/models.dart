@@ -114,7 +114,8 @@ class CaseEvent {
 class HealthInfo {
   final String version, provider, model, stt;
   final bool cache, auth, traceExport;
-  final Map<String, dynamic> spend;
+  final Map<String, dynamic> spend, effort;
+  final String replayOf; // when the replayed Meta replies were recorded; empty on a live server
   HealthInfo(
     this.version,
     this.provider,
@@ -124,6 +125,8 @@ class HealthInfo {
     this.auth,
     this.spend, {
     this.traceExport = false,
+    this.effort = const {},
+    this.replayOf = '',
   });
   factory HealthInfo.from(Map<String, dynamic> j) {
     final p = obj(j['provider']);
@@ -136,6 +139,8 @@ class HealthInfo {
       boolean(p['auth']),
       obj(p['spend_guard']),
       traceExport: boolean(obj(p['features'])['trace_export']),
+      effort: obj(p['effort']),
+      replayOf: str(p['replay_of']),
     );
   }
 }
