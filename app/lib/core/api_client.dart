@@ -213,21 +213,29 @@ class ApiClient {
     return objs(body is Map ? body['items'] : body).map(FamilyItem.from).toList(); // server: {"items": [...]}
   }
 
-  Future<Proposal> extract(int familyId, {String? text, String? field, Upload? audio, Upload? file}) async =>
-      Proposal.from(
-        obj(
-          await postForm(
-            '/v1/families/$familyId/profile/extract',
-            {'text': ?text, 'field': ?field},
-            files: [?audio, ?file],
-          ),
-        ),
-      );
+  Future<Proposal> extract(
+    int familyId, {
+    String? text,
+    String? field,
+    int? memberId,
+    Upload? audio,
+    Upload? file,
+  }) async => Proposal.from(
+    obj(
+      await postForm(
+        '/v1/families/$familyId/profile/extract',
+        {'text': ?text, 'field': ?field, 'member_id': ?memberId?.toString()},
+        files: [?audio, ?file],
+      ),
+    ),
+  );
 
-  Future<void> confirm(int familyId, List<Proposed> chosen) => postJson('/v1/families/$familyId/profile/confirm', {
-    'values': [for (final p in chosen.where((p) => !p.isItem)) p.confirmed()],
-    'items': [for (final p in chosen.where((p) => p.isItem)) p.confirmed()],
-  });
+  Future<void> confirm(int familyId, List<Proposed> chosen, {int? memberId}) =>
+      postJson('/v1/families/$familyId/profile/confirm', {
+        'values': [for (final p in chosen.where((p) => !p.isItem)) p.confirmed()],
+        'items': [for (final p in chosen.where((p) => p.isItem)) p.confirmed()],
+        'member_id': ?memberId,
+      });
 
   Future<List<Document>> documents(int familyId) async =>
       objs(obj(await get('/v1/families/$familyId/documents'))['documents']).map(Document.from).toList();

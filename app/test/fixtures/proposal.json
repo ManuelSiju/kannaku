@@ -12,5 +12,7 @@
   }
  ],
  "items": [],
- "heard": "My pension is 45,000 a month."
+ "heard": "My pension is 45,000 a month.",
+ "member_id": 3,
+ "ask_household": false
 }

@@ -9,6 +9,8 @@ Fact ids:
   existing_emi        sum of active confirmed loan items, per month
   regular_commitments other active confirmed recurring items per month (yearly premiums / 12), not EMIs
   item.<id>.amount    one family item
+  holdings.*          mutual fund, share and SIP totals, as on the statement date (only when the family has some)
+  tip.held_*          the family's own holding of the share in a tip (only when they hold it)
   ref.fd_rate | ref.inflation | ref.index_long_run_return
   engine ids as in app.engines (irr, endowment_return, fd_value, sip_value, loan_*, emi_share, ...)
 """
@@ -24,7 +26,7 @@ from pathlib import Path
 from typing import Any
 
 from app.config import SERVER_ROOT, get_settings
-from app.db.repo import PROFILE_FIELDS, FamilyItem, NotConfirmed, Repo
+from app.db.repo import PROFILE_FIELDS, FamilyItem, NotConfirmed, ProfileValue, Repo
 from app.engines import finance
 from app.engines.fact import Fact, known, unknown
 from app.engines.tip_signals import tip_signals
@@ -52,33 +54,65 @@ def _dump(facts: list[Fact]) -> list[dict[str, Any]]:
 
 
 # ---------------------------------------------------------------- family
+def _member_names(family_id: int, repo: Repo | None) -> dict[int, str]:
+    return {m["id"]: m["name"] for m in _repo(repo).members(family_id)}
+
+
+def _household_values(family_id: int, repo: Repo | None) -> dict[str, list[ProfileValue]]:
+    """Per field, the values that count in the family budget. Without members, the latest one only."""
+    values: dict[str, list[ProfileValue]] = {}
+    for pv in _repo(repo).profile_values(family_id):
+        if pv.in_household:
+            values.setdefault(pv.field, []).append(pv)
+    return values if get_settings().feature_members else {k: v[-1:] for k, v in values.items()}
+
+
 def profile_facts(family_id: int, repo: Repo | None = None) -> list[Fact]:
-    values = {pv.field: pv for pv in _repo(repo).profile_values(family_id)}
+    values = _household_values(family_id, repo)
+    names = _member_names(family_id, repo)
     out = []
     for field in PROFILE_FIELDS:
-        pv = values.get(field)
+        rows = values.get(field)
         fid, label = f"profile.{field}", _PROFILE_LABELS[field]
-        if pv is None:
+        if not rows:
             out.append(unknown(fid, label, "INR", "personal", "not told yet", [field]))
+            continue
+        pv = rows[0]
+        members = {"members": [names.get(r.member_id, "") for r in rows]} if get_settings().feature_members else {}
+        if len(rows) == 1:
+            how, source, source_ref = f"confirmed value ({pv.source})", pv.source, pv.source_ref
         else:
-            out.append(
-                known(
-                    fid,
-                    label,
-                    pv.value,
-                    pv.unit,
-                    "personal",
-                    f"confirmed value ({pv.source})",
-                    source=pv.source,
-                    source_ref=pv.source_ref,
-                    updated_at=pv.updated_at,
-                )
+            how, source, source_ref = f"sum of confirmed values ({', '.join(members['members'])})", "several", None
+        out.append(
+            known(
+                fid,
+                label,
+                sum(r.value for r in rows),
+                pv.unit,
+                "personal",
+                how,
+                source=source,
+                source_ref=source_ref,
+                updated_at=max(r.updated_at for r in rows),
+                **members,
             )
+        )
     return out
 
 
+def _budget_items(family_id: int, repo: Repo | None, kind: Any = None) -> list[FamilyItem]:
+    return [i for i in _repo(repo).list_items(family_id, kind) if i.in_household]
+
+
+def _owners(items: list[FamilyItem], family_id: int, repo: Repo | None) -> dict[str, list[str]]:
+    if not get_settings().feature_members:
+        return {}
+    names = _member_names(family_id, repo)
+    return {"members": sorted({names.get(i.member_id or 0, "Family") for i in items})}
+
+
 def existing_emi_fact(family_id: int, repo: Repo | None = None, today: date | None = None) -> Fact:
-    loans = [i for i in _repo(repo).list_items(family_id, "loan") if i.active_on(today or date.today())]
+    loans = [i for i in _budget_items(family_id, repo, "loan") if i.active_on(today or date.today())]
     total = sum(i.monthly_amount() for i in loans)
     return known(
         "existing_emi",
@@ -88,13 +122,15 @@ def existing_emi_fact(family_id: int, repo: Repo | None = None, today: date | No
         "personal",
         "sum of active confirmed loan items, per month",
         items=[i.id for i in loans],
+        **_owners(loans, family_id, repo),
     )
 
 
 def regular_commitments_fact(family_id: int, repo: Repo | None = None, today: date | None = None) -> Fact:
     day = today or date.today()
-    items = [i for i in _repo(repo).list_items(family_id) if i.kind != "loan" and i.frequency != "once"]
-    items = [i for i in items if i.active_on(day)]
+    sips = get_settings().feature_holdings
+    items = [i for i in _budget_items(family_id, repo) if i.kind != "loan" and i.frequency != "once"]
+    items = [i for i in items if i.active_on(day) and (sips or i.kind != "sip")]
     total = sum(i.monthly_amount() for i in items)
     return known(
         "regular_commitments",
@@ -104,12 +140,99 @@ def regular_commitments_fact(family_id: int, repo: Repo | None = None, today: da
         "personal",
         "sum of active confirmed non-loan items, per month (yearly / 12)",
         items=[i.id for i in items],
+        **_owners(items, family_id, repo),
     )
+
+
+def holdings_facts(family_id: int, repo: Repo | None = None) -> list[Fact]:
+    """What the family has invested, from confirmed statements. Whoever holds it, and whether or not it counts in the
+    budget: none of it is cash, so no budget or buffer figure uses it. Nothing here when the family has no holdings."""
+    if not get_settings().feature_holdings:
+        return []
+    items = _repo(repo).list_items(family_id)
+    funds = [i for i in items if i.kind == "mf_holding"]
+    stocks = [i for i in items if i.kind == "stock_holding"]
+    sips = [i for i in items if i.kind == "sip"]
+    if not (funds or stocks or sips):
+        return []
+    owners = _owners(funds + stocks + sips, family_id, repo)
+
+    def fact(fid: str, label: str, value: float, formula: str, unit: str = "INR") -> Fact:
+        return known(fid, f"{label}, as on statement date", value, unit, "personal", formula, **owners)
+
+    fund_total = sum(i.amount for i in funds)
+    stock_total = sum(i.amount for i in stocks)
+    out = [
+        fact("holdings.mf_value_total", "Value of the family's mutual funds", fund_total, "sum of mutual fund values"),
+        fact(
+            "holdings.equity_mf_value",
+            "Value of the family's equity mutual funds",
+            sum(i.amount for i in funds if i.category == "equity"),
+            "sum of mutual fund values with category equity",
+        ),
+        fact("holdings.stock_value_total", "Value of the family's shares", stock_total, "sum of share values"),
+        fact(
+            "holdings.total_value", "Value of all the family's investments", fund_total + stock_total, "funds + shares"
+        ),
+        fact("holdings.sip_monthly", "The family's SIPs each month", sum(i.amount for i in sips), "sum of SIP amounts"),
+    ]
+    if stock_total:
+        out.append(
+            fact(
+                "holdings.largest_stock_share",
+                "The biggest share as a part of all the family's shares",
+                max(i.amount for i in stocks) / stock_total,
+                "largest share value / value of all shares",
+                "fraction",
+            )
+        )
+    return out
+
+
+def tip_holding_facts(family_id: int, symbol: str, repo: Repo | None = None) -> list[Fact]:
+    """The family's own holding of a tipped share; nothing if they do not hold it."""
+    if not get_settings().feature_holdings:
+        return []
+    stocks = _repo(repo).list_items(family_id, "stock_holding")
+    held = [i for i in stocks if normalize_symbol(i.symbol or "") == normalize_symbol(symbol)]
+    if not held:
+        return []
+    owners = _owners(held, family_id, repo)
+    value = sum(i.amount for i in held)
+    return [
+        known(
+            "tip.held_shares",
+            f"Shares of {held[0].symbol} the family already holds, as on statement date",
+            sum(i.units or 0 for i in held),
+            "shares",
+            "personal",
+            "shares on the confirmed statement",
+            **owners,
+        ),
+        known(
+            "tip.held_value",
+            f"Value of the family's {held[0].symbol} shares, as on statement date",
+            value,
+            "INR",
+            "personal",
+            "value on the confirmed statement",
+            **owners,
+        ),
+        known(
+            "tip.held_share_of_stocks",
+            f"{held[0].symbol} as a part of all the family's shares, as on statement date",
+            value / sum(i.amount for i in stocks),
+            "fraction",
+            "personal",
+            "value of this share / value of all shares",
+            **owners,
+        ),
+    ]
 
 
 def family_get_profile(family_id: int, repo: Repo | None = None) -> dict[str, Any]:
     facts = profile_facts(family_id, repo)
-    return {
+    out: dict[str, Any] = {
         "family_id": family_id,
         "values": [
             {
@@ -122,13 +245,31 @@ def family_get_profile(family_id: int, repo: Repo | None = None) -> dict[str, An
         ],
         "facts": _dump(facts + [existing_emi_fact(family_id, repo), regular_commitments_fact(family_id, repo)]),
     }
+    if get_settings().feature_members:
+        rows = _repo(repo).profile_values(family_id)
+        out["member_values"] = [
+            {
+                "member_id": m["id"],
+                "name": m["name"],
+                "role": m["role"],
+                "values": [
+                    {"field": r.field, "value": r.value, "source": r.source, "in_household": r.in_household}
+                    for r in rows
+                    if r.member_id == m["id"]
+                ],
+            }
+            for m in _repo(repo).members(family_id)
+        ]
+        out["household"] = {f.id.removeprefix("profile."): f.value for f in facts}
+    return out
 
 
 def _item_fact(item: FamilyItem) -> Fact:
     per = {"monthly": "a month", "yearly": "a year", "once": "once"}[item.frequency]
+    held = item.kind in ("mf_holding", "stock_holding")
     return known(
         f"item.{item.id}.amount",
-        f"{item.name}: amount paid {per}",
+        f"{item.name}: value as on statement date" if held else f"{item.name}: amount paid {per}",
         item.amount,
         "INR",
         "personal",

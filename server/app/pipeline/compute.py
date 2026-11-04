@@ -125,6 +125,7 @@ def compute_facts(
                         bench_id,
                     )
             afford_commitment(premium / 12)
+            facts += tools.holdings_facts(family_id, repo)
             facts.append(
                 share_of(
                     "premium_share_of_income",
@@ -167,7 +168,9 @@ def compute_facts(
             )
 
     elif case_type in ("stock_tip", "shares", "ipo"):
+        facts += tools.holdings_facts(family_id, repo)
         if stock_symbol:
+            facts += tools.tip_holding_facts(family_id, stock_symbol, repo)
             signals = tools.stocks_tip_signals(stock_symbol)
             if signals["found"]:
                 facts += _facts(signals)
@@ -205,4 +208,11 @@ def compute_facts(
             if savings is None or t["monthly_amount"] * 12 > LARGE_SHARE_OF_SAVINGS * savings:
                 flags.append("amount_vs_savings")
 
+    if any(f.id.startswith("holdings.") for f in facts):
+        facts = [
+            f.model_copy(update={"formula": f"{f.formula} (bank savings only: investments are not cash)"})
+            if f.id == "buffer_months_after"
+            else f
+            for f in facts
+        ]
     return Computed(facts=facts, missing_required=missing, flags=flags, commitment=commitment, questions=questions)

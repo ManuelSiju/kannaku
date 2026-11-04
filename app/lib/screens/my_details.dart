@@ -77,9 +77,50 @@ class _MyDetailsScreenState extends State<MyDetailsScreen> {
                 ],
               ),
             ),
+            if (p.members.length > 1) ...[
+              const SectionTitle('Whose details'),
+              Wrap(
+                spacing: 8,
+                children: [
+                  for (final m in p.members)
+                    ChoiceChip(
+                      label: Text(m.name, style: const TextStyle(fontSize: 17)),
+                      selected: m.id == p.member?.id,
+                      onSelected: (_) => p.chooseMember(m.id),
+                    ),
+                ],
+              ),
+              const SizedBox(height: 8),
+              if (p.member!.values.isEmpty) Text('Nothing saved for ${p.member!.name} yet.'),
+              for (final v in p.member!.values)
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 8),
+                  child: KCard(
+                    padding: const EdgeInsets.all(12),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(fieldLabel(v.field), style: const TextStyle(fontSize: 17)),
+                              Text(
+                                '${inr(v.value)} · ${p.member!.name} · '
+                                '${v.inHousehold ? 'in the family budget' : 'not in the family budget'}',
+                                style: const TextStyle(fontSize: 16, color: K.muted),
+                              ),
+                            ],
+                          ),
+                        ),
+                        Pill(_source(v.source), color: _dot(v.source)),
+                      ],
+                    ),
+                  ),
+                ),
+            ],
             const SectionTitle('Policies, loans and deposits'),
-            if (p.items.isEmpty && !p.loading) const Text('Nothing added yet.', style: TextStyle(fontSize: 17)),
-            for (final it in p.items)
+            if (p.memberItems.isEmpty && !p.loading) const Text('Nothing added yet.', style: TextStyle(fontSize: 17)),
+            for (final it in p.memberItems)
               Padding(
                 padding: const EdgeInsets.only(bottom: 8),
                 child: KCard(
@@ -92,7 +133,12 @@ class _MyDetailsScreenState extends State<MyDetailsScreen> {
                           children: [
                             Text(it.name, style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w700)),
                             Text(
-                              '${inr(it.amount)} · ${it.frequency}',
+                              [
+                                inr(it.amount),
+                                if (it.units != null) '${it.units!.toStringAsFixed(it.units! % 1 == 0 ? 0 : 3)} units',
+                                if (it.frequency != 'once') it.frequency,
+                                if (p.members.isNotEmpty) p.ownerOf(it),
+                              ].join(' · '),
                               style: const TextStyle(fontSize: 16, color: K.muted),
                             ),
                           ],
@@ -142,7 +188,11 @@ class _MyDetailsScreenState extends State<MyDetailsScreen> {
     Proposal? proposal;
     try {
       if (how == 'type') {
-        final text = await _ask(context, 'Type it', 'e.g. My pension is 25,000 a month. Health policy Rs 9,600 a year.');
+        final text = await _ask(
+          context,
+          'Type it',
+          'e.g. My pension is 25,000 a month. Health policy Rs 9,600 a year.',
+        );
         if (text == null || text.trim().isEmpty) return;
         proposal = await p.extract(text: text);
       } else if (how == 'say') {
@@ -273,7 +323,9 @@ class _ConfirmScreenState extends State<ConfirmScreen> {
   Future<void> _save() async {
     setState(() => _saving = true);
     try {
-      await context.read<ProfileProvider>().confirm([for (final i in _keep) _items[i]]);
+      await context.read<ProfileProvider>().confirm([
+        for (final i in _keep) _items[i],
+      ], memberId: widget.proposal.memberId);
       if (!mounted) return;
       toast(context, 'Saved.');
       widget.onSaved?.call();
@@ -298,18 +350,32 @@ class _ConfirmScreenState extends State<ConfirmScreen> {
           ),
         for (var i = 0; i < _items.length; i++)
           Card(
-            child: CheckboxListTile(
-              value: _keep.contains(i),
-              onChanged: (on) => setState(() => on == true ? _keep.add(i) : _keep.remove(i)),
-              title: Text(_items[i].label, style: const TextStyle(fontSize: 17)),
-              subtitle: Text(
-                [
-                  if (widget.proposal.heard.isEmpty && _items[i].quote.isNotEmpty) '“${_items[i].quote}”',
-                  _items[i].readback,
-                  if (_items[i].uncertain) '⚠ Not sure I got this right. Please check.',
-                ].join('\n'),
-              ),
-              secondary: IconButton(tooltip: 'Edit', icon: const Icon(LucideIcons.pencil), onPressed: () => _edit(i)),
+            child: Column(
+              children: [
+                CheckboxListTile(
+                  value: _keep.contains(i),
+                  onChanged: (on) => setState(() => on == true ? _keep.add(i) : _keep.remove(i)),
+                  title: Text(_items[i].label, style: const TextStyle(fontSize: 17)),
+                  subtitle: Text(
+                    [
+                      if (widget.proposal.heard.isEmpty && _items[i].quote.isNotEmpty) '“${_items[i].quote}”',
+                      _items[i].readback,
+                      if (_items[i].uncertain) '⚠ Not sure I got this right. Please check.',
+                    ].join('\n'),
+                  ),
+                  secondary: IconButton(
+                    tooltip: 'Edit',
+                    icon: const Icon(LucideIcons.pencil),
+                    onPressed: () => _edit(i),
+                  ),
+                ),
+                if (widget.proposal.askHousehold)
+                  SwitchListTile(
+                    title: const Text('Count this in the family budget?', style: TextStyle(fontSize: 16)),
+                    value: _items[i].inHousehold,
+                    onChanged: (on) => setState(() => _items = [..._items]..[i] = _items[i].withHousehold(on)),
+                  ),
+              ],
             ),
           ),
         const SizedBox(height: 16),

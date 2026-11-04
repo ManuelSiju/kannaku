@@ -138,11 +138,36 @@ class ProfileValue {
       ProfileValue(str(j['field']), str(j['status']), number(j['value']), str(j['source']));
 }
 
+/// One person's own values, whether or not they count in the family budget.
+class MemberValues {
+  final int id;
+  final String name, role;
+  final List<MemberValue> values;
+  MemberValues(this.id, this.name, this.role, this.values);
+  factory MemberValues.from(Map<String, dynamic> j) => MemberValues(
+    integer(j['member_id']),
+    str(j['name']),
+    str(j['role']),
+    objs(j['values']).map(MemberValue.from).toList(),
+  );
+}
+
+class MemberValue {
+  final String field, source;
+  final double value;
+  final bool inHousehold;
+  MemberValue(this.field, this.value, this.source, this.inHousehold);
+  factory MemberValue.from(Map<String, dynamic> j) =>
+      MemberValue(str(j['field']), number(j['value']) ?? 0, str(j['source']), boolean(j['in_household']));
+}
+
 class FamilyItem {
   final int id;
   final String kind, name, frequency, source;
   final double amount;
-  FamilyItem(this.id, this.kind, this.name, this.amount, this.frequency, this.source);
+  final int? memberId;
+  final double? units;
+  FamilyItem(this.id, this.kind, this.name, this.amount, this.frequency, this.source, {this.memberId, this.units});
   factory FamilyItem.from(Map<String, dynamic> j) => FamilyItem(
     integer(j['id']),
     str(j['kind'], 'other'),
@@ -150,6 +175,8 @@ class FamilyItem {
     number(j['amount']) ?? 0,
     str(j['frequency'], 'monthly'),
     str(j['source'], 'typed'),
+    memberId: j['member_id'] == null ? null : integer(j['member_id']),
+    units: number(j['units']),
   );
 }
 
@@ -181,18 +208,24 @@ class Proposed {
   bool get uncertain => boolean(raw['uncertain']);
   double get amount => number(isItem ? raw['amount'] : raw['value']) ?? 0;
   String get label => isItem ? str(raw['name']) : fieldLabel(str(raw['field']));
+  bool get inHousehold => boolean(raw['in_household']);
   Proposed withAmount(double v) => Proposed(isItem, {...raw, if (isItem) 'amount': v else 'value': v});
+  Proposed withHousehold(bool on) => Proposed(isItem, {...raw, 'in_household': on});
   Map<String, dynamic> confirmed() => {...raw, 'confirmed': true};
 }
 
 class Proposal {
   final List<Proposed> values;
   final String heard;
-  Proposal(this.values, this.heard);
-  factory Proposal.from(Map<String, dynamic> j) => Proposal([
-    ...objs(j['values']).map((v) => Proposed(false, v)),
-    ...objs(j['items']).map((v) => Proposed(true, v)),
-  ], str(j['heard']));
+  final int? memberId;
+  final bool askHousehold; // not the primary member: ask whether it counts in the family budget
+  Proposal(this.values, this.heard, {this.memberId, this.askHousehold = false});
+  factory Proposal.from(Map<String, dynamic> j) => Proposal(
+    [...objs(j['values']).map((v) => Proposed(false, v)), ...objs(j['items']).map((v) => Proposed(true, v))],
+    str(j['heard']),
+    memberId: j['member_id'] == null ? null : integer(j['member_id']),
+    askHousehold: boolean(j['ask_household']),
+  );
 }
 
 class Alert {

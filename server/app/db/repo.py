@@ -17,7 +17,7 @@ from app.db.migrate import migrate
 from app.engines.fact import Fact
 
 Source = Literal["typed", "voice", "document"]
-ItemKind = Literal["policy", "loan", "deposit", "chit", "other"]
+ItemKind = Literal["policy", "loan", "deposit", "chit", "other", "mf_holding", "stock_holding", "sip"]
 Frequency = Literal["monthly", "yearly", "once"]
 PROFILE_FIELDS = ("monthly_income", "monthly_expenses", "savings")  # monthly_expenses EXCLUDES loan EMIs
 
@@ -51,6 +51,7 @@ class ProfileValue(BaseModel):
     source_ref: str | None
     confirmed: bool
     updated_at: str
+    in_household: bool = True
 
 
 class FamilyItem(BaseModel):
@@ -65,6 +66,12 @@ class FamilyItem(BaseModel):
     source: Source
     source_ref: str | None = None
     confirmed: bool = False
+    member_id: int | None = None  # None: the family's own
+    in_household: bool = True  # counts in the family budget
+    units: float | None = None  # mutual fund units or number of shares
+    symbol: str | None = None
+    scheme: str | None = None
+    category: Literal["equity", "debt", "other"] | None = None
 
     def monthly_amount(self) -> float:
         return {"monthly": self.amount, "yearly": self.amount / 12, "once": 0.0}[self.frequency]
@@ -191,6 +198,9 @@ class Repo:
     def members(self, family_id: int) -> list[dict[str, Any]]:
         return self._rows("SELECT * FROM member WHERE family_id = ? ORDER BY id", family_id)
 
+    def member_in_family(self, family_id: int, member_id: int) -> bool:
+        return any(m["id"] == member_id for m in self.members(family_id))
+
     def primary_member_id(self, family_id: int) -> int | None:
         rows = self._rows("SELECT id FROM member WHERE family_id = ? AND role = 'primary' ORDER BY id", family_id)
         return rows[0]["id"] if rows else None
@@ -206,16 +216,18 @@ class Repo:
         unit: str = "INR",
         source_ref: str | None = None,
         confirmed: bool,
+        in_household: bool = True,
     ) -> int:
         if not confirmed:
             raise NotConfirmed(f"{field} not confirmed by the family; not saved")
         self.conn.execute(
-            """INSERT INTO profile_value (member_id, field, value, unit, source, source_ref, confirmed, updated_at)
-               VALUES (?, ?, ?, ?, ?, ?, 1, datetime('now'))
+            """INSERT INTO profile_value (member_id, field, value, unit, source, source_ref, confirmed, updated_at,
+                                          in_household)
+               VALUES (?, ?, ?, ?, ?, ?, 1, datetime('now'), ?)
                ON CONFLICT (member_id, field) DO UPDATE SET value = excluded.value, unit = excluded.unit,
                  source = excluded.source, source_ref = excluded.source_ref, confirmed = 1,
-                 updated_at = excluded.updated_at""",
-            (member_id, field, float(value), unit, source, strip_ids(source_ref)),
+                 updated_at = excluded.updated_at, in_household = excluded.in_household""",
+            (member_id, field, float(value), unit, source, strip_ids(source_ref), int(in_household)),
         )
         self.conn.commit()
         return int(
@@ -239,6 +251,8 @@ class Repo:
         data = item.model_dump(exclude={"id", "family_id", "confirmed"})
         data["name"] = strip_ids(data["name"])
         data["source_ref"] = strip_ids(data["source_ref"])
+        data["scheme"] = strip_ids(data["scheme"])
+        data["in_household"] = int(data["in_household"])
         return self._insert("family_item", family_id=family_id, confirmed=1, **data)
 
     def list_items(self, family_id: int, kind: ItemKind | None = None) -> list[FamilyItem]:

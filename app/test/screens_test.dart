@@ -152,10 +152,12 @@ void main() {
 
       testWidgets('my details', (tester) async {
         await pumpScreen(tester, const MyDetailsScreen(), textScale: scale);
-        expect(find.text('Income each month'), findsOneWidget);
+        expect(find.text('Income each month'), findsWidgets);
         expect(find.textContaining('Could not load'), findsNothing);
         await expectLater(find.byType(MaterialApp), matchesGoldenFile(golden('my_details', scale)));
+        await seen(tester, find.text('Arun'));
         await seen(tester, find.text('Scooter loan EMI'));
+        await seen(tester, find.textContaining('· Lakshmi'));
         await seen(tester, find.text('Insurance')); // the category of a paper from the documents table
         await seen(tester, find.text('Show paper'));
       });
@@ -182,6 +184,26 @@ void main() {
         await pumpScreen(tester, ConfirmScreen(proposal: Proposal.from(paper)), textScale: scale);
         expect(find.textContaining('“Net salary Rs 52,000 a month.”'), findsOneWidget);
         expect(find.textContaining('I heard:'), findsNothing);
+      });
+
+      testWidgets('confirm asks about the family budget for another member, default no', (tester) async {
+        final paper = {
+          'values': [
+            {'field': 'monthly_income', 'value': 52000, 'quote': 'Net salary.', 'readback': 'Is that right?'},
+          ],
+          'items': [],
+          'heard': '',
+          'member_id': 2,
+          'ask_household': true,
+        };
+        await pumpScreen(tester, ConfirmScreen(proposal: Proposal.from(paper)), textScale: scale);
+        expect(find.text('Count this in the family budget?'), findsOneWidget);
+        expect(tester.widget<SwitchListTile>(find.byType(SwitchListTile)).value, isFalse);
+      });
+
+      testWidgets('confirm asks nothing for the primary member', (tester) async {
+        await pumpScreen(tester, ConfirmScreen(proposal: Proposal.from(obj(fixture('proposal')))), textScale: scale);
+        expect(find.text('Count this in the family budget?'), findsNothing);
       });
 
       testWidgets('guardian alerts', (tester) async {

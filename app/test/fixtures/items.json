@@ -11,7 +11,13 @@
    "end_date": null,
    "source": "document",
    "source_ref": "policy bond photo",
-   "confirmed": true
+   "confirmed": true,
+   "member_id": null,
+   "in_household": true,
+   "units": null,
+   "symbol": null,
+   "scheme": null,
+   "category": null
   },
   {
    "id": 2,
@@ -24,7 +30,13 @@
    "end_date": "2027-03-31",
    "source": "voice",
    "source_ref": null,
-   "confirmed": true
+   "confirmed": true,
+   "member_id": null,
+   "in_household": true,
+   "units": null,
+   "symbol": null,
+   "scheme": null,
+   "category": null
   }
  ],
  "facts": [

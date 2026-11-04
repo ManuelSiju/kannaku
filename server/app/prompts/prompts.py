@@ -4,6 +4,7 @@ Numbers rule (agents and explainer): the model never writes a number. It writes 
 fills in Fact.display. Any digit outside a placeholder drops the argument / triggers a rewrite.
 """
 
+from app.config import get_settings
 from app.pipeline.schemas import TERM_NAMES
 
 _TERMS = ", ".join(f"{k} ({v})" for k, v in TERM_NAMES.items())
@@ -76,9 +77,18 @@ _GROUP = {
 }
 
 
+HOLDING_HINTS = {
+    ("vick", "stock"): "If {tip.held_shares} is in your facts, the family already holds this share: you must say so, "
+    "using {tip.held_shares} in the sentence.",
+    ("dani", "insurance"): "If {holdings.equity_mf_value} is in your facts, you may say the family already invests "
+    "{holdings.equity_mf_value} in equity funds.",
+}
+
+
 def role_card(agent: str, case_type: str) -> str:
-    hint = CASE_HINTS.get((agent, _GROUP.get(case_type, "")))
-    return ROLE_CARDS[agent] + (" " + hint if hint else "")
+    key = (agent, _GROUP.get(case_type, ""))
+    hints = [CASE_HINTS.get(key), HOLDING_HINTS.get(key) if get_settings().feature_holdings else None]
+    return " ".join([ROLE_CARDS[agent], *[h for h in hints if h]])
 
 
 STYLE_RULES = """SPEAKING STYLE (every spoken line): at most 2 sentences, at most 20 words each, at most one number

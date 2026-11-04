@@ -31,7 +31,10 @@
    "inputs": {
     "source": "voice",
     "source_ref": "onboarding voice note",
-    "updated_at": "2026-11-04 06:22:14"
+    "updated_at": "2026-11-04 14:36:36",
+    "members": [
+     "Lakshmi"
+    ]
    },
    "status": "known",
    "value_text": null,
@@ -47,7 +50,10 @@
    "inputs": {
     "source": "typed",
     "source_ref": "onboarding",
-    "updated_at": "2026-11-04 06:22:14"
+    "updated_at": "2026-11-04 14:36:36",
+    "members": [
+     "Lakshmi"
+    ]
    },
    "status": "known",
    "value_text": null,
@@ -63,7 +69,10 @@
    "inputs": {
     "source": "document",
     "source_ref": "passbook photo",
-    "updated_at": "2026-11-04 06:22:14"
+    "updated_at": "2026-11-04 14:36:36",
+    "members": [
+     "Lakshmi"
+    ]
    },
    "status": "known",
    "value_text": null,
@@ -79,6 +88,9 @@
    "inputs": {
     "items": [
      2
+    ],
+    "members": [
+     "Family"
     ]
    },
    "status": "known",
@@ -95,6 +107,9 @@
    "inputs": {
     "items": [
      1
+    ],
+    "members": [
+     "Family"
     ]
    },
    "status": "known",
@@ -102,6 +117,44 @@
    "phrase": null
   }
  ],
+ "member_values": [
+  {
+   "member_id": 3,
+   "name": "Lakshmi",
+   "role": "primary",
+   "values": [
+    {
+     "field": "monthly_income",
+     "value": 45000.0,
+     "source": "voice",
+     "in_household": true
+    },
+    {
+     "field": "monthly_expenses",
+     "value": 28000.0,
+     "source": "typed",
+     "in_household": true
+    },
+    {
+     "field": "savings",
+     "value": 160000.0,
+     "source": "document",
+     "in_household": true
+    }
+   ]
+  },
+  {
+   "member_id": 4,
+   "name": "Arun",
+   "role": "guardian",
+   "values": []
+  }
+ ],
+ "household": {
+  "monthly_income": 45000.0,
+  "monthly_expenses": 28000.0,
+  "savings": 160000.0
+ },
  "members": [
   {
    "id": 3,

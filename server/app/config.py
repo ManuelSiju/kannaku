@@ -61,6 +61,12 @@ class Settings(BaseSettings):
     local_vision_enabled: bool | None = None
     local_vision_model: str = ""
 
+    # Features added after the demo-safe tag; with all four off the answers match that tag.
+    feature_members: bool = True
+    feature_holdings: bool = True
+    feature_trace_export: bool = True
+    feature_snapshot: bool = True
+
     # LAN access token: every request except /health needs "Authorization: Bearer <token>" when it is set.
     kanakku_token: SecretStr = SecretStr("")
     # request limits

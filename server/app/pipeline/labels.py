@@ -48,6 +48,8 @@ def source_label(fact: Fact, case_type: str) -> str:
         return label
     if fact.id in ("existing_emi", "regular_commitments"):
         return "Added up from your saved loans and policies"
+    if fact.id.startswith(("holdings.", "tip.held")):
+        return "From your statements"
     if fact.id.startswith("scam."):
         return "Warning sign found"
     return "Worked out by Kanakku"
