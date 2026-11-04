@@ -156,6 +156,12 @@ half-configured. `make up` also creates the LAN access token (`KANAKKU_TOKEN` in
 | 13 | questions | — | from the code's bank per case type (`questions.py`); the model may only pick ids and lightly reword |
 | 14 | save | — | verdict, lines, dropped arguments, blocked lines, trace; guardian alert for red (and big yellow) |
 
+**Documents remember their category.** Every uploaded file gets a row in `document` (per family, by content hash) with
+the category from the case builder and its verified terms; the same file again counts up. The case builder sees
+`known_documents`, the agents see `family_documents`, and when the model cannot place a question ("unknown" or
+"general_money") a paper from this session, or the same file from an earlier one, keeps its stored category (trace step
+`document_type`). `GET /v1/families/{id}/documents` and the MCP tool `family.list_documents` list them.
+
 Limits: at most **4 model calls per ask** (`LLM_MAX_CALLS_PER_ASK`), **20 s** per text call, **60 s** per vision call,
 one retry with backoff on timeouts / 429 / 5xx within that budget; any failed step marks the answer `degraded`.
 
@@ -224,6 +230,7 @@ and every response has `X-Request-ID`.
 | POST | `/v1/families/{id}/profile` | `{"field":"savings","value":160000,"source":"typed","confirmed":true}` | profile |
 | POST | `/v1/families/{id}/profile/extract` | form: `text` / `audio` / `file`, optional `field` | proposal (nothing saved): `{"values":[{"field":"monthly_income","value":45000.0,"readback":"I heard ₹45,000 a month for your income each month. Is that right?","uncertain":false,…}],"items":[],"heard":"My pension is 45,000 a month."}` |
 | POST | `/v1/families/{id}/profile/confirm` | `{"values":[…confirmed…],"items":[…]}` | `{"saved":[…],"skipped":[…],"profile":{…}}` |
+| GET | `/v1/families/{id}/documents` | — | `{"documents":[{"id":1,"case_id":7,"filename":"kanakavalli_brochure.pdf","doc_type":"insurance_offer","terms":{"premium":"₹50,000"},"times_seen":2,…}]}` |
 | GET/POST | `/v1/families/{id}/items` | POST: an item with `confirmed` | `{"items":[{"id":1,"kind":"policy","name":"Money-back policy (fictional)","amount":12000.0,"frequency":"yearly","source":"document",…}]}` |
 | DELETE | `/v1/families/{id}/items/{item_id}` | — | `{"deleted":true}` |
 | GET | `/v1/families/{id}/alerts` | `?status=new\|handled` | alerts with `note` (the alert), `guardian_note`, `colour`, `sentence`, `key_facts`, `agent_lines` |

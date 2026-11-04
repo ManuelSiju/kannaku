@@ -421,3 +421,61 @@ def test_malayalam_family_gets_malayalam_templates_and_spoken_numbers(harness):
     assert lines[-1].startswith("ഈ ലോൺ ഇപ്പോൾ എടുക്കരുത്.")
     assert "Meera" in lines[-1]  # red -> next step: talk to the guardian (Malayalam template)
     assert res["suggested_followups"][0] == "യഥാർത്ഥ പലിശ എത്രയാണ്?"
+
+
+# ---------------------------------------------------------------- documents remember their category
+
+
+def test_uploaded_document_category_is_saved(harness):
+    client, state, repo = harness
+    state["llm"] = FakeLLM(load_fixture("endowment"))
+    res = ask(client, ENDOWMENT_Q, brochure_files())
+    docs = client.get("/v1/families/1/documents").json()["documents"]
+    assert len(docs) == 1 and docs[0]["filename"] == "kanakavalli_brochure.pdf"
+    assert docs[0]["doc_type"] == "insurance_offer" and docs[0]["case_id"] == res["case_id"]
+    assert docs[0]["terms"]["premium"] and docs[0]["times_seen"] == 1
+    assert client.get(f"/v1/cases/{res['case_id']}").json()["documents"][0]["doc_type"] == "insurance_offer"
+
+
+def test_followup_in_the_same_session_keeps_the_document_type(harness):
+    client, state, repo = harness
+    state["llm"] = FakeLLM(load_fixture("endowment"))
+    first = ask(client, ENDOWMENT_Q, brochure_files())
+    script = load_fixture("endowment")
+    script["CaseDraft"] = {**script["CaseDraft"], "case_type": "unknown"}
+    state["llm"] = llm = FakeLLM(script)
+    res = ask(client, "What if I pay for 10 years?", case_id=first["case_id"])
+    assert res["case_type"] == "insurance_offer" and res["verdict"]["colour"] is not None
+    assert llm.inputs[0]["known_documents"] == [{"filename": "kanakavalli_brochure.pdf", "type": "insurance_offer"}]
+    trace = client.get(f"/v1/cases/{res['case_id']}").json()["trace"]
+    assert next(t for t in trace if t["step"] == "document_type")["detail"]["used"] == "insurance_offer"
+
+
+def test_same_file_in_a_later_session_is_recognised(harness):
+    client, state, repo = harness
+    state["llm"] = FakeLLM(load_fixture("endowment"))
+    ask(client, ENDOWMENT_Q, brochure_files())
+    script = load_fixture("endowment")
+    script["CaseDraft"] = {**script["CaseDraft"], "case_type": "unknown"}
+    state["llm"] = llm = FakeLLM(script)
+    res = ask(client, "Is this one good?", brochure_files())  # a new case
+    assert res["case_type"] == "insurance_offer"
+    docs = client.get("/v1/families/1/documents").json()["documents"]
+    assert len(docs) == 1 and docs[0]["times_seen"] == 2
+    council_input = next(i for i in llm.inputs if "agents" in i)
+    assert council_input["case"]["family_documents"][0]["type"] == "insurance_offer"
+
+
+def test_unknown_never_overwrites_a_category(repo):
+    fam = repo.create_family()
+    c1, c2 = repo.create_case(fam), repo.create_case(fam)
+    repo.remember_document(fam, c1, "a.pdf", "h1", "loan_offer", {"flat_rate": "12%"})
+    repo.remember_document(fam, c2, "a.pdf", "h1", "unknown")
+    d = repo.family_documents(fam)[0]
+    assert d["doc_type"] == "loan_offer" and d["terms"] == {"flat_rate": "12%"} and d["times_seen"] == 2
+
+
+def test_documents_belong_to_one_family(repo):
+    a, b = repo.create_family(), repo.create_family()
+    repo.remember_document(a, repo.create_case(a), "a.pdf", "same", "loan_offer")
+    assert repo.family_documents(b) == []

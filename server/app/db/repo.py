@@ -105,6 +105,44 @@ class Repo:
     def ping(self) -> bool:
         return self.conn.execute("SELECT 1").fetchone()[0] == 1
 
+    # ------------------------------------------------------------ documents (what each paper was categorised as)
+    def remember_document(
+        self,
+        family_id: int,
+        case_id: int,
+        filename: str,
+        sha256: str,
+        doc_type: str,
+        terms: dict[str, str] | None = None,
+    ) -> None:
+        """Saves a paper's category. A paper seen again counts up; "unknown" never replaces a real category."""
+        self.conn.execute(
+            """INSERT INTO document (family_id, case_id, filename, sha256, doc_type, terms_json)
+               VALUES (?, ?, ?, ?, ?, ?)
+               ON CONFLICT (family_id, sha256) DO UPDATE SET
+                 case_id = excluded.case_id,
+                 times_seen = times_seen + (excluded.case_id != document.case_id),
+                 last_seen = datetime('now'),
+                 doc_type = CASE WHEN excluded.doc_type = 'unknown' THEN document.doc_type ELSE excluded.doc_type END,
+                 terms_json = CASE WHEN excluded.terms_json = '{}' THEN terms_json ELSE excluded.terms_json END""",
+            (family_id, case_id, strip_ids(filename), sha256, doc_type, json.dumps(terms or {})),
+        )
+        self.conn.commit()
+
+    def family_documents(self, family_id: int, limit: int = 20) -> list[dict[str, Any]]:
+        rows = self._rows(
+            "SELECT * FROM document WHERE family_id = ? ORDER BY last_seen DESC, id DESC LIMIT ?", family_id, limit
+        )
+        for r in rows:
+            r["terms"] = json.loads(r.pop("terms_json"))
+        return rows
+
+    def case_documents(self, case_id: int) -> list[dict[str, Any]]:
+        rows = self._rows("SELECT * FROM document WHERE case_id = ? ORDER BY id", case_id)
+        for r in rows:
+            r["terms"] = json.loads(r.pop("terms_json"))
+        return rows
+
     # ------------------------------------------------------------ idempotency (POST /cases)
     def idempotent_case(self, key: str, family_id: int) -> int | None:
         row = self.conn.execute(
@@ -464,6 +502,7 @@ class Repo:
                 ),
                 None,
             ),
+            "documents": self.case_documents(case_id),
             "spoken_lines": self._rows('SELECT * FROM spoken_line WHERE case_id = ? ORDER BY "order"', case_id),
             "trace": self.get_trace(case_id),
         }

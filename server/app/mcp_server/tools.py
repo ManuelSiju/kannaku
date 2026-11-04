@@ -145,6 +145,11 @@ def family_list_items(family_id: int, kind: str | None = None, repo: Repo | None
     return {"items": [i.model_dump() for i in items], "facts": _dump([_item_fact(i) for i in items])}
 
 
+def family_list_documents(family_id: int, repo: Repo | None = None) -> dict[str, Any]:
+    keep = ("id", "case_id", "filename", "doc_type", "terms", "times_seen", "first_seen", "last_seen")
+    return {"documents": [{k: d[k] for k in keep} for d in _repo(repo).family_documents(family_id)]}
+
+
 def family_save_item(family_id: int, item: dict[str, Any], confirmed: bool, repo: Repo | None = None) -> dict[str, Any]:
     """Refuses (saved=False) unless the family confirmed the item."""
     parsed = FamilyItem.model_validate(item)

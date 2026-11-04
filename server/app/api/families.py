@@ -63,6 +63,13 @@ def set_profile(family_id: int, body: ProfileValueIn, repo: Repo = Depends(get_r
     return tools.family_get_profile(family_id, repo)
 
 
+@router.get("/families/{family_id}/documents")
+def documents(family_id: int, repo: Repo = Depends(get_repo)) -> dict[str, Any]:
+    """Papers this family showed, newest first, with the category each was given."""
+    require_family(repo, family_id)
+    return {"documents": tools.family_list_documents(family_id, repo)["documents"]}
+
+
 @router.post("/families/{family_id}/profile/extract", response_model=Proposal)
 async def extract(
     family_id: int,

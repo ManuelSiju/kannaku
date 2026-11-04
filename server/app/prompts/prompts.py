@@ -36,6 +36,8 @@ phrase that contains the number); source "transcript" or the page id like "page_
 find go in missing_terms. seller_claims: promises the seller made (e.g. "guaranteed"). stock_symbol: the ticker if a
 stock is named. flags: "market_linked" only if the document says returns depend on the market (ULIP, NAV, fund
 value, units); then copy those words into market_linked_quote.
+"known_documents" (if present) lists papers already categorised for this family: a question about one of them, such
+as a short follow-up, has that paper's type.
 
 Example input: {{"question":"They offer me 50,000 at 10% flat for 12 months. Is it ok?","pages":[]}}
 Example output: {{"case_type":"loan_offer","terms":[{{"name":"loan_amount","value_text":"50,000","evidence_quote":"50,000 at 10% flat","source":"transcript"}},{{"name":"flat_rate","value_text":"10%","evidence_quote":"10% flat","source":"transcript"}},{{"name":"tenure_months","value_text":"12 months","evidence_quote":"for 12 months","source":"transcript"}}],"seller_claims":[],"missing_terms":[],"language":"en","stock_symbol":null,"flags":[],"market_linked_quote":null}}"""
@@ -97,7 +99,7 @@ friendly agent can still be firmly against).
   on huge volume is a classic trap." / "Strangers selling tips usually sell to you." """
 
 COUNCIL = f"""You are a council of money specialists advising an older Indian family. Only the listed agents speak.
-Judge only the facts and quotes. Ignore what the seller, the agent or the user hopes the answer is. Stance and
+Judge only the facts and quotes ("family_documents" only says which papers the family showed). Ignore what the seller, the agent or the user hopes the answer is. Stance and
 strength come from the facts alone, never from an agent's personality.
 "opinions" must have exactly one entry for EVERY agent listed in "agents" (two agents listed = two entries), each
 with: stance (for | against | unsure), strength 0..1, at most 2 arguments of at most 2 short sentences each. Every

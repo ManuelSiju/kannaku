@@ -24,6 +24,11 @@ def family_list_items(family_id: int, kind: str | None = None) -> dict[str, Any]
     return tools.family_list_items(family_id, kind)
 
 
+@mcp.tool(name="family.list_documents", description="Papers the family showed, with the category each was given.")
+def family_list_documents(family_id: int) -> dict[str, Any]:
+    return tools.family_list_documents(family_id)
+
+
 @mcp.tool(name="family.save_item", description="Save a family item. Refused unless confirmed is true.")
 def family_save_item(family_id: int, item: dict[str, Any], confirmed: bool) -> dict[str, Any]:
     return tools.family_save_item(family_id, item, confirmed)

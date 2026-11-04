@@ -19,6 +19,7 @@ Any failed step -> degraded=true with its name; the answer still returns what is
 
 from __future__ import annotations
 
+import hashlib
 import logging
 import re
 import time
@@ -69,6 +70,9 @@ WORDS_PER_MINUTE = 150
 # A red conclusion must say no plainly: "do not sign without written guarantees" invites signing once the paper comes.
 RED_NO = re.compile(r"\b(do not|don't|dont|not go ahead|avoid|stop|never|say no)\b", re.I)
 RED_LOOPHOLE = re.compile(r"\b(without|unless|until|carefully|first compare|more facts|more details)\b", re.I)
+# Categories a stored paper can pass on to a later question (not "unknown", not out of scope).
+DOCUMENT_TYPES = {"insurance_offer", "ulip", "loan_offer", "sip_or_fund_question", "stock_tip", "shares", "ipo",
+                  "chit_fund", "scam_or_payment_request"}  # fmt: skip
 # The model's own "ask them ..." sentences are removed from Alfii's conclusion: questions come only from the bank.
 MODEL_ASK = re.compile(r"\bask(?:s|ed|ing)?\b|\bquestions?\b|ചോദിക്ക|पूछ", re.I)
 ACTION_CUES = re.compile(r"\b(ask|wait|talk to|show me|call|do not sign|don't sign|before you)\b", re.I)
@@ -241,19 +245,38 @@ async def _pipeline(run: _Run, inp: AskInput, *, repo: Repo, llm: LLMProvider, s
     mode = decide_mode(inp.earphones, inp.user_says_alone, None, context_cue)
     repo.update_case(case_id, privacy_mode=mode, language=lang)
 
+    # papers this family showed before: this session's and earlier ones (same file = same content hash)
+    uploads = [(f.filename, hashlib.sha256(f.data).hexdigest()) for f in inp.files]
+    known_docs = repo.family_documents(inp.family_id)
+    session_docs = [d for d in known_docs if d["case_id"] == case_id]
+    same_files = [d for d in known_docs if d["sha256"] in {h for _, h in uploads}]
+
+    def remember(doc_type: str, terms: dict[str, str] | None = None) -> None:
+        for filename, digest in uploads:
+            repo.remember_document(inp.family_id, case_id, filename, digest, doc_type, terms)
+
     # 2 scam rules (fast path) -------------------------------------------------------------------------------
     signals: list[ScamSignal] = []
     async with run.step("scam_rules") as info:
         signals = detect(transcript, ing.doc_text)
         info["signals"] = [s.model_dump() for s in signals]
     if signals:
+        remember("scam_or_payment_request")
         return _scam_result(run, signals, mode, repo, inp.family_id, lang)
 
     # 3 case builder (LLM 1; a failed vision call falls back to the OCR text) --------------------------------
     draft = CaseDraft(case_type="unknown")
     vision_read = False
     async with run.step("case_builder") as info:
-        user = _json({"question": transcript, "pages": [{"source": p.source, "text": p.text} for p in ing.pages]})
+        case_input: dict[str, Any] = {
+            "question": transcript,
+            "pages": [{"source": p.source, "text": p.text} for p in ing.pages],
+        }
+        if session_docs or same_files:
+            case_input["known_documents"] = [
+                {"filename": d["filename"], "type": d["doc_type"]} for d in [*session_docs, *same_files]
+            ]
+        user = _json(case_input)
         images = ing.images if getattr(getattr(llm, "settings", None), "llm_vision_enabled", False) else []
         if images:
             try:
@@ -272,8 +295,15 @@ async def _pipeline(run: _Run, inp: AskInput, *, repo: Repo, llm: LLMProvider, s
             ms_llm=usage.ms,
             tokens=[usage.prompt_tokens, usage.completion_tokens],
         )
+    # A paper already categorised keeps its category when the model cannot place the question (a short follow-up, or
+    # the same file sent again): the type recorded for it is used instead of asking "is this a loan or a policy?".
+    stored = next((d["doc_type"] for d in [*same_files, *session_docs] if d["doc_type"] in DOCUMENT_TYPES), None)
+    if stored and draft.case_type in ("unknown", "general_money"):
+        repo.add_trace(case_id, "document_type", 0.0, "ok", {"model_said": draft.case_type, "used": stored})
+        draft = draft.model_copy(update={"case_type": stored})
     flags, case_type, flag_why = routing_flags(draft, evidence)  # market_linked only with document support
     repo.update_case(case_id, case_type=case_type)
+    remember(case_type)
 
     if case_type == "unknown":  # Alfii asks one clarifying question; no council, no extra LLM call
         return _simple_result(run, case_type, t(lang, "clarify"), mode, repo, lang)
@@ -304,6 +334,7 @@ async def _pipeline(run: _Run, inp: AskInput, *, repo: Repo, llm: LLMProvider, s
         info.update(facts=[f.id for f in computed.facts], missing_required=computed.missing_required)
     facts = computed.facts
     repo.save_facts(case_id, facts)
+    remember(case_type, {tm.name: tm.display for tm in terms if tm.verified})
     claims: list[ClaimCheck] = check_claims(draft.seller_claims, facts, quotes, case_type)
 
     # 6 router ---------------------------------------------------------------------------------------------------
@@ -325,6 +356,10 @@ async def _pipeline(run: _Run, inp: AskInput, *, repo: Repo, llm: LLMProvider, s
     summary = {
         "case_type": case_type,
         "question": transcript,
+        "family_documents": [
+            {"filename": d["filename"], "type": d["doc_type"], "times_seen": d["times_seen"]}
+            for d in repo.family_documents(inp.family_id, limit=5)
+        ],
         "verified_terms": [
             {"name": tm.name, "value": tm.display, "quote_id": tm.quote_id} for tm in terms if tm.verified
         ],
