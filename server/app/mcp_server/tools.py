@@ -431,6 +431,10 @@ def calc_flat_to_effective(principal: float, flat_rate_annual: float, months: in
     return {"facts": _dump(finance.flat_to_effective(principal, flat_rate_annual, months))}
 
 
+def calc_reducing_loan(principal: float, rate_annual: float, months: int) -> dict[str, Any]:
+    return {"facts": _dump(finance.reducing_loan(principal, rate_annual, months))}
+
+
 def calc_affordability(
     monthly_income: float | None = None,
     monthly_expenses: float | None = None,

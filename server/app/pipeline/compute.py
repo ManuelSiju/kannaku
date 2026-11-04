@@ -148,8 +148,10 @@ def compute_facts(
             )
 
     elif case_type == "loan_offer":
-        if need("loan_amount", "flat_rate", "tenure_months"):
-            loan = _facts(tools.calc_flat_to_effective(t["loan_amount"], t["flat_rate"], int(t["tenure_months"])))
+        rate = "reducing_rate" if "reducing_rate" in t else "flat_rate"
+        if need("loan_amount", rate, "tenure_months"):
+            calc = tools.calc_reducing_loan if rate == "reducing_rate" else tools.calc_flat_to_effective
+            loan = _facts(calc(t["loan_amount"], t[rate], int(t["tenure_months"])))
             facts += loan
             commitment = t["loan_amount"]
             emi = next(f.value for f in loan if f.id == "loan_emi")

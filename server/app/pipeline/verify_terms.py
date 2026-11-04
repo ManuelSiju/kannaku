@@ -47,13 +47,20 @@ class VerifiedTerm(BaseModel):
 
 
 def term_unit(name: str) -> str:
-    if "rate" in name:  # flat_rate, bonus_rate_low, bonus_rate_high
+    if "rate" in name:  # flat_rate, reducing_rate, bonus_rate_low, bonus_rate_high
         return "fraction"
     if name.endswith("months"):
         return "months"
     if name.endswith("years"):
         return "years"
     return "INR"
+
+
+def _sentence_around(quote: str, text: str) -> str:
+    """The quote with the sentence it came from: "9.5% a year" alone does not say flat or reducing."""
+    parts = re.split(r"(?<=[.!?])\s+|\n", text)
+    near = [p for p in parts if fuzzy_contains(quote, p) >= FUZZY_MIN]
+    return " ".join([quote, *near])
 
 
 def _norm(s: str) -> str:
@@ -98,6 +105,12 @@ def verify_term(term: ExtractedTerm, evidence: list[EvidenceText], *, vision_rea
         return fail("the number is not in the quoted words", match.quote_id)
     if match.ocr_text is not None and not _number_in(value, unit, match.ocr_text):
         return fail("photo reading did not confirm the number", match.quote_id)
+    if term.name == "flat_rate":  # the two rates give different EMIs, so the words decide, not the model
+        context = _sentence_around(term.evidence_quote, match.text)
+        if re.search(r"\breducing\b", context, re.I):
+            base["name"] = "reducing_rate"
+        elif not re.search(r"\bflat\b", context, re.I):
+            return fail("not written as a flat rate", match.quote_id)
     is_photo = match.ocr_text is not None
     reading = ("twice" if vision_read else "once") if is_photo else "checked"
     return VerifiedTerm(

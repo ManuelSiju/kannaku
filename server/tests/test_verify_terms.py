@@ -48,3 +48,24 @@ def test_unknown_name_and_unparseable():
 def test_fuzzy_contains_tolerates_ocr_noise():
     assert fuzzy_contains("Annual premium: Rs. 50,000", "Annual  premium : Rs. 50,000") >= 0.9
     assert fuzzy_contains("Sum assured is ten crore guaranteed forever", PAGE.text) < 0.9
+
+
+# ---------------------------------------------------------------- flat or reducing: the words decide
+def rate_term(quote: str, text: str):
+    term = ExtractedTerm(name="flat_rate", value_text="9.5%", evidence_quote=quote)
+    return verify_term(term, [EvidenceText(quote_id="q1", source="transcript", text=text)])
+
+
+def test_a_reducing_rate_is_never_treated_as_flat():
+    got = rate_term("9.5%", "A loan of 80,000 at 9.5% a year on reducing balance for 24 months.")
+    assert got.verified and got.name == "reducing_rate" and got.value == 0.095
+
+
+def test_a_flat_rate_stays_flat():
+    got = rate_term("9.5% flat", "A loan of 80,000 at 9.5% flat for 24 months.")
+    assert got.verified and got.name == "flat_rate"
+
+
+def test_a_rate_that_is_neither_is_not_assumed_flat():
+    got = rate_term("9.5%", "A loan of 80,000 at 9.5% a year for 24 months.")
+    assert not got.verified and got.reason == "not written as a flat rate"

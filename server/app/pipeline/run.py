@@ -434,6 +434,8 @@ async def _pipeline(run: _Run, inp: AskInput, *, repo: Repo, llm: LLMProvider, s
         ]
     # questions come from the code's bank for this case type: missing terms and contradicted claims first
     bank = questions_mod.candidates(case_type, unverified, claims, lang)
+    if any(tm.name == "reducing_rate" and tm.verified for tm in terms):  # it was already told
+        bank = [q for q in bank if q.id != "loan_reducing_rate"]
     agent_lines: list[explainer_mod.CheckedLine] = []
     notes: list[explainer_mod.CheckedLine] = []
     conclusion: explainer_mod.CheckedLine | None = None

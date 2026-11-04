@@ -521,3 +521,21 @@ def test_silence_asks_again_without_a_model_call(harness):
     res = ask(client, files=[("audio", ("a.wav", b"RIFF\x00\x00\x00\x00WAVEfmt ", "audio/wav"))])
     assert res["spoken_lines"][0]["text"] == "I didn't catch that. Please say it again, or type it."
     assert res["verdict"]["colour"] is None and llm.calls == [] and res["llm_calls"] == 0
+
+
+# ---------------------------------------------------------------- reducing-balance loan
+def test_reducing_loan_is_not_computed_as_flat_and_does_not_ask_the_rate_again(harness):
+    client, state, _ = harness
+    fixture = json.loads(json.dumps(load_fixture("flat_loan")))
+    draft = fixture["CaseDraft"]
+    question = "My bank offers a loan of 1,00,000 at 12% a year on reducing balance for 24 months. Should I take it?"
+    for term in draft["terms"]:
+        if term["name"] == "flat_rate":
+            term.update(value_text="12%", evidence_quote="12% a year on reducing balance")
+    state["llm"] = FakeLLM(fixture)
+    res = ask(client, question)
+    bundle = client.get(f"/cases/{res['case_id']}").json()
+    facts = {f["id"]: f["value"] for f in bundle["facts"]}
+    assert facts["loan_emi"] == pytest.approx(4707.35, abs=0.01)
+    assert facts["term.reducing_rate"] == 0.12 and "term.flat_rate" not in facts
+    assert not any("reducing-balance interest rate" in q for q in res["verdict"]["questions"])

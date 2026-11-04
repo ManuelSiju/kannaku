@@ -8,8 +8,10 @@ from app.engines.finance import (
     flat_to_effective,
     irr_annual,
     irr_rate,
+    reducing_loan,
     sip_value,
 )
+from tests.calibration.oracle import reducing_emi
 
 
 def by_id(facts):
@@ -110,3 +112,11 @@ def test_regular_commitments_unknown_makes_buffer_unknown():
     assert f["buffer_months_after"].status == "unknown"
     assert "regular_commitments" in f["surplus_after"].inputs["missing"]
     assert f["emi_share"].status == "known"
+
+
+def test_reducing_loan_matches_the_independent_formula():
+    emi, interest, rate = reducing_loan(80_000, 0.095, 24)
+    assert emi.value == pytest.approx(reducing_emi(80_000, 0.095, 24), abs=0.01)
+    assert emi.value == pytest.approx(3673.16, abs=0.01)
+    assert interest.value == pytest.approx(emi.value * 24 - 80_000, abs=0.01)
+    assert rate.value == 0.095

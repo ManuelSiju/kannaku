@@ -1,0 +1,2443 @@
+[
+ {
+  "id": "G3",
+  "title": "Reducing-balance two-wheeler loan",
+  "colours": [
+   "green",
+   "green",
+   "green"
+  ],
+  "allowed": [
+   "green"
+  ],
+  "problems": [],
+  "violations": [],
+  "runs": [
+   {
+    "colour": "green",
+    "case_type": "loan_offer",
+    "agents": [
+     "sankz"
+    ],
+    "stances": {
+     "sankz": "for 0.7"
+    },
+    "score": 0.65,
+    "overrides": [],
+    "llm_calls": 3,
+    "degraded": [],
+    "seconds": 18.3,
+    "facts": {
+     "term.loan_amount": {
+      "value": 80000.0,
+      "unit": "INR"
+     },
+     "term.reducing_rate": {
+      "value": 0.095,
+      "unit": "fraction"
+     },
+     "term.tenure_months": {
+      "value": 24.0,
+      "unit": "months"
+     },
+     "profile.monthly_income": {
+      "value": 50000.0,
+      "unit": "INR"
+     },
+     "profile.monthly_expenses": {
+      "value": 25000.0,
+      "unit": "INR"
+     },
+     "profile.savings": {
+      "value": 150000.0,
+      "unit": "INR"
+     },
+     "existing_emi": {
+      "value": 0.0,
+      "unit": "INR"
+     },
+     "regular_commitments": {
+      "value": 0.0,
+      "unit": "INR"
+     },
+     "ref.fd_rate": {
+      "value": 0.07,
+      "unit": "fraction"
+     },
+     "ref.inflation": {
+      "value": 0.05,
+      "unit": "fraction"
+     },
+     "ref.index_long_run_return": {
+      "value": 0.11,
+      "unit": "fraction"
+     },
+     "ref.typical_personal_loan_rate": {
+      "value": 0.14,
+      "unit": "fraction"
+     },
+     "loan_emi": {
+      "value": 3673.16,
+      "unit": "INR"
+     },
+     "loan_total_interest": {
+      "value": 8155.83,
+      "unit": "INR"
+     },
+     "loan_effective_rate": {
+      "value": 0.095,
+      "unit": "fraction"
+     },
+     "emi_share": {
+      "value": 0.0735,
+      "unit": "fraction"
+     },
+     "buffer_months_after": {
+      "value": 5.23,
+      "unit": "months"
+     },
+     "surplus_after": {
+      "value": 21326.84,
+      "unit": "INR"
+     },
+     "cmp_effective_vs_typical": {
+      "value": -4.5,
+      "unit": "percentage points"
+     }
+    },
+    "terms": {
+     "loan_amount": 80000.0,
+     "reducing_rate": 0.095,
+     "tenure_months": 24.0
+    },
+    "spoken": [
+     "Let me ask Sankz.",
+     "You pay 3,673 rupees each month, so your bike cost stays fixed. This loan costs you lower than a normal bank loan, so it is fair.",
+     "You can take this bike loan. Before you decide, ask: \"What are the processing and prepayment charges?\""
+    ],
+    "notes": [
+     "Your EMIs would take 7.3% of your income.",
+     "After this, you would have ₹21,327 left each month.",
+     "Your savings would cover 5.2 months of costs."
+    ],
+    "claims": [],
+    "sentence": "You can take this bike loan. Before you decide, ask: \"What are the processing and prepayment charges?\"",
+    "questions": [
+     "What are the processing and prepayment charges?"
+    ]
+   },
+   {
+    "colour": "green",
+    "case_type": "loan_offer",
+    "agents": [
+     "sankz"
+    ],
+    "stances": {
+     "sankz": "for 0.6"
+    },
+    "score": 0.6,
+    "overrides": [],
+    "llm_calls": 3,
+    "degraded": [],
+    "seconds": 27.2,
+    "facts": {
+     "term.loan_amount": {
+      "value": 80000.0,
+      "unit": "INR"
+     },
+     "term.reducing_rate": {
+      "value": 0.095,
+      "unit": "fraction"
+     },
+     "term.tenure_months": {
+      "value": 24.0,
+      "unit": "months"
+     },
+     "profile.monthly_income": {
+      "value": 50000.0,
+      "unit": "INR"
+     },
+     "profile.monthly_expenses": {
+      "value": 25000.0,
+      "unit": "INR"
+     },
+     "profile.savings": {
+      "value": 150000.0,
+      "unit": "INR"
+     },
+     "existing_emi": {
+      "value": 0.0,
+      "unit": "INR"
+     },
+     "regular_commitments": {
+      "value": 0.0,
+      "unit": "INR"
+     },
+     "ref.fd_rate": {
+      "value": 0.07,
+      "unit": "fraction"
+     },
+     "ref.inflation": {
+      "value": 0.05,
+      "unit": "fraction"
+     },
+     "ref.index_long_run_return": {
+      "value": 0.11,
+      "unit": "fraction"
+     },
+     "ref.typical_personal_loan_rate": {
+      "value": 0.14,
+      "unit": "fraction"
+     },
+     "loan_emi": {
+      "value": 3673.16,
+      "unit": "INR"
+     },
+     "loan_total_interest": {
+      "value": 8155.83,
+      "unit": "INR"
+     },
+     "loan_effective_rate": {
+      "value": 0.095,
+      "unit": "fraction"
+     },
+     "emi_share": {
+      "value": 0.0735,
+      "unit": "fraction"
+     },
+     "buffer_months_after": {
+      "value": 5.23,
+      "unit": "months"
+     },
+     "surplus_after": {
+      "value": 21326.84,
+      "unit": "INR"
+     },
+     "cmp_effective_vs_typical": {
+      "value": -4.5,
+      "unit": "percentage points"
+     }
+    },
+    "terms": {
+     "loan_amount": 80000.0,
+     "reducing_rate": 0.095,
+     "tenure_months": 24.0
+    },
+    "spoken": [
+     "Let me ask Sankz.",
+     "You pay 3,673 rupees each month so you can use the scooter now. It costs you 9.5 percent a year, lower than a normal bank loan.",
+     "You can take this loan. Before you decide, ask: \"What is the reducing-balance interest rate?\""
+    ],
+    "notes": [
+     "Your EMIs would take 7.3% of your income.",
+     "After this, you would have ₹21,327 left each month.",
+     "Your savings would cover 5.2 months of costs."
+    ],
+    "claims": [],
+    "sentence": "You can take this loan. Before you decide, ask: \"What is the reducing-balance interest rate?\"",
+    "questions": [
+     "What is the reducing-balance interest rate?",
+     "What are the processing and prepayment charges?"
+    ]
+   },
+   {
+    "colour": "green",
+    "case_type": "loan_offer",
+    "agents": [
+     "sankz"
+    ],
+    "stances": {
+     "sankz": "for 0.6"
+    },
+    "score": 0.6,
+    "overrides": [],
+    "llm_calls": 3,
+    "degraded": [],
+    "seconds": 25.9,
+    "facts": {
+     "term.loan_amount": {
+      "value": 80000.0,
+      "unit": "INR"
+     },
+     "term.reducing_rate": {
+      "value": 0.095,
+      "unit": "fraction"
+     },
+     "term.tenure_months": {
+      "value": 24.0,
+      "unit": "months"
+     },
+     "profile.monthly_income": {
+      "value": 50000.0,
+      "unit": "INR"
+     },
+     "profile.monthly_expenses": {
+      "value": 25000.0,
+      "unit": "INR"
+     },
+     "profile.savings": {
+      "value": 150000.0,
+      "unit": "INR"
+     },
+     "existing_emi": {
+      "value": 0.0,
+      "unit": "INR"
+     },
+     "regular_commitments": {
+      "value": 0.0,
+      "unit": "INR"
+     },
+     "ref.fd_rate": {
+      "value": 0.07,
+      "unit": "fraction"
+     },
+     "ref.inflation": {
+      "value": 0.05,
+      "unit": "fraction"
+     },
+     "ref.index_long_run_return": {
+      "value": 0.11,
+      "unit": "fraction"
+     },
+     "ref.typical_personal_loan_rate": {
+      "value": 0.14,
+      "unit": "fraction"
+     },
+     "loan_emi": {
+      "value": 3673.16,
+      "unit": "INR"
+     },
+     "loan_total_interest": {
+      "value": 8155.83,
+      "unit": "INR"
+     },
+     "loan_effective_rate": {
+      "value": 0.095,
+      "unit": "fraction"
+     },
+     "emi_share": {
+      "value": 0.0735,
+      "unit": "fraction"
+     },
+     "buffer_months_after": {
+      "value": 5.23,
+      "unit": "months"
+     },
+     "surplus_after": {
+      "value": 21326.84,
+      "unit": "INR"
+     },
+     "cmp_effective_vs_typical": {
+      "value": -4.5,
+      "unit": "percentage points"
+     }
+    },
+    "terms": {
+     "loan_amount": 80000.0,
+     "reducing_rate": 0.095,
+     "tenure_months": 24.0
+    },
+    "spoken": [
+     "Let me ask Sankz.",
+     "You will pay 3,673 rupees each month so keep that money ready. This rate sits lower than a normal bank loan so it is kind to you.",
+     "You may take this loan if you need the bike. Before you decide, ask: \"What are the processing and prepayment charges?\""
+    ],
+    "notes": [
+     "Your EMIs would take 7.3% of your income.",
+     "After this, you would have ₹21,327 left each month.",
+     "Your savings would cover 5.2 months of costs."
+    ],
+    "claims": [],
+    "sentence": "You may take this loan if you need the bike. Before you decide, ask: \"What are the processing and prepayment charges?\"",
+    "questions": [
+     "What are the processing and prepayment charges?"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "Y3",
+  "title": "Affordable loan, EMI share 45 percent",
+  "colours": [
+   "yellow",
+   "yellow",
+   "yellow"
+  ],
+  "allowed": [
+   "yellow"
+  ],
+  "problems": [],
+  "violations": [],
+  "runs": [
+   {
+    "colour": "yellow",
+    "case_type": "loan_offer",
+    "agents": [
+     "sankz"
+    ],
+    "stances": {
+     "sankz": "unsure 0.6"
+    },
+    "score": 0.0,
+    "overrides": [
+     "emi_share_over_40"
+    ],
+    "llm_calls": 3,
+    "degraded": [],
+    "seconds": 22.5,
+    "facts": {
+     "term.loan_amount": {
+      "value": 392000.0,
+      "unit": "INR"
+     },
+     "term.reducing_rate": {
+      "value": 0.095,
+      "unit": "fraction"
+     },
+     "term.tenure_months": {
+      "value": 24.0,
+      "unit": "months"
+     },
+     "profile.monthly_income": {
+      "value": 40000.0,
+      "unit": "INR"
+     },
+     "profile.monthly_expenses": {
+      "value": 15000.0,
+      "unit": "INR"
+     },
+     "profile.savings": {
+      "value": 300000.0,
+      "unit": "INR"
+     },
+     "existing_emi": {
+      "value": 0.0,
+      "unit": "INR"
+     },
+     "regular_commitments": {
+      "value": 0.0,
+      "unit": "INR"
+     },
+     "ref.fd_rate": {
+      "value": 0.07,
+      "unit": "fraction"
+     },
+     "ref.inflation": {
+      "value": 0.05,
+      "unit": "fraction"
+     },
+     "ref.index_long_run_return": {
+      "value": 0.11,
+      "unit": "fraction"
+     },
+     "ref.typical_personal_loan_rate": {
+      "value": 0.14,
+      "unit": "fraction"
+     },
+     "loan_emi": {
+      "value": 17998.48,
+      "unit": "INR"
+     },
+     "loan_total_interest": {
+      "value": 39963.55,
+      "unit": "INR"
+     },
+     "loan_effective_rate": {
+      "value": 0.095,
+      "unit": "fraction"
+     },
+     "emi_share": {
+      "value": 0.45,
+      "unit": "fraction"
+     },
+     "buffer_months_after": {
+      "value": 9.09,
+      "unit": "months"
+     },
+     "surplus_after": {
+      "value": 7001.52,
+      "unit": "INR"
+     },
+     "cmp_effective_vs_typical": {
+      "value": -4.5,
+      "unit": "percentage points"
+     }
+    },
+    "terms": {
+     "loan_amount": 392000.0,
+     "reducing_rate": 0.095,
+     "tenure_months": 24.0
+    },
+    "spoken": [
+     "Let me ask Sankz.",
+     "You will pay 17,998 rupees each month so you need that spare. This loan costs lower than a normal bank loan so the charge is kinder.",
+     "Please wait and check everything before you sign."
+    ],
+    "notes": [
+     "Your EMIs would take 45% of your income.",
+     "After this, you would have ₹7,002 left each month.",
+     "Your savings would cover 9.1 months of costs."
+    ],
+    "claims": [],
+    "sentence": "Please wait and check everything before you sign.",
+    "questions": [
+     "What are the processing and prepayment charges?",
+     "What is the reducing-balance interest rate?"
+    ]
+   },
+   {
+    "colour": "yellow",
+    "case_type": "loan_offer",
+    "agents": [
+     "sankz"
+    ],
+    "stances": {
+     "sankz": "unsure 0.6"
+    },
+    "score": 0.0,
+    "overrides": [
+     "emi_share_over_40"
+    ],
+    "llm_calls": 3,
+    "degraded": [],
+    "seconds": 27.9,
+    "facts": {
+     "term.loan_amount": {
+      "value": 392000.0,
+      "unit": "INR"
+     },
+     "term.reducing_rate": {
+      "value": 0.095,
+      "unit": "fraction"
+     },
+     "term.tenure_months": {
+      "value": 24.0,
+      "unit": "months"
+     },
+     "profile.monthly_income": {
+      "value": 40000.0,
+      "unit": "INR"
+     },
+     "profile.monthly_expenses": {
+      "value": 15000.0,
+      "unit": "INR"
+     },
+     "profile.savings": {
+      "value": 300000.0,
+      "unit": "INR"
+     },
+     "existing_emi": {
+      "value": 0.0,
+      "unit": "INR"
+     },
+     "regular_commitments": {
+      "value": 0.0,
+      "unit": "INR"
+     },
+     "ref.fd_rate": {
+      "value": 0.07,
+      "unit": "fraction"
+     },
+     "ref.inflation": {
+      "value": 0.05,
+      "unit": "fraction"
+     },
+     "ref.index_long_run_return": {
+      "value": 0.11,
+      "unit": "fraction"
+     },
+     "ref.typical_personal_loan_rate": {
+      "value": 0.14,
+      "unit": "fraction"
+     },
+     "loan_emi": {
+      "value": 17998.48,
+      "unit": "INR"
+     },
+     "loan_total_interest": {
+      "value": 39963.55,
+      "unit": "INR"
+     },
+     "loan_effective_rate": {
+      "value": 0.095,
+      "unit": "fraction"
+     },
+     "emi_share": {
+      "value": 0.45,
+      "unit": "fraction"
+     },
+     "buffer_months_after": {
+      "value": 9.09,
+      "unit": "months"
+     },
+     "surplus_after": {
+      "value": 7001.52,
+      "unit": "INR"
+     },
+     "cmp_effective_vs_typical": {
+      "value": -4.5,
+      "unit": "percentage points"
+     }
+    },
+    "terms": {
+     "loan_amount": 392000.0,
+     "reducing_rate": 0.095,
+     "tenure_months": 24.0
+    },
+    "spoken": [
+     "Let me ask Sankz.",
+     "You pay 17,998 rupees each month so you can plan ahead.",
+     "Please wait and check everything before you sign."
+    ],
+    "notes": [
+     "Your EMIs would take 45% of your income.",
+     "After this, you would have ₹7,002 left each month.",
+     "Your savings would cover 9.1 months of costs."
+    ],
+    "claims": [],
+    "sentence": "Please wait and check everything before you sign.",
+    "questions": [
+     "What is the reducing-balance interest rate?",
+     "What are the processing and prepayment charges?"
+    ]
+   },
+   {
+    "colour": "yellow",
+    "case_type": "loan_offer",
+    "agents": [
+     "sankz"
+    ],
+    "stances": {
+     "sankz": "unsure 0.6"
+    },
+    "score": 0.0,
+    "overrides": [
+     "emi_share_over_40"
+    ],
+    "llm_calls": 3,
+    "degraded": [],
+    "seconds": 20.0,
+    "facts": {
+     "term.loan_amount": {
+      "value": 392000.0,
+      "unit": "INR"
+     },
+     "term.reducing_rate": {
+      "value": 0.095,
+      "unit": "fraction"
+     },
+     "term.tenure_months": {
+      "value": 24.0,
+      "unit": "months"
+     },
+     "profile.monthly_income": {
+      "value": 40000.0,
+      "unit": "INR"
+     },
+     "profile.monthly_expenses": {
+      "value": 15000.0,
+      "unit": "INR"
+     },
+     "profile.savings": {
+      "value": 300000.0,
+      "unit": "INR"
+     },
+     "existing_emi": {
+      "value": 0.0,
+      "unit": "INR"
+     },
+     "regular_commitments": {
+      "value": 0.0,
+      "unit": "INR"
+     },
+     "ref.fd_rate": {
+      "value": 0.07,
+      "unit": "fraction"
+     },
+     "ref.inflation": {
+      "value": 0.05,
+      "unit": "fraction"
+     },
+     "ref.index_long_run_return": {
+      "value": 0.11,
+      "unit": "fraction"
+     },
+     "ref.typical_personal_loan_rate": {
+      "value": 0.14,
+      "unit": "fraction"
+     },
+     "loan_emi": {
+      "value": 17998.48,
+      "unit": "INR"
+     },
+     "loan_total_interest": {
+      "value": 39963.55,
+      "unit": "INR"
+     },
+     "loan_effective_rate": {
+      "value": 0.095,
+      "unit": "fraction"
+     },
+     "emi_share": {
+      "value": 0.45,
+      "unit": "fraction"
+     },
+     "buffer_months_after": {
+      "value": 9.09,
+      "unit": "months"
+     },
+     "surplus_after": {
+      "value": 7001.52,
+      "unit": "INR"
+     },
+     "cmp_effective_vs_typical": {
+      "value": -4.5,
+      "unit": "percentage points"
+     }
+    },
+    "terms": {
+     "loan_amount": 392000.0,
+     "reducing_rate": 0.095,
+     "tenure_months": 24.0
+    },
+    "spoken": [
+     "Let me ask Sankz.",
+     "This loan costs you 9.5 percent a year on what you still owe. That is lower than a normal bank loan.",
+     "You may consider it slowly after you check all charges. Before you decide, ask: \"What are the processing and prepayment charges?\""
+    ],
+    "notes": [
+     "Your EMIs would take 45% of your income.",
+     "After this, you would have ₹7,002 left each month.",
+     "Your savings would cover 9.1 months of costs."
+    ],
+    "claims": [],
+    "sentence": "You may consider it slowly after you check all charges. Before you decide, ask: \"What are the processing and prepayment charges?\"",
+    "questions": [
+     "What are the processing and prepayment charges?",
+     "What is the reducing-balance interest rate?"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "R2",
+  "title": "12 percent flat loan",
+  "colours": [
+   "red",
+   "red",
+   "red"
+  ],
+  "allowed": [
+   "red",
+   "yellow"
+  ],
+  "problems": [],
+  "violations": [],
+  "runs": [
+   {
+    "colour": "red",
+    "case_type": "loan_offer",
+    "agents": [
+     "sankz"
+    ],
+    "stances": {
+     "sankz": "against 0.8"
+    },
+    "score": -0.8,
+    "overrides": [],
+    "llm_calls": 3,
+    "degraded": [],
+    "seconds": 23.9,
+    "facts": {
+     "term.loan_amount": {
+      "value": 100000.0,
+      "unit": "INR"
+     },
+     "term.flat_rate": {
+      "value": 0.12,
+      "unit": "fraction"
+     },
+     "term.tenure_months": {
+      "value": 24.0,
+      "unit": "months"
+     },
+     "profile.monthly_income": {
+      "value": 45000.0,
+      "unit": "INR"
+     },
+     "profile.monthly_expenses": {
+      "value": 28000.0,
+      "unit": "INR"
+     },
+     "profile.savings": {
+      "value": 160000.0,
+      "unit": "INR"
+     },
+     "existing_emi": {
+      "value": 2400.0,
+      "unit": "INR"
+     },
+     "regular_commitments": {
+      "value": 1000.0,
+      "unit": "INR"
+     },
+     "ref.fd_rate": {
+      "value": 0.07,
+      "unit": "fraction"
+     },
+     "ref.inflation": {
+      "value": 0.05,
+      "unit": "fraction"
+     },
+     "ref.index_long_run_return": {
+      "value": 0.11,
+      "unit": "fraction"
+     },
+     "ref.typical_personal_loan_rate": {
+      "value": 0.14,
+      "unit": "fraction"
+     },
+     "loan_emi": {
+      "value": 5166.67,
+      "unit": "INR"
+     },
+     "loan_total_interest": {
+      "value": 24000.0,
+      "unit": "INR"
+     },
+     "loan_effective_rate": {
+      "value": 0.215712,
+      "unit": "fraction"
+     },
+     "emi_share": {
+      "value": 0.1681,
+      "unit": "fraction"
+     },
+     "buffer_months_after": {
+      "value": 4.38,
+      "unit": "months"
+     },
+     "surplus_after": {
+      "value": 8433.33,
+      "unit": "INR"
+     },
+     "cmp_effective_vs_quoted": {
+      "value": 9.57,
+      "unit": "percentage points"
+     },
+     "cmp_effective_vs_typical": {
+      "value": 7.57,
+      "unit": "percentage points"
+     }
+    },
+    "terms": {
+     "loan_amount": 100000.0,
+     "flat_rate": 0.12,
+     "tenure_months": 24.0
+    },
+    "spoken": [
+     "Let me ask Sankz.",
+     "You really pay 21.6 percent a year on this loan. It stays higher than a normal bank loan so you keep paying extra.",
+     "Please do not take this loan as it is. Talk to Arun before you decide."
+    ],
+    "notes": [
+     "Your EMIs would take 16.8% of your income.",
+     "After this, you would have ₹8,433 left each month.",
+     "Your savings would cover 4.4 months of costs."
+    ],
+    "claims": [],
+    "sentence": "Please do not take this loan as it is. Talk to Arun before you decide.",
+    "questions": [
+     "What is the reducing-balance interest rate?",
+     "What are the processing and prepayment charges?"
+    ]
+   },
+   {
+    "colour": "red",
+    "case_type": "loan_offer",
+    "agents": [
+     "sankz"
+    ],
+    "stances": {
+     "sankz": "against 0.8"
+    },
+    "score": -0.85,
+    "overrides": [],
+    "llm_calls": 3,
+    "degraded": [],
+    "seconds": 28.9,
+    "facts": {
+     "term.loan_amount": {
+      "value": 100000.0,
+      "unit": "INR"
+     },
+     "term.flat_rate": {
+      "value": 0.12,
+      "unit": "fraction"
+     },
+     "term.tenure_months": {
+      "value": 24.0,
+      "unit": "months"
+     },
+     "profile.monthly_income": {
+      "value": 45000.0,
+      "unit": "INR"
+     },
+     "profile.monthly_expenses": {
+      "value": 28000.0,
+      "unit": "INR"
+     },
+     "profile.savings": {
+      "value": 160000.0,
+      "unit": "INR"
+     },
+     "existing_emi": {
+      "value": 2400.0,
+      "unit": "INR"
+     },
+     "regular_commitments": {
+      "value": 1000.0,
+      "unit": "INR"
+     },
+     "ref.fd_rate": {
+      "value": 0.07,
+      "unit": "fraction"
+     },
+     "ref.inflation": {
+      "value": 0.05,
+      "unit": "fraction"
+     },
+     "ref.index_long_run_return": {
+      "value": 0.11,
+      "unit": "fraction"
+     },
+     "ref.typical_personal_loan_rate": {
+      "value": 0.14,
+      "unit": "fraction"
+     },
+     "loan_emi": {
+      "value": 5166.67,
+      "unit": "INR"
+     },
+     "loan_total_interest": {
+      "value": 24000.0,
+      "unit": "INR"
+     },
+     "loan_effective_rate": {
+      "value": 0.215712,
+      "unit": "fraction"
+     },
+     "emi_share": {
+      "value": 0.1681,
+      "unit": "fraction"
+     },
+     "buffer_months_after": {
+      "value": 4.38,
+      "unit": "months"
+     },
+     "surplus_after": {
+      "value": 8433.33,
+      "unit": "INR"
+     },
+     "cmp_effective_vs_quoted": {
+      "value": 9.57,
+      "unit": "percentage points"
+     },
+     "cmp_effective_vs_typical": {
+      "value": 7.57,
+      "unit": "percentage points"
+     }
+    },
+    "terms": {
+     "loan_amount": 100000.0,
+     "flat_rate": 0.12,
+     "tenure_months": 24.0
+    },
+    "spoken": [
+     "Let me ask Sankz.",
+     "You pay 5,167 rupees each month because interest stays on full amount. This really costs you 21.6 percent each year for you.",
+     "Please do not take this loan as it is. Talk to Arun before you decide."
+    ],
+    "notes": [
+     "Your EMIs would take 16.8% of your income.",
+     "After this, you would have ₹8,433 left each month.",
+     "Your savings would cover 4.4 months of costs."
+    ],
+    "claims": [],
+    "sentence": "Please do not take this loan as it is. Talk to Arun before you decide.",
+    "questions": [
+     "What is the reducing-balance interest rate?",
+     "What are the processing and prepayment charges?"
+    ]
+   },
+   {
+    "colour": "red",
+    "case_type": "loan_offer",
+    "agents": [
+     "sankz"
+    ],
+    "stances": {
+     "sankz": "against 0.8"
+    },
+    "score": -0.85,
+    "overrides": [],
+    "llm_calls": 3,
+    "degraded": [],
+    "seconds": 21.2,
+    "facts": {
+     "term.loan_amount": {
+      "value": 100000.0,
+      "unit": "INR"
+     },
+     "term.flat_rate": {
+      "value": 0.12,
+      "unit": "fraction"
+     },
+     "term.tenure_months": {
+      "value": 24.0,
+      "unit": "months"
+     },
+     "profile.monthly_income": {
+      "value": 45000.0,
+      "unit": "INR"
+     },
+     "profile.monthly_expenses": {
+      "value": 28000.0,
+      "unit": "INR"
+     },
+     "profile.savings": {
+      "value": 160000.0,
+      "unit": "INR"
+     },
+     "existing_emi": {
+      "value": 2400.0,
+      "unit": "INR"
+     },
+     "regular_commitments": {
+      "value": 1000.0,
+      "unit": "INR"
+     },
+     "ref.fd_rate": {
+      "value": 0.07,
+      "unit": "fraction"
+     },
+     "ref.inflation": {
+      "value": 0.05,
+      "unit": "fraction"
+     },
+     "ref.index_long_run_return": {
+      "value": 0.11,
+      "unit": "fraction"
+     },
+     "ref.typical_personal_loan_rate": {
+      "value": 0.14,
+      "unit": "fraction"
+     },
+     "loan_emi": {
+      "value": 5166.67,
+      "unit": "INR"
+     },
+     "loan_total_interest": {
+      "value": 24000.0,
+      "unit": "INR"
+     },
+     "loan_effective_rate": {
+      "value": 0.215712,
+      "unit": "fraction"
+     },
+     "emi_share": {
+      "value": 0.1681,
+      "unit": "fraction"
+     },
+     "buffer_months_after": {
+      "value": 4.38,
+      "unit": "months"
+     },
+     "surplus_after": {
+      "value": 8433.33,
+      "unit": "INR"
+     },
+     "cmp_effective_vs_quoted": {
+      "value": 9.57,
+      "unit": "percentage points"
+     },
+     "cmp_effective_vs_typical": {
+      "value": 7.57,
+      "unit": "percentage points"
+     }
+    },
+    "terms": {
+     "loan_amount": 100000.0,
+     "flat_rate": 0.12,
+     "tenure_months": 24.0
+    },
+    "spoken": [
+     "Let me ask Sankz.",
+     "You really pay about 21.6 percent a year, higher than the rate they told you.",
+     "Please do not take this loan as it is. Talk to Arun before you decide."
+    ],
+    "notes": [
+     "Your EMIs would take 16.8% of your income.",
+     "After this, you would have ₹8,433 left each month.",
+     "Your savings would cover 4.4 months of costs."
+    ],
+    "claims": [],
+    "sentence": "Please do not take this loan as it is. Talk to Arun before you decide.",
+    "questions": [
+     "What is the reducing-balance interest rate?",
+     "What are the processing and prepayment charges?"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "R7",
+  "title": "Guaranteed return, nothing written",
+  "colours": [
+   "red",
+   "red",
+   "red"
+  ],
+  "allowed": [
+   "red",
+   "yellow"
+  ],
+  "problems": [],
+  "violations": [],
+  "runs": [
+   {
+    "colour": "red",
+    "case_type": "general_money",
+    "agents": [
+     "sankz",
+     "dani"
+    ],
+    "stances": {
+     "sankz": "against 0.9",
+     "dani": "against 0.9"
+    },
+    "score": -0.9,
+    "overrides": [],
+    "llm_calls": 3,
+    "degraded": [],
+    "seconds": 17.9,
+    "facts": {
+     "term.invest_amount": {
+      "value": 100000.0,
+      "unit": "INR"
+     },
+     "term.years": {
+      "value": 6.0,
+      "unit": "years"
+     },
+     "profile.monthly_income": {
+      "value": 45000.0,
+      "unit": "INR"
+     },
+     "profile.monthly_expenses": {
+      "value": 28000.0,
+      "unit": "INR"
+     },
+     "profile.savings": {
+      "value": 160000.0,
+      "unit": "INR"
+     },
+     "existing_emi": {
+      "value": 2400.0,
+      "unit": "INR"
+     },
+     "regular_commitments": {
+      "value": 1000.0,
+      "unit": "INR"
+     },
+     "ref.fd_rate": {
+      "value": 0.07,
+      "unit": "fraction"
+     },
+     "ref.inflation": {
+      "value": 0.05,
+      "unit": "fraction"
+     },
+     "ref.index_long_run_return": {
+      "value": 0.11,
+      "unit": "fraction"
+     },
+     "ref.typical_personal_loan_rate": {
+      "value": 0.14,
+      "unit": "fraction"
+     }
+    },
+    "terms": {
+     "invest_amount": 100000.0,
+     "years": 6.0
+    },
+    "spoken": [
+     "Let me ask Sankz and Dani.",
+     "You would put 1 lakh rupees with no paper, so you cannot prove what you get back.",
+     "Locking your money for 6 years on only talk is unsafe, so keep it in a bank for now.",
+     "Please do not put money in this scheme. Talk to Arun before you decide."
+    ],
+    "notes": [],
+    "claims": [
+     {
+      "status": "cant_verify",
+      "claim": "guaranteed 12% return"
+     },
+     {
+      "status": "cant_verify",
+      "claim": "money will double in 6 years"
+     }
+    ],
+    "sentence": "Please do not put money in this scheme. Talk to Arun before you decide.",
+    "questions": []
+   },
+   {
+    "colour": "red",
+    "case_type": "general_money",
+    "agents": [
+     "sankz",
+     "dani"
+    ],
+    "stances": {
+     "sankz": "against 0.9",
+     "dani": "against 0.8"
+    },
+    "score": -0.875,
+    "overrides": [],
+    "llm_calls": 3,
+    "degraded": [],
+    "seconds": 17.8,
+    "facts": {
+     "term.invest_amount": {
+      "value": 100000.0,
+      "unit": "INR"
+     },
+     "term.years": {
+      "value": 6.0,
+      "unit": "years"
+     },
+     "profile.monthly_income": {
+      "value": 45000.0,
+      "unit": "INR"
+     },
+     "profile.monthly_expenses": {
+      "value": 28000.0,
+      "unit": "INR"
+     },
+     "profile.savings": {
+      "value": 160000.0,
+      "unit": "INR"
+     },
+     "existing_emi": {
+      "value": 2400.0,
+      "unit": "INR"
+     },
+     "regular_commitments": {
+      "value": 1000.0,
+      "unit": "INR"
+     },
+     "ref.fd_rate": {
+      "value": 0.07,
+      "unit": "fraction"
+     },
+     "ref.inflation": {
+      "value": 0.05,
+      "unit": "fraction"
+     },
+     "ref.index_long_run_return": {
+      "value": 0.11,
+      "unit": "fraction"
+     },
+     "ref.typical_personal_loan_rate": {
+      "value": 0.14,
+      "unit": "fraction"
+     }
+    },
+    "terms": {
+     "invest_amount": 100000.0,
+     "years": 6.0
+    },
+    "spoken": [
+     "Let me ask Sankz and Dani.",
+     "If you give 1 lakh rupees with no paper, you have no way to get it back.",
+     "A bank gives paper for a fixed deposit at 7 percent, but this man gives you nothing to hold.",
+     "Please do not put money in this scheme. Talk to Arun before you decide."
+    ],
+    "notes": [],
+    "claims": [
+     {
+      "status": "cant_verify",
+      "claim": "guaranteed 12% return"
+     }
+    ],
+    "sentence": "Please do not put money in this scheme. Talk to Arun before you decide.",
+    "questions": []
+   },
+   {
+    "colour": "red",
+    "case_type": "general_money",
+    "agents": [
+     "sankz",
+     "dani"
+    ],
+    "stances": {
+     "sankz": "against 0.9",
+     "dani": "against 0.8"
+    },
+    "score": -0.875,
+    "overrides": [],
+    "llm_calls": 3,
+    "degraded": [],
+    "seconds": 15.5,
+    "facts": {
+     "term.invest_amount": {
+      "value": 100000.0,
+      "unit": "INR"
+     },
+     "term.years": {
+      "value": 6.0,
+      "unit": "years"
+     },
+     "profile.monthly_income": {
+      "value": 45000.0,
+      "unit": "INR"
+     },
+     "profile.monthly_expenses": {
+      "value": 28000.0,
+      "unit": "INR"
+     },
+     "profile.savings": {
+      "value": 160000.0,
+      "unit": "INR"
+     },
+     "existing_emi": {
+      "value": 2400.0,
+      "unit": "INR"
+     },
+     "regular_commitments": {
+      "value": 1000.0,
+      "unit": "INR"
+     },
+     "ref.fd_rate": {
+      "value": 0.07,
+      "unit": "fraction"
+     },
+     "ref.inflation": {
+      "value": 0.05,
+      "unit": "fraction"
+     },
+     "ref.index_long_run_return": {
+      "value": 0.11,
+      "unit": "fraction"
+     },
+     "ref.typical_personal_loan_rate": {
+      "value": 0.14,
+      "unit": "fraction"
+     }
+    },
+    "terms": {
+     "invest_amount": 100000.0,
+     "years": 6.0
+    },
+    "spoken": [
+     "Let me ask Sankz and Dani.",
+     "You would give 1 lakh rupees with no paper showing what you get back.",
+     "You keep 1 lakh rupees safe only when the promise is written for you.",
+     "Please do not put money in this scheme. Talk to Arun before you decide."
+    ],
+    "notes": [],
+    "claims": [
+     {
+      "status": "cant_verify",
+      "claim": "guaranteed 12% return"
+     }
+    ],
+    "sentence": "Please do not put money in this scheme. Talk to Arun before you decide.",
+    "questions": []
+   }
+  ]
+ },
+ {
+  "id": "S2a",
+  "title": "G3 at 10 percent",
+  "colours": [
+   "green",
+   "yellow",
+   "green"
+  ],
+  "allowed": [
+   "green"
+  ],
+  "problems": [
+   "colour flipped",
+   "run 2 gave yellow"
+  ],
+  "violations": [],
+  "runs": [
+   {
+    "colour": "green",
+    "case_type": "loan_offer",
+    "agents": [
+     "sankz"
+    ],
+    "stances": {
+     "sankz": "for 0.7"
+    },
+    "score": 0.65,
+    "overrides": [],
+    "llm_calls": 3,
+    "degraded": [],
+    "seconds": 17.8,
+    "facts": {
+     "term.loan_amount": {
+      "value": 80000.0,
+      "unit": "INR"
+     },
+     "term.reducing_rate": {
+      "value": 0.1,
+      "unit": "fraction"
+     },
+     "term.tenure_months": {
+      "value": 24.0,
+      "unit": "months"
+     },
+     "profile.monthly_income": {
+      "value": 50000.0,
+      "unit": "INR"
+     },
+     "profile.monthly_expenses": {
+      "value": 25000.0,
+      "unit": "INR"
+     },
+     "profile.savings": {
+      "value": 150000.0,
+      "unit": "INR"
+     },
+     "existing_emi": {
+      "value": 0.0,
+      "unit": "INR"
+     },
+     "regular_commitments": {
+      "value": 0.0,
+      "unit": "INR"
+     },
+     "ref.fd_rate": {
+      "value": 0.07,
+      "unit": "fraction"
+     },
+     "ref.inflation": {
+      "value": 0.05,
+      "unit": "fraction"
+     },
+     "ref.index_long_run_return": {
+      "value": 0.11,
+      "unit": "fraction"
+     },
+     "ref.typical_personal_loan_rate": {
+      "value": 0.14,
+      "unit": "fraction"
+     },
+     "loan_emi": {
+      "value": 3691.59,
+      "unit": "INR"
+     },
+     "loan_total_interest": {
+      "value": 8598.26,
+      "unit": "INR"
+     },
+     "loan_effective_rate": {
+      "value": 0.1,
+      "unit": "fraction"
+     },
+     "emi_share": {
+      "value": 0.0738,
+      "unit": "fraction"
+     },
+     "buffer_months_after": {
+      "value": 5.23,
+      "unit": "months"
+     },
+     "surplus_after": {
+      "value": 21308.41,
+      "unit": "INR"
+     },
+     "cmp_effective_vs_typical": {
+      "value": -4.0,
+      "unit": "percentage points"
+     }
+    },
+    "terms": {
+     "loan_amount": 80000.0,
+     "reducing_rate": 0.1,
+     "tenure_months": 24.0
+    },
+    "spoken": [
+     "Let me ask Sankz.",
+     "You will pay 3,692 rupees every month for this bike loan. You keep paying it for 24 months in total.",
+     "You can take this two-wheeler loan if you need it. Before you decide, ask: \"What are the processing and prepayment charges?\""
+    ],
+    "notes": [
+     "Your EMIs would take 7.4% of your income.",
+     "After this, you would have ₹21,308 left each month.",
+     "Your savings would cover 5.2 months of costs."
+    ],
+    "claims": [],
+    "sentence": "You can take this two-wheeler loan if you need it. Before you decide, ask: \"What are the processing and prepayment charges?\"",
+    "questions": [
+     "What are the processing and prepayment charges?"
+    ]
+   },
+   {
+    "colour": "yellow",
+    "case_type": "loan_offer",
+    "agents": [
+     "sankz"
+    ],
+    "stances": {
+     "sankz": "unsure 0.6"
+    },
+    "score": 0.0,
+    "overrides": [],
+    "llm_calls": 3,
+    "degraded": [],
+    "seconds": 23.7,
+    "facts": {
+     "term.loan_amount": {
+      "value": 80000.0,
+      "unit": "INR"
+     },
+     "term.reducing_rate": {
+      "value": 0.1,
+      "unit": "fraction"
+     },
+     "term.tenure_months": {
+      "value": 24.0,
+      "unit": "months"
+     },
+     "profile.monthly_income": {
+      "value": 50000.0,
+      "unit": "INR"
+     },
+     "profile.monthly_expenses": {
+      "value": 25000.0,
+      "unit": "INR"
+     },
+     "profile.savings": {
+      "value": 150000.0,
+      "unit": "INR"
+     },
+     "existing_emi": {
+      "value": 0.0,
+      "unit": "INR"
+     },
+     "regular_commitments": {
+      "value": 0.0,
+      "unit": "INR"
+     },
+     "ref.fd_rate": {
+      "value": 0.07,
+      "unit": "fraction"
+     },
+     "ref.inflation": {
+      "value": 0.05,
+      "unit": "fraction"
+     },
+     "ref.index_long_run_return": {
+      "value": 0.11,
+      "unit": "fraction"
+     },
+     "ref.typical_personal_loan_rate": {
+      "value": 0.14,
+      "unit": "fraction"
+     },
+     "loan_emi": {
+      "value": 3691.59,
+      "unit": "INR"
+     },
+     "loan_total_interest": {
+      "value": 8598.26,
+      "unit": "INR"
+     },
+     "loan_effective_rate": {
+      "value": 0.1,
+      "unit": "fraction"
+     },
+     "emi_share": {
+      "value": 0.0738,
+      "unit": "fraction"
+     },
+     "buffer_months_after": {
+      "value": 5.23,
+      "unit": "months"
+     },
+     "surplus_after": {
+      "value": 21308.41,
+      "unit": "INR"
+     },
+     "cmp_effective_vs_typical": {
+      "value": -4.0,
+      "unit": "percentage points"
+     }
+    },
+    "terms": {
+     "loan_amount": 80000.0,
+     "reducing_rate": 0.1,
+     "tenure_months": 24.0
+    },
+    "spoken": [
+     "Let me ask Sankz.",
+     "This loan costs you 10 percent a year for your bike. That is lower than a normal bank loan for you.",
+     "Please wait and check the charges before you sign."
+    ],
+    "notes": [
+     "Your EMIs would take 7.4% of your income.",
+     "After this, you would have ₹21,308 left each month.",
+     "Your savings would cover 5.2 months of costs."
+    ],
+    "claims": [],
+    "sentence": "Please wait and check the charges before you sign.",
+    "questions": [
+     "What is the reducing-balance interest rate?",
+     "What are the processing and prepayment charges?"
+    ]
+   },
+   {
+    "colour": "green",
+    "case_type": "loan_offer",
+    "agents": [
+     "sankz"
+    ],
+    "stances": {
+     "sankz": "for 0.6"
+    },
+    "score": 0.6,
+    "overrides": [],
+    "llm_calls": 3,
+    "degraded": [],
+    "seconds": 21.2,
+    "facts": {
+     "term.loan_amount": {
+      "value": 80000.0,
+      "unit": "INR"
+     },
+     "term.reducing_rate": {
+      "value": 0.1,
+      "unit": "fraction"
+     },
+     "term.tenure_months": {
+      "value": 24.0,
+      "unit": "months"
+     },
+     "profile.monthly_income": {
+      "value": 50000.0,
+      "unit": "INR"
+     },
+     "profile.monthly_expenses": {
+      "value": 25000.0,
+      "unit": "INR"
+     },
+     "profile.savings": {
+      "value": 150000.0,
+      "unit": "INR"
+     },
+     "existing_emi": {
+      "value": 0.0,
+      "unit": "INR"
+     },
+     "regular_commitments": {
+      "value": 0.0,
+      "unit": "INR"
+     },
+     "ref.fd_rate": {
+      "value": 0.07,
+      "unit": "fraction"
+     },
+     "ref.inflation": {
+      "value": 0.05,
+      "unit": "fraction"
+     },
+     "ref.index_long_run_return": {
+      "value": 0.11,
+      "unit": "fraction"
+     },
+     "ref.typical_personal_loan_rate": {
+      "value": 0.14,
+      "unit": "fraction"
+     },
+     "loan_emi": {
+      "value": 3691.59,
+      "unit": "INR"
+     },
+     "loan_total_interest": {
+      "value": 8598.26,
+      "unit": "INR"
+     },
+     "loan_effective_rate": {
+      "value": 0.1,
+      "unit": "fraction"
+     },
+     "emi_share": {
+      "value": 0.0738,
+      "unit": "fraction"
+     },
+     "buffer_months_after": {
+      "value": 5.23,
+      "unit": "months"
+     },
+     "surplus_after": {
+      "value": 21308.41,
+      "unit": "INR"
+     },
+     "cmp_effective_vs_typical": {
+      "value": -4.0,
+      "unit": "percentage points"
+     }
+    },
+    "terms": {
+     "loan_amount": 80000.0,
+     "reducing_rate": 0.1,
+     "tenure_months": 24.0
+    },
+    "spoken": [
+     "Let me ask Sankz.",
+     "You pay 3,692 rupees each month for your bike loan. This loan is lower than a normal bank loan, so it treats you fairly.",
+     "Please take this bike loan if you need the bike. Before you decide, ask: \"What are the processing and prepayment charges?\""
+    ],
+    "notes": [
+     "Your EMIs would take 7.4% of your income.",
+     "After this, you would have ₹21,308 left each month.",
+     "Your savings would cover 5.2 months of costs."
+    ],
+    "claims": [],
+    "sentence": "Please take this bike loan if you need the bike. Before you decide, ask: \"What are the processing and prepayment charges?\"",
+    "questions": [
+     "What are the processing and prepayment charges?"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "S2b",
+  "title": "G3 at 9 percent",
+  "colours": [
+   "green",
+   "green",
+   "yellow"
+  ],
+  "allowed": [
+   "green"
+  ],
+  "problems": [
+   "colour flipped",
+   "run 3 gave yellow"
+  ],
+  "violations": [],
+  "runs": [
+   {
+    "colour": "green",
+    "case_type": "loan_offer",
+    "agents": [
+     "sankz"
+    ],
+    "stances": {
+     "sankz": "for 0.6"
+    },
+    "score": 0.6,
+    "overrides": [],
+    "llm_calls": 3,
+    "degraded": [],
+    "seconds": 18.9,
+    "facts": {
+     "term.loan_amount": {
+      "value": 80000.0,
+      "unit": "INR"
+     },
+     "term.reducing_rate": {
+      "value": 0.09,
+      "unit": "fraction"
+     },
+     "term.tenure_months": {
+      "value": 24.0,
+      "unit": "months"
+     },
+     "profile.monthly_income": {
+      "value": 50000.0,
+      "unit": "INR"
+     },
+     "profile.monthly_expenses": {
+      "value": 25000.0,
+      "unit": "INR"
+     },
+     "profile.savings": {
+      "value": 150000.0,
+      "unit": "INR"
+     },
+     "existing_emi": {
+      "value": 0.0,
+      "unit": "INR"
+     },
+     "regular_commitments": {
+      "value": 0.0,
+      "unit": "INR"
+     },
+     "ref.fd_rate": {
+      "value": 0.07,
+      "unit": "fraction"
+     },
+     "ref.inflation": {
+      "value": 0.05,
+      "unit": "fraction"
+     },
+     "ref.index_long_run_return": {
+      "value": 0.11,
+      "unit": "fraction"
+     },
+     "ref.typical_personal_loan_rate": {
+      "value": 0.14,
+      "unit": "fraction"
+     },
+     "loan_emi": {
+      "value": 3654.78,
+      "unit": "INR"
+     },
+     "loan_total_interest": {
+      "value": 7714.71,
+      "unit": "INR"
+     },
+     "loan_effective_rate": {
+      "value": 0.09,
+      "unit": "fraction"
+     },
+     "emi_share": {
+      "value": 0.0731,
+      "unit": "fraction"
+     },
+     "buffer_months_after": {
+      "value": 5.23,
+      "unit": "months"
+     },
+     "surplus_after": {
+      "value": 21345.22,
+      "unit": "INR"
+     },
+     "cmp_effective_vs_typical": {
+      "value": -5.0,
+      "unit": "percentage points"
+     }
+    },
+    "terms": {
+     "loan_amount": 80000.0,
+     "reducing_rate": 0.09,
+     "tenure_months": 24.0
+    },
+    "spoken": [
+     "Let me ask Sankz.",
+     "You pay 3,655 rupees each month, so you can plan easily. This loan grows lower than a normal bank loan, so you save interest.",
+     "You can take this loan. Before you decide, ask: \"What is the reducing-balance interest rate?\""
+    ],
+    "notes": [
+     "Your EMIs would take 7.3% of your income.",
+     "After this, you would have ₹21,345 left each month.",
+     "Your savings would cover 5.2 months of costs."
+    ],
+    "claims": [],
+    "sentence": "You can take this loan. Before you decide, ask: \"What is the reducing-balance interest rate?\"",
+    "questions": [
+     "What is the reducing-balance interest rate?",
+     "What are the processing and prepayment charges?"
+    ]
+   },
+   {
+    "colour": "green",
+    "case_type": "loan_offer",
+    "agents": [
+     "sankz"
+    ],
+    "stances": {
+     "sankz": "for 0.6"
+    },
+    "score": 0.6,
+    "overrides": [],
+    "llm_calls": 3,
+    "degraded": [],
+    "seconds": 28.8,
+    "facts": {
+     "term.loan_amount": {
+      "value": 80000.0,
+      "unit": "INR"
+     },
+     "term.reducing_rate": {
+      "value": 0.09,
+      "unit": "fraction"
+     },
+     "term.tenure_months": {
+      "value": 24.0,
+      "unit": "months"
+     },
+     "profile.monthly_income": {
+      "value": 50000.0,
+      "unit": "INR"
+     },
+     "profile.monthly_expenses": {
+      "value": 25000.0,
+      "unit": "INR"
+     },
+     "profile.savings": {
+      "value": 150000.0,
+      "unit": "INR"
+     },
+     "existing_emi": {
+      "value": 0.0,
+      "unit": "INR"
+     },
+     "regular_commitments": {
+      "value": 0.0,
+      "unit": "INR"
+     },
+     "ref.fd_rate": {
+      "value": 0.07,
+      "unit": "fraction"
+     },
+     "ref.inflation": {
+      "value": 0.05,
+      "unit": "fraction"
+     },
+     "ref.index_long_run_return": {
+      "value": 0.11,
+      "unit": "fraction"
+     },
+     "ref.typical_personal_loan_rate": {
+      "value": 0.14,
+      "unit": "fraction"
+     },
+     "loan_emi": {
+      "value": 3654.78,
+      "unit": "INR"
+     },
+     "loan_total_interest": {
+      "value": 7714.71,
+      "unit": "INR"
+     },
+     "loan_effective_rate": {
+      "value": 0.09,
+      "unit": "fraction"
+     },
+     "emi_share": {
+      "value": 0.0731,
+      "unit": "fraction"
+     },
+     "buffer_months_after": {
+      "value": 5.23,
+      "unit": "months"
+     },
+     "surplus_after": {
+      "value": 21345.22,
+      "unit": "INR"
+     },
+     "cmp_effective_vs_typical": {
+      "value": -5.0,
+      "unit": "percentage points"
+     }
+    },
+    "terms": {
+     "loan_amount": 80000.0,
+     "reducing_rate": 0.09,
+     "tenure_months": 24.0
+    },
+    "spoken": [
+     "Let me ask Sankz.",
+     "You pay back 3,655 rupees each month because interest adds to your bike cost. This true cost stays lower than a normal bank loan for you.",
+     "You can take this bike loan as it is. Before you decide, ask: \"What is the reducing-balance interest rate?\""
+    ],
+    "notes": [
+     "Your EMIs would take 7.3% of your income.",
+     "After this, you would have ₹21,345 left each month.",
+     "Your savings would cover 5.2 months of costs."
+    ],
+    "claims": [],
+    "sentence": "You can take this bike loan as it is. Before you decide, ask: \"What is the reducing-balance interest rate?\"",
+    "questions": [
+     "What is the reducing-balance interest rate?",
+     "What are the processing and prepayment charges?"
+    ]
+   },
+   {
+    "colour": "yellow",
+    "case_type": "loan_offer",
+    "agents": [
+     "sankz"
+    ],
+    "stances": {
+     "sankz": "unsure 0.6"
+    },
+    "score": 0.0,
+    "overrides": [],
+    "llm_calls": 3,
+    "degraded": [],
+    "seconds": 27.1,
+    "facts": {
+     "term.loan_amount": {
+      "value": 80000.0,
+      "unit": "INR"
+     },
+     "term.reducing_rate": {
+      "value": 0.09,
+      "unit": "fraction"
+     },
+     "term.tenure_months": {
+      "value": 24.0,
+      "unit": "months"
+     },
+     "profile.monthly_income": {
+      "value": 50000.0,
+      "unit": "INR"
+     },
+     "profile.monthly_expenses": {
+      "value": 25000.0,
+      "unit": "INR"
+     },
+     "profile.savings": {
+      "value": 150000.0,
+      "unit": "INR"
+     },
+     "existing_emi": {
+      "value": 0.0,
+      "unit": "INR"
+     },
+     "regular_commitments": {
+      "value": 0.0,
+      "unit": "INR"
+     },
+     "ref.fd_rate": {
+      "value": 0.07,
+      "unit": "fraction"
+     },
+     "ref.inflation": {
+      "value": 0.05,
+      "unit": "fraction"
+     },
+     "ref.index_long_run_return": {
+      "value": 0.11,
+      "unit": "fraction"
+     },
+     "ref.typical_personal_loan_rate": {
+      "value": 0.14,
+      "unit": "fraction"
+     },
+     "loan_emi": {
+      "value": 3654.78,
+      "unit": "INR"
+     },
+     "loan_total_interest": {
+      "value": 7714.71,
+      "unit": "INR"
+     },
+     "loan_effective_rate": {
+      "value": 0.09,
+      "unit": "fraction"
+     },
+     "emi_share": {
+      "value": 0.0731,
+      "unit": "fraction"
+     },
+     "buffer_months_after": {
+      "value": 5.23,
+      "unit": "months"
+     },
+     "surplus_after": {
+      "value": 21345.22,
+      "unit": "INR"
+     },
+     "cmp_effective_vs_typical": {
+      "value": -5.0,
+      "unit": "percentage points"
+     }
+    },
+    "terms": {
+     "loan_amount": 80000.0,
+     "reducing_rate": 0.09,
+     "tenure_months": 24.0
+    },
+    "spoken": [
+     "Let me ask Sankz.",
+     "You will pay 3,655 rupees each month for this bike loan. That adds 7,715 rupees extra just for borrowing.",
+     "You may take this loan only after careful thought. Before you decide, ask: \"What are the processing and prepayment charges?\""
+    ],
+    "notes": [
+     "Your EMIs would take 7.3% of your income.",
+     "After this, you would have ₹21,345 left each month.",
+     "Your savings would cover 5.2 months of costs."
+    ],
+    "claims": [],
+    "sentence": "You may take this loan only after careful thought. Before you decide, ask: \"What are the processing and prepayment charges?\"",
+    "questions": [
+     "What are the processing and prepayment charges?"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "P1",
+  "title": "G3 loan for a poorer family",
+  "colours": [
+   "red",
+   "red",
+   "red"
+  ],
+  "allowed": [
+   "yellow",
+   "red"
+  ],
+  "problems": [],
+  "violations": [],
+  "runs": [
+   {
+    "colour": "red",
+    "case_type": "loan_offer",
+    "agents": [
+     "sankz"
+    ],
+    "stances": {
+     "sankz": "for 0.6"
+    },
+    "score": 0.6,
+    "overrides": [
+     "buffer_under_1_month"
+    ],
+    "llm_calls": 3,
+    "degraded": [],
+    "seconds": 27.5,
+    "facts": {
+     "term.loan_amount": {
+      "value": 80000.0,
+      "unit": "INR"
+     },
+     "term.reducing_rate": {
+      "value": 0.095,
+      "unit": "fraction"
+     },
+     "term.tenure_months": {
+      "value": 24.0,
+      "unit": "months"
+     },
+     "profile.monthly_income": {
+      "value": 20000.0,
+      "unit": "INR"
+     },
+     "profile.monthly_expenses": {
+      "value": 15000.0,
+      "unit": "INR"
+     },
+     "profile.savings": {
+      "value": 15000.0,
+      "unit": "INR"
+     },
+     "existing_emi": {
+      "value": 0.0,
+      "unit": "INR"
+     },
+     "regular_commitments": {
+      "value": 0.0,
+      "unit": "INR"
+     },
+     "ref.fd_rate": {
+      "value": 0.07,
+      "unit": "fraction"
+     },
+     "ref.inflation": {
+      "value": 0.05,
+      "unit": "fraction"
+     },
+     "ref.index_long_run_return": {
+      "value": 0.11,
+      "unit": "fraction"
+     },
+     "ref.typical_personal_loan_rate": {
+      "value": 0.14,
+      "unit": "fraction"
+     },
+     "loan_emi": {
+      "value": 3673.16,
+      "unit": "INR"
+     },
+     "loan_total_interest": {
+      "value": 8155.83,
+      "unit": "INR"
+     },
+     "loan_effective_rate": {
+      "value": 0.095,
+      "unit": "fraction"
+     },
+     "emi_share": {
+      "value": 0.1837,
+      "unit": "fraction"
+     },
+     "buffer_months_after": {
+      "value": 0.8,
+      "unit": "months"
+     },
+     "surplus_after": {
+      "value": 1326.84,
+      "unit": "INR"
+     },
+     "cmp_effective_vs_typical": {
+      "value": -4.5,
+      "unit": "percentage points"
+     }
+    },
+    "terms": {
+     "loan_amount": 80000.0,
+     "reducing_rate": 0.095,
+     "tenure_months": 24.0
+    },
+    "spoken": [
+     "Let me ask Sankz.",
+     "You pay 3,673 rupees each month to use the bike now. That plan costs you 8,156 rupees extra in total.",
+     "Please do not take this loan. Please wait a day before you sign anything."
+    ],
+    "notes": [
+     "Your EMIs would take 18.4% of your income.",
+     "After this, you would have ₹1,327 left each month.",
+     "Your savings would cover 0.8 months of costs."
+    ],
+    "claims": [],
+    "sentence": "Please do not take this loan. Please wait a day before you sign anything.",
+    "questions": [
+     "What are the processing and prepayment charges?",
+     "What is the reducing-balance interest rate?"
+    ]
+   },
+   {
+    "colour": "red",
+    "case_type": "loan_offer",
+    "agents": [
+     "sankz"
+    ],
+    "stances": {
+     "sankz": "for 0.6"
+    },
+    "score": 0.6,
+    "overrides": [
+     "buffer_under_1_month"
+    ],
+    "llm_calls": 3,
+    "degraded": [],
+    "seconds": 17.4,
+    "facts": {
+     "term.loan_amount": {
+      "value": 80000.0,
+      "unit": "INR"
+     },
+     "term.reducing_rate": {
+      "value": 0.095,
+      "unit": "fraction"
+     },
+     "term.tenure_months": {
+      "value": 24.0,
+      "unit": "months"
+     },
+     "profile.monthly_income": {
+      "value": 20000.0,
+      "unit": "INR"
+     },
+     "profile.monthly_expenses": {
+      "value": 15000.0,
+      "unit": "INR"
+     },
+     "profile.savings": {
+      "value": 15000.0,
+      "unit": "INR"
+     },
+     "existing_emi": {
+      "value": 0.0,
+      "unit": "INR"
+     },
+     "regular_commitments": {
+      "value": 0.0,
+      "unit": "INR"
+     },
+     "ref.fd_rate": {
+      "value": 0.07,
+      "unit": "fraction"
+     },
+     "ref.inflation": {
+      "value": 0.05,
+      "unit": "fraction"
+     },
+     "ref.index_long_run_return": {
+      "value": 0.11,
+      "unit": "fraction"
+     },
+     "ref.typical_personal_loan_rate": {
+      "value": 0.14,
+      "unit": "fraction"
+     },
+     "loan_emi": {
+      "value": 3673.16,
+      "unit": "INR"
+     },
+     "loan_total_interest": {
+      "value": 8155.83,
+      "unit": "INR"
+     },
+     "loan_effective_rate": {
+      "value": 0.095,
+      "unit": "fraction"
+     },
+     "emi_share": {
+      "value": 0.1837,
+      "unit": "fraction"
+     },
+     "buffer_months_after": {
+      "value": 0.8,
+      "unit": "months"
+     },
+     "surplus_after": {
+      "value": 1326.84,
+      "unit": "INR"
+     },
+     "cmp_effective_vs_typical": {
+      "value": -4.5,
+      "unit": "percentage points"
+     }
+    },
+    "terms": {
+     "loan_amount": 80000.0,
+     "reducing_rate": 0.095,
+     "tenure_months": 24.0
+    },
+    "spoken": [
+     "Let me ask Sankz.",
+     "You pay 3,673 rupees each month. This covers your bike loan for 24 months.",
+     "Please do not take this loan for now. Please wait a day before you sign anything."
+    ],
+    "notes": [
+     "Your EMIs would take 18.4% of your income.",
+     "After this, you would have ₹1,327 left each month.",
+     "Your savings would cover 0.8 months of costs."
+    ],
+    "claims": [],
+    "sentence": "Please do not take this loan for now. Please wait a day before you sign anything.",
+    "questions": [
+     "What are the processing and prepayment charges?"
+    ]
+   },
+   {
+    "colour": "red",
+    "case_type": "loan_offer",
+    "agents": [
+     "sankz"
+    ],
+    "stances": {
+     "sankz": "for 0.6"
+    },
+    "score": 0.6,
+    "overrides": [
+     "buffer_under_1_month"
+    ],
+    "llm_calls": 3,
+    "degraded": [],
+    "seconds": 21.0,
+    "facts": {
+     "term.loan_amount": {
+      "value": 80000.0,
+      "unit": "INR"
+     },
+     "term.reducing_rate": {
+      "value": 0.095,
+      "unit": "fraction"
+     },
+     "term.tenure_months": {
+      "value": 24.0,
+      "unit": "months"
+     },
+     "profile.monthly_income": {
+      "value": 20000.0,
+      "unit": "INR"
+     },
+     "profile.monthly_expenses": {
+      "value": 15000.0,
+      "unit": "INR"
+     },
+     "profile.savings": {
+      "value": 15000.0,
+      "unit": "INR"
+     },
+     "existing_emi": {
+      "value": 0.0,
+      "unit": "INR"
+     },
+     "regular_commitments": {
+      "value": 0.0,
+      "unit": "INR"
+     },
+     "ref.fd_rate": {
+      "value": 0.07,
+      "unit": "fraction"
+     },
+     "ref.inflation": {
+      "value": 0.05,
+      "unit": "fraction"
+     },
+     "ref.index_long_run_return": {
+      "value": 0.11,
+      "unit": "fraction"
+     },
+     "ref.typical_personal_loan_rate": {
+      "value": 0.14,
+      "unit": "fraction"
+     },
+     "loan_emi": {
+      "value": 3673.16,
+      "unit": "INR"
+     },
+     "loan_total_interest": {
+      "value": 8155.83,
+      "unit": "INR"
+     },
+     "loan_effective_rate": {
+      "value": 0.095,
+      "unit": "fraction"
+     },
+     "emi_share": {
+      "value": 0.1837,
+      "unit": "fraction"
+     },
+     "buffer_months_after": {
+      "value": 0.8,
+      "unit": "months"
+     },
+     "surplus_after": {
+      "value": 1326.84,
+      "unit": "INR"
+     },
+     "cmp_effective_vs_typical": {
+      "value": -4.5,
+      "unit": "percentage points"
+     }
+    },
+    "terms": {
+     "loan_amount": 80000.0,
+     "reducing_rate": 0.095,
+     "tenure_months": 24.0
+    },
+    "spoken": [
+     "Let me ask Sankz.",
+     "You will pay 3,673 rupees each month till the loan ends, so you must keep that money ready.",
+     "Please do not take this loan. Please wait a day before you sign anything."
+    ],
+    "notes": [
+     "Your EMIs would take 18.4% of your income.",
+     "After this, you would have ₹1,327 left each month.",
+     "Your savings would cover 0.8 months of costs."
+    ],
+    "claims": [],
+    "sentence": "Please do not take this loan. Please wait a day before you sign anything.",
+    "questions": [
+     "What are the processing and prepayment charges?",
+     "What is the reducing-balance interest rate?"
+    ]
+   }
+  ]
+ }
+]

@@ -26,10 +26,12 @@ CASE_BUILDER = f"""You read a family's money question and any document pages the
 Classify the case and copy out the key terms. Never calculate anything.
 case_type: insurance_offer | ulip | loan_offer | sip_or_fund_question | stock_tip | shares | ipo | chit_fund |
 general_money | scam_or_payment_request | out_of_scope (not about money) | unknown (about money but you cannot tell what).
+An offer to put money into a scheme, or a promised return, is general_money, not unknown.
 Term names (use only these): {_TERMS}.
 For insurance: premium is the yearly premium; sum_assured is the guaranteed amount. Illustrations come in pairs:
 extract BOTH amounts, maturity_low (the SMALLER maturity amount shown) and maturity_high (the larger), and
 their bonus rates bonus_rate_low and bonus_rate_high.
+For loans: a rate called flat is flat_rate; a rate on reducing balance is reducing_rate.
 For stock tips: stock_symbol is the ticker only (e.g. "ACME", not "ACME Ltd"); invest_amount is the money the user
 plans to put in.
 Each term: value_text exactly as written; evidence_quote copied character for character from the source (a short
@@ -61,7 +63,8 @@ CASE_HINTS = {
         "sankz",
         "loan",
     ): "State the quoted flat rate {term.flat_rate} against the real yearly rate {loan_effective_rate}, "
-    "using {cmp_effective_vs_quoted}; compare with a normal bank loan using {cmp_effective_vs_typical}.",
+    "using {cmp_effective_vs_quoted}; compare with a normal bank loan using {cmp_effective_vs_typical}. A loan on "
+    "reducing balance has no flat rate: judge {loan_effective_rate} and {loan_emi} on their own.",
     ("vick", "stock"): "Every argument must use at least one of {run_up_30d}, {volume_spike}, "
     "{upper_circuit_hits_30d} or {pump_risk}; lead with the strongest signal. Say the time window in words "
     '("in the last month of trading"), never as digits.',

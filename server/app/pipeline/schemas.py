@@ -36,6 +36,7 @@ TERM_NAMES = {
     "bonus_rate_high": "higher bonus rate",
     "loan_amount": "loan amount",
     "flat_rate": "flat interest rate",
+    "reducing_rate": "yearly interest rate on reducing balance",
     "tenure_months": "loan period in months",
     "monthly_amount": "monthly amount",
     "invest_amount": "amount to invest",

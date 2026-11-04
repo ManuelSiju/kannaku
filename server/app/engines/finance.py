@@ -120,6 +120,44 @@ def sip_value(
     )
 
 
+def reducing_loan(principal: Number, rate_annual: Number, months: int, *, prefix: str = "") -> list[Fact]:
+    """Reducing-balance loan. Returns [loan_emi, loan_total_interest, loan_effective_rate]; the quoted yearly rate is
+    already the real one. EMI = P * i * (1+i)^n / ((1+i)^n - 1), i = rate / 12."""
+    p, r, n = float(principal), float(rate_annual), int(months)
+    i = r / 12
+    emi = p / n if i == 0 else p * i * (1 + i) ** n / ((1 + i) ** n - 1)
+    inputs = dict(principal=principal, rate_annual=rate_annual, months=months)
+    return [
+        known(
+            _id(prefix, "loan_emi"),
+            "Monthly instalment (EMI)",
+            round(emi, 2),
+            "INR",
+            "offer",
+            "P * i * (1+i)^n / ((1+i)^n - 1), i = rate / 12",
+            **inputs,
+        ),
+        known(
+            _id(prefix, "loan_total_interest"),
+            "Total interest paid over the loan",
+            round(emi * n - p, 2),
+            "INR",
+            "offer",
+            "EMI * months - P",
+            **inputs,
+        ),
+        known(
+            _id(prefix, "loan_effective_rate"),
+            "Real yearly interest rate of this reducing-balance loan",
+            r,
+            "fraction",
+            "offer",
+            "the quoted reducing-balance rate",
+            **inputs,
+        ),
+    ]
+
+
 def flat_to_effective(principal: Number, flat_rate_annual: Number, months: int, *, prefix: str = "") -> list[Fact]:
     """Flat-rate loan. Returns [loan_emi, loan_total_interest, loan_effective_rate]:
     interest = principal * flat_rate * months / 12, EMI = (principal + interest) / months, and the
