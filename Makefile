@@ -190,7 +190,7 @@ app-fixtures: ## Re-export the app test fixtures from the real pipeline (offline
 
 app-goldens: ## Re-draw the app screenshots (app/test/goldens -> docs/screens)
 	cd app && flutter test test/screens_test.dart --update-goldens
-	@mkdir -p docs/screens && cp app/test/goldens/*.png docs/screens/ && echo "✔ docs/screens"
+	@mkdir -p docs/screens && cp app/test/goldens/*@1.0.png docs/screens/ && echo "✔ docs/screens"
 
 app-integration: ## On-device tests against the real server + screen recording (emulator or USB phone)
 	@scripts/app_integration.sh

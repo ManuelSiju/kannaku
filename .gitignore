@@ -42,7 +42,6 @@ key.properties
 .flutter-plugins-dependencies
 
 # private owner guide (local only)
-docs/PROJECT_GUIDE.md
 
 # editors / OS
 .idea/
