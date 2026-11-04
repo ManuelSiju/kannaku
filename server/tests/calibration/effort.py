@@ -70,7 +70,8 @@ async def main() -> int:
         lines.append(
             f"| {label} | {sum(r['match'] for r in runs)}/{n} | {sum(r['kept'] for r in runs)} / "
             f"{sum(r['dropped'] for r in runs)} | {sum(r['degraded'] for r in runs)}/{n} | "
-            f"{statistics.median(r['seconds'] for r in runs):.1f} s | {statistics.median(r['calls'] for r in runs):.0f} |"
+            f"{statistics.median(r['seconds'] for r in runs):.1f} s | "
+            f"{statistics.median(r['calls'] for r in runs):.0f} |"
         )
         print(lines[-1], flush=True)
     (REPO_ROOT / "docs" / "reports" / "effort_matrix.md").write_text("\n".join(lines) + "\n")
