@@ -41,7 +41,7 @@ class Recording(LLMProvider):
             return schema.model_validate_json(self.known[key]["response"]), LLMUsage(calls=1)
         out, usage = await self.inner.chat_json(system, user, schema, images)
         self._keep(key, out.model_dump_json(), self.inner.model)
-        return out, usage
+        return schema.model_validate_json(out.model_dump_json()), usage  # exactly what replay will hand back
 
     async def chat_text(self, system, user, images=None):
         text, usage = await self.inner.chat_text(system, user, images)

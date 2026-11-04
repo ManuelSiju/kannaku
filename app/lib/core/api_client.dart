@@ -86,6 +86,7 @@ class ApiClient {
     final message = str(err['message']);
     final rid = str(err['request_id'], r.headers['x-request-id'] ?? '');
     final friendly = switch (r.statusCode) {
+      404 => 'That answer is no longer on the server. Please ask again.',
       401 => 'The access token is missing or wrong. Open Settings and paste the token shown by "make up".',
       413 => message.isNotEmpty ? message : 'That file is too big.',
       415 => message.isNotEmpty ? message : 'I cannot read that kind of file.',

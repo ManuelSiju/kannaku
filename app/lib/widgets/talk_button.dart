@@ -1,3 +1,4 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
@@ -7,11 +8,13 @@ import '../theme.dart';
 
 enum TalkZone { private, outLoud, cancel }
 
-/// Hold the mic to talk. A full-screen overlay shows the three choices: slide UP = Private (the default, also when
-/// you do not slide), slide DOWN = Out loud, slide SIDEWAYS = cancel. A haptic tick marks each change.
+/// Hold the mic to talk. A full-screen overlay shows the three choices: slide UP = Private, slide DOWN = Out loud,
+/// slide SIDEWAYS = cancel. With no slide, or back at the centre, the header pill's choice stands. The circle follows
+/// the finger and a haptic tick marks each change.
 class TalkButton extends StatefulWidget {
+  final bool outLoud; // the header pill
   final void Function(List<int> audio, bool outLoud) onSend;
-  const TalkButton({super.key, required this.onSend});
+  const TalkButton({super.key, required this.onSend, this.outLoud = false});
 
   @override
   State<TalkButton> createState() => _TalkButtonState();
@@ -20,9 +23,13 @@ class TalkButton extends StatefulWidget {
 class _TalkButtonState extends State<TalkButton> {
   final _rec = Recorder();
   final _zone = ValueNotifier(TalkZone.private);
+  final _finger = ValueNotifier(Offset.zero);
   OverlayEntry? _overlay;
-  bool _recording = false;
-  static const _slide = 50.0, _sideways = 110.0;
+  bool _held = false, _recording = false;
+  Future<bool>? _started;
+  static const _slide = 50.0, _centre = 28.0, _sideways = 110.0;
+
+  TalkZone get _pill => widget.outLoud ? TalkZone.outLoud : TalkZone.private;
 
   void _setZone(TalkZone z) {
     if (z != _zone.value) {
@@ -36,39 +43,52 @@ class _TalkButtonState extends State<TalkButton> {
     _overlay = null;
   }
 
+  /// The overlay comes first, so the finger gets an answer at once; the microphone starts behind it.
   Future<void> _start(LongPressStartDetails _) async {
     HapticFeedback.mediumImpact();
-    final ok = await _rec.start();
+    _held = true;
+    _zone.value = _pill;
+    _finger.value = Offset.zero;
+    _overlay = OverlayEntry(
+      builder: (_) => _GestureOverlay(zone: _zone, finger: _finger),
+    );
+    Overlay.of(context).insert(_overlay!);
+    final started = _started = _rec.start();
+    final ok = await started;
     if (!mounted) return;
+    _recording = ok;
     if (!ok) {
+      _held = false;
+      _closeOverlay();
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Please allow the microphone in your phone settings, or type instead.')),
       );
-      return;
     }
-    _recording = true;
-    _zone.value = TalkZone.private;
-    _overlay = OverlayEntry(builder: (_) => _GestureOverlay(zone: _zone));
-    Overlay.of(context).insert(_overlay!);
   }
 
   void _move(LongPressMoveUpdateDetails d) {
-    if (!_recording) return;
+    if (!_held) return;
     final o = d.offsetFromOrigin;
+    _finger.value = o;
     if (o.dx.abs() > _sideways) {
       _setZone(TalkZone.cancel);
     } else if (o.dy > _slide) {
       _setZone(TalkZone.outLoud);
     } else if (o.dy < -_slide) {
       _setZone(TalkZone.private);
+    } else if (o.dy.abs() < _centre && o.dx.abs() < _sideways - _centre) {
+      _setZone(_pill); // back at the centre: changed your mind
     }
   }
 
   Future<void> _end(LongPressEndDetails _) async {
-    if (!_recording) return;
-    _recording = false;
+    if (!_held) return;
+    _held = false;
     final zone = _zone.value;
     _closeOverlay();
+    await _started; // a very quick tap can end before the microphone is ready
+    if (!_recording) return;
+    _recording = false;
     if (zone == TalkZone.cancel) {
       await _rec.cancel();
       return;
@@ -88,6 +108,7 @@ class _TalkButtonState extends State<TalkButton> {
   void dispose() {
     _closeOverlay();
     _zone.dispose();
+    _finger.dispose();
     _rec.dispose();
     super.dispose();
   }
@@ -97,10 +118,17 @@ class _TalkButtonState extends State<TalkButton> {
     key: const ValueKey('talk_button'),
     button: true,
     label: 'Hold and talk. Slide up for private, down to say it out loud.',
-    child: GestureDetector(
-      onLongPressStart: _start,
-      onLongPressMoveUpdate: _move,
-      onLongPressEnd: _end,
+    child: RawGestureDetector(
+      gestures: {
+        // The default long press waits half a second, which feels like the button is stuck.
+        LongPressGestureRecognizer: GestureRecognizerFactoryWithHandlers<LongPressGestureRecognizer>(
+          () => LongPressGestureRecognizer(duration: const Duration(milliseconds: 150)),
+          (r) => r
+            ..onLongPressStart = _start
+            ..onLongPressMoveUpdate = _move
+            ..onLongPressEnd = _end,
+        ),
+      },
       child: Container(
         width: 56,
         height: 56,
@@ -114,7 +142,8 @@ class _TalkButtonState extends State<TalkButton> {
 /// The three choices while the finger is down. It only shows; the finger stays on the mic button's detector.
 class _GestureOverlay extends StatelessWidget {
   final ValueNotifier<TalkZone> zone;
-  const _GestureOverlay({required this.zone});
+  final ValueNotifier<Offset> finger;
+  const _GestureOverlay({required this.zone, required this.finger});
 
   Widget _target(TalkZone me, TalkZone now, String title, String sub, IconData icon, Color color) {
     final active = me == now;
@@ -167,17 +196,33 @@ class _GestureOverlay extends StatelessWidget {
                 ),
                 Column(
                   children: [
-                    Container(
-                      width: 88,
-                      height: 88,
-                      decoration: const BoxDecoration(color: K.alfii, shape: BoxShape.circle),
-                      child: const Icon(LucideIcons.mic, color: Colors.white, size: 40),
+                    ValueListenableBuilder(
+                      valueListenable: finger,
+                      builder: (_, o, child) => Transform.translate(
+                        offset: Offset(o.dx.clamp(-120, 120), o.dy.clamp(-120, 120)),
+                        child: child,
+                      ),
+                      child: AnimatedContainer(
+                        duration: const Duration(milliseconds: 120),
+                        width: 88,
+                        height: 88,
+                        decoration: BoxDecoration(
+                          color: switch (now) {
+                            TalkZone.private => K.alfii,
+                            TalkZone.outLoud => const Color(0xFFD97706),
+                            TalkZone.cancel => const Color(0xFF52525B),
+                          },
+                          shape: BoxShape.circle,
+                        ),
+                        child: const Icon(LucideIcons.mic, color: Colors.white, size: 40),
+                      ),
                     ),
                     const SizedBox(height: 14),
-                    Text(
-                      now == TalkZone.cancel ? 'Let go to cancel' : 'Listening… let go to send',
-                      style: const TextStyle(color: Colors.white, fontSize: 21, fontWeight: FontWeight.w700),
-                    ),
+                    Text(switch (now) {
+                      TalkZone.cancel => 'Let go to cancel',
+                      TalkZone.outLoud => 'Listening… answer out loud',
+                      TalkZone.private => 'Listening… answer private',
+                    }, style: const TextStyle(color: Colors.white, fontSize: 21, fontWeight: FontWeight.w700)),
                     const Text('Slide sideways to cancel', style: TextStyle(color: Color(0xFFA1A1AA), fontSize: 16)),
                   ],
                 ),

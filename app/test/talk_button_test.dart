@@ -18,6 +18,45 @@ class FakeRecorder extends Recorder {
 void main() {
   setUp(() => Recorder.create = FakeRecorder.new);
 
+  Future<TestGesture> hold(WidgetTester tester, void Function(bool) onSent, {bool pill = false}) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: Center(
+            child: TalkButton(outLoud: pill, onSend: (audio, loud) => onSent(loud)),
+          ),
+        ),
+      ),
+    );
+    final g = await tester.startGesture(tester.getCenter(find.byKey(const ValueKey('talk_button'))));
+    await tester.pump(const Duration(milliseconds: 200));
+    await tester.pump();
+    return g;
+  }
+
+  testWidgets('it reacts within 200 ms and the pill sets the default', (tester) async {
+    bool? sent;
+    final g = await hold(tester, (v) => sent = v, pill: true);
+    expect(find.text('Listening… answer out loud'), findsOneWidget);
+    await g.up();
+    await tester.pumpAndSettle();
+    expect(sent, isTrue);
+  });
+
+  testWidgets('back at the centre undoes a slide', (tester) async {
+    bool? sent;
+    final g = await hold(tester, (v) => sent = v);
+    await g.moveBy(const Offset(0, 120));
+    await tester.pump();
+    expect(find.text('Listening… answer out loud'), findsOneWidget);
+    await g.moveBy(const Offset(0, -115));
+    await tester.pump();
+    expect(find.text('Listening… answer private'), findsOneWidget);
+    await g.up();
+    await tester.pumpAndSettle();
+    expect(sent, isFalse);
+  });
+
   for (final (name, dy, outLoud) in const [
     ('slide up = private', -120.0, false),
     ('slide down = out loud', 120.0, true),
@@ -35,7 +74,7 @@ void main() {
       final g = await tester.startGesture(tester.getCenter(find.byKey(const ValueKey('talk_button'))));
       await tester.pump(const Duration(milliseconds: 700));
       await tester.pump();
-      expect(find.text('Listening… let go to send'), findsOneWidget);
+      expect(find.text('Listening… answer private'), findsOneWidget);
       await g.moveBy(Offset(0, dy / 2));
       await tester.pump();
       await g.moveBy(Offset(0, dy / 2));

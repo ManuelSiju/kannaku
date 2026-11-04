@@ -382,14 +382,18 @@ class _ChatPageState extends State<ChatPage> {
             ),
             const Gap(8),
             TalkButton(
-              onSend: (audio, outLoud) => _send(
-                AskRequest(
-                  text: '',
-                  audio: Upload('audio', 'question.m4a', audio, 'audio/mp4'),
-                  files: List.of(_pages),
-                  outLoud: outLoud,
-                ),
-              ),
+              outLoud: context.watch<SettingsProvider>().outLoud,
+              onSend: (audio, outLoud) {
+                context.read<SettingsProvider>().setOutLoud(outLoud); // the pill follows the slide
+                _send(
+                  AskRequest(
+                    text: '',
+                    audio: Upload('audio', 'question.m4a', audio, 'audio/mp4'),
+                    files: List.of(_pages),
+                    outLoud: outLoud,
+                  ),
+                );
+              },
             ),
           ],
         ),
