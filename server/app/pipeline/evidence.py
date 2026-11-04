@@ -125,6 +125,23 @@ def resolve_placeholders(text: str, fact_ids: Iterable[str]) -> tuple[str, list[
     return PLACEHOLDER.sub(fix, text), fixes
 
 
+def clean_citations(
+    cited_ids: Iterable[str], fact_map: Mapping[str, Fact], quote_map: Mapping[str, str]
+) -> tuple[list[str], list[str]]:
+    """Models decorate ids ("#run_up_30d", "{term.premium}") or drop the prefix ("fd_rate" for "ref.fd_rate"). Only
+    the spelling is repaired, and only to an id that exists exactly once; anything else stays unknown and is dropped."""
+    out, fixes = [], []
+    for raw in cited_ids:
+        cid = raw.strip().strip("#{}[]()'\"").strip()
+        if cid not in fact_map and cid not in quote_map:
+            matches = [f for f in fact_map if f.rsplit(".", 1)[-1] == cid]
+            cid = matches[0] if len(matches) == 1 else cid
+        if cid != raw:
+            fixes.append(f"citation {raw!r} -> {cid}")
+        out.append(cid)
+    return out, fixes
+
+
 def auto_placeholders(text: str, facts: Facts) -> tuple[str, list[str]]:
     """Replace a raw number that exactly equals the display of exactly ONE known fact by that fact's placeholder.
     Text inside existing placeholders is never touched. Ambiguous or non-matching numbers stay (and get dropped)."""
@@ -225,10 +242,17 @@ def check_argument(
             return Dropped(reason=f"placeholder {wrong[0]} is not a {kind_filter} fact", fixes=fixes)
     if (raw := raw_number(argument_text)) is not None:
         return Dropped(reason=f"raw number in text ('{raw}'); numbers must be {{fact_id}} placeholders", fixes=fixes)
-    cited = list(dict.fromkeys([*cited_ids, *ph]))
+    clean_ids, id_fixes = clean_citations(cited_ids, fact_map, quote_map)
+    fixes += id_fixes
+    cited = list(dict.fromkeys([*clean_ids, *ph]))
     unknown_ids = [c for c in cited if c not in fact_map and c not in quote_map]
     if unknown_ids:
-        return Dropped(reason=f"unknown citation id(s): {', '.join(unknown_ids)}", fixes=fixes)
+        # An invented id proves nothing, so it is ignored; the argument stands only on what is real. The raw-number
+        # and comparison checks are unchanged, and an argument with nothing real left is dropped.
+        cited = [c for c in cited if c not in unknown_ids]
+        fixes += [f"ignored unknown citation {c}" for c in unknown_ids]
+        if not cited:
+            return Dropped(reason=f"unknown citation id(s): {', '.join(unknown_ids)}", fixes=fixes)
     if not cited:
         return Dropped(reason="no evidence cited", fixes=fixes)
     rendered = render(argument_text, fact_map)

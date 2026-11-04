@@ -176,3 +176,25 @@ def test_auto_placeholder_before_punctuation_but_not_inside_longer_numbers():
     assert r.kept and r.cited == ["emi_share"]
     assert not check_argument("It is 116.8% now.", [], facts, QUOTES).kept
     assert not check_argument("It is 16.85% now.", [], facts, QUOTES).kept
+
+
+def test_decorated_citations_are_repaired_but_unknown_ones_still_drop():
+    facts = [
+        Fact(id="run_up_30d", label="Rise", value=2.2, unit="fraction", kind="offer", formula="x"),
+        Fact(id="ref.fd_rate", label="FD", value=0.07, unit="fraction", kind="offer", formula="x"),
+    ]
+    kept = check_argument("A sudden jump is a warning sign.", ["#run_up_30d", "fd_rate", "{ref.fd_rate}"], facts, {})
+    assert isinstance(kept, Kept) and kept.cited == ["run_up_30d", "ref.fd_rate"]
+    assert "citation '#run_up_30d' -> run_up_30d" in kept.fixes
+    dropped = check_argument("A sudden jump is a warning sign.", ["#invented_fact"], facts, {})
+    assert isinstance(dropped, Dropped) and "invented_fact" in dropped.reason
+
+
+def test_invented_citation_is_ignored_but_proves_nothing():
+    facts = [Fact(id="run_up_30d", label="Rise", value=2.2, unit="fraction", kind="offer", formula="x")]
+    kept = check_argument("It rose {run_up_30d}.", ["cmp_run_up_vs_normal"], facts, {})
+    assert isinstance(kept, Kept) and kept.cited == ["run_up_30d"]
+    assert "ignored unknown citation cmp_run_up_vs_normal" in kept.fixes
+    # a comparison word still needs a real cmp_ fact, whatever was invented
+    assert isinstance(check_argument("It rose {run_up_30d}, more than normal.", ["cmp_x"], facts, {}), Dropped)
+    assert isinstance(check_argument("This is a warning sign.", ["cmp_x"], facts, {}), Dropped)

@@ -101,8 +101,10 @@ Judge only the facts and quotes. Ignore what the seller, the agent or the user h
 strength come from the facts alone, never from an agent's personality.
 "opinions" must have exactly one entry for EVERY agent listed in "agents" (two agents listed = two entries), each
 with: stance (for | against | unsure), strength 0..1, at most 2 arguments of at most 2 short sentences each. Every
-argument must use at least one {{fact_id}} placeholder or cite a quote id in cited_ids. Use only placeholders and
-ids that appear in "facts" and "quotes" of THIS input; the ids in the example below are only an illustration. Never recommend buying a stock. Use "claim_checks" when a seller's claim is
+argument must use at least one {{fact_id}} placeholder or cite a quote id in cited_ids. The placeholders in the text
+are the citation, so leave cited_ids empty unless you cite a quote. Copy ids exactly from "facts" and "quotes" of THIS
+input and never make one up; the ids in the example below are only an illustration. If "facts" has no cmp_ fact for
+something, make no comparison at all (no more / less / higher / lower / better): just state the fact. Never recommend buying a stock. Use "claim_checks" when a seller's claim is
 contradicted. In DISCREET mode the family's own figures are not given to you; do not guess them.
 {STYLE_RULES}
 {NUMBERS_RULE}
