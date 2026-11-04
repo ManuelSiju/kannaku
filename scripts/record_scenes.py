@@ -93,11 +93,11 @@ class Scenes:
             self.p.sh("input", "keyevent", "KEYCODE_BACK")
             time.sleep(1.2)
 
-    def ask(self, question: str) -> None:
+    def ask(self, question: str, ready: str = r"Alfii's answer|Retry") -> None:
         self.p.type_into(0, question)
         self.p.hide_keyboard()
         self.p.tap_text(r"^Send$")
-        self.p.wait(r"Alfii's answer|Retry", 120)
+        self.p.wait(ready, 120)
 
     def endowment(self, n: dict) -> None:
         self.p.tap_text(r"Show a paper or photo")
@@ -197,11 +197,8 @@ class Scenes:
         self.p.tap_text(r"^Chat$")
         time.sleep(1)
         t = time.monotonic()
-        self.ask(TIP_Q)
+        self.ask(TIP_Q, r"^The council$|Retry")  # with earphones on the council opens and plays by itself
         n["answer_seconds"] = f"{time.monotonic() - t:.1f}"
-        time.sleep(1.5)
-        self.scroll_to(r"Hear the council")
-        self.p.tap_text(r"Hear the council")
         time.sleep(1.5)
         n["lines"] = self.screen()[:900]
         time.sleep(30)

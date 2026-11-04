@@ -136,6 +136,17 @@ class _Details extends StatelessWidget {
   final Map<String, dynamic> b;
   const _Details(this.b);
 
+  /// A fact as a person reads it: ₹1,00,000 or 7%.
+  static String _shown(Map<String, dynamic> f) {
+    final value = number(f['value']);
+    if (value == null) return str(f['value_text'], 'unknown');
+    return switch (str(f['unit'])) {
+      'INR' => inr(value),
+      'fraction' => '${(value * 100).toStringAsFixed(value * 100 % 1 == 0 ? 0 : 1)}%',
+      final unit => '${value % 1 == 0 ? value.toStringAsFixed(0) : value.toStringAsFixed(2)} $unit',
+    };
+  }
+
   Map<String, dynamic> _step(String name) =>
       obj(objs(b['trace']).firstWhere((t) => str(t['step']) == name, orElse: () => {})['detail']);
 
@@ -170,9 +181,7 @@ class _Details extends StatelessWidget {
                 children: [
                   Pill(str(f['kind']), color: str(f['kind']) == 'personal' ? K.vick : K.sankz),
                   const SizedBox(width: 8),
-                  Expanded(
-                    child: Text('${f['id']} = ${f['value'] ?? f['value_text'] ?? '?'} ${f['unit'] ?? ''}', style: body),
-                  ),
+                  Expanded(child: Text('${_shown(f)}  ·  ${f['id']}', style: body)),
                 ],
               ),
             ),

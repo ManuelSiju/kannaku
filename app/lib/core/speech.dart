@@ -33,6 +33,46 @@ Map<String, Map<String, String>> assignVoices(List<Map<String, String>> installe
   return {for (var i = 0; i < speakers.length; i++) speakers[i]: pool[i % pool.length]};
 }
 
+const _ones = [
+  'zero',
+  'one',
+  'two',
+  'three',
+  'four',
+  'five',
+  'six',
+  'seven',
+  'eight',
+  'nine',
+  'ten',
+  'eleven',
+  'twelve',
+  'thirteen',
+  'fourteen',
+  'fifteen',
+  'sixteen',
+  'seventeen',
+  'eighteen',
+  'nineteen',
+]; // fmt: skip
+const _tens = ['', '', 'twenty', 'thirty', 'forty', 'fifty', 'sixty', 'seventy', 'eighty', 'ninety'];
+
+String _words(int n) {
+  if (n < 20) return _ones[n];
+  if (n < 100) return '${_tens[n ~/ 10]}${n % 10 == 0 ? '' : ' ${_ones[n % 10]}'}';
+  return '${_ones[n ~/ 100]} hundred${n % 100 == 0 ? '' : ' ${_words(n % 100)}'}';
+}
+
+/// English voices misread digits before lakh and crore ("7.5 lakh" comes out as a long number), so those are said in
+/// words: "seven point five lakh". The text on screen keeps its digits.
+String speakable(String text, String lang) {
+  if (lang != 'en') return text;
+  return text.replaceAllMapped(RegExp(r'(\d{1,3})(?:\.(\d+))?\s*(lakhs?|crores?)', caseSensitive: false), (m) {
+    final point = m[2] == null ? '' : ' point ${m[2]!.split('').map((d) => _ones[int.parse(d)]).join(' ')}';
+    return '${_words(int.parse(m[1]!))}$point ${m[3]}';
+  });
+}
+
 String ttsLocale(String lang) => switch (lang) {
   'ml' => 'ml-IN',
   'hi' => 'hi-IN',
@@ -84,7 +124,7 @@ class Speaker {
       if (own != null) await _tts.setVoice({'name': own['name']!, 'locale': own['locale']!});
       await _tts.setPitch(own == null ? v.pitch : 1.0);
       await _tts.setSpeechRate((v.rate * speed).clamp(0.2, 0.9));
-      await _tts.speak(text);
+      await _tts.speak(speakable(text, lang));
     } catch (_) {}
   }
 

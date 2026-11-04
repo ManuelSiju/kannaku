@@ -45,6 +45,16 @@ CaseProvider casesWith(FakeSettings s, List<String> names) {
 }
 
 void main() {
+  group('speech', () {
+    test('lakh and crore amounts are said in words', () {
+      expect(speakable('Only 7.5 lakh rupees is guaranteed', 'en'), 'Only seven point five lakh rupees is guaranteed');
+      expect(speakable('15 lakh rupees and 1 lakh rupees', 'en'), 'fifteen lakh rupees and one lakh rupees');
+      expect(speakable('2.25 crore', 'en'), 'two point two five crore');
+      expect(speakable('It costs 21.6 percent', 'en'), 'It costs 21.6 percent');
+      expect(speakable('7.5 ലക്ഷം', 'ml'), '7.5 ലക്ഷം');
+    });
+  });
+
   group('council voices', () {
     Map<String, String> voice(String name, [String locale = 'en-IN']) => {'name': name, 'locale': locale};
 
