@@ -49,8 +49,6 @@ key.properties
 .DS_Store
 
 # local only: tooling, working files, builds
-.claude/
-CLAUDE.md
 AGENTS.md
 .vscode/
 .idea/

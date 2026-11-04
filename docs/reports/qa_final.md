@@ -43,21 +43,21 @@ Checked by regex on every spoken line; hits were then read by hand.
 
 ## 4. Fixes made
 
-| finding | severity | commit |
-|---|---|---|
-| Reducing-balance loans computed as flat: wrong EMI, wrong red | P0 | `5be16bf` |
-| "Grows higher than a fixed deposit" spoken without "at the higher bonus rate" | P0 | `d399e0e` |
-| Meta answers degraded: `json_schema` never finished on Muse Spark | P1 | `36cf91e` |
-| Voice misread amounts before lakh ("7.5 lakh" came out as a long number); found by a reviewer | P0 | `c6b657f` |
-| Scheme offer classed unknown, no verdict | P1 | `5be16bf` |
-| Silence or noise opened a clarifying question | P1 | `5cb0dc4` |
-| Vick left out the held shares in 2 of 3 full-mode runs | P1 | `657d4f7` |
-| Show paper opened the camera with no PDF choice | P1 | `aadb6a5` |
-| The listening screen could stay stuck after a cancelled gesture | P0 | `675353d` |
-| Hold to talk felt slow, and did not follow the top-right setting | P1 | `4f34fad` |
-| Back on a tab left the app | P1 | `f9280c6` |
-| An empty transcript gave up without trying Whisper | P1 | `675353d` |
-| Blur on My details left the same figures visible below it | P1 | `5ae6a6e` |
+| finding | severity |
+|---|---|
+| Reducing-balance loans computed as flat: wrong EMI, wrong red | P0 |
+| "Grows higher than a fixed deposit" spoken without "at the higher bonus rate" | P0 |
+| Meta answers degraded: `json_schema` never finished on Muse Spark | P1 |
+| Voice misread amounts before lakh ("7.5 lakh" came out as a long number); found by a reviewer | P0 |
+| Scheme offer classed unknown, no verdict | P1 |
+| Silence or noise opened a clarifying question | P1 |
+| Vick left out the held shares in 2 of 3 full-mode runs | P1 |
+| Show paper opened the camera with no PDF choice | P1 |
+| The listening screen could stay stuck after a cancelled gesture | P0 |
+| Hold to talk felt slow, and did not follow the top-right setting | P1 |
+| Back on a tab left the app | P1 |
+| An empty transcript gave up without trying Whisper | P1 |
+| Blur on My details left the same figures visible below it | P1 |
 
 ## 5. Adversarial
 
