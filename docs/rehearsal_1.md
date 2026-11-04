@@ -1,25 +1,25 @@
 # Rehearsal 1: fresh clone, following docs/OWNER_GUIDE.md
 
-Folder: `/home/x4alpha/kanakku-rehearsal-1` (a new `git clone`; nothing copied). 2026-11-04 11:14. Total 6.1 min. Result: **FAILED**.
+Folder: `/home/x4alpha/kanakku-rehearsal-1` (a new `git clone`; nothing copied). 2026-11-04 12:15. Total 4.6 min. Result: **all steps passed**.
 
 Device: Android emulator `emulator-5554` standing in for the phone. `sudo` was a stub that refuses (no password available), so the declined path ran, not a real install. Ollama and Flutter were already installed.
 
 | guide section | step | result | time |
 |---|---|---|---|
 | 2.3 download | `git clone /home/x4alpha/Documents/github/kannaku /home/x4alpha/kanakku-rehearsal-1` | ✔ pass | 0.2 s |
-| 2.4 first make start: full setup | `make start` (foreground, until the box and live log) | ✔ pass | 7.5 s |
+| 2.4 first make start: full setup | `make start` (foreground, until the box and live log) | ✔ pass | 3.9 s |
 | 2.4 setup ran | server parts installed, system-package message shown | ✔ pass | 0.0 s |
-| 2.4 check | `make doctor` | ✔ pass | 0.8 s |
-| 4 app on the phone | `make phone` | ✔ pass | 64.9 s |
-| 3.2 phone over Wi-Fi + demo question | `python3 scripts/phone_smoke.py --serial emulator-5554 --token $(grep KANAKKU_TOKEN .env.local | cut -d= -f2) --url http://192.168.1.102:8013 --shots run/shots --expect Stop` | ✘ FAIL | 106.7 s |
+| 2.4 check | `make doctor` | ✔ pass | 0.6 s |
+| 4 app on the phone | `make phone` | ✔ pass | 48.2 s |
+| 3.2 phone over Wi-Fi + demo question | `python3 scripts/phone_smoke.py --serial emulator-5554 --token $(grep KANAKKU_TOKEN .env.local | cut -d= -f2) --url http://192.168.1.102:8013 --shots run/shots --expect Stop` | ✔ pass | 71.1 s |
 | 3.1 live log | request lines stream in the terminal | ✔ pass | 0.0 s |
 | 3.3 stop | Ctrl+C | ✔ pass | 0.6 s |
 | 3.3 stop | no leftovers (`ps` evidence) | ✔ pass | 0.0 s |
 | second start: setup check | `scripts/setup.sh` | ✔ pass | 0.2 s |
 | second start: setup check | under 2 s (0.20 s) | ✔ pass | 0.2 s |
 | second start | `make start` (foreground, until the box and live log) | ✔ pass | 1.9 s |
-| phone via USB | `python3 scripts/phone_smoke.py --serial emulator-5554 --token $(grep KANAKKU_TOKEN .env.local | cut -d= -f2) --url http://127.0.0.1:8013 --keep-data --expect Stop` | ✘ FAIL | 97.9 s |
-| 7 Wi-Fi address changed | `python3 scripts/phone_smoke.py --serial emulator-5554 --token $(grep KANAKKU_TOKEN .env.local | cut -d= -f2) --url http://192.168.1.102:8013 --keep-data --connect-only` | ✔ pass | 28.0 s |
+| phone via USB | `python3 scripts/phone_smoke.py --serial emulator-5554 --token $(grep KANAKKU_TOKEN .env.local | cut -d= -f2) --url http://127.0.0.1:8013 --keep-data --expect Stop` | ✔ pass | 62.1 s |
+| 7 Wi-Fi address changed | `python3 scripts/phone_smoke.py --serial emulator-5554 --token $(grep KANAKKU_TOKEN .env.local | cut -d= -f2) --url http://192.168.1.102:8013 --keep-data --connect-only` | ✔ pass | 28.6 s |
 | start twice | `make start` | ✔ pass | 0.2 s |
 | 6 demo while running | `make demo` | ✔ pass | 2.0 s |
 | 6 demo while running | the foreground make start survives | ✔ pass | 0.0 s |
@@ -35,7 +35,7 @@ Device: Android emulator `emulator-5554` standing in for the phone. `sudo` was a
 | 7 laptop restarted (setup) | `make start` (foreground, until the box and live log) | ✔ pass | 1.9 s |
 | 7 laptop restarted (power cut) | `kill -9 $(cat run/start.pid) $(cat run/server.pid); sleep 1; ls run/*.pid` | ✔ pass | 1.2 s |
 | 7 laptop restarted | `make start` (foreground, until the box and live log) | ✔ pass | 1.9 s |
-| 3.2 phone after restart | `python3 scripts/phone_smoke.py --serial emulator-5554 --token $(grep KANAKKU_TOKEN .env.local | cut -d= -f2) --url http://192.168.1.102:8013 --keep-data --connect-only` | ✔ pass | 27.8 s |
+| 3.2 phone after restart | `python3 scripts/phone_smoke.py --serial emulator-5554 --token $(grep KANAKKU_TOKEN .env.local | cut -d= -f2) --url http://192.168.1.102:8013 --keep-data --connect-only` | ✔ pass | 28.6 s |
 | 3.3 stop | Ctrl+C | ✔ pass | 0.6 s |
 | 3.3 stop | no leftovers (`ps` evidence) | ✔ pass | 0.0 s |
 | BG=1 | `make start BG=1 PROVIDER=local` | ✔ pass | 1.4 s |
@@ -67,7 +67,7 @@ Cloning into '/home/x4alpha/kanakku-rehearsal-1'...
 done.
 ```
 
-### 2.4 first make start: full setup: `make start` (foreground, until the box and live log) — pass (7.5 s)
+### 2.4 first make start: full setup: `make start` (foreground, until the box and live log) — pass (3.9 s)
 
 ```
 ✔ Settings file created
@@ -83,17 +83,17 @@ Provider: local
   ✔ new access token for the app saved in .env.local
 LLM backend: ollama  (http://127.0.0.1:11435/v1, model qwen2.5:7b-instruct)
 …
-██▄▄ █▀ ▄▄▀ ▄▀ ▀█▀ ▄▄██  ▀▄█▀██  ▄█ ▀▀ ██
-███▀ ▄▄ ▄▄ ▀▀▄ ▀ ▄ ██   ▀▀▄█▄▄  █ █▀█  ██
-██▀▄▄ ██▄█    ██  ▄▄ ▄▄█ █▄██▄ █ ███▀ ▀██
-██▄   ▄ ▄██ ▄▀█▄█▀▄▄  █▄█  █▄ ▄▄█▄▄ █▄▄██
-███▀ █▄ ▄ ▄█▀▀ ▀█▀▄ ▄ █▄▄ █  █▄  ███▀▀ ██
-██▄▀█▀▄█▄▀ █ ▄ ▀ ▀▄▄█▀█▀  ▄ ▀▀▄▀██▀▄█▄ ██
-██▄█▄▄▄█▄▄▀▄▀ ██  █▀  █▄  ▀ ██ ▄▄▄ ▀█▀▀██
-██ ▄▄▄▄▄ █ ▄ ▀█▄█▀█▄█▀ ▄▄██▄ ▄ █▄█ ▄█  ██
-██ █   █ █▄█▀▀ ▀█▄█  ▄▄ ▄ ▄▄█▀▄▄▄  █▀████
-██ █▄▄▄█ █  ▄▄ ▀ ▀▄▀ ▀▀ █▀▄▀█▄ ▄█  ▄█▀▄██
-██▄▄▄▄▄▄▄█▄██▄██▄▄██▄██▄▄█▄▄█▄▄█▄▄███▄▄██
+██▄▀▄█▄▀▄██ ▄█▄█▄ ▀▄▄ █▀▀█ ▀ ▄▄▄▄ ▄▀ █▄██
+██ ▀█▄ ▄▄ ▄▄█ ▄█▀█▀▄▀▀█▀ █ ▀██▀▄▀▄▄ ▄▄▄██
+██▀█ █ ▀▄▀▄ ▄▄▀▀▀▀█   ▄▄▀▀ ▀▄█▀▀▄▀▄▄ ▄███
+██▀█▄▀▀ ▄██▄ █▀ ▄ █ █ ▄█▄▄▄▀█▀█ ▀ █▀▄  ██
+██  ▄▄█▄▄█▀▀ █▄█▄ █▀▄▀██▀▄▀▄▀▄█▄▄▀▄▄ █▄██
+██ ███▀ ▄▄█▄█ ▄█▀███ █▀ ▄▄ ▄  ██▀▀ █▄ ▄██
+██▄█▄▄█▄▄▄ █▀▄▀▀▀▄▄▄  ▄▀█▄█▄▄▄ ▄▄▄  ▄████
+██ ▄▄▄▄▄ █▄ ▄█▀ ▄▀█▄▀ ▄█▀▀▀ ▀█ █▄█ █▄▄▄██
+██ █   █ █  ▄█▄█▄█▄▀▄ █▀▀▄  ▄ ▄  ▄ ▄ ▀▀██
+██ █▄▄▄█ █ ▄▄ ▄█▀ ▄▀▀▀█ ▀█ █▄█▀ ▀▄▀█▄█ ██
+██▄▄▄▄▄▄▄█▄▄█▄███▄█▄▄▄▄▄██▄▄▄███▄▄▄▄▄▄▄██
 ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀
   ╔══════════════════════════════════════════════════════════════╗
      Kanakku is running.   (AI: local)
@@ -110,7 +110,7 @@ LLM backend: ollama  (http://127.0.0.1:11435/v1, model qwen2.5:7b-instruct)
 Live log (time, level, request, message):
 ```
 
-### 2.4 check: `make doctor` — pass (0.8 s)
+### 2.4 check: `make doctor` — pass (0.6 s)
 
 ```
 Kanakku check-up
@@ -124,7 +124,7 @@ Kanakku check-up
   · Malayalam papers       not installed (only for photos of Malayalam papers)
       → sudo apt install tesseract-ocr-mal
   ✔ Audio tools (ffmpeg)   installed
-  ✔ Disk space             616 GB free
+  ✔ Disk space             615 GB free
   ✔ Flutter                installed (builds the phone app)
   ✔ adb                    installed (puts the app on the phone)
   ✔ Phone by USB           connected: emulator-5554 
@@ -134,51 +134,38 @@ Kanakku check-up
 All good. Next: make start
 ```
 
-### 4 app on the phone: `make phone` — pass (64.9 s)
+### 4 app on the phone: `make phone` — pass (48.2 s)
 
 ```
 Building the app (the first time takes about 5 minutes)…
-✔ App built: /home/x4alpha/kanakku-rehearsal-1/dist/kanakku-v0.5.0+3-dc87906.apk
+✔ App built: /home/x4alpha/kanakku-rehearsal-1/dist/kanakku-v0.5.0+3-a6c9885.apk
 ✔ Installed on the phone (emulator-5554). Open 'Kanakku' on the phone.
 ✔ Demo brochure copied to the phone's Download folder (kanakavalli_brochure.pdf).
 ```
 
-### 3.2 phone over Wi-Fi + demo question: `python3 scripts/phone_smoke.py --serial emulator-5554 --token $(grep KANAKKU_TOKEN .env.local | cut -d= -f2) --url http://192.168.1.102:8013 --shots run/shots --expect Stop` — FAIL (106.7 s)
+### 3.2 phone over Wi-Fi + demo question: `python3 scripts/phone_smoke.py --serial emulator-5554 --token $(grep KANAKKU_TOKEN .env.local | cut -d= -f2) --url http://192.168.1.102:8013 --shots run/shots --expect Stop` — pass (71.1 s)
 
 ```
-[  3.3s] app opened: Welcome screen
-[ 11.6s] Home screen
-[ 30.8s] Test connection: Connected ✔  Provider: local (qwen2.5:7b-instruct) · server 0.2.0
-[ 32.9s]   App version
+[  3.2s] app opened: Welcome screen
+[ 11.4s] Home screen
+[ 30.0s] Test connection: Connected ✔  Provider: local (qwen2.5:7b-instruct) · server 0.2.0
+[ 32.1s]   App version
 0.5.0+3
-[ 32.9s]   Server version
+[ 32.1s]   Server version
 0.2.0
-[ 32.9s]   Model provider: not visible
+[ 32.1s]   Model provider: not visible
 [ 48.0s] question sent
-Traceback (most recent call last):
-  File "/home/x4alpha/kanakku-rehearsal-1/scripts/phone_smoke.py", line 159, in <module>
-    sys.exit(main())
-             ^^^^^^
-  File "/home/x4alpha/kanakku-rehearsal-1/scripts/phone_smoke.py", line 150, in main
-    verdict = p.wait(r"^(Stop|Careful|Looks fine)$|Retry", 30)
-              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/x4alpha/kanakku-rehearsal-1/scripts/phone_smoke.py", line 64, in wait
-    raise TimeoutError(f"'{pattern}' not on screen after {timeout:.0f}s. On screen: {seen}")
-TimeoutError: '^(Stop|Careful|Looks fine)$|Retry' not on screen after 30s. On screen: Back | Alfii's answer | Verdict: Careful
-Careful
-Do not invest without more facts first.
-Do not invest without more facts first. Before you decide, ask whoever sent it: "Who sent this tip, and do they own the stock?" | Read aloud | Only on your screen
-• This amount is 62.5% of your savings. | Who sent this tip, and do they own the stock? | Hear the council | Why? | What are the warning signs?
+[ 70.7s] answer on the phone: Stop
 ```
 
 ### 3.3 stop: Ctrl+C — pass (0.6 s)
 
 ```
-: POST http://127.0.0.1:11435/v1/chat/completions "HTTP/1.1 200 OK"
-11:10:15 INFO    69dfd334 GET /v1/families/1/notes -> 200  (1 ms)
-11:10:15 INFO    2185183c HTTP Request: POST http://127.0.0.1:11435/v1/chat/completions "HTTP/1.1 200 OK"
-11:10:15 INFO    d7ac49a6 GET /v1/cases/1 -> 200  (3 ms)
-11:10:45 INFO    be3a4212 GET /v1/families/1/notes -> 200  (1 ms)
+mpletions "HTTP/1.1 200 OK"
+12:12:14 INFO    846fc400 HTTP Request: POST http://127.0.0.1:11435/v1/chat/completions "HTTP/1.1 200 OK"
+12:12:17 INFO    846fc400 HTTP Request: POST http://127.0.0.1:11435/v1/chat/completions "HTTP/1.1 200 OK"
+12:12:17 INFO    97e13fd9 GET /v1/cases/1 -> 200  (1 ms)
+12:12:18 INFO    48f9c224 GET /v1/families/1/notes -> 200  (1 ms)
 ^C
 Stopping Kanakku…
 Kanakku stopped
@@ -201,24 +188,24 @@ LLM backend: ollama  (http://127.0.0.1:11435/v1, model qwen2.5:7b-instruct)
   ✔ already running
   ✔ model qwen2.5:7b-instruct available
 API server: 0.0.0.0:8013
-  starting (pid 115805) .
+  starting (pid 193749) .
   ✔ up
 Kanakku 0.2.0
   provider    : local
   model       : qwen2.5:7b-instruct   vision: off
   speech      : faster-whisper (local)
 …
-██▄▄ █▀ ▄▄▀ ▄▀ ▀█▀ ▄▄██  ▀▄█▀██  ▄█ ▀▀ ██
-███▀ ▄▄ ▄▄ ▀▀▄ ▀ ▄ ██   ▀▀▄█▄▄  █ █▀█  ██
-██▀▄▄ ██▄█    ██  ▄▄ ▄▄█ █▄██▄ █ ███▀ ▀██
-██▄   ▄ ▄██ ▄▀█▄█▀▄▄  █▄█  █▄ ▄▄█▄▄ █▄▄██
-███▀ █▄ ▄ ▄█▀▀ ▀█▀▄ ▄ █▄▄ █  █▄  ███▀▀ ██
-██▄▀█▀▄█▄▀ █ ▄ ▀ ▀▄▄█▀█▀  ▄ ▀▀▄▀██▀▄█▄ ██
-██▄█▄▄▄█▄▄▀▄▀ ██  █▀  █▄  ▀ ██ ▄▄▄ ▀█▀▀██
-██ ▄▄▄▄▄ █ ▄ ▀█▄█▀█▄█▀ ▄▄██▄ ▄ █▄█ ▄█  ██
-██ █   █ █▄█▀▀ ▀█▄█  ▄▄ ▄ ▄▄█▀▄▄▄  █▀████
-██ █▄▄▄█ █  ▄▄ ▀ ▀▄▀ ▀▀ █▀▄▀█▄ ▄█  ▄█▀▄██
-██▄▄▄▄▄▄▄█▄██▄██▄▄██▄██▄▄█▄▄█▄▄█▄▄███▄▄██
+██▄▀▄█▄▀▄██ ▄█▄█▄ ▀▄▄ █▀▀█ ▀ ▄▄▄▄ ▄▀ █▄██
+██ ▀█▄ ▄▄ ▄▄█ ▄█▀█▀▄▀▀█▀ █ ▀██▀▄▀▄▄ ▄▄▄██
+██▀█ █ ▀▄▀▄ ▄▄▀▀▀▀█   ▄▄▀▀ ▀▄█▀▀▄▀▄▄ ▄███
+██▀█▄▀▀ ▄██▄ █▀ ▄ █ █ ▄█▄▄▄▀█▀█ ▀ █▀▄  ██
+██  ▄▄█▄▄█▀▀ █▄█▄ █▀▄▀██▀▄▀▄▀▄█▄▄▀▄▄ █▄██
+██ ███▀ ▄▄█▄█ ▄█▀███ █▀ ▄▄ ▄  ██▀▀ █▄ ▄██
+██▄█▄▄█▄▄▄ █▀▄▀▀▀▄▄▄  ▄▀█▄█▄▄▄ ▄▄▄  ▄████
+██ ▄▄▄▄▄ █▄ ▄█▀ ▄▀█▄▀ ▄█▀▀▀ ▀█ █▄█ █▄▄▄██
+██ █   █ █  ▄█▄█▄█▄▀▄ █▀▀▄  ▄ ▄  ▄ ▄ ▀▀██
+██ █▄▄▄█ █ ▄▄ ▄█▀ ▄▀▀▀█ ▀█ █▄█▀ ▀▄▀█▄█ ██
+██▄▄▄▄▄▄▄█▄▄█▄███▄█▄▄▄▄▄██▄▄▄███▄▄▄▄▄▄▄██
 ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀
   ╔══════════════════════════════════════════════════════════════╗
      Kanakku is running.   (AI: local)
@@ -235,43 +222,30 @@ Kanakku 0.2.0
 Live log (time, level, request, message):
 ```
 
-### phone via USB: `python3 scripts/phone_smoke.py --serial emulator-5554 --token $(grep KANAKKU_TOKEN .env.local | cut -d= -f2) --url http://127.0.0.1:8013 --keep-data --expect Stop` — FAIL (97.9 s)
+### phone via USB: `python3 scripts/phone_smoke.py --serial emulator-5554 --token $(grep KANAKKU_TOKEN .env.local | cut -d= -f2) --url http://127.0.0.1:8013 --keep-data --expect Stop` — pass (62.1 s)
 
 ```
-[  3.3s] Home screen
-[ 22.7s] Test connection: Connected ✔  Provider: local (qwen2.5:7b-instruct) · server 0.2.0
-[ 24.7s]   App version
+[  2.9s] Home screen
+[ 21.5s] Test connection: Connected ✔  Provider: local (qwen2.5:7b-instruct) · server 0.2.0
+[ 23.4s]   App version
 0.5.0+3
-[ 24.7s]   Server version
+[ 23.4s]   Server version
 0.2.0
-[ 24.7s]   Model provider: not visible
-[ 39.9s] question sent
-Traceback (most recent call last):
-  File "/home/x4alpha/kanakku-rehearsal-1/scripts/phone_smoke.py", line 159, in <module>
-    sys.exit(main())
-             ^^^^^^
-  File "/home/x4alpha/kanakku-rehearsal-1/scripts/phone_smoke.py", line 150, in main
-    verdict = p.wait(r"^(Stop|Careful|Looks fine)$|Retry", 30)
-              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/x4alpha/kanakku-rehearsal-1/scripts/phone_smoke.py", line 64, in wait
-    raise TimeoutError(f"'{pattern}' not on screen after {timeout:.0f}s. On screen: {seen}")
-TimeoutError: '^(Stop|Careful|Looks fine)$|Retry' not on screen after 30s. On screen: Back | Alfii's answer | Verdict: Stop
-Stop
-Please don't go ahead with this as it is.
-My advice: do not go ahead with this as it is. Talk to Arun before you decide. | Read aloud | Only on your screen
-• This amount is 62.5% of your savings. | Who sent this tip, and do they own the stock? | Hear the council | Why? | Help me say no
+[ 23.4s]   Model provider: not visible
+[ 39.6s] question sent
+[ 62.0s] answer on the phone: Stop
 ```
 
-### 7 Wi-Fi address changed: `python3 scripts/phone_smoke.py --serial emulator-5554 --token $(grep KANAKKU_TOKEN .env.local | cut -d= -f2) --url http://192.168.1.102:8013 --keep-data --connect-only` — pass (28.0 s)
+### 7 Wi-Fi address changed: `python3 scripts/phone_smoke.py --serial emulator-5554 --token $(grep KANAKKU_TOKEN .env.local | cut -d= -f2) --url http://192.168.1.102:8013 --keep-data --connect-only` — pass (28.6 s)
 
 ```
-[  3.2s] Home screen
-[ 22.5s] Test connection: Connected ✔  Provider: local (qwen2.5:7b-instruct) · server 0.2.0
-[ 24.5s]   App version
+[  2.9s] Home screen
+[ 21.4s] Test connection: Connected ✔  Provider: local (qwen2.5:7b-instruct) · server 0.2.0
+[ 23.3s]   App version
 0.5.0+3
-[ 24.5s]   Server version
+[ 23.3s]   Server version
 0.2.0
-[ 24.5s]   Model provider: not visible
+[ 23.3s]   Model provider: not visible
 ```
 
 ### start twice: `make start` — pass (0.2 s)
@@ -279,25 +253,25 @@ My advice: do not go ahead with this as it is. Talk to Arun before you decide. |
 ```
 Kanakku is already running in another terminal window.
 █████████████████████████████████████████
-██ ▄▄▄▄▄ ██▀▄██▀▄██▀  ▄▄█   █▀▀█ ▄▄▄▄▄ ██
-██ █   █ █▄▀█▄▀▀█▄▀▄██ █▄  █▄ ██ █   █ ██
-██ █▄▄▄█ ██▄▀▀ ▄▀▀ ▀▀ ▄█▀█ ▄▄▄ █ █▄▄▄█ ██
-██▄▄▄▄▄▄▄█ █▄▀▄█▄▀▄▀ ▀ █ █ ▀▄▀▄█▄▄▄▄▄▄▄██
-██▄ ▄▀▄▄▄▄ ▀█▀ ▀█▀ ▄▄██   ▄▀█▀▄▄ ██▀ ▀▀██
-████▄█ ▀▄ ▄ ▄▄ ▀ ▄ ▄▀▄██▀█▄  ▀▀▄▄▄▀▄█▄ ██
-██ ▄ ▄▄ ▄▄ ▀▄ ██  █▄ ▄█   █▄▄▄█▄  █▄█▀▀██
-██ ▀▀█▀▀▄▀▀ █▀█▄█▀███▄█▄▄█▄▄▀▀█▀ █▄ ▄▄▄██
-██▄▄ █▀ ▄▄▀ ▄▀ ▀█▀ ▄▄██  ▀▄█▀██  ▄█ ▀▀ ██
-███▀ ▄▄ ▄▄ ▀▀▄ ▀ ▄ ██   ▀▀▄█▄▄  █ █▀█  ██
-██▀▄▄ ██▄█    ██  ▄▄ ▄▄█ █▄██▄ █ ███▀ ▀██
-██▄   ▄ ▄██ ▄▀█▄█▀▄▄  █▄█  █▄ ▄▄█▄▄ █▄▄██
-███▀ █▄ ▄ ▄█▀▀ ▀█▀▄ ▄ █▄▄ █  █▄  ███▀▀ ██
-██▄▀█▀▄█▄▀ █ ▄ ▀ ▀▄▄█▀█▀  ▄ ▀▀▄▀██▀▄█▄ ██
-██▄█▄▄▄█▄▄▀▄▀ ██  █▀  █▄  ▀ ██ ▄▄▄ ▀█▀▀██
-██ ▄▄▄▄▄ █ ▄ ▀█▄█▀█▄█▀ ▄▄██▄ ▄ █▄█ ▄█  ██
-██ █   █ █▄█▀▀ ▀█▄█  ▄▄ ▄ ▄▄█▀▄▄▄  █▀████
-██ █▄▄▄█ █  ▄▄ ▀ ▀▄▀ ▀▀ █▀▄▀█▄ ▄█  ▄█▀▄██
-██▄▄▄▄▄▄▄█▄██▄██▄▄██▄██▄▄█▄▄█▄▄█▄▄███▄▄██
+██ ▄▄▄▄▄ █▀ █▀▀██▄▄▄ ▄██▄▄▄▄▄  █ ▄▄▄▄▄ ██
+██ █   █ █▀ ▄ ██▄█  ▀█ ▄█▄▄▀█▀▄█ █   █ ██
+██ █▄▄▄█ █▀█ █▄   ▀▀▄ █▄ ▀▄ ██▀█ █▄▄▄█ ██
+██▄▄▄▄▄▄▄█▄█▄█ ▀▄▀▄█ ▀▄█ ▀▄█▄▀▄█▄▄▄▄▄▄▄██
+██▄ ▄▄▄█▄▄ ▄▄█▄█▄ ▀ ▄ █▀▀▄ █▄ █ █ █ ▀▄███
+██ █   ▀▄██▀▄ ▄█▀█▀█▀▄▄▄ ▀ ▄▀      █▄ ▄██
+██▀▀▄▀▀▄▄ ▄▀▄▄▀▀▀▀▄▄  █▀▀▄▀ ██▄ ▄▄▄█▄████
+██▀█▀▄  ▄▀ ▀▀█▀ ▄ ▄█▄▀▄██▀    ▄█▄▀█▀█  ██
+██▄▀▄█▄▀▄██ ▄█▄█▄ ▀▄▄ █▀▀█ ▀ ▄▄▄▄ ▄▀ █▄██
+██ ▀█▄ ▄▄ ▄▄█ ▄█▀█▀▄▀▀█▀ █ ▀██▀▄▀▄▄ ▄▄▄██
+██▀█ █ ▀▄▀▄ ▄▄▀▀▀▀█   ▄▄▀▀ ▀▄█▀▀▄▀▄▄ ▄███
+██▀█▄▀▀ ▄██▄ █▀ ▄ █ █ ▄█▄▄▄▀█▀█ ▀ █▀▄  ██
+██  ▄▄█▄▄█▀▀ █▄█▄ █▀▄▀██▀▄▀▄▀▄█▄▄▀▄▄ █▄██
+██ ███▀ ▄▄█▄█ ▄█▀███ █▀ ▄▄ ▄  ██▀▀ █▄ ▄██
+██▄█▄▄█▄▄▄ █▀▄▀▀▀▄▄▄  ▄▀█▄█▄▄▄ ▄▄▄  ▄████
+██ ▄▄▄▄▄ █▄ ▄█▀ ▄▀█▄▀ ▄█▀▀▀ ▀█ █▄█ █▄▄▄██
+██ █   █ █  ▄█▄█▄█▄▀▄ █▀▀▄  ▄ ▄  ▄ ▄ ▀▀██
+██ █▄▄▄█ █ ▄▄ ▄█▀ ▄▀▀▀█ ▀█ █▄█▀ ▀▄▀█▄█ ██
+██▄▄▄▄▄▄▄█▄▄█▄███▄█▄▄▄▄▄██▄▄▄███▄▄▄▄▄▄▄██
 ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀
   ╔══════════════════════════════════════════════════════════════╗
      Kanakku is running.   (AI: local)
@@ -339,12 +313,12 @@ Show "Under the hood": long-press the word Kanakku at the top of the app.
 ### 3.3 stop: Ctrl+C — pass (0.6 s)
 
 ```
-4 INFO             Application startup complete.
-11:13:04 INFO             Uvicorn running on http://0.0.0.0:8013 (Press CTRL+C to quit)
-11:13:05 INFO    c3f29a12 GET /health -> 200  (47 ms)
-11:13:05 INFO    26f70080 GET /health -> 200  (7 ms)
-11:13:05 INFO    3387138d GET /health -> 200  (6 ms)
-11:13:05 INFO    84ac6553 GET /v1/families/1/notes -> 200  (2 ms)
+7 INFO             Application startup complete.
+12:13:57 INFO             Uvicorn running on http://0.0.0.0:8013 (Press CTRL+C to quit)
+12:13:58 INFO    455e6023 GET /health -> 200  (40 ms)
+12:13:58 INFO    0acda4eb GET /health -> 200  (5 ms)
+12:13:58 INFO    2f27d8f6 GET /health -> 200  (6 ms)
+12:13:58 INFO    d8b881e8 GET /v1/families/1/notes -> 200  (2 ms)
 ^C
 Stopping Kanakku…
 Kanakku stopped
@@ -383,24 +357,24 @@ LLM backend: ollama  (http://127.0.0.1:11435/v1, model qwen2.5:7b-instruct)
   ✔ already running
   ✔ model qwen2.5:7b-instruct available
 API server: 0.0.0.0:8013
-  starting (pid 119161) .
+  starting (pid 196389) .
   ✔ up
 Kanakku 0.2.0
   provider    : local
   model       : qwen2.5:7b-instruct   vision: off
   speech      : faster-whisper (local)
 …
-██▄▄ █▀ ▄▄▀ ▄▀ ▀█▀ ▄▄██  ▀▄█▀██  ▄█ ▀▀ ██
-███▀ ▄▄ ▄▄ ▀▀▄ ▀ ▄ ██   ▀▀▄█▄▄  █ █▀█  ██
-██▀▄▄ ██▄█    ██  ▄▄ ▄▄█ █▄██▄ █ ███▀ ▀██
-██▄   ▄ ▄██ ▄▀█▄█▀▄▄  █▄█  █▄ ▄▄█▄▄ █▄▄██
-███▀ █▄ ▄ ▄█▀▀ ▀█▀▄ ▄ █▄▄ █  █▄  ███▀▀ ██
-██▄▀█▀▄█▄▀ █ ▄ ▀ ▀▄▄█▀█▀  ▄ ▀▀▄▀██▀▄█▄ ██
-██▄█▄▄▄█▄▄▀▄▀ ██  █▀  █▄  ▀ ██ ▄▄▄ ▀█▀▀██
-██ ▄▄▄▄▄ █ ▄ ▀█▄█▀█▄█▀ ▄▄██▄ ▄ █▄█ ▄█  ██
-██ █   █ █▄█▀▀ ▀█▄█  ▄▄ ▄ ▄▄█▀▄▄▄  █▀████
-██ █▄▄▄█ █  ▄▄ ▀ ▀▄▀ ▀▀ █▀▄▀█▄ ▄█  ▄█▀▄██
-██▄▄▄▄▄▄▄█▄██▄██▄▄██▄██▄▄█▄▄█▄▄█▄▄███▄▄██
+██▄▀▄█▄▀▄██ ▄█▄█▄ ▀▄▄ █▀▀█ ▀ ▄▄▄▄ ▄▀ █▄██
+██ ▀█▄ ▄▄ ▄▄█ ▄█▀█▀▄▀▀█▀ █ ▀██▀▄▀▄▄ ▄▄▄██
+██▀█ █ ▀▄▀▄ ▄▄▀▀▀▀█   ▄▄▀▀ ▀▄█▀▀▄▀▄▄ ▄███
+██▀█▄▀▀ ▄██▄ █▀ ▄ █ █ ▄█▄▄▄▀█▀█ ▀ █▀▄  ██
+██  ▄▄█▄▄█▀▀ █▄█▄ █▀▄▀██▀▄▀▄▀▄█▄▄▀▄▄ █▄██
+██ ███▀ ▄▄█▄█ ▄█▀███ █▀ ▄▄ ▄  ██▀▀ █▄ ▄██
+██▄█▄▄█▄▄▄ █▀▄▀▀▀▄▄▄  ▄▀█▄█▄▄▄ ▄▄▄  ▄████
+██ ▄▄▄▄▄ █▄ ▄█▀ ▄▀█▄▀ ▄█▀▀▀ ▀█ █▄█ █▄▄▄██
+██ █   █ █  ▄█▄█▄█▄▀▄ █▀▀▄  ▄ ▄  ▄ ▄ ▀▀██
+██ █▄▄▄█ █ ▄▄ ▄█▀ ▄▀▀▀█ ▀█ █▄█▀ ▀▄▀█▄█ ██
+██▄▄▄▄▄▄▄█▄▄█▄███▄█▄▄▄▄▄██▄▄▄███▄▄▄▄▄▄▄██
 ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀
   ╔══════════════════════════════════════════════════════════════╗
      Kanakku is running.   (AI: local)
@@ -440,24 +414,24 @@ LLM backend: ollama  (http://127.0.0.1:11435/v1, model qwen2.5:7b-instruct)
   ✔ already running
   ✔ model qwen2.5:7b-instruct available
 API server: 0.0.0.0:8013
-  starting (pid 119481) .
+  starting (pid 196723) .
   ✔ up
 Kanakku 0.2.0
   provider    : local
   model       : qwen2.5:7b-instruct   vision: off
   speech      : faster-whisper (local)
 …
-██▄▄ █▀ ▄▄▀ ▄▀ ▀█▀ ▄▄██  ▀▄█▀██  ▄█ ▀▀ ██
-███▀ ▄▄ ▄▄ ▀▀▄ ▀ ▄ ██   ▀▀▄█▄▄  █ █▀█  ██
-██▀▄▄ ██▄█    ██  ▄▄ ▄▄█ █▄██▄ █ ███▀ ▀██
-██▄   ▄ ▄██ ▄▀█▄█▀▄▄  █▄█  █▄ ▄▄█▄▄ █▄▄██
-███▀ █▄ ▄ ▄█▀▀ ▀█▀▄ ▄ █▄▄ █  █▄  ███▀▀ ██
-██▄▀█▀▄█▄▀ █ ▄ ▀ ▀▄▄█▀█▀  ▄ ▀▀▄▀██▀▄█▄ ██
-██▄█▄▄▄█▄▄▀▄▀ ██  █▀  █▄  ▀ ██ ▄▄▄ ▀█▀▀██
-██ ▄▄▄▄▄ █ ▄ ▀█▄█▀█▄█▀ ▄▄██▄ ▄ █▄█ ▄█  ██
-██ █   █ █▄█▀▀ ▀█▄█  ▄▄ ▄ ▄▄█▀▄▄▄  █▀████
-██ █▄▄▄█ █  ▄▄ ▀ ▀▄▀ ▀▀ █▀▄▀█▄ ▄█  ▄█▀▄██
-██▄▄▄▄▄▄▄█▄██▄██▄▄██▄██▄▄█▄▄█▄▄█▄▄███▄▄██
+██▄▀▄█▄▀▄██ ▄█▄█▄ ▀▄▄ █▀▀█ ▀ ▄▄▄▄ ▄▀ █▄██
+██ ▀█▄ ▄▄ ▄▄█ ▄█▀█▀▄▀▀█▀ █ ▀██▀▄▀▄▄ ▄▄▄██
+██▀█ █ ▀▄▀▄ ▄▄▀▀▀▀█   ▄▄▀▀ ▀▄█▀▀▄▀▄▄ ▄███
+██▀█▄▀▀ ▄██▄ █▀ ▄ █ █ ▄█▄▄▄▀█▀█ ▀ █▀▄  ██
+██  ▄▄█▄▄█▀▀ █▄█▄ █▀▄▀██▀▄▀▄▀▄█▄▄▀▄▄ █▄██
+██ ███▀ ▄▄█▄█ ▄█▀███ █▀ ▄▄ ▄  ██▀▀ █▄ ▄██
+██▄█▄▄█▄▄▄ █▀▄▀▀▀▄▄▄  ▄▀█▄█▄▄▄ ▄▄▄  ▄████
+██ ▄▄▄▄▄ █▄ ▄█▀ ▄▀█▄▀ ▄█▀▀▀ ▀█ █▄█ █▄▄▄██
+██ █   █ █  ▄█▄█▄█▄▀▄ █▀▀▄  ▄ ▄  ▄ ▄ ▀▀██
+██ █▄▄▄█ █ ▄▄ ▄█▀ ▄▀▀▀█ ▀█ █▄█▀ ▀▄▀█▄█ ██
+██▄▄▄▄▄▄▄█▄▄█▄███▄█▄▄▄▄▄██▄▄▄███▄▄▄▄▄▄▄██
 ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀
   ╔══════════════════════════════════════════════════════════════╗
      Kanakku is running.   (AI: local)
@@ -491,24 +465,24 @@ LLM backend: ollama  (http://127.0.0.1:11435/v1, model qwen2.5:7b-instruct)
   ✔ already running
   ✔ model qwen2.5:7b-instruct available
 API server: 0.0.0.0:8013
-  starting (pid 119991) .
+  starting (pid 197200) .
   ✔ up
 Kanakku 0.2.0
   provider    : local
   model       : qwen2.5:7b-instruct   vision: off
   speech      : faster-whisper (local)
 …
-██▄▄ █▀ ▄▄▀ ▄▀ ▀█▀ ▄▄██  ▀▄█▀██  ▄█ ▀▀ ██
-███▀ ▄▄ ▄▄ ▀▀▄ ▀ ▄ ██   ▀▀▄█▄▄  █ █▀█  ██
-██▀▄▄ ██▄█    ██  ▄▄ ▄▄█ █▄██▄ █ ███▀ ▀██
-██▄   ▄ ▄██ ▄▀█▄█▀▄▄  █▄█  █▄ ▄▄█▄▄ █▄▄██
-███▀ █▄ ▄ ▄█▀▀ ▀█▀▄ ▄ █▄▄ █  █▄  ███▀▀ ██
-██▄▀█▀▄█▄▀ █ ▄ ▀ ▀▄▄█▀█▀  ▄ ▀▀▄▀██▀▄█▄ ██
-██▄█▄▄▄█▄▄▀▄▀ ██  █▀  █▄  ▀ ██ ▄▄▄ ▀█▀▀██
-██ ▄▄▄▄▄ █ ▄ ▀█▄█▀█▄█▀ ▄▄██▄ ▄ █▄█ ▄█  ██
-██ █   █ █▄█▀▀ ▀█▄█  ▄▄ ▄ ▄▄█▀▄▄▄  █▀████
-██ █▄▄▄█ █  ▄▄ ▀ ▀▄▀ ▀▀ █▀▄▀█▄ ▄█  ▄█▀▄██
-██▄▄▄▄▄▄▄█▄██▄██▄▄██▄██▄▄█▄▄█▄▄█▄▄███▄▄██
+██▄▀▄█▄▀▄██ ▄█▄█▄ ▀▄▄ █▀▀█ ▀ ▄▄▄▄ ▄▀ █▄██
+██ ▀█▄ ▄▄ ▄▄█ ▄█▀█▀▄▀▀█▀ █ ▀██▀▄▀▄▄ ▄▄▄██
+██▀█ █ ▀▄▀▄ ▄▄▀▀▀▀█   ▄▄▀▀ ▀▄█▀▀▄▀▄▄ ▄███
+██▀█▄▀▀ ▄██▄ █▀ ▄ █ █ ▄█▄▄▄▀█▀█ ▀ █▀▄  ██
+██  ▄▄█▄▄█▀▀ █▄█▄ █▀▄▀██▀▄▀▄▀▄█▄▄▀▄▄ █▄██
+██ ███▀ ▄▄█▄█ ▄█▀███ █▀ ▄▄ ▄  ██▀▀ █▄ ▄██
+██▄█▄▄█▄▄▄ █▀▄▀▀▀▄▄▄  ▄▀█▄█▄▄▄ ▄▄▄  ▄████
+██ ▄▄▄▄▄ █▄ ▄█▀ ▄▀█▄▀ ▄█▀▀▀ ▀█ █▄█ █▄▄▄██
+██ █   █ █  ▄█▄█▄█▄▀▄ █▀▀▄  ▄ ▄  ▄ ▄ ▀▀██
+██ █▄▄▄█ █ ▄▄ ▄█▀ ▄▀▀▀█ ▀█ █▄█▀ ▀▄▀█▄█ ██
+██▄▄▄▄▄▄▄█▄▄█▄███▄█▄▄▄▄▄██▄▄▄███▄▄▄▄▄▄▄██
 ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀
   ╔══════════════════════════════════════════════════════════════╗
      Kanakku is running.   (AI: local)
@@ -540,24 +514,24 @@ LLM backend: ollama  (http://127.0.0.1:11435/v1, model qwen2.5:7b-instruct)
   ✔ already running
   ✔ model qwen2.5:7b-instruct available
 API server: 0.0.0.0:8013
-  starting (pid 120269) .
+  starting (pid 197487) .
   ✔ up
 Kanakku 0.2.0
   provider    : local
   model       : qwen2.5:7b-instruct   vision: off
   speech      : faster-whisper (local)
 …
-██▄▄ █▀ ▄▄▀ ▄▀ ▀█▀ ▄▄██  ▀▄█▀██  ▄█ ▀▀ ██
-███▀ ▄▄ ▄▄ ▀▀▄ ▀ ▄ ██   ▀▀▄█▄▄  █ █▀█  ██
-██▀▄▄ ██▄█    ██  ▄▄ ▄▄█ █▄██▄ █ ███▀ ▀██
-██▄   ▄ ▄██ ▄▀█▄█▀▄▄  █▄█  █▄ ▄▄█▄▄ █▄▄██
-███▀ █▄ ▄ ▄█▀▀ ▀█▀▄ ▄ █▄▄ █  █▄  ███▀▀ ██
-██▄▀█▀▄█▄▀ █ ▄ ▀ ▀▄▄█▀█▀  ▄ ▀▀▄▀██▀▄█▄ ██
-██▄█▄▄▄█▄▄▀▄▀ ██  █▀  █▄  ▀ ██ ▄▄▄ ▀█▀▀██
-██ ▄▄▄▄▄ █ ▄ ▀█▄█▀█▄█▀ ▄▄██▄ ▄ █▄█ ▄█  ██
-██ █   █ █▄█▀▀ ▀█▄█  ▄▄ ▄ ▄▄█▀▄▄▄  █▀████
-██ █▄▄▄█ █  ▄▄ ▀ ▀▄▀ ▀▀ █▀▄▀█▄ ▄█  ▄█▀▄██
-██▄▄▄▄▄▄▄█▄██▄██▄▄██▄██▄▄█▄▄█▄▄█▄▄███▄▄██
+██▄▀▄█▄▀▄██ ▄█▄█▄ ▀▄▄ █▀▀█ ▀ ▄▄▄▄ ▄▀ █▄██
+██ ▀█▄ ▄▄ ▄▄█ ▄█▀█▀▄▀▀█▀ █ ▀██▀▄▀▄▄ ▄▄▄██
+██▀█ █ ▀▄▀▄ ▄▄▀▀▀▀█   ▄▄▀▀ ▀▄█▀▀▄▀▄▄ ▄███
+██▀█▄▀▀ ▄██▄ █▀ ▄ █ █ ▄█▄▄▄▀█▀█ ▀ █▀▄  ██
+██  ▄▄█▄▄█▀▀ █▄█▄ █▀▄▀██▀▄▀▄▀▄█▄▄▀▄▄ █▄██
+██ ███▀ ▄▄█▄█ ▄█▀███ █▀ ▄▄ ▄  ██▀▀ █▄ ▄██
+██▄█▄▄█▄▄▄ █▀▄▀▀▀▄▄▄  ▄▀█▄█▄▄▄ ▄▄▄  ▄████
+██ ▄▄▄▄▄ █▄ ▄█▀ ▄▀█▄▀ ▄█▀▀▀ ▀█ █▄█ █▄▄▄██
+██ █   █ █  ▄█▄█▄█▄▀▄ █▀▀▄  ▄ ▄  ▄ ▄ ▀▀██
+██ █▄▄▄█ █ ▄▄ ▄█▀ ▄▀▀▀█ ▀█ █▄█▀ ▀▄▀█▄█ ██
+██▄▄▄▄▄▄▄█▄▄█▄███▄█▄▄▄▄▄██▄▄▄███▄▄▄▄▄▄▄██
 ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀
   ╔══════════════════════════════════════════════════════════════╗
      Kanakku is running.   (AI: local)
@@ -574,28 +548,27 @@ Kanakku 0.2.0
 Live log (time, level, request, message):
 ```
 
-### 3.2 phone after restart: `python3 scripts/phone_smoke.py --serial emulator-5554 --token $(grep KANAKKU_TOKEN .env.local | cut -d= -f2) --url http://192.168.1.102:8013 --keep-data --connect-only` — pass (27.8 s)
+### 3.2 phone after restart: `python3 scripts/phone_smoke.py --serial emulator-5554 --token $(grep KANAKKU_TOKEN .env.local | cut -d= -f2) --url http://192.168.1.102:8013 --keep-data --connect-only` — pass (28.6 s)
 
 ```
-[  3.3s] Home screen
-[ 22.3s] Test connection: Connected ✔  Provider: local (qwen2.5:7b-instruct) · server 0.2.0
-[ 24.2s]   App version
+[  3.0s] Home screen
+[ 21.5s] Test connection: Connected ✔  Provider: local (qwen2.5:7b-instruct) · server 0.2.0
+[ 23.4s]   App version
 0.5.0+3
-[ 24.2s]   Server version
+[ 23.4s]   Server version
 0.2.0
-[ 24.2s]   Model provider: not visible
+[ 23.4s]   Model provider: not visible
 ```
 
 ### 3.3 stop: Ctrl+C — pass (0.6 s)
 
 ```
-0.1:8013 also works.
-     To stop Kanakku: press Ctrl+C here.
-  ╚══════════════════════════════════════════════════════════════╝
-Live log (time, level, request, message):
-11:13:35 INFO    f130d457 GET /v1/families/1/notes -> 200  (3 ms)
-11:13:54 INFO    7f92d474 GET /v1/health -> 200  (11 ms)
-11:13:54 INFO    2bfe69b8 GET /v1/families/1/profile -> 200  (3 ms)
+v1/families/1/notes -> 200  (4 ms)
+12:14:28 INFO    5057f113 GET /v1/families/1/profile -> 200  (6 ms)
+12:14:29 INFO    6c66f99d GET /v1/families/1/items -> 200  (1 ms)
+12:14:29 INFO    e417acaf GET /v1/families/1/documents -> 200  (1 ms)
+12:14:46 INFO    6e56e0d2 GET /v1/health -> 200  (6 ms)
+12:14:46 INFO    7faf12e4 GET /v1/families/1/profile -> 200  (1 ms)
 ^C
 Stopping Kanakku…
 Kanakku stopped
@@ -617,7 +590,7 @@ LLM backend: ollama  (http://127.0.0.1:11435/v1, model qwen2.5:7b-instruct)
   ✔ already running
   ✔ model qwen2.5:7b-instruct available
 API server: 0.0.0.0:8013
-  starting (pid 121202) .
+  starting (pid 198417) .
   ✔ up
 Kanakku 0.2.0
   provider    : local
@@ -625,18 +598,18 @@ Kanakku 0.2.0
   speech      : faster-whisper (local)
   cache       : off
 …
-██ ▀▀█▀▀▄▀▀ █▀█▄█▀███▄█▄▄█▄▄▀▀█▀ █▄ ▄▄▄██
-██▄▄ █▀ ▄▄▀ ▄▀ ▀█▀ ▄▄██  ▀▄█▀██  ▄█ ▀▀ ██
-███▀ ▄▄ ▄▄ ▀▀▄ ▀ ▄ ██   ▀▀▄█▄▄  █ █▀█  ██
-██▀▄▄ ██▄█    ██  ▄▄ ▄▄█ █▄██▄ █ ███▀ ▀██
-██▄   ▄ ▄██ ▄▀█▄█▀▄▄  █▄█  █▄ ▄▄█▄▄ █▄▄██
-███▀ █▄ ▄ ▄█▀▀ ▀█▀▄ ▄ █▄▄ █  █▄  ███▀▀ ██
-██▄▀█▀▄█▄▀ █ ▄ ▀ ▀▄▄█▀█▀  ▄ ▀▀▄▀██▀▄█▄ ██
-██▄█▄▄▄█▄▄▀▄▀ ██  █▀  █▄  ▀ ██ ▄▄▄ ▀█▀▀██
-██ ▄▄▄▄▄ █ ▄ ▀█▄█▀█▄█▀ ▄▄██▄ ▄ █▄█ ▄█  ██
-██ █   █ █▄█▀▀ ▀█▄█  ▄▄ ▄ ▄▄█▀▄▄▄  █▀████
-██ █▄▄▄█ █  ▄▄ ▀ ▀▄▀ ▀▀ █▀▄▀█▄ ▄█  ▄█▀▄██
-██▄▄▄▄▄▄▄█▄██▄██▄▄██▄██▄▄█▄▄█▄▄█▄▄███▄▄██
+██▀█▀▄  ▄▀ ▀▀█▀ ▄ ▄█▄▀▄██▀    ▄█▄▀█▀█  ██
+██▄▀▄█▄▀▄██ ▄█▄█▄ ▀▄▄ █▀▀█ ▀ ▄▄▄▄ ▄▀ █▄██
+██ ▀█▄ ▄▄ ▄▄█ ▄█▀█▀▄▀▀█▀ █ ▀██▀▄▀▄▄ ▄▄▄██
+██▀█ █ ▀▄▀▄ ▄▄▀▀▀▀█   ▄▄▀▀ ▀▄█▀▀▄▀▄▄ ▄███
+██▀█▄▀▀ ▄██▄ █▀ ▄ █ █ ▄█▄▄▄▀█▀█ ▀ █▀▄  ██
+██  ▄▄█▄▄█▀▀ █▄█▄ █▀▄▀██▀▄▀▄▀▄█▄▄▀▄▄ █▄██
+██ ███▀ ▄▄█▄█ ▄█▀███ █▀ ▄▄ ▄  ██▀▀ █▄ ▄██
+██▄█▄▄█▄▄▄ █▀▄▀▀▀▄▄▄  ▄▀█▄█▄▄▄ ▄▄▄  ▄████
+██ ▄▄▄▄▄ █▄ ▄█▀ ▄▀█▄▀ ▄█▀▀▀ ▀█ █▄█ █▄▄▄██
+██ █   █ █  ▄█▄█▄█▄▀▄ █▀▀▄  ▄ ▄  ▄ ▄ ▀▀██
+██ █▄▄▄█ █ ▄▄ ▄█▀ ▄▀▀▀█ ▀█ █▄█▀ ▀▄▀█▄█ ██
+██▄▄▄▄▄▄▄█▄▄█▄███▄█▄▄▄▄▄██▄▄▄███▄▄▄▄▄▄▄██
 ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀
   ╔══════════════════════════════════════════════════════════════╗
      Kanakku is running.   (AI: local)
@@ -656,7 +629,7 @@ Kanakku 0.2.0
 
 ```
 Stopping Kanakku
-  ✔ stopped server (pid 121202)
+  ✔ stopped server (pid 198417)
   LLM backend left alone (not started by make up)
 ```
 
@@ -678,23 +651,23 @@ Save this key for next time? [y/N] y
 Provider: meta
 LLM backend: Meta Model API (the local backend is not started)
 API server: 0.0.0.0:8013
-  starting (pid 121546) .
+  starting (pid 198816) .
   ✔ up
 Kanakku 0.2.0
   provider    : meta
   model       : muse-spark-1.3   vision: muse-spark-1.3
 …
-██▄▄ █▀ ▄▄▀ ▄▀ ▀█▀ ▄▄██  ▀▄█▀██  ▄█ ▀▀ ██
-███▀ ▄▄ ▄▄ ▀▀▄ ▀ ▄ ██   ▀▀▄█▄▄  █ █▀█  ██
-██▀▄▄ ██▄█    ██  ▄▄ ▄▄█ █▄██▄ █ ███▀ ▀██
-██▄   ▄ ▄██ ▄▀█▄█▀▄▄  █▄█  █▄ ▄▄█▄▄ █▄▄██
-███▀ █▄ ▄ ▄█▀▀ ▀█▀▄ ▄ █▄▄ █  █▄  ███▀▀ ██
-██▄▀█▀▄█▄▀ █ ▄ ▀ ▀▄▄█▀█▀  ▄ ▀▀▄▀██▀▄█▄ ██
-██▄█▄▄▄█▄▄▀▄▀ ██  █▀  █▄  ▀ ██ ▄▄▄ ▀█▀▀██
-██ ▄▄▄▄▄ █ ▄ ▀█▄█▀█▄█▀ ▄▄██▄ ▄ █▄█ ▄█  ██
-██ █   █ █▄█▀▀ ▀█▄█  ▄▄ ▄ ▄▄█▀▄▄▄  █▀████
-██ █▄▄▄█ █  ▄▄ ▀ ▀▄▀ ▀▀ █▀▄▀█▄ ▄█  ▄█▀▄██
-██▄▄▄▄▄▄▄█▄██▄██▄▄██▄██▄▄█▄▄█▄▄█▄▄███▄▄██
+██▄▀▄█▄▀▄██ ▄█▄█▄ ▀▄▄ █▀▀█ ▀ ▄▄▄▄ ▄▀ █▄██
+██ ▀█▄ ▄▄ ▄▄█ ▄█▀█▀▄▀▀█▀ █ ▀██▀▄▀▄▄ ▄▄▄██
+██▀█ █ ▀▄▀▄ ▄▄▀▀▀▀█   ▄▄▀▀ ▀▄█▀▀▄▀▄▄ ▄███
+██▀█▄▀▀ ▄██▄ █▀ ▄ █ █ ▄█▄▄▄▀█▀█ ▀ █▀▄  ██
+██  ▄▄█▄▄█▀▀ █▄█▄ █▀▄▀██▀▄▀▄▀▄█▄▄▀▄▄ █▄██
+██ ███▀ ▄▄█▄█ ▄█▀███ █▀ ▄▄ ▄  ██▀▀ █▄ ▄██
+██▄█▄▄█▄▄▄ █▀▄▀▀▀▄▄▄  ▄▀█▄█▄▄▄ ▄▄▄  ▄████
+██ ▄▄▄▄▄ █▄ ▄█▀ ▄▀█▄▀ ▄█▀▀▀ ▀█ █▄█ █▄▄▄██
+██ █   █ █  ▄█▄█▄█▄▀▄ █▀▀▄  ▄ ▄  ▄ ▄ ▀▀██
+██ █▄▄▄█ █ ▄▄ ▄█▀ ▄▀▀▀█ ▀█ █▄█▀ ▀▄▀█▄█ ██
+██▄▄▄▄▄▄▄█▄▄█▄███▄█▄▄▄▄▄██▄▄▄███▄▄▄▄▄▄▄██
 ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀
   ╔══════════════════════════════════════════════════════════════╗
      Kanakku is running.   (AI: meta)
@@ -741,7 +714,7 @@ Checking the Meta key (one call, 10 s) ... ✔ key accepted
 Provider: meta
 LLM backend: Meta Model API (the local backend is not started)
 API server: 0.0.0.0:8013
-  starting (pid 121822) .
+  starting (pid 199090) .
   ✔ up
 Kanakku 0.2.0
   provider    : meta
@@ -750,17 +723,17 @@ Kanakku 0.2.0
   cache       : on
   spend guard : 0 / 300 calls today, fallback none
 …
-██▄▄ █▀ ▄▄▀ ▄▀ ▀█▀ ▄▄██  ▀▄█▀██  ▄█ ▀▀ ██
-███▀ ▄▄ ▄▄ ▀▀▄ ▀ ▄ ██   ▀▀▄█▄▄  █ █▀█  ██
-██▀▄▄ ██▄█    ██  ▄▄ ▄▄█ █▄██▄ █ ███▀ ▀██
-██▄   ▄ ▄██ ▄▀█▄█▀▄▄  █▄█  █▄ ▄▄█▄▄ █▄▄██
-███▀ █▄ ▄ ▄█▀▀ ▀█▀▄ ▄ █▄▄ █  █▄  ███▀▀ ██
-██▄▀█▀▄█▄▀ █ ▄ ▀ ▀▄▄█▀█▀  ▄ ▀▀▄▀██▀▄█▄ ██
-██▄█▄▄▄█▄▄▀▄▀ ██  █▀  █▄  ▀ ██ ▄▄▄ ▀█▀▀██
-██ ▄▄▄▄▄ █ ▄ ▀█▄█▀█▄█▀ ▄▄██▄ ▄ █▄█ ▄█  ██
-██ █   █ █▄█▀▀ ▀█▄█  ▄▄ ▄ ▄▄█▀▄▄▄  █▀████
-██ █▄▄▄█ █  ▄▄ ▀ ▀▄▀ ▀▀ █▀▄▀█▄ ▄█  ▄█▀▄██
-██▄▄▄▄▄▄▄█▄██▄██▄▄██▄██▄▄█▄▄█▄▄█▄▄███▄▄██
+██▄▀▄█▄▀▄██ ▄█▄█▄ ▀▄▄ █▀▀█ ▀ ▄▄▄▄ ▄▀ █▄██
+██ ▀█▄ ▄▄ ▄▄█ ▄█▀█▀▄▀▀█▀ █ ▀██▀▄▀▄▄ ▄▄▄██
+██▀█ █ ▀▄▀▄ ▄▄▀▀▀▀█   ▄▄▀▀ ▀▄█▀▀▄▀▄▄ ▄███
+██▀█▄▀▀ ▄██▄ █▀ ▄ █ █ ▄█▄▄▄▀█▀█ ▀ █▀▄  ██
+██  ▄▄█▄▄█▀▀ █▄█▄ █▀▄▀██▀▄▀▄▀▄█▄▄▀▄▄ █▄██
+██ ███▀ ▄▄█▄█ ▄█▀███ █▀ ▄▄ ▄  ██▀▀ █▄ ▄██
+██▄█▄▄█▄▄▄ █▀▄▀▀▀▄▄▄  ▄▀█▄█▄▄▄ ▄▄▄  ▄████
+██ ▄▄▄▄▄ █▄ ▄█▀ ▄▀█▄▀ ▄█▀▀▀ ▀█ █▄█ █▄▄▄██
+██ █   █ █  ▄█▄█▄█▄▀▄ █▀▀▄  ▄ ▄  ▄ ▄ ▀▀██
+██ █▄▄▄█ █ ▄▄ ▄█▀ ▄▀▀▀█ ▀█ █▄█▀ ▀▄▀█▄█ ██
+██▄▄▄▄▄▄▄█▄▄█▄███▄█▄▄▄▄▄██▄▄▄███▄▄▄▄▄▄▄██
 ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀
   ╔══════════════════════════════════════════════════════════════╗
      Kanakku is running.   (AI: meta)
@@ -817,22 +790,22 @@ LLM backend: ollama  (http://127.0.0.1:11435/v1, model qwen2.5:7b-instruct)
   ✔ already running
   ✔ model qwen2.5:7b-instruct available
 API server: 0.0.0.0:8013
-  starting (pid 122131) .
+  starting (pid 199405) .
   ✔ up
 Kanakku 0.2.0
   provider    : local
 …
-██▄▄ █▀ ▄▄▀ ▄▀ ▀█▀ ▄▄██  ▀▄█▀██  ▄█ ▀▀ ██
-███▀ ▄▄ ▄▄ ▀▀▄ ▀ ▄ ██   ▀▀▄█▄▄  █ █▀█  ██
-██▀▄▄ ██▄█    ██  ▄▄ ▄▄█ █▄██▄ █ ███▀ ▀██
-██▄   ▄ ▄██ ▄▀█▄█▀▄▄  █▄█  █▄ ▄▄█▄▄ █▄▄██
-███▀ █▄ ▄ ▄█▀▀ ▀█▀▄ ▄ █▄▄ █  █▄  ███▀▀ ██
-██▄▀█▀▄█▄▀ █ ▄ ▀ ▀▄▄█▀█▀  ▄ ▀▀▄▀██▀▄█▄ ██
-██▄█▄▄▄█▄▄▀▄▀ ██  █▀  █▄  ▀ ██ ▄▄▄ ▀█▀▀██
-██ ▄▄▄▄▄ █ ▄ ▀█▄█▀█▄█▀ ▄▄██▄ ▄ █▄█ ▄█  ██
-██ █   █ █▄█▀▀ ▀█▄█  ▄▄ ▄ ▄▄█▀▄▄▄  █▀████
-██ █▄▄▄█ █  ▄▄ ▀ ▀▄▀ ▀▀ █▀▄▀█▄ ▄█  ▄█▀▄██
-██▄▄▄▄▄▄▄█▄██▄██▄▄██▄██▄▄█▄▄█▄▄█▄▄███▄▄██
+██▄▀▄█▄▀▄██ ▄█▄█▄ ▀▄▄ █▀▀█ ▀ ▄▄▄▄ ▄▀ █▄██
+██ ▀█▄ ▄▄ ▄▄█ ▄█▀█▀▄▀▀█▀ █ ▀██▀▄▀▄▄ ▄▄▄██
+██▀█ █ ▀▄▀▄ ▄▄▀▀▀▀█   ▄▄▀▀ ▀▄█▀▀▄▀▄▄ ▄███
+██▀█▄▀▀ ▄██▄ █▀ ▄ █ █ ▄█▄▄▄▀█▀█ ▀ █▀▄  ██
+██  ▄▄█▄▄█▀▀ █▄█▄ █▀▄▀██▀▄▀▄▀▄█▄▄▀▄▄ █▄██
+██ ███▀ ▄▄█▄█ ▄█▀███ █▀ ▄▄ ▄  ██▀▀ █▄ ▄██
+██▄█▄▄█▄▄▄ █▀▄▀▀▀▄▄▄  ▄▀█▄█▄▄▄ ▄▄▄  ▄████
+██ ▄▄▄▄▄ █▄ ▄█▀ ▄▀█▄▀ ▄█▀▀▀ ▀█ █▄█ █▄▄▄██
+██ █   █ █  ▄█▄█▄█▄▀▄ █▀▀▄  ▄ ▄  ▄ ▄ ▀▀██
+██ █▄▄▄█ █ ▄▄ ▄█▀ ▄▀▀▀█ ▀█ █▄█▀ ▀▄▀█▄█ ██
+██▄▄▄▄▄▄▄█▄▄█▄███▄█▄▄▄▄▄██▄▄▄███▄▄▄▄▄▄▄██
 ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀
   ╔══════════════════════════════════════════════════════════════╗
      Kanakku is running.   (AI: local)
@@ -881,24 +854,24 @@ LLM backend: ollama  (http://127.0.0.1:11435/v1, model qwen2.5:7b-instruct)
   ✔ already running
   ✔ model qwen2.5:7b-instruct available
 API server: 0.0.0.0:8013
-  starting (pid 122422) .
+  starting (pid 199694) .
   ✔ up
 Kanakku 0.2.0
   provider    : local
   model       : qwen2.5:7b-instruct   vision: off
   speech      : faster-whisper (local)
 …
-██▄▄ █▀ ▄▄▀ ▄▀ ▀█▀ ▄▄██  ▀▄█▀██  ▄█ ▀▀ ██
-███▀ ▄▄ ▄▄ ▀▀▄ ▀ ▄ ██   ▀▀▄█▄▄  █ █▀█  ██
-██▀▄▄ ██▄█    ██  ▄▄ ▄▄█ █▄██▄ █ ███▀ ▀██
-██▄   ▄ ▄██ ▄▀█▄█▀▄▄  █▄█  █▄ ▄▄█▄▄ █▄▄██
-███▀ █▄ ▄ ▄█▀▀ ▀█▀▄ ▄ █▄▄ █  █▄  ███▀▀ ██
-██▄▀█▀▄█▄▀ █ ▄ ▀ ▀▄▄█▀█▀  ▄ ▀▀▄▀██▀▄█▄ ██
-██▄█▄▄▄█▄▄▀▄▀ ██  █▀  █▄  ▀ ██ ▄▄▄ ▀█▀▀██
-██ ▄▄▄▄▄ █ ▄ ▀█▄█▀█▄█▀ ▄▄██▄ ▄ █▄█ ▄█  ██
-██ █   █ █▄█▀▀ ▀█▄█  ▄▄ ▄ ▄▄█▀▄▄▄  █▀████
-██ █▄▄▄█ █  ▄▄ ▀ ▀▄▀ ▀▀ █▀▄▀█▄ ▄█  ▄█▀▄██
-██▄▄▄▄▄▄▄█▄██▄██▄▄██▄██▄▄█▄▄█▄▄█▄▄███▄▄██
+██▄▀▄█▄▀▄██ ▄█▄█▄ ▀▄▄ █▀▀█ ▀ ▄▄▄▄ ▄▀ █▄██
+██ ▀█▄ ▄▄ ▄▄█ ▄█▀█▀▄▀▀█▀ █ ▀██▀▄▀▄▄ ▄▄▄██
+██▀█ █ ▀▄▀▄ ▄▄▀▀▀▀█   ▄▄▀▀ ▀▄█▀▀▄▀▄▄ ▄███
+██▀█▄▀▀ ▄██▄ █▀ ▄ █ █ ▄█▄▄▄▀█▀█ ▀ █▀▄  ██
+██  ▄▄█▄▄█▀▀ █▄█▄ █▀▄▀██▀▄▀▄▀▄█▄▄▀▄▄ █▄██
+██ ███▀ ▄▄█▄█ ▄█▀███ █▀ ▄▄ ▄  ██▀▀ █▄ ▄██
+██▄█▄▄█▄▄▄ █▀▄▀▀▀▄▄▄  ▄▀█▄█▄▄▄ ▄▄▄  ▄████
+██ ▄▄▄▄▄ █▄ ▄█▀ ▄▀█▄▀ ▄█▀▀▀ ▀█ █▄█ █▄▄▄██
+██ █   █ █  ▄█▄█▄█▄▀▄ █▀▀▄  ▄ ▄  ▄ ▄ ▀▀██
+██ █▄▄▄█ █ ▄▄ ▄█▀ ▄▀▀▀█ ▀█ █▄█▀ ▀▄▀█▄█ ██
+██▄▄▄▄▄▄▄█▄▄█▄███▄█▄▄▄▄▄██▄▄▄███▄▄▄▄▄▄▄██
 ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀
   ╔══════════════════════════════════════════════════════════════╗
      Kanakku is running.   (AI: local)
