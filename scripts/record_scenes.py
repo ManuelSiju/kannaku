@@ -77,8 +77,11 @@ class Scenes:
 
     def settings_toggle(self, pattern: str) -> None:
         """Between recordings only: the Settings screen shows the server address."""
-        self.p.tap_text(r"^Settings$")
-        self.p.wait(pattern, 15) if self.p.find(r"^Save and test") else time.sleep(2)
+        for _ in range(6):  # the recorder's closing overlay can swallow a tap
+            self.p.tap_text(r"^Settings$")
+            time.sleep(2)
+            if self.p.find(r"^Voice and language"):
+                break
         self.scroll_to(pattern)
         self.p.tap_text(pattern)
         time.sleep(1.2)
@@ -224,14 +227,16 @@ def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--serial", required=True)
     ap.add_argument("--out", default="video/raw")
+    ap.add_argument("--start", type=int, default=1, help="5 resumes after the first four scenes")
     a = ap.parse_args()
     out = Path(a.out)
     out.mkdir(parents=True, exist_ok=True)
     s = Scenes(a.serial, out)
-    s.record("scene_01_endowment", s.endowment)
-    s.record("scene_02_council", s.council)
-    s.record("scene_03_why", s.why)
-    s.record("scene_04_scam", s.scam)
+    if a.start <= 1:
+        s.record("scene_01_endowment", s.endowment)
+        s.record("scene_02_council", s.council)
+        s.record("scene_03_why", s.why)
+        s.record("scene_04_scam", s.scam)
     s.home()
     s.settings_toggle(r"^Guardian view")
     s.record("scene_05_alerts", s.alerts)

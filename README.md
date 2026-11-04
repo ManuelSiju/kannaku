@@ -166,7 +166,7 @@ video/      Demo video cards, edit list and render script
 
 | suite | command | evidence |
 |---|---|---|
-| Server: unit, API, end-to-end (offline) | `make test` | 523 tests |
+| Server: unit, API, end-to-end (offline) | `make test` | 530 tests |
 | App: analysis, widgets, screenshots | `make app-test` | [screens](docs/screens/) |
 | App on a device against the real server | `make app-integration` | [recording](docs/demo_run.mp4) |
 | Real-model reliability | `make reliability` | [Meta](docs/reports/reliability_meta.md), [local discreet](docs/reliability_final.md), [local full](docs/reliability_full_final.md) |

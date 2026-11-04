@@ -1,0 +1,260 @@
+{
+ "shots": [
+  {
+   "card": "irdai.png",
+   "seconds": 5
+  },
+  {
+   "card": "title.png",
+   "seconds": 5
+  },
+  {
+   "clip": "scene_01_endowment.mp4",
+   "in": 5,
+   "out": 28,
+   "speed": 3,
+   "rubric": "Impact",
+   "title": "Show the paper. Ask the question.",
+   "text": "Lakshmi attaches the agent's brochure and asks if 15 lakh is really guaranteed.",
+   "note": "Shown 3x faster."
+  },
+  {
+   "clip": "scene_01_endowment.mp4",
+   "in": 28,
+   "out": 53,
+   "speed": 3,
+   "rubric": "Use of Meta AI",
+   "title": "The council gets to work",
+   "text": "Muse Spark reads the paper. Code does every sum. Live on Meta's API.",
+   "note": "Shown 3x faster. This answer took 37 s."
+  },
+  {
+   "clip": "scene_01_endowment.mp4",
+   "in": 54,
+   "out": 66,
+   "title": "Stop.",
+   "text": "With the exact questions to ask the agent, and the family's own figures kept on screen, not spoken."
+  },
+  {
+   "clip": "scene_02_council.mp4",
+   "in": 14,
+   "out": 44.6,
+   "voice": true,
+   "who": "The council, in the app's own voices",
+   "title": "Only 7.5 lakh is guaranteed",
+   "text": "Dani and Sankz argue from code-computed facts. The model never writes a number.",
+   "captions": [
+    {
+     "at": 0.6,
+     "to": 2.7,
+     "text": "Alfii: Let me ask Dani and Sankz."
+    },
+    {
+     "at": 3.4,
+     "to": 5.8,
+     "text": "Dani: You were told guaranteed to give 15 lakh rupees;"
+    },
+    {
+     "at": 5.8,
+     "to": 8.2,
+     "text": "paper says bonuses may change each year."
+    },
+    {
+     "at": 9.0,
+     "to": 12.9,
+     "text": "Dani: Only 7.5 lakh rupees is written as guaranteed for you."
+    },
+    {
+     "at": 14,
+     "to": 18.4,
+     "text": "Sankz: Only 7.5 lakh rupees is guaranteed for you to get back."
+    },
+    {
+     "at": 19.3,
+     "to": 24.3,
+     "text": "Sankz: It grows on the guaranteed amount only, lower than a fixed deposit."
+    },
+    {
+     "at": 25.3,
+     "to": 27.7,
+     "text": "Alfii: Please do not take this plan as it is."
+    },
+    {
+     "at": 28.2,
+     "to": 30.1,
+     "text": "Alfii: Talk to Arun before you decide."
+    }
+   ]
+  },
+  {
+   "clip": "scene_03_why.mp4",
+   "in": 1,
+   "out": 23,
+   "speed": 1.2,
+   "rubric": "Technical depth",
+   "title": "Every number shows its source",
+   "text": "The seller's claim is checked against the paper, and each term links back to its page.",
+   "note": "Shown 1.2x faster."
+  },
+  {
+   "card": "arch_1.png",
+   "seconds": 1.5
+  },
+  {
+   "card": "arch_2.png",
+   "seconds": 1.5
+  },
+  {
+   "card": "arch_3.png",
+   "seconds": 1.5
+  },
+  {
+   "card": "arch_4.png",
+   "seconds": 1.5
+  },
+  {
+   "card": "arch_5.png",
+   "seconds": 1.5
+  },
+  {
+   "card": "arch_6.png",
+   "seconds": 1.5
+  },
+  {
+   "clip": "scene_04_scam.mp4",
+   "in": 12,
+   "out": 28,
+   "speed": 3,
+   "title": "A scam call",
+   "text": "Code rules catch it. No AI call is needed.",
+   "note": "Shown 3x faster."
+  },
+  {
+   "clip": "scene_04_scam.mp4",
+   "in": 28,
+   "out": 33.6,
+   "voice": true,
+   "who": "Alfii",
+   "title": "No real bank asks for your OTP",
+   "text": "",
+   "captions": [
+    {
+     "at": 0,
+     "to": 2.7,
+     "text": "Alfii: Please don't share any code or pay anyone."
+    },
+    {
+     "at": 3.1,
+     "to": 5.3,
+     "text": "Alfii: Hang up and call your bank yourself."
+    }
+   ]
+  },
+  {
+   "clip": "scene_05_alerts.mp4",
+   "in": 5.5,
+   "out": 26,
+   "speed": 2,
+   "rubric": "Impact",
+   "title": "Arun sees the red answers",
+   "text": "In the guardian view he can call, or leave a note for Amma.",
+   "note": "Shown 2x faster."
+  },
+  {
+   "clip": "scene_06_note.mp4",
+   "in": 13.8,
+   "out": 19.3,
+   "voice": true,
+   "title": "Amma gets the note",
+   "text": "Read out to her on Home.",
+   "captions": [
+    {
+     "at": 1.5,
+     "to": 5.1,
+     "text": "Please wait for me before you sign"
+    }
+   ]
+  },
+  {
+   "clip": "scene_07_details.mp4",
+   "in": 6,
+   "out": 52,
+   "speed": 2.5,
+   "title": "The whole family's papers",
+   "text": "Arun's demat statement is read line by line, confirmed first. His money stays out of the family budget unless the family says so.",
+   "note": "Shown 2.5x faster."
+  },
+  {
+   "clip": "scene_08_tip.mp4",
+   "in": 24.8,
+   "out": 27.4,
+   "voice": true,
+   "who": "A stock tip on WhatsApp",
+   "title": "ZEPHYRX, target Rs. 180",
+   "text": "",
+   "captions": [
+    {
+     "at": 0.4,
+     "to": 2.4,
+     "text": "Alfii: Let me ask Vick and Sankz."
+    }
+   ]
+  },
+  {
+   "clip": "scene_08_tip.mp4",
+   "in": 47.5,
+   "out": 56.6,
+   "voice": true,
+   "who": "Vick, with earphones on",
+   "title": "It knows what you hold",
+   "text": "Personal figures are spoken only when the listener is private.",
+   "captions": [
+    {
+     "at": 0.4,
+     "to": 4,
+     "text": "Vick: The family already holds 150 shares of this."
+    },
+    {
+     "at": 4.4,
+     "to": 8.8,
+     "text": "Vick: It jumped 222 percent in one month, so you would buy at the top."
+    }
+   ]
+  },
+  {
+   "clip": "scene_08_tip.mp4",
+   "in": 67.9,
+   "out": 73.0,
+   "voice": true,
+   "who": "Alfii concludes",
+   "title": "Stop.",
+   "text": "",
+   "captions": [
+    {
+     "at": 0.2,
+     "to": 2.5,
+     "text": "Alfii: Please do not put money in this tip."
+    },
+    {
+     "at": 2.9,
+     "to": 4.9,
+     "text": "Alfii: Talk to Arun before you decide."
+    }
+   ]
+  },
+  {
+   "clip": "scene_09_hood.mp4",
+   "in": 10,
+   "out": 28,
+   "speed": 1.2,
+   "rubric": "Technical depth",
+   "title": "Nothing hidden",
+   "text": "Router, facts, vote maths, privacy and timings for every answer, with the Meta model and reasoning level.",
+   "note": "Shown 1.2x faster."
+  },
+  {
+   "card": "end.png",
+   "seconds": 5
+  }
+ ]
+}

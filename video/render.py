@@ -114,7 +114,10 @@ def main() -> None:
     srt = HERE / "kanakku.srt"
     wrap = lambda t: "\n".join(textwrap.wrap(t, 42)[:2])  # noqa: E731
     srt.write_text("\n".join(f"{n}\n{stamp(a)} --> {stamp(b)}\n{wrap(t)}\n" for n, (a, b, t) in enumerate(subs, 1)))
-    style = "FontName=Noto Sans,FontSize=20,PrimaryColour=&HFFFFFF&,BackColour=&H99000000&,BorderStyle=4,MarginV=30"
+    style = (  # right of the phone, under the panel text; sizes are on the subtitle canvas of 384 x 288
+        "FontName=Noto Sans,FontSize=11,PrimaryColour=&HFFFFFF&,BackColour=&H99000000&,BorderStyle=4,"
+        "Alignment=1,MarginL=152,MarginR=16,MarginV=26"
+    )
     vf = f"subtitles={srt}:force_style='{style}'" if subs else "null"
     run("-i", str(joined), "-vf", vf, "-af", "loudnorm=I=-14:TP=-1.5:LRA=11",
         *ENC, *AUD, "-movflags", "+faststart", str(HERE / "kanakku_demo.mp4"))  # fmt: skip
