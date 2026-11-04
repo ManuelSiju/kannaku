@@ -48,6 +48,8 @@ class Settings(BaseSettings):
     meta_api_key: SecretStr = SecretStr("")
     meta_base_url: str = META_BASE_URL
     meta_model: str = META_MODEL
+    # Muse Spark is a reasoning model: at its default effort the bigger steps run past llm_timeout_s.
+    meta_reasoning_effort: Literal["minimal", "low", "medium", "high"] = "minimal"
     # Meta only: response cache and a daily call cap (counter kept in SQLite). LLM_FALLBACK=local answers with the
     # local models once the cap is reached (shown as a "local fallback" badge and in the trace); none = fail fast.
     llm_cache: bool = True

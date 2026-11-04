@@ -4,6 +4,7 @@ from types import SimpleNamespace
 import pytest
 from pydantic import BaseModel
 
+from app.config import Settings
 from app.providers.llm import (
     AskBudget,
     BudgetExceeded,
@@ -35,6 +36,7 @@ class FakeCompletions:
         return SimpleNamespace(
             choices=[SimpleNamespace(message=SimpleNamespace(content=reply))],
             usage=SimpleNamespace(prompt_tokens=10, completion_tokens=5),
+            model=kwargs["model"],
         )
 
 
@@ -55,6 +57,22 @@ async def test_chat_json_success(settings):
     assert fake.calls[0]["temperature"] == 0.2
     assert llm.stats.valid_first_try == 1
     assert '"verdict"' in fake.calls[0]["messages"][0]["content"]  # schema in system prompt
+
+
+async def test_meta_asks_for_plain_json_at_low_reasoning_and_records_the_reply_model():
+    settings = Settings(_env_file=None, llm_provider="meta", meta_api_key="k")
+    llm, fake = make_llm(settings, ['{"verdict": "red", "score": 3}'])
+    await llm.chat_json("sys", "user", Answer)
+    assert fake.calls[0]["response_format"] == {"type": "json_object"}  # json_schema never ends on Muse Spark
+    assert fake.calls[0]["reasoning_effort"] == "minimal"
+    assert '"verdict"' in fake.calls[0]["messages"][0]["content"]
+    assert llm.stats.models == {"muse-spark-1.3": 1}
+
+
+async def test_local_models_get_no_reasoning_effort(settings):
+    llm, fake = make_llm(settings, ['{"verdict": "red", "score": 3}'])
+    await llm.chat_json("sys", "user", Answer)
+    assert "reasoning_effort" not in fake.calls[0]
 
 
 async def test_chat_json_retries_once_with_error(settings):

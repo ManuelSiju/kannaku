@@ -146,6 +146,7 @@ class LLMStats(BaseModel):
     valid_after_retry: int = 0
     invalid_twice: int = 0
     transport_failures: int = 0
+    models: dict[str, int] = {}  # model id each reply said it came from, with its count
 
 
 _FORMATS = ("json_schema", "json_object", "none")
@@ -164,7 +165,9 @@ class OpenAICompatibleLLM(LLMProvider):
             timeout=self.settings.llm_timeout_s,
             max_retries=0,
         )
-        self._format = 0  # index into _FORMATS; drops a level when the server rejects one
+        # Index into _FORMATS; drops a level when the server rejects one. Meta starts at json_object: under json_schema
+        # Muse Spark runs on until it hits the token limit. The schema is in the prompt either way.
+        self._format = 1 if self.settings.meta else 0
         self.stats = LLMStats()
 
     def _messages(self, system: str, user: str, images: list[bytes] | None) -> list[dict[str, Any]]:
@@ -226,6 +229,8 @@ class OpenAICompatibleLLM(LLMProvider):
             "messages": messages,
             "temperature": self.settings.llm_temperature,
         }
+        if self.settings.meta:
+            kwargs["reasoning_effort"] = self.settings.meta_reasoning_effort
         loop = asyncio.get_running_loop()
         t0 = loop.time()
         try:
@@ -255,6 +260,8 @@ class OpenAICompatibleLLM(LLMProvider):
         finally:
             usage.ms += (loop.time() - t0) * 1000
         usage.calls += 1
+        self.stats.models[resp.model] = self.stats.models.get(resp.model, 0) + 1
+        log.info("LLM reply from model %s in %.0f ms", resp.model, (loop.time() - t0) * 1000)
         if resp.usage is not None:
             usage.prompt_tokens = (usage.prompt_tokens or 0) + resp.usage.prompt_tokens
             usage.completion_tokens = (usage.completion_tokens or 0) + resp.usage.completion_tokens

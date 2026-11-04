@@ -25,7 +25,7 @@ endif
 
 .PHONY: help setup-system env doctor run-server health llm-up llm-down llm-pull llm-list \
         check-models test test-fast smoke lint fmt clean run-mcp seed-demo reset-demo demo-assets run-app demo \
-        reliability reliability-framing reliability-vision lan-url firewall-open phone-devices phone-usb phone-usb-off up down status app-release provider forget-key app-test start stop phone app-fixtures app-goldens app-integration meta-check
+        reliability reliability-framing reliability-vision lan-url firewall-open phone-devices phone-usb phone-usb-off up down status app-release provider forget-key app-test start stop phone app-fixtures app-goldens app-integration meta-check meta-run
 
 help: ##! Show this list (owner commands first)
 	@echo "Start here:"
@@ -194,3 +194,6 @@ app-integration: ## On-device tests against the real server + screen recording (
 
 meta-check: ## One endowment case against the real Meta API (only if META_API_KEY is set)
 	cd $(SERVER) && $(PY) scripts/meta_live_check.py
+
+meta-run: ## The demo cases once each on the real Meta API; writes docs/reports/meta_run.md
+	cd $(SERVER) && $(PY) scripts/meta_run.py
