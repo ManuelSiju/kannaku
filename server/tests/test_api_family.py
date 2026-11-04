@@ -3,6 +3,7 @@ from fastapi.testclient import TestClient
 
 from app.api import deps
 from app.main import app
+from app.pipeline.profile_extract import extract_profile
 from tests.fakes import FakeSTT
 
 
@@ -86,3 +87,64 @@ def test_guardian_note_reaches_amma(client, demo_repo):
     assert alert["note"] == "RED: loan offer: do not sign" and alert["guardian_note"] == "Wait for me, I will call."
     notes = client.get("/v1/families/1/notes").json()
     assert notes[0]["note"] == "Wait for me, I will call." and notes[0]["from"] == "Arun"
+
+
+# ---------------------------------------------------------------- what a sentence or a paper proposes
+@pytest.mark.parametrize(
+    "text",
+    ["LIC premium 12,000 a year.", "Health policy Rs 12,000 a year.", "Premium on my loan policy Rs 12,000 yearly."],
+)
+def test_premium_is_always_a_policy(text):
+    (item,) = extract_profile(text, "typed").items
+    assert (item.kind, item.amount, item.frequency) == ("policy", 12000, "yearly")
+
+
+@pytest.mark.parametrize(
+    "text", ["Gold loan EMI 2,400 a month.", "My emi is 2400.", "Two loans cost Rs 2,400 monthly."]
+)
+def test_loan_words_are_whole_words(text):
+    (item,) = extract_profile(text, "typed").items
+    assert (item.kind, item.amount, item.frequency) == ("loan", 2400, "monthly")
+
+
+@pytest.mark.parametrize(
+    "text", ["Net salary: Rs. 36,400.", "Net salary Rs 36,400.", "Net salary ₹36,400.", "Salary Rs.36400/-"]
+)
+def test_all_rupee_spellings_parse(text):
+    (value,) = extract_profile(text, "typed").values
+    assert (value.field, value.value, value.uncertain) == ("monthly_income", 36400, False)
+
+
+@pytest.mark.parametrize(
+    ("text", "amount"),
+    [
+        ("Salary for October 2026 Rs 36,400.", 36400),
+        ("Salary paid on 01/10/2026 Rs 36,400.", 36400),
+        ("Salary paid 31 Oct 2026 was 36,400.", 36400),
+        ("Salary since 2019 is 36,400.", 36400),
+        ("I spend 2000 a month.", 2000),
+    ],
+)
+def test_dates_are_not_amounts(text, amount):
+    assert [v.value for v in extract_profile(text, "typed").values] == [amount]
+
+
+def test_a_date_alone_proposes_nothing():
+    prop = extract_profile("Salary slip for October 2026", "document")
+    assert not prop.values and not prop.items
+
+
+def test_a_line_ends_a_sentence():
+    prop = extract_profile("Sunrise Traders\nNet salary Rs 36,400\nBank balance Rs 1,60,000", "document")
+    assert [(v.field, v.value) for v in prop.values] == [("monthly_income", 36400), ("savings", 160000)]
+
+
+def test_paper_text_stays_out_of_the_proposal():
+    text = "Private note about the family.\nHolder PAN ABCDE1234F salary Rs 36,400."
+    prop = extract_profile(text, "document", source_ref="slip.pdf")
+    assert prop.heard == ""
+    assert prop.values[0].quote == "Holder PAN [removed] salary Rs 36,400."
+
+
+def test_typed_text_is_still_read_back():
+    assert extract_profile("My pension is 45,000 a month.", "typed").heard == "My pension is 45,000 a month."

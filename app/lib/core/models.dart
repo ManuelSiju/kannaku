@@ -177,6 +177,7 @@ class Proposed {
   final Map<String, dynamic> raw;
   Proposed(this.isItem, this.raw);
   String get readback => str(raw['readback']);
+  String get quote => str(raw['quote']);
   bool get uncertain => boolean(raw['uncertain']);
   double get amount => number(isItem ? raw['amount'] : raw['value']) ?? 0;
   String get label => isItem ? str(raw['name']) : fieldLabel(str(raw['field']));

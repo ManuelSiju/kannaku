@@ -1,0 +1,1040 @@
+{
+ "discreet": {
+  "endowment": {
+   "mode": "discreet",
+   "colour": "red",
+   "case_type": "insurance_offer",
+   "called_agents": [
+    "dani",
+    "sankz"
+   ],
+   "llm_calls": 4,
+   "facts": {
+    "term.premium": [
+     50000.0,
+     "known",
+     "INR",
+     "offer"
+    ],
+    "term.pay_years": [
+     15.0,
+     "known",
+     "years",
+     "offer"
+    ],
+    "term.policy_years": [
+     15.0,
+     "known",
+     "years",
+     "offer"
+    ],
+    "term.sum_assured": [
+     750000.0,
+     "known",
+     "INR",
+     "offer"
+    ],
+    "term.maturity_low": [
+     1020000.0,
+     "known",
+     "INR",
+     "offer"
+    ],
+    "term.maturity_high": [
+     1500000.0,
+     "known",
+     "INR",
+     "offer"
+    ],
+    "profile.monthly_income": [
+     45000.0,
+     "known",
+     "INR",
+     "personal"
+    ],
+    "profile.monthly_expenses": [
+     28000.0,
+     "known",
+     "INR",
+     "personal"
+    ],
+    "profile.savings": [
+     160000.0,
+     "known",
+     "INR",
+     "personal"
+    ],
+    "existing_emi": [
+     2400.0,
+     "known",
+     "INR",
+     "personal"
+    ],
+    "regular_commitments": [
+     1000.0,
+     "known",
+     "INR",
+     "personal"
+    ],
+    "ref.fd_rate": [
+     0.07,
+     "known",
+     "fraction",
+     "offer"
+    ],
+    "ref.inflation": [
+     0.05,
+     "known",
+     "fraction",
+     "offer"
+    ],
+    "ref.index_long_run_return": [
+     0.11,
+     "known",
+     "fraction",
+     "offer"
+    ],
+    "ref.typical_personal_loan_rate": [
+     0.14,
+     "known",
+     "fraction",
+     "offer"
+    ],
+    "endowment_return": [
+     0.037543,
+     "known",
+     "fraction",
+     "offer"
+    ],
+    "f_return_high": [
+     0.082613,
+     "known",
+     "fraction",
+     "offer"
+    ],
+    "f_return_guaranteed": [
+     0.0,
+     "known",
+     "fraction",
+     "offer"
+    ],
+    "fd_value": [
+     1344402.68,
+     "known",
+     "INR",
+     "offer"
+    ],
+    "cmp_return_low_vs_fd": [
+     -3.25,
+     "known",
+     "percentage points",
+     "offer"
+    ],
+    "cmp_return_low_vs_inflation": [
+     -1.25,
+     "known",
+     "percentage points",
+     "offer"
+    ],
+    "cmp_return_high_vs_fd": [
+     1.26,
+     "known",
+     "percentage points",
+     "offer"
+    ],
+    "cmp_return_high_vs_inflation": [
+     3.26,
+     "known",
+     "percentage points",
+     "offer"
+    ],
+    "cmp_guaranteed_vs_fd": [
+     -7.0,
+     "known",
+     "percentage points",
+     "offer"
+    ],
+    "cmp_guaranteed_vs_inflation": [
+     -5.0,
+     "known",
+     "percentage points",
+     "offer"
+    ],
+    "emi_share": [
+     0.0533,
+     "known",
+     "fraction",
+     "personal"
+    ],
+    "buffer_months_after": [
+     4.5,
+     "known",
+     "months",
+     "personal"
+    ],
+    "surplus_after": [
+     9433.33,
+     "known",
+     "INR",
+     "personal"
+    ],
+    "premium_share_of_income": [
+     0.0926,
+     "known",
+     "fraction",
+     "personal"
+    ],
+    "premium_share_of_savings": [
+     0.3125,
+     "known",
+     "fraction",
+     "personal"
+    ]
+   },
+   "spoken": [
+    [
+     "alfii",
+     "Let me ask Dani and Sankz."
+    ],
+    [
+     "dani",
+     "This plan grows only about 3.8 percent a year, lower than a fixed deposit."
+    ],
+    [
+     "sankz",
+     "Only 7.5 lakh rupees is guaranteed, which is just your own premiums back with no growth."
+    ],
+    [
+     "alfii",
+     "Do not sign yet: this plan earns less than a fixed deposit, and the 15 lakh rupees is not guaranteed."
+    ]
+   ]
+  },
+  "flat_loan": {
+   "mode": "discreet",
+   "colour": "red",
+   "case_type": "loan_offer",
+   "called_agents": [
+    "sankz"
+   ],
+   "llm_calls": 3,
+   "facts": {
+    "term.loan_amount": [
+     100000.0,
+     "known",
+     "INR",
+     "offer"
+    ],
+    "term.flat_rate": [
+     0.12,
+     "known",
+     "fraction",
+     "offer"
+    ],
+    "term.tenure_months": [
+     24.0,
+     "known",
+     "months",
+     "offer"
+    ],
+    "profile.monthly_income": [
+     45000.0,
+     "known",
+     "INR",
+     "personal"
+    ],
+    "profile.monthly_expenses": [
+     28000.0,
+     "known",
+     "INR",
+     "personal"
+    ],
+    "profile.savings": [
+     160000.0,
+     "known",
+     "INR",
+     "personal"
+    ],
+    "existing_emi": [
+     2400.0,
+     "known",
+     "INR",
+     "personal"
+    ],
+    "regular_commitments": [
+     1000.0,
+     "known",
+     "INR",
+     "personal"
+    ],
+    "ref.fd_rate": [
+     0.07,
+     "known",
+     "fraction",
+     "offer"
+    ],
+    "ref.inflation": [
+     0.05,
+     "known",
+     "fraction",
+     "offer"
+    ],
+    "ref.index_long_run_return": [
+     0.11,
+     "known",
+     "fraction",
+     "offer"
+    ],
+    "ref.typical_personal_loan_rate": [
+     0.14,
+     "known",
+     "fraction",
+     "offer"
+    ],
+    "loan_emi": [
+     5166.67,
+     "known",
+     "INR",
+     "offer"
+    ],
+    "loan_total_interest": [
+     24000.0,
+     "known",
+     "INR",
+     "offer"
+    ],
+    "loan_effective_rate": [
+     0.215712,
+     "known",
+     "fraction",
+     "offer"
+    ],
+    "emi_share": [
+     0.1681,
+     "known",
+     "fraction",
+     "personal"
+    ],
+    "buffer_months_after": [
+     4.38,
+     "known",
+     "months",
+     "personal"
+    ],
+    "surplus_after": [
+     8433.33,
+     "known",
+     "INR",
+     "personal"
+    ],
+    "cmp_effective_vs_quoted": [
+     9.57,
+     "known",
+     "percentage points",
+     "offer"
+    ],
+    "cmp_effective_vs_typical": [
+     7.57,
+     "known",
+     "percentage points",
+     "offer"
+    ]
+   },
+   "spoken": [
+    [
+     "alfii",
+     "Let me ask Sankz."
+    ],
+    [
+     "sankz",
+     "This flat-rate loan really costs about 21.6 percent a year."
+    ],
+    [
+     "alfii",
+     "Do not take this loan as offered; ask for the reducing-balance rate first."
+    ]
+   ]
+  },
+  "stock_tip": {
+   "mode": "discreet",
+   "colour": "red",
+   "case_type": "stock_tip",
+   "called_agents": [
+    "vick",
+    "sankz"
+   ],
+   "llm_calls": 4,
+   "facts": {
+    "term.invest_amount": [
+     100000.0,
+     "known",
+     "INR",
+     "offer"
+    ],
+    "profile.monthly_income": [
+     45000.0,
+     "known",
+     "INR",
+     "personal"
+    ],
+    "profile.monthly_expenses": [
+     28000.0,
+     "known",
+     "INR",
+     "personal"
+    ],
+    "profile.savings": [
+     160000.0,
+     "known",
+     "INR",
+     "personal"
+    ],
+    "existing_emi": [
+     2400.0,
+     "known",
+     "INR",
+     "personal"
+    ],
+    "regular_commitments": [
+     1000.0,
+     "known",
+     "INR",
+     "personal"
+    ],
+    "ref.fd_rate": [
+     0.07,
+     "known",
+     "fraction",
+     "offer"
+    ],
+    "ref.inflation": [
+     0.05,
+     "known",
+     "fraction",
+     "offer"
+    ],
+    "ref.index_long_run_return": [
+     0.11,
+     "known",
+     "fraction",
+     "offer"
+    ],
+    "ref.typical_personal_loan_rate": [
+     0.14,
+     "known",
+     "fraction",
+     "offer"
+    ],
+    "run_up_30d": [
+     2.2179,
+     "known",
+     "fraction",
+     "offer"
+    ],
+    "upper_circuit_hits_30d": [
+     22.0,
+     "known",
+     "count",
+     "offer"
+    ],
+    "volume_spike": [
+     3.97,
+     "known",
+     "times",
+     "offer"
+    ],
+    "max_drawdown_90d": [
+     0.0283,
+     "known",
+     "fraction",
+     "offer"
+    ],
+    "pump_risk": [
+     2.0,
+     "known",
+     "level",
+     "offer"
+    ],
+    "invest_share_of_savings": [
+     0.625,
+     "known",
+     "fraction",
+     "personal"
+    ]
+   },
+   "spoken": [
+    [
+     "alfii",
+     "Let me ask Vick and Sankz."
+    ],
+    [
+     "vick",
+     "This share jumped about 222 percent in a few weeks on huge volume, which is how pump-and-dump schemes look."
+    ],
+    [
+     "alfii",
+     "Sankz has left a note about your budget on your screen."
+    ],
+    [
+     "alfii",
+     "Do not buy on this tip; it shows strong pump-and-dump signs. Talk to Arun before you decide."
+    ]
+   ]
+  },
+  "otp_scam": {
+   "mode": "discreet",
+   "colour": "red",
+   "case_type": "scam_or_payment_request",
+   "called_agents": [],
+   "llm_calls": 0,
+   "facts": {},
+   "spoken": [
+    [
+     "alfii",
+     "You did the right thing by asking me."
+    ],
+    [
+     "alfii",
+     "No real bank ever asks for your OTP or PIN."
+    ],
+    [
+     "alfii",
+     "Please don't share any code or pay anyone. Hang up and call your bank yourself."
+    ]
+   ]
+  },
+  "out_of_scope": {
+   "mode": "discreet",
+   "colour": null,
+   "case_type": "out_of_scope",
+   "called_agents": [],
+   "llm_calls": 1,
+   "facts": {},
+   "spoken": [
+    [
+     "alfii",
+     "I can only help with money questions. You could ask me one of these."
+    ]
+   ]
+  }
+ },
+ "full": {
+  "endowment": {
+   "mode": "full",
+   "colour": "red",
+   "case_type": "insurance_offer",
+   "called_agents": [
+    "dani",
+    "sankz"
+   ],
+   "llm_calls": 3,
+   "facts": {
+    "term.premium": [
+     50000.0,
+     "known",
+     "INR",
+     "offer"
+    ],
+    "term.pay_years": [
+     15.0,
+     "known",
+     "years",
+     "offer"
+    ],
+    "term.policy_years": [
+     15.0,
+     "known",
+     "years",
+     "offer"
+    ],
+    "term.sum_assured": [
+     750000.0,
+     "known",
+     "INR",
+     "offer"
+    ],
+    "term.maturity_low": [
+     1020000.0,
+     "known",
+     "INR",
+     "offer"
+    ],
+    "term.maturity_high": [
+     1500000.0,
+     "known",
+     "INR",
+     "offer"
+    ],
+    "profile.monthly_income": [
+     45000.0,
+     "known",
+     "INR",
+     "personal"
+    ],
+    "profile.monthly_expenses": [
+     28000.0,
+     "known",
+     "INR",
+     "personal"
+    ],
+    "profile.savings": [
+     160000.0,
+     "known",
+     "INR",
+     "personal"
+    ],
+    "existing_emi": [
+     2400.0,
+     "known",
+     "INR",
+     "personal"
+    ],
+    "regular_commitments": [
+     1000.0,
+     "known",
+     "INR",
+     "personal"
+    ],
+    "ref.fd_rate": [
+     0.07,
+     "known",
+     "fraction",
+     "offer"
+    ],
+    "ref.inflation": [
+     0.05,
+     "known",
+     "fraction",
+     "offer"
+    ],
+    "ref.index_long_run_return": [
+     0.11,
+     "known",
+     "fraction",
+     "offer"
+    ],
+    "ref.typical_personal_loan_rate": [
+     0.14,
+     "known",
+     "fraction",
+     "offer"
+    ],
+    "endowment_return": [
+     0.037543,
+     "known",
+     "fraction",
+     "offer"
+    ],
+    "f_return_high": [
+     0.082613,
+     "known",
+     "fraction",
+     "offer"
+    ],
+    "f_return_guaranteed": [
+     0.0,
+     "known",
+     "fraction",
+     "offer"
+    ],
+    "fd_value": [
+     1344402.68,
+     "known",
+     "INR",
+     "offer"
+    ],
+    "cmp_return_low_vs_fd": [
+     -3.25,
+     "known",
+     "percentage points",
+     "offer"
+    ],
+    "cmp_return_low_vs_inflation": [
+     -1.25,
+     "known",
+     "percentage points",
+     "offer"
+    ],
+    "cmp_return_high_vs_fd": [
+     1.26,
+     "known",
+     "percentage points",
+     "offer"
+    ],
+    "cmp_return_high_vs_inflation": [
+     3.26,
+     "known",
+     "percentage points",
+     "offer"
+    ],
+    "cmp_guaranteed_vs_fd": [
+     -7.0,
+     "known",
+     "percentage points",
+     "offer"
+    ],
+    "cmp_guaranteed_vs_inflation": [
+     -5.0,
+     "known",
+     "percentage points",
+     "offer"
+    ],
+    "emi_share": [
+     0.0533,
+     "known",
+     "fraction",
+     "personal"
+    ],
+    "buffer_months_after": [
+     4.5,
+     "known",
+     "months",
+     "personal"
+    ],
+    "surplus_after": [
+     9433.33,
+     "known",
+     "INR",
+     "personal"
+    ],
+    "premium_share_of_income": [
+     0.0926,
+     "known",
+     "fraction",
+     "personal"
+    ],
+    "premium_share_of_savings": [
+     0.3125,
+     "known",
+     "fraction",
+     "personal"
+    ]
+   },
+   "spoken": [
+    [
+     "alfii",
+     "Let me ask Dani and Sankz."
+    ],
+    [
+     "dani",
+     "This plan grows only about 3.8 percent a year, lower than a fixed deposit."
+    ],
+    [
+     "sankz",
+     "After paying this you would have only 9,433 rupees left each month."
+    ],
+    [
+     "alfii",
+     "Do not sign yet: this plan earns less than a fixed deposit, and the 15 lakh rupees is not guaranteed."
+    ]
+   ]
+  },
+  "flat_loan": {
+   "mode": "full",
+   "colour": "red",
+   "case_type": "loan_offer",
+   "called_agents": [
+    "sankz"
+   ],
+   "llm_calls": 3,
+   "facts": {
+    "term.loan_amount": [
+     100000.0,
+     "known",
+     "INR",
+     "offer"
+    ],
+    "term.flat_rate": [
+     0.12,
+     "known",
+     "fraction",
+     "offer"
+    ],
+    "term.tenure_months": [
+     24.0,
+     "known",
+     "months",
+     "offer"
+    ],
+    "profile.monthly_income": [
+     45000.0,
+     "known",
+     "INR",
+     "personal"
+    ],
+    "profile.monthly_expenses": [
+     28000.0,
+     "known",
+     "INR",
+     "personal"
+    ],
+    "profile.savings": [
+     160000.0,
+     "known",
+     "INR",
+     "personal"
+    ],
+    "existing_emi": [
+     2400.0,
+     "known",
+     "INR",
+     "personal"
+    ],
+    "regular_commitments": [
+     1000.0,
+     "known",
+     "INR",
+     "personal"
+    ],
+    "ref.fd_rate": [
+     0.07,
+     "known",
+     "fraction",
+     "offer"
+    ],
+    "ref.inflation": [
+     0.05,
+     "known",
+     "fraction",
+     "offer"
+    ],
+    "ref.index_long_run_return": [
+     0.11,
+     "known",
+     "fraction",
+     "offer"
+    ],
+    "ref.typical_personal_loan_rate": [
+     0.14,
+     "known",
+     "fraction",
+     "offer"
+    ],
+    "loan_emi": [
+     5166.67,
+     "known",
+     "INR",
+     "offer"
+    ],
+    "loan_total_interest": [
+     24000.0,
+     "known",
+     "INR",
+     "offer"
+    ],
+    "loan_effective_rate": [
+     0.215712,
+     "known",
+     "fraction",
+     "offer"
+    ],
+    "emi_share": [
+     0.1681,
+     "known",
+     "fraction",
+     "personal"
+    ],
+    "buffer_months_after": [
+     4.38,
+     "known",
+     "months",
+     "personal"
+    ],
+    "surplus_after": [
+     8433.33,
+     "known",
+     "INR",
+     "personal"
+    ],
+    "cmp_effective_vs_quoted": [
+     9.57,
+     "known",
+     "percentage points",
+     "offer"
+    ],
+    "cmp_effective_vs_typical": [
+     7.57,
+     "known",
+     "percentage points",
+     "offer"
+    ]
+   },
+   "spoken": [
+    [
+     "alfii",
+     "Let me ask Sankz."
+    ],
+    [
+     "sankz",
+     "This flat-rate loan really costs about 21.6 percent a year."
+    ],
+    [
+     "alfii",
+     "Do not take this loan as offered; ask for the reducing-balance rate first."
+    ]
+   ]
+  },
+  "stock_tip": {
+   "mode": "full",
+   "colour": "red",
+   "case_type": "stock_tip",
+   "called_agents": [
+    "vick",
+    "sankz"
+   ],
+   "llm_calls": 3,
+   "facts": {
+    "term.invest_amount": [
+     100000.0,
+     "known",
+     "INR",
+     "offer"
+    ],
+    "profile.monthly_income": [
+     45000.0,
+     "known",
+     "INR",
+     "personal"
+    ],
+    "profile.monthly_expenses": [
+     28000.0,
+     "known",
+     "INR",
+     "personal"
+    ],
+    "profile.savings": [
+     160000.0,
+     "known",
+     "INR",
+     "personal"
+    ],
+    "existing_emi": [
+     2400.0,
+     "known",
+     "INR",
+     "personal"
+    ],
+    "regular_commitments": [
+     1000.0,
+     "known",
+     "INR",
+     "personal"
+    ],
+    "ref.fd_rate": [
+     0.07,
+     "known",
+     "fraction",
+     "offer"
+    ],
+    "ref.inflation": [
+     0.05,
+     "known",
+     "fraction",
+     "offer"
+    ],
+    "ref.index_long_run_return": [
+     0.11,
+     "known",
+     "fraction",
+     "offer"
+    ],
+    "ref.typical_personal_loan_rate": [
+     0.14,
+     "known",
+     "fraction",
+     "offer"
+    ],
+    "run_up_30d": [
+     2.2179,
+     "known",
+     "fraction",
+     "offer"
+    ],
+    "upper_circuit_hits_30d": [
+     22.0,
+     "known",
+     "count",
+     "offer"
+    ],
+    "volume_spike": [
+     3.97,
+     "known",
+     "times",
+     "offer"
+    ],
+    "max_drawdown_90d": [
+     0.0283,
+     "known",
+     "fraction",
+     "offer"
+    ],
+    "pump_risk": [
+     2.0,
+     "known",
+     "level",
+     "offer"
+    ],
+    "invest_share_of_savings": [
+     0.625,
+     "known",
+     "fraction",
+     "personal"
+    ]
+   },
+   "spoken": [
+    [
+     "alfii",
+     "Let me ask Vick and Sankz."
+    ],
+    [
+     "vick",
+     "This share jumped about 222 percent in a few weeks on huge volume, which is how pump-and-dump schemes look."
+    ],
+    [
+     "sankz",
+     "Please do not put your savings into a tip like this."
+    ],
+    [
+     "alfii",
+     "Do not buy on this tip; it shows strong pump-and-dump signs. Talk to Arun before you decide."
+    ]
+   ]
+  },
+  "otp_scam": {
+   "mode": "full",
+   "colour": "red",
+   "case_type": "scam_or_payment_request",
+   "called_agents": [],
+   "llm_calls": 0,
+   "facts": {},
+   "spoken": [
+    [
+     "alfii",
+     "You did the right thing by asking me."
+    ],
+    [
+     "alfii",
+     "No real bank ever asks for your OTP or PIN."
+    ],
+    [
+     "alfii",
+     "Please don't share any code or pay anyone. Hang up and call your bank yourself."
+    ]
+   ]
+  },
+  "out_of_scope": {
+   "mode": "full",
+   "colour": null,
+   "case_type": "out_of_scope",
+   "called_agents": [],
+   "llm_calls": 1,
+   "facts": {},
+   "spoken": [
+    [
+     "alfii",
+     "I can only help with money questions. You could ask me one of these."
+    ]
+   ]
+  }
+ }
+}

@@ -142,7 +142,7 @@ class _MyDetailsScreenState extends State<MyDetailsScreen> {
     Proposal? proposal;
     try {
       if (how == 'type') {
-        final text = await _ask(context, 'Type it', 'e.g. My pension is 25,000 a month. LIC premium 12,000 a year.');
+        final text = await _ask(context, 'Type it', 'e.g. My pension is 25,000 a month. Health policy Rs 9,600 a year.');
         if (text == null || text.trim().isEmpty) return;
         proposal = await p.extract(text: text);
       } else if (how == 'say') {
@@ -303,7 +303,11 @@ class _ConfirmScreenState extends State<ConfirmScreen> {
               onChanged: (on) => setState(() => on == true ? _keep.add(i) : _keep.remove(i)),
               title: Text(_items[i].label, style: const TextStyle(fontSize: 17)),
               subtitle: Text(
-                _items[i].readback + (_items[i].uncertain ? '\n⚠ Not sure I got this right. Please check.' : ''),
+                [
+                  if (widget.proposal.heard.isEmpty && _items[i].quote.isNotEmpty) '“${_items[i].quote}”',
+                  _items[i].readback,
+                  if (_items[i].uncertain) '⚠ Not sure I got this right. Please check.',
+                ].join('\n'),
               ),
               secondary: IconButton(tooltip: 'Edit', icon: const Icon(LucideIcons.pencil), onPressed: () => _edit(i)),
             ),

@@ -21,10 +21,10 @@ _MULTIPLIERS: list[tuple[str, int]] = [
 _UNIT_RE = "|".join(f"(?P<u{i}>{pat})" for i, (pat, _) in enumerate(_MULTIPLIERS))
 
 _NUMBER = r"\d{1,3}(?:,\d{2,3})+(?:\.\d+)?|\d+(?:\.\d+)?|\.\d+"
-_CURRENCY = r"₹|rs\.?|inr|rupees?"
+_CURRENCY = r"₹|(?<![a-z])(?:rs\.?|inr|rupees?)"
 
 _AMOUNT_RE = re.compile(
-    rf"(?P<cur>(?:{_CURRENCY})\s*)?(?<![\d.,])(?P<num>{_NUMBER})(?![\d])"
+    rf"(?:(?P<cur>(?:{_CURRENCY})\s*)|(?<![\d.,]))(?P<num>{_NUMBER})(?![\d])"
     rf"(?:\s*(?:{_UNIT_RE}))?(?P<pct>\s*(?:%|per\s*cent|percent))?",
     re.IGNORECASE,
 )
@@ -36,6 +36,7 @@ class AmountMatch(BaseModel):
     text: str
     start: int
     end: int
+    currency: bool = False  # written with ₹ / Rs / INR / rupees in front
 
 
 def _to_decimal(num: str) -> Decimal | None:
@@ -62,7 +63,15 @@ def find_amounts(text: str) -> list[AmountMatch]:
             if m.group(f"u{i}"):
                 value *= mult
                 break
-        out.append(AmountMatch(value=_clean(value), text=m.group(0).strip(), start=m.start(), end=m.end()))
+        out.append(
+            AmountMatch(
+                value=_clean(value),
+                text=m.group(0).strip(),
+                start=m.start(),
+                end=m.end(),
+                currency=bool(m.group("cur")),
+            )
+        )
     return out
 
 

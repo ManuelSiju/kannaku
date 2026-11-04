@@ -78,3 +78,17 @@ def test_parse_percent(text, expected):
 def test_parse_percent_none():
     assert parse_percent("50,000") is None
     assert [p.value for p in find_percents("4% and 8% bonus")] == [4, 8]
+
+
+@pytest.mark.parametrize(
+    ("text", "value"),
+    [("Rs.36400/-", 36400), ("Rs. 36,400", 36400), ("Rs 36,400", 36400), ("₹36,400", 36400), ("INR 500", 500)],
+)
+def test_currency_prefix_joined_to_the_number(text, value):
+    (m,) = find_amounts(text)
+    assert m.value == value and m.currency
+
+
+def test_the_end_of_a_word_is_not_a_currency():
+    (m,) = find_amounts("for 5 years")
+    assert m.value == 5 and not m.currency

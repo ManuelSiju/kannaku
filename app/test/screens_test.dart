@@ -166,6 +166,24 @@ void main() {
         await expectLater(find.byType(MaterialApp), matchesGoldenFile(golden('confirm', scale)));
       });
 
+      testWidgets('confirm for a paper shows the matched sentence only', (tester) async {
+        final paper = {
+          'values': [
+            {
+              'field': 'monthly_income',
+              'value': 52000,
+              'quote': 'Net salary Rs 52,000 a month.',
+              'readback': 'I heard ₹52,000 a month for your income each month. Is that right?',
+            },
+          ],
+          'items': [],
+          'heard': '',
+        };
+        await pumpScreen(tester, ConfirmScreen(proposal: Proposal.from(paper)), textScale: scale);
+        expect(find.textContaining('“Net salary Rs 52,000 a month.”'), findsOneWidget);
+        expect(find.textContaining('I heard:'), findsNothing);
+      });
+
       testWidgets('guardian alerts', (tester) async {
         await pumpScreen(tester, const GuardianScreen(), textScale: scale);
         await seen(tester, find.text('Mark handled'));
