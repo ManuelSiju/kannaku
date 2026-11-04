@@ -124,6 +124,6 @@ Future<void> tapAndSettle(WidgetTester tester, Finder finder) async {
 CaseProvider casesOf(WidgetTester tester) =>
     Provider.of<CaseProvider>(tester.element(find.byType(Navigator).first), listen: false);
 
-final talkHint = find.textContaining('Hold and talk');
+final talkHint = find.textContaining('Press and hold the mic');
 
 void log(String step) => debugPrint('[demo] $step');

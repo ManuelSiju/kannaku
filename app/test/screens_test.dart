@@ -122,7 +122,7 @@ void main() {
 
       testWidgets('home empty with a note from the guardian', (tester) async {
         await pumpScreen(tester, const HomeScreen(), textScale: scale);
-        expect(find.textContaining('Hold and talk'), findsOneWidget);
+        expect(find.textContaining('Press and hold the mic'), findsOneWidget);
         expect(find.text('Type your question'), findsOneWidget);
         for (final t in ['Chat', 'Verdict', 'My Details', 'Settings']) {
           expect(find.text(t), findsWidgets);
