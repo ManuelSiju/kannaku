@@ -27,6 +27,8 @@ if command -v ollama >/dev/null; then
   if http_ok "$LLM_BASE_URL/models"; then
     if curl -fsS --max-time 5 "$LLM_BASE_URL/models" | grep -q "\"$LLM_MODEL\""; then ok "Local model" "$LLM_MODEL is ready"
     else bad "Local model" "$LLM_MODEL is not downloaded yet (about 4.7 GB)" "make llm-pull"; fi
+  elif url_frozen "$LLM_BASE_URL"; then
+    bad "Local AI (Ollama)" "frozen: it holds its port but does not answer (this happens after Ctrl+Z)" "killall -9 ollama"
   else
     ok "Local model" "Ollama is not running now (make start starts it)"
   fi

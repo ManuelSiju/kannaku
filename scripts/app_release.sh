@@ -42,6 +42,9 @@ revert() { echo "✘ $*"; git -C "$ROOT" checkout -- "$PUBSPEC"; exit 1; }
 
 # ---------------------------------------------------------------- build
 cd "$APP" || exit 1
+# The bump changed pubspec.yaml. Refresh packages now: otherwise the build does it itself and keeps the test-only
+# integration_test plugin in the generated plugin list, which does not compile in release mode.
+flutter pub get >/dev/null || revert "flutter pub get failed"
 if [[ "$TARGET" == ios ]]; then
   flutter build ipa --release --dart-define=API_URL="$API_URL" || revert "flutter build ipa failed"
   ARTIFACT="$(ls -t build/ios/ipa/*.ipa 2>/dev/null | head -n1)"

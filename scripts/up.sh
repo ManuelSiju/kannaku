@@ -104,6 +104,10 @@ if [[ "$PROVIDER" == local ]]; then
   echo "LLM backend: $BACKEND  ($LLM_BASE_URL, model $LLM_MODEL)"
   if http_ok "$LLM_BASE_URL/models"; then
     echo "  ✔ already running"
+  elif url_frozen "$LLM_BASE_URL"; then
+    fail "the local AI (Ollama) is frozen: it holds its port but does not answer. This happens after Ctrl+Z.
+  Fix it with:  killall -9 ollama
+  Then run this command again. (To stop a command, use Ctrl+C, not Ctrl+Z.)"
   else
     case "$BACKEND" in
       ollama)

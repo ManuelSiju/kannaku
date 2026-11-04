@@ -87,3 +87,11 @@ launch() {
 }
 
 http_ok() { curl -fsS -o /dev/null --max-time 2 "$1" 2>/dev/null; }
+
+# url_frozen URL -> 0 if something holds the URL's port but does not answer (e.g. Ollama paused with Ctrl+Z).
+url_frozen() {
+  local port
+  port="$(sed -E 's#^[a-z]+://[^:/]+:([0-9]+).*#\1#' <<<"$1")"
+  [[ "$port" =~ ^[0-9]+$ ]] || return 1
+  ss -ltn "sport = :$port" 2>/dev/null | grep -q LISTEN && ! http_ok "$1/models"
+}

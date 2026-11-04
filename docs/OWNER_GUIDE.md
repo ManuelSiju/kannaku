@@ -32,6 +32,9 @@ Press **Ctrl + Alt + T** on the keyboard.
 *What you should see:* a window with a blinking cursor. This is the terminal. You will paste commands into it.
 To paste, press **Ctrl + Shift + V**. After pasting, press **Enter**.
 
+> To stop a command, press **Ctrl + C**. **Never press Ctrl + Z**: it only pauses the command, and a paused AI makes
+> everything after it hang. If a command seems stuck, wait a minute, then press Ctrl + C and run `make doctor`.
+
 ### 2.2 Install the basic tools
 
 Paste this and press Enter. Type your laptop password when asked (the letters do not show; that is normal).
@@ -249,6 +252,7 @@ make doctor
 
 | What you see | What to do |
 |---|---|
+| A command hangs, or `make doctor` says Ollama is frozen | Close the terminal window, open a new one, then run `killall -9 ollama`, `cd ~/kanakku` and `make start`. Stop commands with Ctrl + C, never Ctrl + Z. |
 | The phone says "I can't reach the server" | Phone and laptop on the same Wi-Fi? Run `make start` and check the Server address in the box; type it again in Settings. Still no: `make firewall-open`. |
 | The app says the access token is wrong | Copy the **Access token** from the `make start` box into Settings. |
 | The app says "server not found" after a few days | The laptop's Wi-Fi address changed. Run `make start`, type the new Server address in Settings, tap Save and test connection. |

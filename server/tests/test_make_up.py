@@ -218,6 +218,17 @@ def test_invalid_saved_key_non_interactive(env):
     env.assert_no_key(BAD)
 
 
+def test_frozen_ollama_fails_fast_with_the_fix(env):
+    """Port held but no answer (Ollama paused with Ctrl+Z): say so at once, do not hang."""
+    with socket.socket() as s:
+        s.bind(("127.0.0.1", 0))
+        s.listen(1)
+        t0 = time.time()
+        r = env.up("local", LLM_BASE_URL=f"http://127.0.0.1:{s.getsockname()[1]}/v1")
+    assert r.returncode == 1 and time.time() - t0 < 20
+    assert "frozen" in r.stderr and "killall -9 ollama" in r.stderr
+
+
 def test_daily_cap_gives_a_clear_error(env):
     env.env_local.write_text(f"META_API_KEY={GOOD}\n")
     assert env.up("meta", META_MAX_CALLS_PER_DAY="3").returncode == 0

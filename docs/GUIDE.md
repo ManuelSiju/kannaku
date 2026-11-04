@@ -278,6 +278,7 @@ the team; the Info.plist already has microphone / camera / photo texts and local
 | Ollama out of GPU memory | two models loaded | `make down && make up` (only the text model loads), or unset `LLM_VISION_MODEL` |
 | Meta: "key rejected" (401) | wrong / expired key | `make forget-key`, then `make start` and paste the new key |
 | Meta: `429 daily_limit` | `META_MAX_CALLS_PER_DAY` reached | wait until midnight, `make up PROVIDER=local`, or `LLM_FALLBACK=local` |
+| `make up` / `make llm-pull` hang; doctor: "frozen" | Ollama paused with Ctrl+Z: it holds port 11434 but does not answer | `killall -9 ollama`, then `make start` |
 | `port 8013 is already used` | another program | close it, or set `PORT=8014` in `.env` |
 | anything else | | `make doctor`, then `make logs` (request id in the app's error matches the log line) |
 

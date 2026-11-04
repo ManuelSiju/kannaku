@@ -94,13 +94,13 @@ health: ## Call GET /health on the running server
 
 # ---------------------------------------------------------------- local LLM (Ollama)
 llm-up: ## Start the Ollama server in the background
-	@curl -fsS http://localhost:11434/api/version >/dev/null 2>&1 && echo "ollama already running" || \
+	@curl -fsS --max-time 3 http://$${OLLAMA_HOST:-localhost:11434}/api/version >/dev/null 2>&1 && echo "ollama already running" || \
 	  { nohup ollama serve >/tmp/kanakku-ollama.log 2>&1 & sleep 2; echo "✔ ollama started (log /tmp/kanakku-ollama.log)"; }
 
 llm-down: ## Stop the Ollama server
 	-pkill -f "ollama serve" && echo "✔ ollama stopped"
 
-llm-pull: ## Download the model named in .env LLM_MODEL (override: make llm-pull LLM_MODEL=...)
+llm-pull: llm-up ## Download the model named in .env LLM_MODEL (override: make llm-pull LLM_MODEL=...)
 	ollama pull $(LLM_MODEL)
 
 llm-list: ## List local Ollama models
