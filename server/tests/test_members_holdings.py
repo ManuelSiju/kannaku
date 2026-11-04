@@ -14,10 +14,13 @@ from app.api import deps
 from app.config import SERVER_ROOT, get_settings
 from app.db.migrate import MIGRATIONS
 from app.db.repo import FamilyItem
+from app.engines.fact import known
 from app.main import app
 from app.mcp_server import tools
+from app.pipeline.explainer import CheckedLine
 from app.pipeline.ingest import Upload, ingest
 from app.pipeline.profile_extract import extract_profile
+from app.pipeline.run import _say_held_shares
 from tests.fakes import FakeSTT
 from tests.test_demo_safe_baseline import BASELINE, run_case
 
@@ -223,6 +226,19 @@ def test_personal_holding_stays_off_the_council_in_discreet_mode(demo_repo):
     res = run_case(demo_repo, "stock_tip", "discreet")
     assert res["facts"]["tip.held_shares"][0] == 150
     assert not any("150" in text for _, text in res["spoken"])
+
+
+def test_vick_says_the_held_shares_in_full_mode(demo_repo):
+    holdings(demo_repo)
+    res = run_case(demo_repo, "stock_tip", "full")
+    vick = next(text for who, text in res["spoken"] if who == "vick")
+    assert vick.startswith("The family already holds 150 shares of this.")
+
+
+def test_vick_is_not_told_twice():
+    line = CheckedLine(speaker="vick", text="You already hold 150 shares.", screen_text="You already hold 150 shares.")
+    held = known("tip.held_shares", "held", 150, "shares", "personal", "f")
+    assert _say_held_shares([line], [held], "en") == [line]
 
 
 def test_flag_off_reads_no_holdings(monkeypatch):

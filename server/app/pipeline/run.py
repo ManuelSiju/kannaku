@@ -466,6 +466,8 @@ async def _pipeline(run: _Run, inp: AskInput, *, repo: Repo, llm: LLMProvider, s
         )
     if not explained:
         agent_lines, notes = explainer_mod.fallback_turns(agents, kept_args, facts, quote_text, mode, lang)
+    if mode == "full":
+        agent_lines = _say_held_shares(agent_lines, facts, lang)
 
     # questions said aloud (the bank only; the model's picks and rewordings are checked) --------------------------
     picked = questions_mod.pick(case_type, bank, model_questions, facts, mode, lang)
@@ -595,6 +597,29 @@ def _rebuttals(
         if c.problem is None:
             out.append(explainer_mod.CheckedLine(speaker=a, text=c.spoken, screen_text=c.screen, kind="rebuttal"))
     return out
+
+
+def _say_held_shares(
+    lines: list[explainer_mod.CheckedLine], facts: list[Fact], lang: str
+) -> list[explainer_mod.CheckedLine]:
+    """Vick always says how many of the tipped shares the family holds. Code writes it when the model left it out,
+    first in his turn so that the word budget cannot cut it."""
+    from app.pipeline.lint import sentences
+
+    held = next((f for f in facts if f.id == "tip.held_shares"), None)
+    if held is None or held.value is None:
+        return lines
+    n = f"{held.value:g}"
+    said = t(lang, "held_shares", n=n)
+    vick = next((x for x in lines if x.speaker == "vick"), None)
+    if vick is None:
+        return [explainer_mod.CheckedLine(speaker="vick", text=said, screen_text=said, cited_ids=[held.id]), *lines]
+    if re.search(rf"(?<![\d,.]){n}(?![\d,])", vick.text):
+        return lines
+    first = sentences(vick.text)[0]
+    update = {"text": f"{said} {first}", "screen_text": f"{said} {sentences(vick.screen_text or vick.text)[0]}"}
+    update["cited_ids"] = [*vick.cited_ids, held.id]  # type: ignore[assignment]
+    return [vick.model_copy(update=update) if x is vick else x for x in lines]
 
 
 def _fit_budget(lines: list[explainer_mod.CheckedLine]) -> list[explainer_mod.CheckedLine]:
