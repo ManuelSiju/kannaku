@@ -383,17 +383,14 @@ class _ChatPageState extends State<ChatPage> {
             const Gap(8),
             TalkButton(
               outLoud: context.watch<SettingsProvider>().outLoud,
-              onSend: (audio, outLoud) {
-                context.read<SettingsProvider>().setOutLoud(outLoud); // the pill follows the slide
-                _send(
-                  AskRequest(
-                    text: '',
-                    audio: Upload('audio', 'question.m4a', audio, 'audio/mp4'),
-                    files: List.of(_pages),
-                    outLoud: outLoud,
-                  ),
-                );
-              },
+              onSend: (audio, outLoud) => _send(
+                AskRequest(
+                  text: '',
+                  audio: Upload('audio', 'question.m4a', audio, 'audio/mp4'),
+                  files: List.of(_pages),
+                  outLoud: outLoud,
+                ),
+              ),
             ),
           ],
         ),
@@ -401,7 +398,7 @@ class _ChatPageState extends State<ChatPage> {
         Text(
           settings.earphones
               ? 'Earphones: private answers are spoken'
-              : 'Hold and talk: slide up Private, down Out loud',
+              : 'Press and hold the mic: slide up Private, down Out loud',
           textAlign: TextAlign.center,
           style: const TextStyle(fontSize: 15, color: K.muted),
         ),

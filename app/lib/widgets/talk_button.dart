@@ -8,9 +8,9 @@ import '../theme.dart';
 
 enum TalkZone { private, outLoud, cancel }
 
-/// Hold the mic to talk. A full-screen overlay shows the three choices: slide UP = Private, slide DOWN = Out loud,
-/// slide SIDEWAYS = cancel. With no slide, or back at the centre, the header pill's choice stands. The circle follows
-/// the finger and a haptic tick marks each change.
+/// Press and hold the mic to talk; a quick tap explains that. While held, an overlay shows the choices for this question:
+/// slide UP = Private, slide DOWN = Out loud, slide SIDEWAYS = cancel. With no slide, or back at the centre, the header
+/// pill's setting stands, and a slide never changes that setting. The circle follows the finger.
 class TalkButton extends StatefulWidget {
   final bool outLoud; // the header pill
   final void Function(List<int> audio, bool outLoud) onSend;
@@ -43,6 +43,10 @@ class _TalkButtonState extends State<TalkButton> {
     _overlay = null;
   }
 
+  void _tip() => ScaffoldMessenger.of(context)
+    ..hideCurrentSnackBar()
+    ..showSnackBar(const SnackBar(content: Text('Press and hold the mic, talk, then let go.')));
+
   /// The overlay comes first, so the finger gets an answer at once; the microphone starts behind it.
   Future<void> _start(LongPressStartDetails _) async {
     HapticFeedback.mediumImpact();
@@ -50,7 +54,7 @@ class _TalkButtonState extends State<TalkButton> {
     _zone.value = _pill;
     _finger.value = Offset.zero;
     _overlay = OverlayEntry(
-      builder: (_) => _GestureOverlay(zone: _zone, finger: _finger),
+      builder: (_) => _GestureOverlay(zone: _zone, finger: _finger, pill: _pill),
     );
     Overlay.of(context).insert(_overlay!);
     final started = _started = _rec.start();
@@ -120,13 +124,17 @@ class _TalkButtonState extends State<TalkButton> {
     label: 'Hold and talk. Slide up for private, down to say it out loud.',
     child: RawGestureDetector(
       gestures: {
-        // The default long press waits half a second, which feels like the button is stuck.
+        // A deliberate press, shorter than the default half second, which feels like the button is stuck.
         LongPressGestureRecognizer: GestureRecognizerFactoryWithHandlers<LongPressGestureRecognizer>(
-          () => LongPressGestureRecognizer(duration: const Duration(milliseconds: 150)),
+          () => LongPressGestureRecognizer(duration: const Duration(milliseconds: 300)),
           (r) => r
             ..onLongPressStart = _start
             ..onLongPressMoveUpdate = _move
             ..onLongPressEnd = _end,
+        ),
+        TapGestureRecognizer: GestureRecognizerFactoryWithHandlers<TapGestureRecognizer>(
+          TapGestureRecognizer.new,
+          (r) => r.onTap = _tip,
         ),
       },
       child: Container(
@@ -143,7 +151,8 @@ class _TalkButtonState extends State<TalkButton> {
 class _GestureOverlay extends StatelessWidget {
   final ValueNotifier<TalkZone> zone;
   final ValueNotifier<Offset> finger;
-  const _GestureOverlay({required this.zone, required this.finger});
+  final TalkZone pill;
+  const _GestureOverlay({required this.zone, required this.finger, required this.pill});
 
   Widget _target(TalkZone me, TalkZone now, String title, String sub, IconData icon, Color color) {
     final active = me == now;
@@ -223,7 +232,10 @@ class _GestureOverlay extends StatelessWidget {
                       TalkZone.outLoud => 'Listening… answer out loud',
                       TalkZone.private => 'Listening… answer private',
                     }, style: const TextStyle(color: Colors.white, fontSize: 21, fontWeight: FontWeight.w700)),
-                    const Text('Slide sideways to cancel', style: TextStyle(color: Color(0xFFA1A1AA), fontSize: 16)),
+                    Text(
+                      'No slide: ${pill == TalkZone.outLoud ? 'Out loud' : 'Private'}. Slide sideways to cancel.',
+                      style: const TextStyle(color: Color(0xFFA1A1AA), fontSize: 16),
+                    ),
                   ],
                 ),
                 _target(

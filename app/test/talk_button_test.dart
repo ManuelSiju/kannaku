@@ -29,18 +29,32 @@ void main() {
       ),
     );
     final g = await tester.startGesture(tester.getCenter(find.byKey(const ValueKey('talk_button'))));
-    await tester.pump(const Duration(milliseconds: 200));
+    await tester.pump(const Duration(milliseconds: 350));
     await tester.pump();
     return g;
   }
 
-  testWidgets('it reacts within 200 ms and the pill sets the default', (tester) async {
+  testWidgets('it reacts to a deliberate press and the pill sets the default', (tester) async {
     bool? sent;
     final g = await hold(tester, (v) => sent = v, pill: true);
     expect(find.text('Listening… answer out loud'), findsOneWidget);
     await g.up();
     await tester.pumpAndSettle();
     expect(sent, isTrue);
+  });
+
+  testWidgets('a quick tap explains how to talk', (tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: Center(child: TalkButton(onSend: (_, _) {})),
+        ),
+      ),
+    );
+    await tester.tap(find.byKey(const ValueKey('talk_button')));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 300));
+    expect(find.text('Press and hold the mic, talk, then let go.'), findsOneWidget);
   });
 
   testWidgets('back at the centre undoes a slide', (tester) async {
