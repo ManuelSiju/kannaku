@@ -113,9 +113,18 @@ class CaseEvent {
 
 class HealthInfo {
   final String version, provider, model, stt;
-  final bool cache, auth;
+  final bool cache, auth, traceExport;
   final Map<String, dynamic> spend;
-  HealthInfo(this.version, this.provider, this.model, this.stt, this.cache, this.auth, this.spend);
+  HealthInfo(
+    this.version,
+    this.provider,
+    this.model,
+    this.stt,
+    this.cache,
+    this.auth,
+    this.spend, {
+    this.traceExport = false,
+  });
   factory HealthInfo.from(Map<String, dynamic> j) {
     final p = obj(j['provider']);
     return HealthInfo(
@@ -126,6 +135,7 @@ class HealthInfo {
       boolean(p['cache']),
       boolean(p['auth']),
       obj(p['spend_guard']),
+      traceExport: boolean(obj(p['features'])['trace_export']),
     );
   }
 }

@@ -75,6 +75,7 @@ def provider_summary() -> dict[str, Any]:
         "spend_guard": guard,
         "fallback": s.llm_fallback if s.meta else "none",
         "auth": bool(s.kanakku_token.get_secret_value()),
+        "features": {"trace_export": s.feature_trace_export},
     }
 
 

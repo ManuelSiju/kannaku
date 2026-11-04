@@ -177,6 +177,8 @@ class ApiClient {
   /// The full case bundle (result + trace + facts + arguments) for the verdict, Why and Under the hood screens.
   Future<Map<String, dynamic>> caseBundle(int caseId) async => obj(await get('/v1/cases/$caseId'));
 
+  Future<Map<String, dynamic>> caseTrace(int caseId) async => obj(await get('/v1/cases/$caseId/trace.json'));
+
   /// Server-Sent Events for one case. Ends after the "done" event, or with an error the caller can ignore
   /// (the caller then polls [caseBundle]).
   Stream<CaseEvent> events(int caseId) async* {

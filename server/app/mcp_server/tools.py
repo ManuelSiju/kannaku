@@ -261,7 +261,28 @@ def family_get_profile(family_id: int, repo: Repo | None = None) -> dict[str, An
             for m in _repo(repo).members(family_id)
         ]
         out["household"] = {f.id.removeprefix("profile."): f.value for f in facts}
+    if get_settings().feature_snapshot:
+        out["snapshot"] = family_snapshot(family_id, repo)
     return out
+
+
+def family_snapshot(family_id: int, repo: Repo | None = None) -> dict[str, float | None]:
+    """The family's money at a glance, every figure taken from a fact. Unknown stays None, never zero."""
+    prof = {f.id.removeprefix("profile."): f.value for f in profile_facts(family_id, repo)}
+    emi = existing_emi_fact(family_id, repo).value or 0.0
+    regular = regular_commitments_fact(family_id, repo).value or 0.0
+    held = {f.id: f.value for f in holdings_facts(family_id, repo)}
+    afford = {
+        f["id"]: f["value"] for f in calc_affordability(new_monthly_cost=0, family_id=family_id, repo=repo)["facts"]
+    }
+    spending = prof["monthly_expenses"]
+    return {
+        "savings": prof["savings"],
+        "holdings_total": held.get("holdings.total_value"),
+        "money_in": prof["monthly_income"],
+        "money_out": None if spending is None else spending + emi + regular,
+        "emi_share": afford.get("emi_share"),
+    }
 
 
 def _item_fact(item: FamilyItem) -> Fact:

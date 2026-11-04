@@ -1,3 +1,5 @@
+import 'dart:ui' show ImageFilter;
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
@@ -7,6 +9,7 @@ import '../core/models.dart';
 import '../core/pickers.dart';
 import '../core/speech.dart';
 import '../state/profile.dart';
+import '../state/settings.dart';
 import '../theme.dart';
 import '../widgets/common.dart';
 
@@ -50,6 +53,7 @@ class _MyDetailsScreenState extends State<MyDetailsScreen> {
             if (p.error != null) ErrorCard(p.error!, onRetry: p.load),
             if (p.loading && p.values.isEmpty) const Center(child: CircularProgressIndicator()),
             const Text('Kept on your laptop', style: TextStyle(fontSize: 15, color: K.muted)),
+            if (p.snapshot.isNotEmpty) _Snapshot(p.snapshot, hidden: !context.watch<SettingsProvider>().earphones),
             const SectionTitle('Money each month'),
             Container(
               padding: const EdgeInsets.all(14),
@@ -214,6 +218,77 @@ class _MyDetailsScreenState extends State<MyDetailsScreen> {
       return;
     }
     Navigator.push(context, MaterialPageRoute(builder: (_) => ConfirmScreen(proposal: proposal!)));
+  }
+}
+
+/// The family's money at a glance, from facts. Blurred until tapped when nobody said it is private.
+class _Snapshot extends StatefulWidget {
+  final Map<String, dynamic> data;
+  final bool hidden;
+  const _Snapshot(this.data, {required this.hidden});
+  @override
+  State<_Snapshot> createState() => _SnapshotState();
+}
+
+class _SnapshotState extends State<_Snapshot> {
+  bool _shown = false;
+
+  String _money(String key) {
+    final v = number(widget.data[key]);
+    return v == null ? 'not given' : inr(v);
+  }
+
+  Widget _row(String label, String value) => Padding(
+    padding: const EdgeInsets.symmetric(vertical: 3),
+    child: Row(
+      children: [
+        Expanded(child: Text(label, style: const TextStyle(fontSize: 16))),
+        Text(value, style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w700)),
+      ],
+    ),
+  );
+
+  @override
+  Widget build(BuildContext context) {
+    final share = number(widget.data['emi_share']);
+    final card = KCard(
+      padding: const EdgeInsets.all(12),
+      child: Column(
+        children: [
+          _row('Bank savings', _money('savings')),
+          if (widget.data['holdings_total'] != null) _row('Investments', _money('holdings_total')),
+          _row('Money in each month', _money('money_in')),
+          _row('Money out each month', _money('money_out')),
+          _row('Loan EMIs out of income', share == null ? 'not given' : '${(share * 100).toStringAsFixed(1)}%'),
+        ],
+      ),
+    );
+    final blurred = widget.hidden && !_shown;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        const SectionTitle('Family money snapshot'),
+        if (!blurred)
+          card
+        else
+          Semantics(
+            button: true,
+            label: 'Tap to show the family money snapshot',
+            child: InkWell(
+              onTap: () => setState(() => _shown = true),
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  ExcludeSemantics(
+                    child: ImageFiltered(imageFilter: ImageFilter.blur(sigmaX: 9, sigmaY: 9), child: card),
+                  ),
+                  const Pill('Tap to show', color: K.alfii),
+                ],
+              ),
+            ),
+          ),
+      ],
+    );
   }
 }
 

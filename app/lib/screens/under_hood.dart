@@ -1,6 +1,11 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
+import 'package:share_plus/share_plus.dart';
 
 import '../core/api_client.dart';
 import '../core/models.dart';
@@ -20,6 +25,7 @@ class UnderHoodScreen extends StatefulWidget {
 class _UnderHoodScreenState extends State<UnderHoodScreen> {
   Future<Map<String, dynamic>>? _bundle;
   Future<HealthInfo>? _health;
+  int? _caseId;
 
   @override
   void initState() {
@@ -31,7 +37,21 @@ class _UnderHoodScreenState extends State<UnderHoodScreen> {
     final api = context.read<SettingsProvider>().api;
     final done = context.read<CaseProvider>().chat.where((e) => e.caseId != null).toList();
     _health = api.health();
-    _bundle = done.isEmpty ? null : api.caseBundle(done.last.caseId!);
+    _caseId = done.isEmpty ? null : done.last.caseId;
+    _bundle = _caseId == null ? null : api.caseBundle(_caseId!);
+  }
+
+  Future<void> _shareTrace() async {
+    final api = context.read<SettingsProvider>().api;
+    try {
+      final trace = await api.caseTrace(_caseId!);
+      final dir = await getTemporaryDirectory();
+      final file = File('${dir.path}/kanakku_case_${_caseId}_trace.json');
+      await file.writeAsString(const JsonEncoder.withIndent('  ').convert(trace));
+      await SharePlus.instance.share(ShareParams(files: [XFile(file.path, mimeType: 'application/json')]));
+    } on ApiException catch (e) {
+      if (mounted) toast(context, e.friendly);
+    }
   }
 
   @override
@@ -63,6 +83,19 @@ class _UnderHoodScreenState extends State<UnderHoodScreen> {
               ),
             ),
           ),
+          FutureBuilder<HealthInfo>(
+            future: _health,
+            builder: (_, s) => s.data?.traceExport == true && _caseId != null
+                ? Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 8),
+                    child: OutlinedButton.icon(
+                      onPressed: _shareTrace,
+                      icon: const Icon(LucideIcons.share2),
+                      label: const Text('Share trace'),
+                    ),
+                  )
+                : const SizedBox.shrink(),
+          ),
           if (_bundle == null)
             const Padding(padding: EdgeInsets.all(20), child: Text('Ask a question first.'))
           else
@@ -76,11 +109,11 @@ class _UnderHoodScreenState extends State<UnderHoodScreen> {
                   );
                 }
                 if (!s.hasData) {
-                return const Padding(
+                  return const Padding(
                     padding: EdgeInsets.all(30),
                     child: Center(child: CircularProgressIndicator()),
                   );
-              }
+                }
                 return _Details(s.data!);
               },
             ),

@@ -8,7 +8,7 @@ import pytest
 from fastapi.testclient import TestClient
 
 from app.api import deps
-from app.config import SERVER_ROOT
+from app.config import SERVER_ROOT, get_settings
 from app.main import app
 from app.pipeline.events import EventBus
 from tests.fakes import TIMEOUT, FakeLLM, FakeSTT, load_fixture
@@ -479,3 +479,35 @@ def test_documents_belong_to_one_family(repo):
     a, b = repo.create_family(), repo.create_family()
     repo.remember_document(a, repo.create_case(a), "a.pdf", "same", "loan_offer")
     assert repo.family_documents(b) == []
+
+
+# ---------------------------------------------------------------- trace export
+def test_trace_export_has_what_a_reviewer_needs(harness):
+    client, state, _ = harness
+    state["llm"] = FakeLLM(load_fixture("endowment"))
+    res = ask(client, ENDOWMENT_Q, brochure_files())
+    trace = client.get(f"/cases/{res['case_id']}/trace.json").json()
+    assert trace["provider"] == "local" and trace["models"]["text"]
+    assert trace["router"]
+    assert any(f["id"] == "endowment_return" for f in trace["facts"])
+    assert len(trace["dropped_arguments"]) == 1 and "raw number" in trace["dropped_arguments"][0]["reason"]
+    assert trace["vote"]["colour"] == "red" and trace["vote"]["positions"]
+    assert [o["rule"] for o in trace["overrides"]] == ["unbacked_guarantee"]
+    assert {"ingest", "council", "explainer"} <= {t["step"] for t in trace["timings_ms"]}
+
+
+def test_trace_export_refuses_an_unknown_case(harness):
+    client, _, _ = harness
+    assert client.get("/cases/9999/trace.json").status_code == 404
+
+
+def test_trace_export_is_gone_with_its_flag_off(harness, monkeypatch):
+    client, state, _ = harness
+    state["llm"] = FakeLLM({})
+    res = ask(client, SCAM_Q)
+    monkeypatch.setenv("FEATURE_TRACE_EXPORT", "false")
+    get_settings.cache_clear()
+    try:
+        assert client.get(f"/cases/{res['case_id']}/trace.json").status_code == 404
+    finally:
+        get_settings.cache_clear()

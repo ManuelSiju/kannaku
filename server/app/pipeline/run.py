@@ -160,7 +160,12 @@ async def run_pipeline(
     budget = AskBudget(settings.llm_max_calls_per_ask)
     run = _Run(case_id, repo, bus)
     provider = settings.llm_provider
-    repo.add_trace(case_id, "request", 0.0, "ok", {"request_id": inp.request_id, "provider": provider})
+    models = {"text": settings.llm_model, "vision": settings.llm_vision_model or settings.llm_model}
+    if not settings.llm_vision_enabled:
+        models["vision"] = ""
+    repo.add_trace(
+        case_id, "request", 0.0, "ok", {"request_id": inp.request_id, "provider": provider, "models": models}
+    )
     with use_budget(budget):
         try:
             result = await _pipeline(run, inp, repo=repo, llm=llm, stt=stt)

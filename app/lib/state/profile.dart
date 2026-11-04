@@ -13,6 +13,7 @@ class ProfileProvider extends ChangeNotifier {
   List<FamilyItem> items = [];
   List<Document> documents = [];
   List<MemberValues> members = []; // empty when the server has members switched off
+  Map<String, dynamic> snapshot = {}; // empty when the server has it switched off
   int? memberId; // the chip chosen in My details; null = the primary member
   bool loading = false;
   String? error;
@@ -26,6 +27,7 @@ class ProfileProvider extends ChangeNotifier {
       final p = await api.profile(settings.familyId);
       values = objs(p['values']).map(ProfileValue.from).toList();
       members = objs(p['member_values']).map(MemberValues.from).toList();
+      snapshot = obj(p['snapshot']);
       items = await api.items(settings.familyId);
       documents = await api.documents(settings.familyId);
     } on ApiException catch (e) {

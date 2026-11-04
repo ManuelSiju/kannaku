@@ -295,3 +295,32 @@ def test_the_mf_statement_names_its_schemes():
 def test_zephyrx_value_agrees_with_the_price_file():
     last = (SERVER_ROOT / "demo_assets" / "stocks" / "ZEPHYRX.csv").read_text().strip().splitlines()[-1]
     assert round(float(last.split(",")[1]) * 150) == ZEPHYRX_VALUE
+
+
+# ---------------------------------------------------------------- money snapshot
+def test_snapshot_comes_from_the_facts(demo_repo):
+    holdings(demo_repo)
+    snap = tools.family_snapshot(1, demo_repo)
+    assert snap == {
+        "savings": 160_000,
+        "holdings_total": 254_096,
+        "money_in": 45_000,
+        "money_out": 28_000 + 2_400 + 1_000,
+        "emi_share": 0.0533,  # the engine rounds a share to 4 places
+    }
+
+
+def test_snapshot_keeps_unknown_as_none(repo):
+    family = repo.create_family()
+    repo.add_member(family, "Asha", "primary")
+    snap = tools.family_snapshot(family, repo)
+    assert snap["savings"] is None and snap["money_out"] is None and snap["emi_share"] is None
+
+
+def test_snapshot_flag_off_leaves_it_out(demo_repo, monkeypatch):
+    monkeypatch.setenv("FEATURE_SNAPSHOT", "false")
+    get_settings.cache_clear()
+    try:
+        assert "snapshot" not in tools.family_get_profile(1, demo_repo)
+    finally:
+        get_settings.cache_clear()

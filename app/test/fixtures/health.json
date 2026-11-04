@@ -9,7 +9,10 @@
   "cache": false,
   "spend_guard": null,
   "fallback": "none",
-  "auth": false
+  "auth": false,
+  "features": {
+   "trace_export": true
+  }
  },
  "providers": {
   "llm": {
@@ -18,7 +21,7 @@
    "model": "qwen2.5:7b-instruct",
    "vision": false,
    "reachable": false,
-   "error": "ReadTimeout: start it with make llm-up"
+   "error": "ConnectError: start it with make llm-up"
   },
   "stt": {
    "provider": "faster_whisper",

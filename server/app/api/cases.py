@@ -13,7 +13,7 @@ from pydantic import BaseModel
 from app.api import uploads as upload_limits
 from app.api.deps import get_bus, get_llm_provider, get_repo, get_settings_dep, get_stt_provider, require_family
 from app.api.errors import ApiError
-from app.config import Settings
+from app.config import Settings, get_settings
 from app.core.context import request_id
 from app.db.repo import Repo
 from app.pipeline.events import EventBus
@@ -116,6 +116,45 @@ def get_case(case_id: int, repo: Repo = Depends(get_repo)) -> dict[str, Any]:
     raw = bundle["case"].pop("result_json", None)
     bundle["result"] = json.loads(raw) if raw else None
     return bundle
+
+
+@router.get("/cases/{case_id}/trace.json")
+def trace_export(case_id: int, repo: Repo = Depends(get_repo)) -> dict[str, Any]:
+    """Everything that decided one case, as one file a reviewer can read."""
+    bundle = repo.case_bundle(case_id) if get_settings().feature_trace_export else None
+    if bundle is None:
+        raise HTTPException(404, f"case {case_id} not found")
+    steps = bundle["trace"]
+    request = next((t["detail"] for t in steps if t["step"] == "request"), {})
+    verdict = bundle["verdict"] or {}
+    return {
+        "case_id": case_id,
+        "case_type": bundle["case"]["case_type"],
+        "privacy_mode": bundle["case"]["privacy_mode"],
+        "provider": request.get("provider"),
+        "models": request.get("models"),
+        "router": next((t["detail"] for t in steps if t["step"] == "router"), {}),
+        "tool_calls": next((t["detail"] for t in steps if t["step"] == "compute"), {}),
+        "facts": bundle["facts"],
+        "dropped_arguments": [
+            {"agent": a["agent"], "text": a["text"], "reason": a["drop_reason"]}
+            for a in bundle["arguments"]
+            if not a["kept"]
+        ],
+        "vote": {
+            "positions": bundle["positions"],
+            "score": verdict.get("score"),
+            "disagreement": verdict.get("disagreement"),
+            "colour": verdict.get("colour"),
+        },
+        "overrides": verdict.get("overrides", []),
+        "privacy_blocks": [
+            {"speaker": ln["speaker"], "text": ln["text"], "reason": ln["blocked_reason"]}
+            for ln in bundle["spoken_lines"]
+            if not ln["allowed"]
+        ],
+        "timings_ms": [{"step": t["step"], "ms": t["ms"], "outcome": t["outcome"]} for t in steps],
+    }
 
 
 @router.get("/cases/{case_id}/events")

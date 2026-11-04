@@ -155,6 +155,11 @@ void main() {
         expect(find.text('Income each month'), findsWidgets);
         expect(find.textContaining('Could not load'), findsNothing);
         await expectLater(find.byType(MaterialApp), matchesGoldenFile(golden('my_details', scale)));
+        expect(find.text('Tap to show'), findsOneWidget);
+        await tester.tap(find.text('Tap to show'));
+        await tester.pumpAndSettle();
+        expect(find.text('Tap to show'), findsNothing);
+        await seen(tester, find.text('Money out each month'));
         await seen(tester, find.text('Arun'));
         await seen(tester, find.text('Scooter loan EMI'));
         await seen(tester, find.textContaining('· Lakshmi'));

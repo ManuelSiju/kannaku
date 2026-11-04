@@ -31,7 +31,7 @@
    "inputs": {
     "source": "voice",
     "source_ref": "onboarding voice note",
-    "updated_at": "2026-11-04 14:36:36",
+    "updated_at": "2026-11-04 14:42:21",
     "members": [
      "Lakshmi"
     ]
@@ -50,7 +50,7 @@
    "inputs": {
     "source": "typed",
     "source_ref": "onboarding",
-    "updated_at": "2026-11-04 14:36:36",
+    "updated_at": "2026-11-04 14:42:21",
     "members": [
      "Lakshmi"
     ]
@@ -69,7 +69,7 @@
    "inputs": {
     "source": "document",
     "source_ref": "passbook photo",
-    "updated_at": "2026-11-04 14:36:36",
+    "updated_at": "2026-11-04 14:42:21",
     "members": [
      "Lakshmi"
     ]
@@ -154,6 +154,13 @@
   "monthly_income": 45000.0,
   "monthly_expenses": 28000.0,
   "savings": 160000.0
+ },
+ "snapshot": {
+  "savings": 160000.0,
+  "holdings_total": null,
+  "money_in": 45000.0,
+  "money_out": 31400.0,
+  "emi_share": 0.0533
  },
  "members": [
   {
