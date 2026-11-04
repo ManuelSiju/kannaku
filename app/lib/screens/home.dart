@@ -41,29 +41,37 @@ class _HomeScreenState extends State<HomeScreen> {
     final settings = context.watch<SettingsProvider>();
     final cases = context.watch<CaseProvider>();
     final latest = cases.chat.lastWhereOrNull((e) => e.result != null)?.result;
-    return Scaffold(
-      body: SafeArea(
-        bottom: false,
-        child: Column(
-          children: [
-            _TopBar(settings: settings),
-            Expanded(
-              child: IndexedStack(
-                index: _tab,
-                children: [
-                  settings.guardianView ? const GuardianScreen(embedded: true) : ChatPage(onOpenVerdict: () => _go(1)),
-                  latest == null
-                      ? const _NoVerdict()
-                      : VerdictScreen(key: ValueKey(latest.caseId), result: latest, embedded: true),
-                  const MyDetailsScreen(embedded: true),
-                  const SettingsScreen(embedded: true),
-                ],
+    return PopScope(
+      canPop: _tab == 0, // Back from another tab returns to the first one instead of leaving the app
+      onPopInvokedWithResult: (didPop, _) {
+        if (!didPop) _go(0);
+      },
+      child: Scaffold(
+        body: SafeArea(
+          bottom: false,
+          child: Column(
+            children: [
+              _TopBar(settings: settings),
+              Expanded(
+                child: IndexedStack(
+                  index: _tab,
+                  children: [
+                    settings.guardianView
+                        ? const GuardianScreen(embedded: true)
+                        : ChatPage(onOpenVerdict: () => _go(1)),
+                    latest == null
+                        ? const _NoVerdict()
+                        : VerdictScreen(key: ValueKey(latest.caseId), result: latest, embedded: true),
+                    const MyDetailsScreen(embedded: true),
+                    const SettingsScreen(embedded: true),
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
+        bottomNavigationBar: _TabBar(index: _tab, guardian: settings.guardianView, onTap: _go),
       ),
-      bottomNavigationBar: _TabBar(index: _tab, guardian: settings.guardianView, onTap: _go),
     );
   }
 }
