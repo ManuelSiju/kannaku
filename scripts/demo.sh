@@ -5,7 +5,11 @@ set -uo pipefail
 source "$(dirname "$0")/lib.sh"
 PORT="$(envget PORT 8013)"
 
+[[ -x "$PY" ]] || { echo "✘ Kanakku is not set up yet. Run: make start"; exit 1; }
+mkdir -p "$RUN_DIR"
 running=""
+touch "$RUN_DIR/demo.reset"
+trap 'rm -f "$RUN_DIR/demo.reset"' EXIT
 if alive "$RUN_DIR/server.pid" "uvicorn app.main:app"; then
   running="$(curl -fsS --max-time 10 "http://127.0.0.1:$PORT/health" | "$PY" -c 'import json,sys; print(json.load(sys.stdin)["provider"]["name"])' 2>/dev/null)"
   echo "Stopping the server for a moment…"

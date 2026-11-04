@@ -23,7 +23,7 @@ Every number is worked out by the laptop, not guessed.
 
 ---
 
-## 2. One-time setup (about 1 hour, mostly waiting for downloads)
+## 2. The first time (about 30 minutes, mostly waiting for downloads)
 
 ### 2.1 Open the terminal
 
@@ -33,36 +33,97 @@ Press **Ctrl + Alt + T** on the keyboard.
 To paste, press **Ctrl + Shift + V**. After pasting, press **Enter**.
 
 > To stop a command, press **Ctrl + C**. **Never press Ctrl + Z**: it only pauses the command, and a paused AI makes
-> everything after it hang. If a command seems stuck, wait a minute, then press Ctrl + C and run `make doctor`.
+> everything after it hang.
 
-### 2.2 Install the basic tools
+### 2.2 Install three small tools
 
 Paste this and press Enter. Type your laptop password when asked (the letters do not show; that is normal).
 
 ```bash
-sudo apt update && sudo apt install -y git curl make tesseract-ocr tesseract-ocr-eng tesseract-ocr-mal ffmpeg adb
+sudo apt update && sudo apt install -y git curl make
 ```
 
 *What you should see:* many lines scroll past, ending without the word "Error".
 
-### 2.3 Install uv and Ollama
+### 2.3 Download Kanakku
 
-uv installs Python for Kanakku. Ollama runs the AI on this laptop.
+Use the link of the project you were given (it looks like https://github.com/…/kanakku):
 
 ```bash
-curl -LsSf https://astral.sh/uv/install.sh | sh
+git clone THE-LINK-YOU-WERE-GIVEN ~/kanakku
+```
+
+*What you should see:* "Cloning into …" and then "done".
+
+### 2.4 Run Kanakku and follow what it asks
+
+```bash
+cd ~/kanakku
 ```
 
 ```bash
-curl -fsSL https://ollama.com/install.sh | sh
+make start
 ```
 
-Then close the terminal and open a new one (Ctrl + Alt + T), so it knows about the new tools.
+The first time it sets everything up by itself. It tells you what it is doing:
 
-*What you should see:* the first ends with "everything's installed!", the second with "Ollama is running" or
-"The Ollama API is now available".
+- "Setting up Kanakku's server parts": wait a few minutes.
+- "Kanakku needs to install system packages; you may be asked for your password once": type your laptop password.
+- "Meta Model API key (press Enter to use the local models):": press **Enter** (section 5 explains the key).
+- "Installing Ollama": this runs the AI on your laptop. Type your password if asked.
+- "Downloading it now (about 4.7 GB)": wait; this is the AI itself.
 
-### 2.4 Install Flutter and the Android tools (to build the phone app)
+*What you should see:* a square made of blocks (a QR code) and a box that says **"Kanakku is running."**
+Below it, new lines appear whenever the app talks to the laptop.
+
+If it stops with a ✘, run `make doctor` in a new terminal. It says what is wrong and which command fixes it.
+
+---
+
+## 3. Every day
+
+### 3.1 Start Kanakku
+
+```bash
+cd ~/kanakku
+```
+
+```bash
+make start
+```
+
+Press **Enter** at the key question to use the AI on this laptop (free), or paste your Meta key (section 5).
+It takes a few seconds. Leave this window open while you use Kanakku.
+
+*What you should see:* the QR code and the box **"Kanakku is running."**
+
+### 3.2 Connect the phone (the first time, or when the Wi-Fi changes)
+
+Open the Kanakku app, then **Settings** (the gear at the top right). Tap **Scan code** and point the phone at the
+square on the laptop. Or type the **Server address** and **Access token** from the box and tap
+**Save and test connection**.
+
+*What you should see:* "Connected ✔ Provider: local …".
+
+![Settings screen](screens/settings@1.0.png)
+
+### 3.3 Stop Kanakku
+
+Click the terminal window and press **Ctrl + C**.
+
+*What you should see:* "Kanakku stopped". Closing the window also stops it.
+
+If that was not possible (the window is gone but the app still connects), open a new terminal and run:
+
+```bash
+cd ~/kanakku && make stop
+```
+
+---
+
+## 4. Putting the app on your phone
+
+### Install the tools that build the app (once)
 
 1. Open https://developer.android.com/studio in the browser and click **Download Android Studio** (Linux).
 2. Open your **Downloads** folder, right-click the file and choose **Extract Here**.
@@ -79,7 +140,7 @@ Then close the terminal and open a new one (Ctrl + Alt + T), so it knows about t
    git clone https://github.com/flutter/flutter.git -b stable ~/flutter && echo 'export PATH="$HOME/flutter/bin:$PATH"' >> ~/.bashrc
    ```
 
-6. Close the terminal and open a new one. Then accept the Android licences (press **y** and Enter each time it asks):
+6. Close the terminal and open a new one. Accept the Android licences (press **y** and Enter each time it asks):
 
    ```bash
    flutter doctor --android-licenses
@@ -87,97 +148,15 @@ Then close the terminal and open a new one (Ctrl + Alt + T), so it knows about t
 
 *What you should see:* at the end, "All SDK package licenses accepted".
 
-### 2.5 Download Kanakku
-
-Use the link of the project you were given (it looks like https://github.com/…/kanakku):
-
-```bash
-git clone THE-LINK-YOU-WERE-GIVEN ~/kanakku
-```
-
-```bash
-cd ~/kanakku
-```
-
-*What you should see:* "Cloning into …" and then "done".
-
-> Every time you open a new terminal, first type `cd ~/kanakku` and press Enter.
-
-### 2.6 Set up Kanakku
-
-```bash
-make setup
-```
-
-*What you should see:* last line "✔ setup done. Next: make doctor". (The first time takes a few minutes.)
-
-### 2.7 Download the AI model (about 4.7 GB)
-
-```bash
-make llm-pull
-```
-
-*What you should see:* a progress bar, then "success".
-
-### 2.8 Check everything
-
-```bash
-make doctor
-```
-
-*What you should see:* a list with ✔ in front of each line, and at the end **"All good. Next: make start"**.
-A line with ✘ is a problem; the line under it (→) is the exact command that fixes it. Run that command, then run
-`make doctor` again. A line with · is optional.
-
----
-
-## 3. Every day
-
-### 3.1 Start Kanakku
-
-```bash
-cd ~/kanakku
-```
-
-```bash
-make start
-```
-
-It asks: `Meta Model API key (press Enter to use the local models):`
-Press **Enter** to use the AI on this laptop (free). Or paste your Meta key (see section 5).
-
-*What you should see:* a box that says **"Kanakku is running."** with a **Server address** and an **Access token**.
-
-### 3.2 Open the app on the phone
-
-The first time, open **Settings** (the gear at the top right) and type the **Server address** and the
-**Access token** from the box. Tap **Save and test connection**.
-
-*What you should see:* "Connected ✔ Provider: local …".
-
-![Settings screen](screens/settings@1.0.png)
-
-### 3.3 Stop Kanakku at the end of the day
-
-```bash
-make stop
-```
-
-*What you should see:* "✔ stopped server".
-
----
-
-## 4. Putting the app on your phone
-
 ### The USB way (easiest)
 
 1. On the phone: **Settings → About phone →** tap **Build number** 7 times. It says "You are now a developer".
 2. **Settings → System → Developer options →** turn on **USB debugging**.
 3. Connect the phone to the laptop with the USB cable. On the phone tap **Allow** when it asks about USB debugging.
-4. In the terminal:
+4. In a terminal:
 
    ```bash
-   make phone
+   cd ~/kanakku && make phone
    ```
 
 *What you should see:* "✔ Installed on the phone" and "✔ Demo brochure copied to the phone's Download folder".
@@ -213,7 +192,7 @@ with the laptop AI.
 make forget-key
 ```
 
-Then `make stop` and `make start`, and press Enter at the question.
+Then stop Kanakku with Ctrl + C, run `make start` again and press Enter at the question.
 
 **How your $150 credit is protected:** Kanakku remembers answers it already got, so the same question twice costs
 nothing the second time. It also stops after 300 Meta calls in a day (one question uses at most 4). At 240 calls it
@@ -223,10 +202,10 @@ writes a warning; at 300 it says so in the app and you can switch to the laptop 
 
 ## 6. Trying it
 
-Run this first; it resets the pretend family and shows the four questions:
+This resets the pretend family and shows the four questions. Kanakku can be running; use a second terminal:
 
 ```bash
-make demo
+cd ~/kanakku && make demo
 ```
 
 | question (type it, or hold the talk button and say it) | what the answer should look like |
@@ -253,14 +232,15 @@ make doctor
 | What you see | What to do |
 |---|---|
 | A command hangs, or `make doctor` says Ollama is frozen | Close the terminal window, open a new one, then run `killall -9 ollama`, `cd ~/kanakku` and `make start`. Stop commands with Ctrl + C, never Ctrl + Z. |
-| The phone says "I can't reach the server" | Phone and laptop on the same Wi-Fi? Run `make start` and check the Server address in the box; type it again in Settings. Still no: `make firewall-open`. |
-| The app says the access token is wrong | Copy the **Access token** from the `make start` box into Settings. |
-| The app says "server not found" after a few days | The laptop's Wi-Fi address changed. Run `make start`, type the new Server address in Settings, tap Save and test connection. |
+| The phone says "I can't reach the server" | Phone and laptop on the same Wi-Fi? Look at the box in the `make start` window; scan the code again in Settings. Still no: `make firewall-open`. |
+| The app says the access token is wrong | In Settings tap **Scan code** and scan the square again. |
+| The app says "server not found" after a few days | The laptop's Wi-Fi address changed. Run `make start` and scan the code again in Settings. |
 | Answers are very slow (more than a minute) | The laptop AI is busy or the laptop is weak. Close other programs, or use the Meta key (section 5). |
 | No voice | Turn up the phone volume. In the phone settings, check that a "text-to-speech" engine is installed (Settings → Accessibility → Text-to-speech). |
-| "key rejected" for the Meta key | Run `make forget-key`, then `make start` and paste a new key. |
+| "key rejected" for the Meta key | Press Enter to carry on with the laptop AI, or run `make forget-key`, then `make start` and paste a new key. |
 | The laptop was restarted | Open the terminal, `cd ~/kanakku`, `make start`. |
-| The Wi-Fi changed | Same as "server not found": `make start` and type the new address in Settings. |
+| The Wi-Fi changed | Same as "server not found": scan the new code in Settings. |
+| Kanakku says it is already running | It is open in another terminal. Use that window, or run `make stop` and start again. |
 
 ---
 
@@ -268,7 +248,7 @@ make doctor
 
 | minute | do this |
 |---|---|
-| before | `make demo`, then `make start`. Phone on the same Wi-Fi. Phone in "Do not disturb". Volume up. |
+| before | `make start`, then `make demo` in a second terminal. Phone on the same Wi-Fi. Phone in "Do not disturb". Volume up. |
 | 0:00 | Show the app's first screen: "Hello, I'm Alfii". Say what Kanakku is in one sentence. |
 | 0:30 | Question 1 with the brochure. Show the checking screen with the helpers. |
 | 1:30 | The red answer. Let the council speak. Tap **Why?** to show where each number came from. |

@@ -62,11 +62,11 @@ son Arun, who leaves her a note.
 | | needed | notes |
 |---|---|---|
 | OS | Linux (tested: Linux Mint 22.3 / Ubuntu 24.04 base) | macOS works for the server; `setup-system` uses apt |
-| Python | 3.11 (installed by `uv` into `.venv`) | `make setup` |
+| Python | 3.11 (installed by `uv` into `.venv`) | `make start` |
 | uv | any recent | `curl -LsSf https://astral.sh/uv/install.sh \| sh` |
 | Ollama | 0.24+ | `curl -fsSL https://ollama.com/install.sh \| sh`; model `qwen2.5:7b-instruct` (4.7 GB) |
-| Tesseract | with `eng` (+ `mal` optional) | `make setup-system` |
-| ffmpeg, adb | | `make setup-system` |
+| Tesseract | with `eng` (+ `mal` optional) | `make start` |
+| ffmpeg, adb | | `make start` |
 | Flutter | 3.41 stable | only to build the app; includes Dart |
 | Android SDK + adb | platform 35 | for `make phone` and the emulator tests |
 | Disk | 10 GB free | model 4.7 GB, Flutter build cache, whisper model ~1.5 GB |
@@ -76,25 +76,33 @@ son Arun, who leaves her a note.
 
 ```bash
 git clone <repo> kanakku && cd kanakku
-make setup            # → "✔ setup done. Next: make doctor"
-make setup-system     # sudo: tesseract (eng + mal), ffmpeg, adb
-make llm-pull         # downloads qwen2.5:7b-instruct (needs Ollama running: make llm-up)
-make seed-demo        # fictional demo family (also created automatically on first start)
-make doctor           # every line ✔ (· lines are optional) → "All good. Next: make start"
+make start            # runs scripts/setup.sh, then starts; see below
+make doctor           # in a second terminal: every line ✔ (· lines are optional)
 ```
+
+`scripts/setup.sh` (run by every `make start`, under 2 s when nothing changed): creates `.env`; installs `uv` if missing;
+creates `.venv` and installs the server when `.venv` is missing or the hash of `server/pyproject.toml` differs from
+`run/setup.stamp`; installs missing system packages (tesseract + eng + mal, ffmpeg, adb; "you may be asked for your
+password once"). A refused install is remembered in `run/system.declined` and not asked again until the list changes;
+Malayalam is optional, the others stop the start. With the local provider `up.sh` installs Ollama if missing and
+downloads the model if missing, saying its size.
 
 ## 5. Daily use
 
 ```bash
-make start                  # = make up + plain phone instructions
-make up                     # asks: "Meta Model API key (press Enter to use the local models):"
-make up PROVIDER=local      # no question
-make up PROVIDER=meta       # uses the saved key (or asks once in a terminal)
+make start                  # foreground: setup check, provider choice, AI, server, adb reverse, QR + box, live log
+                            # Ctrl+C or closing the terminal stops the server, the AI if we started it, adb reverse
+make start PROVIDER=local   # no question (PROVIDER=meta: saved key, or asks once)
+make start BG=1             # background (developers); make stop stops it
+make up                     # background, no setup check or QR
 make status                 # server / health / LLM / phone URL
 make provider               # which provider runs, Meta calls today
-make logs                   # follow run/server.log (JSON lines with request ids)
-make stop                   # = make down
+make stop                   # safety net: stops a foreground make start from another terminal, or a background server
 ```
+
+The live log is `scripts/log_view.py` following `run/server.log` (JSON lines, rotated): time, level, request id,
+message, in colour on a terminal. A second `make start` while one runs says so and shows the box again. The QR code
+holds `kanakku://connect?url=…&token=…`; Settings → Scan code reads it.
 
 Order in which `make up` picks the provider: `PROVIDER=` on the command line → a saved `META_API_KEY`
 (environment or `.env.local`) → a hidden prompt in a terminal → local (CI, `make smoke`). A Meta key is checked with one
@@ -104,10 +112,11 @@ half-configured. `make up` also creates the LAN access token (`KANAKKU_TOKEN` in
 ## 6. Phone
 
 - **Wi-Fi:** phone and laptop on the same network. App → Settings → Server address `http://<laptop-ip>:8013`
-  (printed by `make start`; `make lan-url` prints it too) and Access token (printed by `make start`). Tap
-  "Save and test connection": it shows the provider and the server version.
+  and Access token, both in the `make start` box, or Settings → Scan code on its QR code. "Save and test connection"
+  shows the provider and the server version.
 - **Firewall:** `make firewall-open` (ufw) if the phone cannot connect.
-- **USB instead of Wi-Fi:** `make phone-usb` (adb reverse); then the server address is `http://127.0.0.1:8013`.
+- **USB instead of Wi-Fi:** `make start` sets up `adb reverse` for connected phones; the server address is then
+  `http://127.0.0.1:8013` (`make phone-usb` does it by hand).
 - **Install:** `make phone` (builds a versioned release APK, installs it on the USB phone, copies the demo brochure
   to Download) or send `dist/kanakku-v*.apk` to the phone and allow "Install unknown apps".
 - **Settings fields:** server address, access token (stored with flutter_secure_storage), language, "I use
@@ -275,17 +284,17 @@ the team; the Info.plist already has microphone / camera / photo texts and local
 | phone: "I can't reach the server" | different Wi-Fi, firewall, or the laptop's address changed | `make start` shows the address; `make firewall-open`; or `make phone-usb` |
 | app: "access token is missing or wrong" (401) | token not typed or old | copy the `Token` line from `make start` into Settings |
 | photo answers say "read once" / slow | the vision model runs on the CPU and times out (60 s) → OCR fallback | expected on 8 GB GPUs; see `docs/model_setup.md`; Meta has vision |
-| Ollama out of GPU memory | two models loaded | `make down && make up` (only the text model loads), or unset `LLM_VISION_MODEL` |
+| Ollama out of GPU memory | two models loaded | stop and `make start` again (only the text model loads), or unset `LLM_VISION_MODEL` |
 | Meta: "key rejected" (401) | wrong / expired key | `make forget-key`, then `make start` and paste the new key |
 | Meta: `429 daily_limit` | `META_MAX_CALLS_PER_DAY` reached | wait until midnight, `make up PROVIDER=local`, or `LLM_FALLBACK=local` |
 | `make up` / `make llm-pull` hang; doctor: "frozen" | Ollama paused with Ctrl+Z: it holds port 11434 but does not answer | `killall -9 ollama`, then `make start` |
 | `port 8013 is already used` | another program | close it, or set `PORT=8014` in `.env` |
-| anything else | | `make doctor`, then `make logs` (request id in the app's error matches the log line) |
+| anything else | | `make doctor`, then `run/server.log` (request id in the app's error matches the log line) |
 
 ## 14. Demo checklist (video)
 
-1. `make demo` (resets the family, prints the 4 questions) · `make start` (choose Meta or Enter for local) ·
-   `make provider` shows which.
+1. `make start` (choose Meta or Enter for local) · in a second terminal `make demo` (resets the family, prints the 4
+   questions).
 2. Phone: Settings → Save and test connection → "Connected ✔ Provider: …".
 3. Question 1 with the brochure (camera button → Choose a PDF) → Working (live steps) → **Stop** → the council speaks
    → Why (sources, "read twice") → Help me say no.

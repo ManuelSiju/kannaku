@@ -30,7 +30,7 @@ fail() {
 }
 trap 'fail "interrupted"' INT TERM
 
-[[ -x "$PY" ]] || fail "no .venv — run: make setup"
+[[ -x "$PY" ]] || fail "Kanakku is not set up yet — run: make start"
 
 # ---------------------------------------------------------------- provider
 PROVIDER="${PROVIDER:-}"
@@ -111,7 +111,11 @@ if [[ "$PROVIDER" == local ]]; then
   else
     case "$BACKEND" in
       ollama)
-        command -v ollama >/dev/null || fail "ollama not installed (https://ollama.com/download)"
+        if ! command -v ollama >/dev/null; then
+          interactive || fail "Ollama is not installed (https://ollama.com/download)"
+          echo "  Installing Ollama, which runs the AI on this laptop; you may be asked for your password once."
+          curl -fsSL https://ollama.com/install.sh | sh || fail "could not install Ollama. Check the internet and try again"
+        fi
         # Only when WE start Ollama: keep the text model and (if set) the vision model loaded together, never unload.
         # On an 8 GB GPU qwen2.5vl:7b does not fit next to the text model, so Ollama runs it on the CPU (slow);
         # vision calls then fall back to OCR text after LLM_VISION_TIMEOUT_S (see docs/model_setup.md).
@@ -143,7 +147,8 @@ if [[ "$PROVIDER" == local ]]; then
       'import json,sys; ids={m["id"] for m in json.load(sys.stdin).get("data",[])}; m=sys.argv[1]; sys.exit(0 if m in ids or m+":latest" in ids else 1)' \
       "$LLM_MODEL"; then
     if [[ "$BACKEND" == ollama ]]; then
-      echo "  model $LLM_MODEL missing — pulling"
+      size=""; [[ "$LLM_MODEL" == qwen2.5:7b-instruct ]] && size=" (about 4.7 GB)"
+      echo "  The AI model $LLM_MODEL is not on this laptop yet. Downloading it now$size…"
       ollama pull "$LLM_MODEL" || fail "ollama pull $LLM_MODEL failed"
     else
       echo "  ! llama-server serves whatever LLAMA_MODEL_PATH points at; model name '$LLM_MODEL' is only a label"
@@ -213,4 +218,4 @@ echo
 echo "Laptop : http://127.0.0.1:$PORT    (docs: /docs)"
 echo "Phone  : http://$(lan_ip):$PORT    (same Wi-Fi; make firewall-open if blocked)"
 echo "Token  : $TOKEN    (app → Settings → Access token)"
-echo "make down to stop · make provider shows the provider · make logs follows the log"
+echo "make stop to stop · make provider shows the provider · the log is in run/server.log"

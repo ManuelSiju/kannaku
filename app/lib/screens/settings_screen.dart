@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../core/api_client.dart';
+import '../core/connect_link.dart';
 import '../state/settings.dart';
 import '../theme.dart';
 import '../widgets/common.dart';
+import 'scan.dart';
 
 /// Server address + access token (saved securely), Test connection (provider + server version), app version,
 /// language, earphones, guardian view.
@@ -27,6 +29,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
     _url.dispose();
     _token.dispose();
     super.dispose();
+  }
+
+  Future<void> _scan() async {
+    final link = await Navigator.push<ConnectLink>(context, MaterialPageRoute(builder: (_) => const ScanScreen()));
+    if (link == null || !mounted) return;
+    _url.text = link.url;
+    _token.text = link.token;
+    await _test();
   }
 
   Future<void> _test() async {
@@ -54,6 +64,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
       appBar: AppBar(title: const Text('Settings')),
       body: ListView(padding: const EdgeInsets.all(16), children: [
         const SectionTitle('Server'),
+        OutlinedButton.icon(onPressed: _scan, icon: const Icon(Icons.qr_code_scanner), label: const Text('Scan code')),
+        const SizedBox(height: 10),
         TextField(
           controller: _url,
           keyboardType: TextInputType.url,

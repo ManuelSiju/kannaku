@@ -20,14 +20,16 @@ Built for the Meta AI Developer Hackathon (Oct 27 – Nov 4 2026).
 ## Quickstart
 
 ```bash
-make setup      # one time: Python, server parts, settings file
-make doctor     # checks everything; each ✘ comes with the command that fixes it
-make start      # starts Kanakku; asks for a Meta key (Enter = the local AI); shows the phone settings
+make start      # sets itself up the first time, asks for a Meta key (Enter = the local AI), shows a QR code + live log
+                # Ctrl+C stops everything
 make phone      # builds the app and installs it on the USB phone (or prints the .apk to send)
-make stop       # stops Kanakku
+make doctor     # checks everything; each ✘ comes with the command that fixes it
+make demo       # resets the demo family and prints the 4 demo questions
+make test       # server tests
+make stop       # safety net if Ctrl+C was not possible
 ```
 
-Also: `make demo` (reset the demo family, print the 4 demo questions), `make help` (all commands).
+`make help` lists these first, then the developer commands. `make start BG=1` starts in the background.
 
 ## Switching to the Meta Model API
 

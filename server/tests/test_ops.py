@@ -489,3 +489,25 @@ def test_meta_key_never_appears_in_logs_traces_errors_or_health(tmp_path, demo_r
         deps._llm.cache_clear()
         root.setLevel(old_level)
         setup_logging(None)
+
+
+def test_qr_link_matches_what_the_app_parses():
+    from scripts.print_qr import connect_link
+
+    link = connect_link("http://192.168.1.10:8013", "abc-_1")
+    assert link == "kanakku://connect?url=http%3A%2F%2F192.168.1.10%3A8013&token=abc-_1"  # app/test/models_test.dart
+
+
+def test_log_viewer_is_one_readable_line():
+    import importlib.util
+    from pathlib import Path
+
+    path = Path(__file__).resolve().parents[2] / "scripts" / "log_view.py"
+    spec = importlib.util.spec_from_file_location("log_view", path)
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    raw = json.dumps({"ts": "2026-11-04T10:36:12.123+00:00", "level": "INFO", "request_id": "abcdef123456",
+                      "msg": "POST /v1/cases -> 202", "ms": 12.4})  # fmt: skip
+    assert mod.line(raw, False) == "10:36:12 INFO    abcdef12 POST /v1/cases -> 202  (12 ms)"
+    assert "\033[" in mod.line(raw, True)
+    assert mod.line("not json", False) == "not json"

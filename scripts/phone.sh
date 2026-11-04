@@ -5,7 +5,8 @@
 set -uo pipefail
 source "$(dirname "$0")/lib.sh"
 
-command -v flutter >/dev/null || { echo "✘ Flutter is not installed. See docs/OWNER_GUIDE.md, step 2.4."; exit 1; }
+mkdir -p "$RUN_DIR"
+command -v flutter >/dev/null || { echo "✘ Flutter is not installed. See docs/OWNER_GUIDE.md, section 4."; exit 1; }
 if [[ -n "$(git -C "$ROOT" status --porcelain -- app/pubspec.yaml)" ]]; then
   echo "✘ app/pubspec.yaml has unsaved changes; commit or undo them first (git -C app diff pubspec.yaml)."
   exit 1

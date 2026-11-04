@@ -23,9 +23,9 @@ ifeq ($(LLM_MODEL),)
 LLM_MODEL := qwen2.5:7b-instruct
 endif
 
-.PHONY: help setup setup-system env doctor run-server health llm-up llm-down llm-pull llm-list \
+.PHONY: help setup-system env doctor run-server health llm-up llm-down llm-pull llm-list \
         check-models test test-fast smoke lint fmt clean run-mcp seed-demo reset-demo demo-assets run-app demo commit-phase \
-        reliability reliability-framing reliability-vision lan-url firewall-open phone-devices phone-usb phone-usb-off up down status logs app-release app-ios provider forget-key app-test start stop phone app-fixtures app-goldens app-integration meta-check
+        reliability reliability-framing reliability-vision lan-url firewall-open phone-devices phone-usb phone-usb-off up down status app-release app-ios provider forget-key app-test start stop phone app-fixtures app-goldens app-integration meta-check
 
 help: ##! Show this list (owner commands first)
 	@echo "Start here (docs/OWNER_GUIDE.md):"
@@ -40,11 +40,11 @@ help: ##! Show this list (owner commands first)
 doctor: ##! Check everything; each problem comes with the command that fixes it
 	@scripts/doctor.sh
 
-start: ##! Start Kanakku (asks for a Meta key; press Enter for the local AI) and show the phone settings
-	@PROVIDER="$(PROVIDER)" scripts/start.sh
+start: ##! Set up if needed, start Kanakku (Meta key or Enter for the local AI), show the live log; Ctrl+C stops it
+	@PROVIDER="$(PROVIDER)" BG="$(BG)" scripts/start.sh
 
-stop: ##! Stop Kanakku
-	@scripts/down.sh
+stop: ##! Safety net: stop Kanakku if Ctrl+C was not possible
+	@scripts/stop.sh
 
 phone: ##! Build the app and put it on the phone (USB), or show the file to send to the phone
 	@scripts/phone.sh
@@ -52,14 +52,7 @@ phone: ##! Build the app and put it on the phone (USB), or show the file to send
 demo: ##! Reset the demo family and show the 4 demo questions
 	@scripts/demo.sh
 
-# ---------------------------------------------------------------- setup
-setup: env ##! One-time setup: Python, the server parts and the settings file
-	@command -v uv >/dev/null || { echo "uv missing: curl -LsSf https://astral.sh/uv/install.sh | sh"; exit 1; }
-	test -x $(PY) || uv venv --python 3.11 $(VENV)
-	uv pip install --python $(PY) -e "$(SERVER)[dev]"
-	@cd app 2>/dev/null && command -v flutter >/dev/null && flutter pub get >/dev/null && echo "✔ app packages ready" || true
-	@echo "✔ setup done. Next: make doctor"
-
+# ---------------------------------------------------------------- setup (make start runs scripts/setup.sh)
 env: ## Copy .env.example to .env if .env does not exist
 	@test -f .env || { cp .env.example .env; echo "✔ created .env from .env.example"; }
 
@@ -81,9 +74,6 @@ down: ## Stop the server, and the LLM backend only if make up started it
 
 status: ## What is running, ports, health
 	@scripts/status.sh
-
-logs: ## Follow the background server log, JSON lines (Ctrl-C to quit)
-	@test -f run/server.log && tail -n 50 -f run/server.log || echo "no run/server.log yet — make up"
 
 run-server: ## Start the API in the foreground on PORT (reachable from phone on same Wi-Fi), auto-reload
 	@echo "Server for phone: http://$(LAN_IP):$(PORT)   (health: http://$(LAN_IP):$(PORT)/health)"
@@ -110,7 +100,7 @@ llm-list: ## List local Ollama models
 check-models: ## Call each provider once (LLM, vision, STT, OCR) and print PASS/FAIL
 	cd $(SERVER) && $(PY) scripts/check_models.py
 
-test: ## Run all server tests
+test: ##! Run all server tests
 	cd $(SERVER) && $(PY) -m pytest
 
 test-fast: ## Run tests, stop at first failure

@@ -16,17 +16,17 @@ echo "Kanakku check-up"
 echo
 
 # ---------------------------------------------------------------- laptop tools
-if [[ -x "$PY" ]]; then ok "Python" "$("$PY" --version 2>&1) in .venv"; else bad "Python" "the project is not set up yet" "make setup"; fi
+if [[ -x "$PY" ]]; then ok "Python" "$("$PY" --version 2>&1) in .venv"; else bad "Python" "the project is not set up yet" "make start"; fi
 if [[ -x "$PY" ]] && "$PY" -c "import fastapi, openai, faster_whisper" 2>/dev/null; then ok "Server parts" "installed"
-elif [[ -x "$PY" ]]; then bad "Server parts" "some are missing" "make setup"; fi
+elif [[ -x "$PY" ]]; then bad "Server parts" "some are missing" "make start"; fi
 command -v uv >/dev/null && ok "uv" "installed" || bad "uv" "not installed (it installs Python for you)" "curl -LsSf https://astral.sh/uv/install.sh | sh"
-[[ -f "$ROOT/.env" ]] && ok "Settings file (.env)" "present" || bad "Settings file (.env)" "missing" "make setup"
+[[ -f "$ROOT/.env" ]] && ok "Settings file (.env)" "present" || bad "Settings file (.env)" "missing" "make start"
 
 if command -v ollama >/dev/null; then
   ok "Ollama" "installed"
   if http_ok "$LLM_BASE_URL/models"; then
     if curl -fsS --max-time 5 "$LLM_BASE_URL/models" | grep -q "\"$LLM_MODEL\""; then ok "Local model" "$LLM_MODEL is ready"
-    else bad "Local model" "$LLM_MODEL is not downloaded yet (about 4.7 GB)" "make llm-pull"; fi
+    else ok "Local model" "$LLM_MODEL not downloaded yet (make start downloads it, about 4.7 GB)"; fi
   elif url_frozen "$LLM_BASE_URL"; then
     bad "Local AI (Ollama)" "frozen: it holds its port but does not answer (this happens after Ctrl+Z)" "killall -9 ollama"
   else
@@ -38,26 +38,26 @@ fi
 
 if command -v tesseract >/dev/null; then
   langs="$(tesseract --list-langs 2>/dev/null | tail -n +2 | tr '\n' ' ')"
-  [[ " $langs " == *" eng "* ]] && ok "Reading photos (OCR)" "English ready" || bad "Reading photos (OCR)" "English pack missing" "make setup-system"
+  [[ " $langs " == *" eng "* ]] && ok "Reading photos (OCR)" "English ready" || bad "Reading photos (OCR)" "English pack missing" "make start"
   [[ " $langs " == *" mal "* ]] && ok "Malayalam papers" "ready" || opt "Malayalam papers" "not installed (only for photos of Malayalam papers)" "sudo apt install tesseract-ocr-mal"
 else
-  bad "Reading photos (OCR)" "Tesseract is not installed" "make setup-system"
+  bad "Reading photos (OCR)" "Tesseract is not installed" "make start"
 fi
-command -v ffmpeg >/dev/null && ok "Audio tools (ffmpeg)" "installed" || bad "Audio tools (ffmpeg)" "not installed" "make setup-system"
+command -v ffmpeg >/dev/null && ok "Audio tools (ffmpeg)" "installed" || bad "Audio tools (ffmpeg)" "not installed" "make start"
 
 free_gb=$(df -Pk "$ROOT" | awk 'NR==2 {print int($4/1024/1024)}')
 if (( free_gb >= 10 )); then ok "Disk space" "${free_gb} GB free"; else bad "Disk space" "only ${free_gb} GB free (need 10 GB)" "delete some large files, then run make doctor again"; fi
 
 # ---------------------------------------------------------------- phone tools
 if command -v flutter >/dev/null; then ok "Flutter" "installed (builds the phone app)"
-else bad "Flutter" "not installed (needed once, to build the phone app)" "see docs/OWNER_GUIDE.md, step 2.4"; fi
+else bad "Flutter" "not installed (needed once, to build the phone app)" "see docs/OWNER_GUIDE.md, section 4"; fi
 if command -v adb >/dev/null; then
   ok "adb" "installed (puts the app on the phone)"
   phones="$(adb devices 2>/dev/null | awk 'NR>1 && $2=="device" {print $1}' | tr '\n' ' ')"
   unauth="$(adb devices 2>/dev/null | awk 'NR>1 && $2=="unauthorized"' | wc -l)"
   if [[ -n "$phones" ]]; then ok "Phone by USB" "connected: $phones"
   elif (( unauth > 0 )); then opt "Phone by USB" "connected but not allowed yet" "unlock the phone and tap Allow on the 'USB debugging' question"
-  else opt "Phone by USB" "none connected (only needed for make phone)" "plug in the phone with USB debugging on (docs/OWNER_GUIDE.md, step 4)"; fi
+  else opt "Phone by USB" "none connected (only needed for make phone)" "plug in the phone with USB debugging on (docs/OWNER_GUIDE.md, section 4)"; fi
 else
   bad "adb" "not installed (puts the app on the phone)" "sudo apt install adb"
 fi

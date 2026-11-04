@@ -95,3 +95,18 @@ url_frozen() {
   [[ "$port" =~ ^[0-9]+$ ]] || return 1
   ss -ltn "sport = :$port" 2>/dev/null | grep -q LISTEN && ! http_ok "$1/models"
 }
+
+# phones_for_reverse -> serials to tunnel (DEVICE limits it to one).
+phones_for_reverse() {
+  command -v adb >/dev/null || return 0
+  if [[ -n "${DEVICE:-}" ]]; then echo "$DEVICE"; else adb devices 2>/dev/null | awk 'NR>1 && $2=="device" {print $1}'; fi
+}
+
+# remove_reverse -> undo the adb reverse tunnels recorded in run/adb_reverse.
+remove_reverse() {
+  [[ -f "$RUN_DIR/adb_reverse" ]] || return 0
+  local port serial
+  port="$(envget PORT 8013)"
+  while read -r serial; do adb -s "$serial" reverse --remove "tcp:$port" >/dev/null 2>&1; done <"$RUN_DIR/adb_reverse"
+  rm -f "$RUN_DIR/adb_reverse"
+}

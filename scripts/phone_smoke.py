@@ -147,10 +147,11 @@ def main() -> int:
     if "The council" in p.label(answer) or p.find(r"Skip to Alfii"):
         p.back()
     verdict = p.wait(r"^(Stop|Careful|Looks fine)$|Retry", 30)
-    step(f"answer on the phone: {p.label(verdict)}")
+    word = re.search(r"Stop|Careful|Looks fine|Retry", p.label(verdict)).group(0)  # type: ignore[union-attr]
+    step(f"answer on the phone: {word}")
     if shots:
         p.screenshot(shots / "answer.png")
-    return 0 if p.label(verdict) == a.expect else 1
+    return 0 if word == a.expect else 1
 
 
 if __name__ == "__main__":

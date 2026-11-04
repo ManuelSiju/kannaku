@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
 import 'package:kanakku/core/api_client.dart';
+import 'package:kanakku/core/connect_link.dart';
 import 'package:kanakku/core/models.dart';
 
 void main() {
@@ -41,6 +42,15 @@ void main() {
     final r = CaseResult.from({'provider': 'local fallback', 'local_fallback': true, 'verdict': {'colour': 'red'}});
     expect(r.localFallback, isTrue);
     expect(r.colour, 'red');
+  });
+
+  test('the code printed by make start is understood', () {
+    final l = ConnectLink.parse('kanakku://connect?url=http%3A%2F%2F192.168.1.10%3A8013&token=abc-_1');
+    expect(l?.url, 'http://192.168.1.10:8013');
+    expect(l?.token, 'abc-_1');
+    for (final bad in [null, '', 'https://example.com', 'kanakku://connect?url=x&token=y', 'kanakku://connect?url=http%3A%2F%2Fa']) {
+      expect(ConnectLink.parse(bad), isNull);
+    }
   });
 
   test('Indian grouping', () {
