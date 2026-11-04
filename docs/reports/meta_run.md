@@ -2,13 +2,14 @@
 
 The model id below is the one each Meta reply returned, not the configured value. Reasoning effort: minimal. Limit: 20 s per call (60 s with images).
 
-| case | started (UTC) | model id returned | verdict | model calls | total | degraded steps |
-|---|---|---|---|---|---|---|
-| endowment PDF | 2026-11-04T14:26:53Z | muse-spark-1.3 x3 | red | 3 | 42.2 s | no |
-| endowment brochure PNG (vision) | 2026-11-04T14:27:36Z | muse-spark-1.3 x4 | red | 4 | 50.3 s | no |
-| flat loan | 2026-11-04T14:28:26Z | muse-spark-1.3 x3 | red | 3 | 33.0 s | no |
-| ZEPHYRX tip | 2026-11-04T14:28:59Z | muse-spark-1.3 x3 | red | 3 | 27.9 s | no |
-| OTP scam | 2026-11-04T14:29:27Z | none (no model call) | red | 0 | 0.0 s | no |
+| case | trace (case id) | started (UTC) | model id returned | verdict | model calls | total | degraded steps |
+|---|---|---|---|---|---|---|---|
+| endowment PDF | 1 | 2026-11-04T15:05:44Z | muse-spark-1.3 x3 | red | 3 | 34.6 s | no |
+| endowment brochure PNG (vision) | 2 | 2026-11-04T15:06:18Z | muse-spark-1.3 x4 | red | 4 | 38.2 s | no |
+| flat loan | 3 | 2026-11-04T15:06:56Z | muse-spark-1.3 x3 | yellow | 3 | 31.1 s | no |
+| ZEPHYRX tip | 4 | 2026-11-04T15:07:28Z | muse-spark-1.3 x4 | red | 4 | 40.7 s | no |
+| OTP scam | 5 | 2026-11-04T15:08:08Z | none (no model call) | red | 0 | 0.0 s | no |
+| out of scope | 6 | 2026-11-04T15:08:08Z | muse-spark-1.3 x1 | None | 1 | 2.2 s | no |
 
 ### endowment PDF
 
@@ -24,7 +25,7 @@ The model id below is the one each Meta reply returned, not the configured value
 
 ### flat loan
 
-- Answer: Please don't go ahead with this as it is.
+- Answer: Please do not sign yet, ask them to show the real rate in writing first.
 - Terms: loan_amount=100000.0 (kept); flat_rate=0.12 (kept); tenure_months=24.0 (kept)
 - Term sources shown: What you said · checked
 
@@ -37,5 +38,11 @@ The model id below is the one each Meta reply returned, not the configured value
 ### OTP scam
 
 - Answer: No real bank ever asks for your OTP or PIN.
+- Terms: none
+- Term sources shown: none
+
+### out of scope
+
+- Answer: I can only help with money questions. You could ask me one of these.
 - Terms: none
 - Term sources shown: none

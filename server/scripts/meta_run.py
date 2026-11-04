@@ -5,6 +5,7 @@ Writes docs/reports/meta_run.md. Needs META_API_KEY (environment or .env.local);
 from __future__ import annotations
 
 import asyncio
+import json
 import sys
 import tempfile
 import time
@@ -35,6 +36,7 @@ CASES = [
         [],
     ),
     ("OTP scam", "A man from the bank called. My KYC has expired and he asks me to tell him the OTP.", []),
+    ("out of scope", "How do I make sambar?", []),
 ]
 
 
@@ -57,6 +59,8 @@ def main() -> int:
     repo = Repo(settings.db_path)
     seed(repo)
     rows, details = [], []
+    facts: dict[str, list] = {}
+    spoken: dict[str, list[str]] = {}
     for name, question, files in CASES:
         uploads = [
             Upload(
@@ -80,7 +84,8 @@ def main() -> int:
         models = ", ".join(f"{m} x{n}" for m, n in inner.stats.models.items()) or "none (no model call)"
         degraded = ", ".join(res.degraded_steps) or "no"
         rows.append(
-            f"| {name} | {started} | {models} | {res.verdict.colour} | {res.llm_calls} | {secs:.1f} s | {degraded} |"
+            f"| {name} | {case_id} | {started} | {models} | {res.verdict.colour} | {res.llm_calls} | {secs:.1f} s | "
+            f"{degraded} |"
         )
         terms = [
             f"{t['name']}={t['value']} ({'kept' if t['verified'] else t['reason']})" for t in repo.get_terms(case_id)
@@ -88,6 +93,10 @@ def main() -> int:
         sources = sorted({d.source for d in res.screen_details if d.id.startswith("term.")})
         details.append(f"### {name}\n\n- Answer: {res.short_answer.text if res.short_answer else ''}")
         details.append(f"- Terms: {'; '.join(terms) or 'none'}\n- Term sources shown: {'; '.join(sources) or 'none'}\n")
+        facts[name] = [
+            {"id": f.id, "value": f.value, "unit": f.unit, "display": f.display} for f in repo.get_facts(case_id)
+        ]
+        spoken[name] = [line.text for line in res.spoken_lines]
         print(rows[-1], flush=True)
     out = REPO_ROOT / "docs" / "reports" / "meta_run.md"
     out.parent.mkdir(parents=True, exist_ok=True)
@@ -95,10 +104,13 @@ def main() -> int:
         "# Meta run\n\nThe model id below is the one each Meta reply returned, not the configured value. "
         f"Reasoning effort: {settings.meta_reasoning_effort}. Limit: {settings.llm_timeout_s:g} s per call "
         f"({settings.llm_vision_timeout_s:g} s with images).\n\n"
-        "| case | started (UTC) | model id returned | verdict | model calls | total | degraded steps |\n"
-        "|---|---|---|---|---|---|---|\n"
+        "| case | trace (case id) | started (UTC) | model id returned | verdict | model calls | total | degraded |\n"
+        "|---|---|---|---|---|---|---|---|\n"
     )
     out.write_text(head + "\n".join(rows) + "\n\n" + "\n".join(details))
+    (out.parent / "meta_run_facts.json").write_text(
+        json.dumps({"facts": facts, "spoken": spoken}, indent=1, ensure_ascii=False)
+    )
     print(f"wrote {out}")
     return 0
 

@@ -1,0 +1,647 @@
+{
+ "facts": {
+  "endowment PDF": [
+   {
+    "id": "term.premium",
+    "value": 50000.0,
+    "unit": "INR",
+    "display": "₹50,000"
+   },
+   {
+    "id": "term.pay_years",
+    "value": 15.0,
+    "unit": "years",
+    "display": "15 years"
+   },
+   {
+    "id": "term.policy_years",
+    "value": 15.0,
+    "unit": "years",
+    "display": "15 years"
+   },
+   {
+    "id": "term.sum_assured",
+    "value": 750000.0,
+    "unit": "INR",
+    "display": "₹7.5 lakh"
+   },
+   {
+    "id": "term.maturity_low",
+    "value": 1020000.0,
+    "unit": "INR",
+    "display": "₹10.2 lakh"
+   },
+   {
+    "id": "term.maturity_high",
+    "value": 1500000.0,
+    "unit": "INR",
+    "display": "₹15 lakh"
+   },
+   {
+    "id": "term.bonus_rate_low",
+    "value": 0.04,
+    "unit": "fraction",
+    "display": "4%"
+   },
+   {
+    "id": "term.bonus_rate_high",
+    "value": 0.08,
+    "unit": "fraction",
+    "display": "8%"
+   },
+   {
+    "id": "profile.monthly_income",
+    "value": 45000.0,
+    "unit": "INR",
+    "display": "₹45,000"
+   },
+   {
+    "id": "profile.monthly_expenses",
+    "value": 28000.0,
+    "unit": "INR",
+    "display": "₹28,000"
+   },
+   {
+    "id": "profile.savings",
+    "value": 160000.0,
+    "unit": "INR",
+    "display": "₹1.6 lakh"
+   },
+   {
+    "id": "existing_emi",
+    "value": 2400.0,
+    "unit": "INR",
+    "display": "₹2,400"
+   },
+   {
+    "id": "regular_commitments",
+    "value": 1000.0,
+    "unit": "INR",
+    "display": "₹1,000"
+   },
+   {
+    "id": "ref.fd_rate",
+    "value": 0.07,
+    "unit": "fraction",
+    "display": "7%"
+   },
+   {
+    "id": "ref.inflation",
+    "value": 0.05,
+    "unit": "fraction",
+    "display": "5%"
+   },
+   {
+    "id": "ref.index_long_run_return",
+    "value": 0.11,
+    "unit": "fraction",
+    "display": "11%"
+   },
+   {
+    "id": "ref.typical_personal_loan_rate",
+    "value": 0.14,
+    "unit": "fraction",
+    "display": "14%"
+   },
+   {
+    "id": "endowment_return",
+    "value": 0.037543,
+    "unit": "fraction",
+    "display": "3.8%"
+   },
+   {
+    "id": "f_return_high",
+    "value": 0.082613,
+    "unit": "fraction",
+    "display": "8.3%"
+   },
+   {
+    "id": "f_return_guaranteed",
+    "value": 0.0,
+    "unit": "fraction",
+    "display": "0%"
+   },
+   {
+    "id": "fd_value",
+    "value": 1344402.68,
+    "unit": "INR",
+    "display": "₹13.44 lakh"
+   },
+   {
+    "id": "cmp_return_low_vs_fd",
+    "value": -3.25,
+    "unit": "percentage points",
+    "display": "lower"
+   },
+   {
+    "id": "cmp_return_low_vs_inflation",
+    "value": -1.25,
+    "unit": "percentage points",
+    "display": "lower"
+   },
+   {
+    "id": "cmp_return_high_vs_fd",
+    "value": 1.26,
+    "unit": "percentage points",
+    "display": "higher"
+   },
+   {
+    "id": "cmp_return_high_vs_inflation",
+    "value": 3.26,
+    "unit": "percentage points",
+    "display": "higher"
+   },
+   {
+    "id": "cmp_guaranteed_vs_fd",
+    "value": -7.0,
+    "unit": "percentage points",
+    "display": "lower"
+   },
+   {
+    "id": "cmp_guaranteed_vs_inflation",
+    "value": -5.0,
+    "unit": "percentage points",
+    "display": "lower"
+   },
+   {
+    "id": "emi_share",
+    "value": 0.0533,
+    "unit": "fraction",
+    "display": "5.3%"
+   },
+   {
+    "id": "buffer_months_after",
+    "value": 4.5,
+    "unit": "months",
+    "display": "4.5 months"
+   },
+   {
+    "id": "surplus_after",
+    "value": 9433.33,
+    "unit": "INR",
+    "display": "₹9,433"
+   },
+   {
+    "id": "premium_share_of_income",
+    "value": 0.0926,
+    "unit": "fraction",
+    "display": "9.3%"
+   },
+   {
+    "id": "premium_share_of_savings",
+    "value": 0.3125,
+    "unit": "fraction",
+    "display": "31.2%"
+   }
+  ],
+  "endowment brochure PNG (vision)": [
+   {
+    "id": "term.premium",
+    "value": 50000.0,
+    "unit": "INR",
+    "display": "₹50,000"
+   },
+   {
+    "id": "term.pay_years",
+    "value": 15.0,
+    "unit": "years",
+    "display": "15 years"
+   },
+   {
+    "id": "term.policy_years",
+    "value": 15.0,
+    "unit": "years",
+    "display": "15 years"
+   },
+   {
+    "id": "term.sum_assured",
+    "value": 750000.0,
+    "unit": "INR",
+    "display": "₹7.5 lakh"
+   },
+   {
+    "id": "term.maturity_low",
+    "value": 1020000.0,
+    "unit": "INR",
+    "display": "₹10.2 lakh"
+   },
+   {
+    "id": "term.maturity_high",
+    "value": 1500000.0,
+    "unit": "INR",
+    "display": "₹15 lakh"
+   },
+   {
+    "id": "term.bonus_rate_low",
+    "value": 0.04,
+    "unit": "fraction",
+    "display": "4%"
+   },
+   {
+    "id": "term.bonus_rate_high",
+    "value": 0.08,
+    "unit": "fraction",
+    "display": "8%"
+   },
+   {
+    "id": "profile.monthly_income",
+    "value": 45000.0,
+    "unit": "INR",
+    "display": "₹45,000"
+   },
+   {
+    "id": "profile.monthly_expenses",
+    "value": 28000.0,
+    "unit": "INR",
+    "display": "₹28,000"
+   },
+   {
+    "id": "profile.savings",
+    "value": 160000.0,
+    "unit": "INR",
+    "display": "₹1.6 lakh"
+   },
+   {
+    "id": "existing_emi",
+    "value": 2400.0,
+    "unit": "INR",
+    "display": "₹2,400"
+   },
+   {
+    "id": "regular_commitments",
+    "value": 1000.0,
+    "unit": "INR",
+    "display": "₹1,000"
+   },
+   {
+    "id": "ref.fd_rate",
+    "value": 0.07,
+    "unit": "fraction",
+    "display": "7%"
+   },
+   {
+    "id": "ref.inflation",
+    "value": 0.05,
+    "unit": "fraction",
+    "display": "5%"
+   },
+   {
+    "id": "ref.index_long_run_return",
+    "value": 0.11,
+    "unit": "fraction",
+    "display": "11%"
+   },
+   {
+    "id": "ref.typical_personal_loan_rate",
+    "value": 0.14,
+    "unit": "fraction",
+    "display": "14%"
+   },
+   {
+    "id": "endowment_return",
+    "value": 0.037543,
+    "unit": "fraction",
+    "display": "3.8%"
+   },
+   {
+    "id": "f_return_high",
+    "value": 0.082613,
+    "unit": "fraction",
+    "display": "8.3%"
+   },
+   {
+    "id": "f_return_guaranteed",
+    "value": 0.0,
+    "unit": "fraction",
+    "display": "0%"
+   },
+   {
+    "id": "fd_value",
+    "value": 1344402.68,
+    "unit": "INR",
+    "display": "₹13.44 lakh"
+   },
+   {
+    "id": "cmp_return_low_vs_fd",
+    "value": -3.25,
+    "unit": "percentage points",
+    "display": "lower"
+   },
+   {
+    "id": "cmp_return_low_vs_inflation",
+    "value": -1.25,
+    "unit": "percentage points",
+    "display": "lower"
+   },
+   {
+    "id": "cmp_return_high_vs_fd",
+    "value": 1.26,
+    "unit": "percentage points",
+    "display": "higher"
+   },
+   {
+    "id": "cmp_return_high_vs_inflation",
+    "value": 3.26,
+    "unit": "percentage points",
+    "display": "higher"
+   },
+   {
+    "id": "cmp_guaranteed_vs_fd",
+    "value": -7.0,
+    "unit": "percentage points",
+    "display": "lower"
+   },
+   {
+    "id": "cmp_guaranteed_vs_inflation",
+    "value": -5.0,
+    "unit": "percentage points",
+    "display": "lower"
+   },
+   {
+    "id": "emi_share",
+    "value": 0.0533,
+    "unit": "fraction",
+    "display": "5.3%"
+   },
+   {
+    "id": "buffer_months_after",
+    "value": 4.5,
+    "unit": "months",
+    "display": "4.5 months"
+   },
+   {
+    "id": "surplus_after",
+    "value": 9433.33,
+    "unit": "INR",
+    "display": "₹9,433"
+   },
+   {
+    "id": "premium_share_of_income",
+    "value": 0.0926,
+    "unit": "fraction",
+    "display": "9.3%"
+   },
+   {
+    "id": "premium_share_of_savings",
+    "value": 0.3125,
+    "unit": "fraction",
+    "display": "31.2%"
+   }
+  ],
+  "flat loan": [
+   {
+    "id": "term.loan_amount",
+    "value": 100000.0,
+    "unit": "INR",
+    "display": "₹1 lakh"
+   },
+   {
+    "id": "term.flat_rate",
+    "value": 0.12,
+    "unit": "fraction",
+    "display": "12%"
+   },
+   {
+    "id": "term.tenure_months",
+    "value": 24.0,
+    "unit": "months",
+    "display": "24 months"
+   },
+   {
+    "id": "profile.monthly_income",
+    "value": 45000.0,
+    "unit": "INR",
+    "display": "₹45,000"
+   },
+   {
+    "id": "profile.monthly_expenses",
+    "value": 28000.0,
+    "unit": "INR",
+    "display": "₹28,000"
+   },
+   {
+    "id": "profile.savings",
+    "value": 160000.0,
+    "unit": "INR",
+    "display": "₹1.6 lakh"
+   },
+   {
+    "id": "existing_emi",
+    "value": 2400.0,
+    "unit": "INR",
+    "display": "₹2,400"
+   },
+   {
+    "id": "regular_commitments",
+    "value": 1000.0,
+    "unit": "INR",
+    "display": "₹1,000"
+   },
+   {
+    "id": "ref.fd_rate",
+    "value": 0.07,
+    "unit": "fraction",
+    "display": "7%"
+   },
+   {
+    "id": "ref.inflation",
+    "value": 0.05,
+    "unit": "fraction",
+    "display": "5%"
+   },
+   {
+    "id": "ref.index_long_run_return",
+    "value": 0.11,
+    "unit": "fraction",
+    "display": "11%"
+   },
+   {
+    "id": "ref.typical_personal_loan_rate",
+    "value": 0.14,
+    "unit": "fraction",
+    "display": "14%"
+   },
+   {
+    "id": "loan_emi",
+    "value": 5166.67,
+    "unit": "INR",
+    "display": "₹5,167"
+   },
+   {
+    "id": "loan_total_interest",
+    "value": 24000.0,
+    "unit": "INR",
+    "display": "₹24,000"
+   },
+   {
+    "id": "loan_effective_rate",
+    "value": 0.215712,
+    "unit": "fraction",
+    "display": "21.6%"
+   },
+   {
+    "id": "emi_share",
+    "value": 0.1681,
+    "unit": "fraction",
+    "display": "16.8%"
+   },
+   {
+    "id": "buffer_months_after",
+    "value": 4.38,
+    "unit": "months",
+    "display": "4.4 months"
+   },
+   {
+    "id": "surplus_after",
+    "value": 8433.33,
+    "unit": "INR",
+    "display": "₹8,433"
+   },
+   {
+    "id": "cmp_effective_vs_quoted",
+    "value": 9.57,
+    "unit": "percentage points",
+    "display": "higher"
+   },
+   {
+    "id": "cmp_effective_vs_typical",
+    "value": 7.57,
+    "unit": "percentage points",
+    "display": "higher"
+   }
+  ],
+  "ZEPHYRX tip": [
+   {
+    "id": "term.invest_amount",
+    "value": 100000.0,
+    "unit": "INR",
+    "display": "₹1 lakh"
+   },
+   {
+    "id": "profile.monthly_income",
+    "value": 45000.0,
+    "unit": "INR",
+    "display": "₹45,000"
+   },
+   {
+    "id": "profile.monthly_expenses",
+    "value": 28000.0,
+    "unit": "INR",
+    "display": "₹28,000"
+   },
+   {
+    "id": "profile.savings",
+    "value": 160000.0,
+    "unit": "INR",
+    "display": "₹1.6 lakh"
+   },
+   {
+    "id": "existing_emi",
+    "value": 2400.0,
+    "unit": "INR",
+    "display": "₹2,400"
+   },
+   {
+    "id": "regular_commitments",
+    "value": 1000.0,
+    "unit": "INR",
+    "display": "₹1,000"
+   },
+   {
+    "id": "ref.fd_rate",
+    "value": 0.07,
+    "unit": "fraction",
+    "display": "7%"
+   },
+   {
+    "id": "ref.inflation",
+    "value": 0.05,
+    "unit": "fraction",
+    "display": "5%"
+   },
+   {
+    "id": "ref.index_long_run_return",
+    "value": 0.11,
+    "unit": "fraction",
+    "display": "11%"
+   },
+   {
+    "id": "ref.typical_personal_loan_rate",
+    "value": 0.14,
+    "unit": "fraction",
+    "display": "14%"
+   },
+   {
+    "id": "run_up_30d",
+    "value": 2.2179,
+    "unit": "fraction",
+    "display": "222%"
+   },
+   {
+    "id": "upper_circuit_hits_30d",
+    "value": 22.0,
+    "unit": "count",
+    "display": "22"
+   },
+   {
+    "id": "volume_spike",
+    "value": 3.97,
+    "unit": "times",
+    "display": "4 times"
+   },
+   {
+    "id": "max_drawdown_90d",
+    "value": 0.0283,
+    "unit": "fraction",
+    "display": "2.8%"
+   },
+   {
+    "id": "pump_risk",
+    "value": 2.0,
+    "unit": "level",
+    "display": "high"
+   },
+   {
+    "id": "invest_share_of_savings",
+    "value": 0.625,
+    "unit": "fraction",
+    "display": "62.5%"
+   }
+  ],
+  "OTP scam": [],
+  "out of scope": []
+ },
+ "spoken": {
+  "endowment PDF": [
+   "Let me ask Dani and Sankz.",
+   "Only 7.5 lakh rupees is written as guaranteed for you, so the rest may not come.",
+   "You were told guaranteed to give 15 lakh rupees; the paper says bonuses may change every year.",
+   "Please do not sign this plan as it is."
+  ],
+  "endowment brochure PNG (vision)": [
+   "Let me ask Dani and Sankz.",
+   "Bonuses may change, so only 7.5 lakh rupees is promised to you in writing.",
+   "On what is guaranteed, you get back lower than a fixed deposit because the papers promise so little.",
+   "Please do not sign this plan as it is."
+  ],
+  "flat loan": [
+   "Let me ask Sankz.",
+   "This loan really costs you 21.6 percent a year because you pay on the full amount. It grows higher than a normal bank loan.",
+   "Please do not sign yet, ask them to show the real rate in writing first."
+  ],
+  "ZEPHYRX tip": [
+   "Let me ask Vick and Sankz.",
+   "You could lose very fast because this share grew 222 percent in the last month. Such a push shows a high pump-and-dump risk for you.",
+   "You put 1 lakh rupees at risk for a tip with no proof. A fixed deposit at 7 percent keeps you safe while you get back steady growth.",
+   "Please do not put money in this tip. Talk to Arun before you decide."
+  ],
+  "OTP scam": [
+   "You did the right thing by asking me.",
+   "No real bank ever asks for your OTP or PIN.",
+   "Please don't share any code or pay anyone. Hang up and call your bank yourself."
+  ],
+  "out of scope": [
+   "I can only help with money questions. You could ask me one of these."
+  ]
+ }
+}
