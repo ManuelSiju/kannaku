@@ -71,7 +71,12 @@ class _UnderHoodScreenState extends State<UnderHoodScreen> {
             builder: (_, s) => Card(
               child: ListTile(
                 leading: const Icon(LucideIcons.cpu),
-                title: Text(s.hasData ? 'Provider: ${s.data!.provider} · ${s.data!.model}' : 'Provider: …'),
+                title: Text(
+                  s.hasData
+                      ? '${s.data!.provider == 'meta' ? 'Meta' : s.data!.provider} · ${s.data!.model}'
+                      : 'Provider: …',
+                  style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
+                ),
                 subtitle: Text(
                   s.hasError
                       ? (s.error is ApiException ? (s.error as ApiException).friendly : 'unreachable')
@@ -139,54 +144,91 @@ class _Details extends StatelessWidget {
     final args = objs(b['arguments']);
     final blocked = objs(b['spoken_lines']).where((l) => l['allowed'] == 0 || l['allowed'] == false).toList();
     final positions = objs(b['positions']);
-    final mono = const TextStyle(fontFamily: 'monospace', fontSize: 14);
+    final dropped = args.where((a) => a['kept'] == 0 || a['kept'] == false).toList();
+    final kept = args.length - dropped.length;
+    final tools = strs(_step('compute')['facts']);
+    const body = TextStyle(fontSize: 16, height: 1.35);
+    const red = TextStyle(fontSize: 16, height: 1.35, color: Color(0xFFB3261E), fontWeight: FontWeight.w600);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const SectionTitle('Router'),
-        Text('Called: ${strs(router['agents']).join(', ')}   flags: ${strs(router['flags']).join(', ')}', style: mono),
-        const SectionTitle('Votes'),
-        for (final p in positions)
-          Text('round ${p['round']}  ${str(p['agent']).padRight(6)} ${p['stance']} ${p['strength']}', style: mono),
-        Text(
-          'score ${consensus['score']}  disagreement ${consensus['disagreement']}  → ${consensus['verdict']}',
-          style: mono,
-        ),
-        for (final o in objs(consensus['overrides']))
-          Text('override ${o['rule']}: ${o['detail'] ?? ''}', style: mono.copyWith(color: const Color(0xFFB3261E))),
-        const SectionTitle('Privacy'),
-        Text('mode ${privacy['mode']}   earphones ${privacy['earphones']}', style: mono),
-        for (final l in blocked)
-          Text('blocked ${l['speaker']}: ${l['blocked_reason']}', style: mono.copyWith(color: const Color(0xFFB3261E))),
-        const SectionTitle('Arguments'),
-        for (final a in args)
-          Padding(
-            padding: const EdgeInsets.only(bottom: 6),
-            child: Text(
-              '${a['kept'] == 1 || a['kept'] == true ? '✔' : '✘'} ${a['agent']}: ${a['text']}'
-              '${a['drop_reason'] != null ? '\n   dropped: ${a['drop_reason']}' : ''}',
-              style: mono,
+        _StepCard('Router', [
+          Text('Called: ${strs(router['agents']).join(', ')}', style: body),
+          if (strs(router['flags']).isNotEmpty) Text('Flags: ${strs(router['flags']).join(', ')}', style: body),
+        ]),
+        _StepCard('Tools', [
+          Text('Code computed ${tools.length} facts. The model only cites them.', style: body),
+          for (final f in facts.take(40))
+            Padding(
+              padding: const EdgeInsets.only(top: 4),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Pill(str(f['kind']), color: str(f['kind']) == 'personal' ? K.vick : K.sankz),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text('${f['id']} = ${f['value'] ?? f['value_text'] ?? '?'} ${f['unit'] ?? ''}', style: body),
+                  ),
+                ],
+              ),
             ),
-          ),
-        const SectionTitle('Facts (from code)'),
-        for (final f in facts)
-          Padding(
-            padding: const EdgeInsets.only(bottom: 4),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Pill(str(f['kind']), color: str(f['kind']) == 'personal' ? K.vick : K.sankz),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: Text('${f['id']} = ${f['value'] ?? f['value_text'] ?? '?'} ${f['unit'] ?? ''}', style: mono),
-                ),
-              ],
+        ]),
+        _StepCard('Dropped arguments', [
+          Text('$kept kept, ${dropped.length} dropped.', style: body),
+          if (dropped.isEmpty) const Text('Nothing was dropped in this answer.', style: body),
+          for (final a in dropped) ...[
+            const SizedBox(height: 6),
+            Text('${K.agentName(str(a['agent']))} said: “${a['text']}”', style: body),
+            Text('Dropped because: ${a['drop_reason']}', style: red),
+          ],
+        ]),
+        _StepCard('Vote', [
+          for (final p in positions)
+            Text(
+              '${K.agentName(str(p['agent']))}: ${p['stance']}, strength ${p['strength']} (round ${p['round']})',
+              style: body,
             ),
+          Text(
+            'Score ${consensus['score']}, disagreement ${consensus['disagreement']}: ${consensus['verdict']}',
+            style: body.copyWith(fontWeight: FontWeight.w700),
           ),
-        const SectionTitle('Steps'),
-        for (final t in objs(b['trace']))
-          Text('${str(t['step']).padRight(14)} ${t['ms']} ms  ${t['outcome']}', style: mono),
+          for (final o in objs(consensus['overrides']))
+            Text('Safety rule ${o['rule']}: ${o['detail'] ?? ''}', style: red),
+        ]),
+        _StepCard('Privacy', [
+          Text('Mode: ${privacy['mode']}. Earphones: ${privacy['earphones']}.', style: body),
+          if (blocked.isEmpty) const Text('No line was blocked.', style: body),
+          for (final l in blocked)
+            Text('Blocked ${K.agentName(str(l['speaker']))}: ${l['blocked_reason']}', style: red),
+        ]),
+        _StepCard('Timings', [
+          for (final t in objs(b['trace']))
+            if ((number(t['ms']) ?? 0) >= 1)
+              Text('${str(t['step'])}: ${((number(t['ms']) ?? 0) / 1000).toStringAsFixed(1)} s', style: body),
+        ]),
       ],
     );
   }
+}
+
+/// One step of the pipeline, readable at arm's length.
+class _StepCard extends StatelessWidget {
+  final String title;
+  final List<Widget> children;
+  const _StepCard(this.title, this.children);
+  @override
+  Widget build(BuildContext context) => Padding(
+    padding: const EdgeInsets.only(top: 12),
+    child: KCard(
+      padding: const EdgeInsets.all(14),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(title, style: const TextStyle(fontSize: 19, fontWeight: FontWeight.w800)),
+          const SizedBox(height: 6),
+          ...children,
+        ],
+      ),
+    ),
+  );
 }

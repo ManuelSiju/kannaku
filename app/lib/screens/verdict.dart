@@ -26,6 +26,7 @@ class VerdictScreen extends StatefulWidget {
 
 class _VerdictScreenState extends State<VerdictScreen> {
   final _speaker = Speaker();
+  String? _speaking; // the "Ask him this" question being read out
   final _followUp = TextEditingController();
 
   /// A follow-up continues this case: the brochure and earlier answers still count.
@@ -95,6 +96,24 @@ class _VerdictScreenState extends State<VerdictScreen> {
         ),
       ),
     );
+  }
+
+  /// The verdict arrives with a short fade and scale; none when the phone asks for reduced motion.
+  Widget _arrive(Widget child) => TweenAnimationBuilder<double>(
+    tween: Tween(begin: MediaQuery.of(context).disableAnimations ? 1 : 0, end: 1),
+    duration: const Duration(milliseconds: 300),
+    curve: Curves.easeOut,
+    builder: (_, t, c) => Opacity(
+      opacity: t,
+      child: Transform.scale(scale: 0.96 + 0.04 * t, child: c),
+    ),
+    child: child,
+  );
+
+  Future<void> _sayQuestion(String q, String lang) async {
+    setState(() => _speaking = q);
+    await _speaker.say(q, lang: lang);
+    if (mounted) setState(() => _speaking = null);
   }
 
   Widget _header(CaseResult r, VerdictStyle v, String lang) => KCard(
@@ -225,7 +244,7 @@ class _VerdictScreenState extends State<VerdictScreen> {
       body: ListView(
         padding: const EdgeInsets.all(14),
         children: [
-          _header(r, v, lang),
+          _arrive(_header(r, v, lang)),
           if (r.questions.isNotEmpty) ...[
             SectionTitle(stock ? 'Ask this' : 'Ask him this'),
             for (final q in r.questions)
@@ -233,6 +252,8 @@ class _VerdictScreenState extends State<VerdictScreen> {
                 padding: const EdgeInsets.only(bottom: 8),
                 child: KCard(
                   padding: const EdgeInsets.all(12),
+                  color: _speaking == q ? K.alfii.withValues(alpha: 0.12) : null,
+                  border: _speaking == q ? K.alfii : null,
                   child: Row(
                     children: [
                       Expanded(
@@ -241,7 +262,7 @@ class _VerdictScreenState extends State<VerdictScreen> {
                       IconButton(
                         tooltip: 'Say it',
                         icon: const Icon(LucideIcons.volume2, color: K.alfii),
-                        onPressed: () => _speaker.say(q, lang: lang),
+                        onPressed: () => _sayQuestion(q, lang),
                       ),
                       IconButton(
                         tooltip: 'Copy',

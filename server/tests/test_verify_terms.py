@@ -69,3 +69,26 @@ def test_a_flat_rate_stays_flat():
 def test_a_rate_that_is_neither_is_not_assumed_flat():
     got = rate_term("9.5%", "A loan of 80,000 at 9.5% a year for 24 months.")
     assert not got.verified and got.reason == "not written as a flat rate"
+
+
+# ---------------------------------------------------------------- a photo: the model and Tesseract must agree
+def photo_term(value: str, ocr: str, *, vision: bool = True):
+    term = ExtractedTerm(
+        name="premium", value_text=value, evidence_quote=f"Annual premium: Rs. {value}", source="page_1"
+    )
+    page = EvidenceText(quote_id="q1", source="page_1", text=f"Annual premium: Rs. {value}", ocr_text=ocr)
+    return verify_term(term, [page], vision_read=vision)
+
+
+def test_a_photo_term_is_read_twice_only_when_both_agree():
+    got = photo_term("50,000", "Annual premium: Rs. 50,000")
+    assert got.verified and got.reading == "twice"
+
+
+def test_a_photo_term_is_refused_when_tesseract_disagrees():
+    got = photo_term("80,000", "Annual premium: Rs. 50,000")
+    assert not got.verified and got.reason == "photo reading did not confirm the number"
+
+
+def test_without_vision_a_photo_is_only_read_once():
+    assert photo_term("50,000", "Annual premium: Rs. 50,000", vision=False).reading == "once"

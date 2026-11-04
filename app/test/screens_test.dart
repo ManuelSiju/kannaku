@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:kanakku/core/models.dart';
+import 'package:kanakku/core/speech.dart';
 import 'package:kanakku/screens/council.dart';
 import 'package:kanakku/screens/guardian.dart';
 import 'package:kanakku/screens/home.dart';
@@ -44,6 +45,27 @@ CaseProvider casesWith(FakeSettings s, List<String> names) {
 }
 
 void main() {
+  group('council voices', () {
+    Map<String, String> voice(String name, [String locale = 'en-IN']) => {'name': name, 'locale': locale};
+
+    test('each speaker gets a different on-device voice', () {
+      final got = assignVoices([
+        voice('en-in-x-b-local'),
+        voice('en-in-x-a-local'),
+        voice('en-in-x-c-local'),
+        voice('en-in-x-d-local'),
+        voice('en-in-x-a-network'),
+        voice('en-us-x-z-local', 'en-US'),
+      ], 'en-IN');
+      expect(got.values.map((v) => v['name']).toSet(), hasLength(4));
+      expect(got['alfii']!['name'], 'en-in-x-a-local');
+    });
+
+    test('with fewer than two voices the pitch setup stays', () {
+      expect(assignVoices([voice('en-in-x-a-local')], 'en-IN'), isEmpty);
+    });
+  });
+
   setUp(FakeSpeaker.said.clear);
 
   for (final scale in [1.0, 1.3]) {
@@ -145,7 +167,7 @@ void main() {
       testWidgets('under the hood', (tester) async {
         final s = FakeSettings(fakeServer());
         await pumpScreen(tester, const UnderHoodScreen(), textScale: scale, cases: casesWith(s, ['endowment_red']));
-        expect(find.textContaining('Provider: local'), findsOneWidget);
+        expect(find.textContaining('local ·'), findsOneWidget);
         expect(find.text('Router'), findsOneWidget);
         await expectLater(find.byType(MaterialApp), matchesGoldenFile(golden('under_hood', scale)));
       });
