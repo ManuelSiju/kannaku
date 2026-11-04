@@ -245,6 +245,8 @@ async def _pipeline(run: _Run, inp: AskInput, *, repo: Repo, llm: LLMProvider, s
     context_cue = bool(CONTEXT_CUES.search(transcript))
     mode = decide_mode(inp.earphones, inp.user_says_alone, None, context_cue)
     repo.update_case(case_id, privacy_mode=mode, language=lang)
+    if inp.audio is not None and not ing.transcript.strip() and not ing.pages:  # silence or noise: no model call
+        return _simple_result(run, "unknown", t(lang, "no_speech"), mode, repo, lang)
 
     # papers this family showed before: this session's and earlier ones (same file = same content hash)
     uploads = [(f.filename, hashlib.sha256(f.data).hexdigest()) for f in inp.files]

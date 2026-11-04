@@ -511,3 +511,13 @@ def test_trace_export_is_gone_with_its_flag_off(harness, monkeypatch):
         assert client.get(f"/cases/{res['case_id']}/trace.json").status_code == 404
     finally:
         get_settings.cache_clear()
+
+
+# ---------------------------------------------------------------- nothing heard
+def test_silence_asks_again_without_a_model_call(harness):
+    client, state, _ = harness
+    state["llm"] = llm = FakeLLM({})
+    state["stt"] = FakeSTT("")
+    res = ask(client, files=[("audio", ("a.wav", b"RIFF\x00\x00\x00\x00WAVEfmt ", "audio/wav"))])
+    assert res["spoken_lines"][0]["text"] == "I didn't catch that. Please say it again, or type it."
+    assert res["verdict"]["colour"] is None and llm.calls == [] and res["llm_calls"] == 0
