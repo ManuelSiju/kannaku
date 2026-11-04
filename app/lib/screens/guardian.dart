@@ -168,7 +168,7 @@ class _AlertCard extends StatelessWidget {
     return switch (str(f['unit'])) {
       'fraction' => '${((v ?? 0) * 100).toStringAsFixed(1)}%',
       'INR' => inr(v),
-      _ => '${v ?? '?'} ${str(f['unit'])}'.trim(),
+      _ => '${v == null ? '?' : (v % 1 == 0 ? v.toStringAsFixed(0) : v)} ${str(f['unit'])}'.trim(),
     };
   }
 }

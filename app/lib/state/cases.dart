@@ -64,7 +64,7 @@ const stepWords = {
   'ingest': 'Reading what you sent',
   'scam_rules': 'Checking for tricks',
   'case_builder': 'Understanding the question',
-  'verify_terms': 'Checking every amount twice',
+  'verify_terms': 'Checking every amount',
   'compute': 'Doing the sums',
   'router': 'Choosing who to ask',
   'council': 'Asking the specialists',

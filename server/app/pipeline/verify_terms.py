@@ -132,12 +132,13 @@ def term_fact(t: VerifiedTerm) -> Fact | None:
     """A verified term as an offer fact (id "term.<name>") so agents may cite it."""
     if not t.verified or t.value is None:
         return None
+    where = "What you said" if t.source == "transcript" else "From the document"
     return Fact(
         id=f"term.{t.name}",
-        label=f"From the document: {TERM_NAMES.get(t.name, t.name)}",
+        label=f"{where}: {TERM_NAMES.get(t.name, t.name)}",
         value=t.value,
         unit=t.unit,
         kind="offer",
-        formula="read from the document and checked twice",
+        formula="found in what the family showed or said, and checked against it",
         inputs={"quote_id": t.quote_id, "source": t.source, "photo": t.photo, "reading": t.reading},
     )

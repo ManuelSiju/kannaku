@@ -51,9 +51,11 @@ def list_alerts(
                 "case_type": bundle.get("case", {}).get("case_type"),
                 "colour": verdict.get("colour"),
                 "sentence": verdict.get("sentence"),
-                "key_facts": [f for f in bundle.get("facts", []) if f["kind"] == "offer" and f["value"] is not None][
-                    :4
-                ],
+                "key_facts": [
+                    f
+                    for f in bundle.get("facts", [])
+                    if f["kind"] == "offer" and f["value"] is not None and not f["id"].startswith(("ref.", "cmp_"))
+                ][:4],
                 "agent_lines": [ln for ln in bundle.get("spoken_lines", []) if ln["speaker"] != "alfii"],
             }
         )

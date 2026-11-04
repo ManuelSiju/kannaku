@@ -22,6 +22,11 @@ class MyDetailsScreen extends StatefulWidget {
 }
 
 class _MyDetailsScreenState extends State<MyDetailsScreen> {
+  bool _shown = false; // tapped "Tap to show"; figures stay blurred until then unless the person is private
+
+  Widget _private(bool hidden, Widget child) =>
+      hidden ? ImageFiltered(imageFilter: ImageFilter.blur(sigmaX: 9, sigmaY: 9), child: child) : child;
+
   @override
   void initState() {
     super.initState();
@@ -43,6 +48,7 @@ class _MyDetailsScreenState extends State<MyDetailsScreen> {
   @override
   Widget build(BuildContext context) {
     final p = context.watch<ProfileProvider>();
+    final hidden = !_shown && !context.watch<SettingsProvider>().earphones;
     return Scaffold(
       appBar: widget.embedded ? null : AppBar(title: const Text('My details')),
       body: RefreshIndicator(
@@ -53,32 +59,35 @@ class _MyDetailsScreenState extends State<MyDetailsScreen> {
             if (p.error != null) ErrorCard(p.error!, onRetry: p.load),
             if (p.loading && p.values.isEmpty) const Center(child: CircularProgressIndicator()),
             const Text('Kept on your laptop', style: TextStyle(fontSize: 15, color: K.muted)),
-            if (p.snapshot.isNotEmpty) _Snapshot(p.snapshot, hidden: !context.watch<SettingsProvider>().earphones),
+            if (p.snapshot.isNotEmpty) _Snapshot(p.snapshot, hidden: hidden, onShow: () => setState(() => _shown = true)),
             const SectionTitle('Money each month'),
-            Container(
-              padding: const EdgeInsets.all(14),
-              decoration: BoxDecoration(color: K.ink, borderRadius: BorderRadius.circular(16)),
-              child: Column(
-                children: [
-                  for (final v in p.values)
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 6),
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: Text(
-                              fieldLabel(v.field),
-                              style: const TextStyle(fontSize: 17, color: Color(0xFFD4D4D8)),
+            _private(
+              hidden,
+              Container(
+                padding: const EdgeInsets.all(14),
+                decoration: BoxDecoration(color: K.ink, borderRadius: BorderRadius.circular(16)),
+                child: Column(
+                  children: [
+                    for (final v in p.values)
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 6),
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: Text(
+                                fieldLabel(v.field),
+                                style: const TextStyle(fontSize: 17, color: Color(0xFFD4D4D8)),
+                              ),
                             ),
-                          ),
-                          Text(
-                            v.status == 'known' ? inr(v.value) : 'not given',
-                            style: const TextStyle(fontSize: 19, fontWeight: FontWeight.w700, color: Colors.white),
-                          ),
-                        ],
+                            Text(
+                              v.status == 'known' ? inr(v.value) : 'not given',
+                              style: const TextStyle(fontSize: 19, fontWeight: FontWeight.w700, color: Colors.white),
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                ],
+                  ],
+                ),
               ),
             ),
             if (p.members.length > 1) ...[
@@ -99,25 +108,28 @@ class _MyDetailsScreenState extends State<MyDetailsScreen> {
               for (final v in p.member!.values)
                 Padding(
                   padding: const EdgeInsets.only(bottom: 8),
-                  child: KCard(
-                    padding: const EdgeInsets.all(12),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(fieldLabel(v.field), style: const TextStyle(fontSize: 17)),
-                              Text(
-                                '${inr(v.value)} · ${p.member!.name} · '
-                                '${v.inHousehold ? 'in the family budget' : 'not in the family budget'}',
-                                style: const TextStyle(fontSize: 16, color: K.muted),
-                              ),
-                            ],
+                  child: _private(
+                    hidden,
+                    KCard(
+                      padding: const EdgeInsets.all(12),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(fieldLabel(v.field), style: const TextStyle(fontSize: 17)),
+                                Text(
+                                  '${inr(v.value)} · ${p.member!.name} · '
+                                  '${v.inHousehold ? 'in the family budget' : 'not in the family budget'}',
+                                  style: const TextStyle(fontSize: 16, color: K.muted),
+                                ),
+                              ],
+                            ),
                           ),
-                        ),
-                        Pill(_source(v.source), color: _dot(v.source)),
-                      ],
+                          Pill(_source(v.source), color: _dot(v.source)),
+                        ],
+                      ),
                     ),
                   ),
                 ),
@@ -127,31 +139,34 @@ class _MyDetailsScreenState extends State<MyDetailsScreen> {
             for (final it in p.memberItems)
               Padding(
                 padding: const EdgeInsets.only(bottom: 8),
-                child: KCard(
-                  padding: const EdgeInsets.all(12),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(it.name, style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w700)),
-                            Text(
-                              [
-                                inr(it.amount),
-                                if (it.units != null)
-                                  '${it.units!.toStringAsFixed(it.units! % 1 == 0 ? 0 : 3)} '
-                                      '${it.kind == 'stock_holding' ? 'shares' : 'units'}',
-                                if (it.frequency != 'once') it.frequency,
-                                if (p.members.isNotEmpty) p.ownerOf(it),
-                              ].join(' · '),
-                              style: const TextStyle(fontSize: 16, color: K.muted),
-                            ),
-                          ],
+                child: _private(
+                  hidden,
+                  KCard(
+                    padding: const EdgeInsets.all(12),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(it.name, style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w700)),
+                              Text(
+                                [
+                                  inr(it.amount),
+                                  if (it.units != null)
+                                    '${it.units!.toStringAsFixed(it.units! % 1 == 0 ? 0 : 3)} '
+                                        '${it.kind == 'stock_holding' ? 'shares' : 'units'}',
+                                  if (it.frequency != 'once') it.frequency,
+                                  if (p.members.isNotEmpty) p.ownerOf(it),
+                                ].join(' · '),
+                                style: const TextStyle(fontSize: 16, color: K.muted),
+                              ),
+                            ],
+                          ),
                         ),
-                      ),
-                      Pill(_source(it.source), color: _dot(it.source)),
-                    ],
+                        Pill(_source(it.source), color: _dot(it.source)),
+                      ],
+                    ),
                   ),
                 ),
               ),
@@ -226,19 +241,14 @@ class _MyDetailsScreenState extends State<MyDetailsScreen> {
 }
 
 /// The family's money at a glance, from facts. Blurred until tapped when nobody said it is private.
-class _Snapshot extends StatefulWidget {
+class _Snapshot extends StatelessWidget {
   final Map<String, dynamic> data;
   final bool hidden;
-  const _Snapshot(this.data, {required this.hidden});
-  @override
-  State<_Snapshot> createState() => _SnapshotState();
-}
-
-class _SnapshotState extends State<_Snapshot> {
-  bool _shown = false;
+  final VoidCallback onShow;
+  const _Snapshot(this.data, {required this.hidden, required this.onShow});
 
   String _money(String key) {
-    final v = number(widget.data[key]);
+    final v = number(data[key]);
     return v == null ? 'not given' : inr(v);
   }
 
@@ -254,32 +264,31 @@ class _SnapshotState extends State<_Snapshot> {
 
   @override
   Widget build(BuildContext context) {
-    final share = number(widget.data['emi_share']);
+    final share = number(data['emi_share']);
     final card = KCard(
       padding: const EdgeInsets.all(12),
       child: Column(
         children: [
           _row('Bank savings', _money('savings')),
-          if (widget.data['holdings_total'] != null) _row('Investments', _money('holdings_total')),
+          if (data['holdings_total'] != null) _row('Investments', _money('holdings_total')),
           _row('Money in each month', _money('money_in')),
           _row('Money out each month', _money('money_out')),
           _row('Loan EMIs out of income', share == null ? 'not given' : '${(share * 100).toStringAsFixed(1)}%'),
         ],
       ),
     );
-    final blurred = widget.hidden && !_shown;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         const SectionTitle('Family money snapshot'),
-        if (!blurred)
+        if (!hidden)
           card
         else
           Semantics(
             button: true,
             label: 'Tap to show the family money snapshot',
             child: InkWell(
-              onTap: () => setState(() => _shown = true),
+              onTap: onShow,
               child: Stack(
                 alignment: Alignment.center,
                 children: [
