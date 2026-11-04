@@ -33,11 +33,15 @@ revert() { echo "✘ $*"; git -C "$ROOT" checkout -- "$PUBSPEC"; exit 1; }
 
 # ---------------------------------------------------------------- build
 cd "$APP" || exit 1
-# The bump changed pubspec.yaml. Refresh packages now: otherwise the build does it itself and keeps the test-only
-# integration_test plugin in the generated plugin list, which does not compile in release mode.
-flutter pub get >/dev/null || revert "flutter pub get failed"
+# The test-only integration_test plugin does not compile in release mode, and an editor running pub get keeps it in the
+# generated plugin list. So it leaves pubspec.yaml for the build and comes back right after.
+cp pubspec.yaml "$RUN_DIR/pubspec.full"
+sed -i '/^  integration_test:$/,+1d' pubspec.yaml
+restore_tests() { cp "$RUN_DIR/pubspec.full" pubspec.yaml; git -C "$ROOT" checkout -- app/pubspec.lock; flutter pub get >/dev/null; }
+flutter pub get >/dev/null || { restore_tests; revert "flutter pub get failed"; }
 if [[ -f android/key.properties ]]; then echo "Signing with android/key.properties"; else echo "Signing: debug key (no android/key.properties)"; fi
-flutter build apk --release --dart-define=API_URL="$API_URL" || revert "flutter build apk failed"
+flutter build apk --release --dart-define=API_URL="$API_URL" || { restore_tests; revert "flutter build apk failed"; }
+restore_tests
 ARTIFACT="build/app/outputs/flutter-apk/app-release.apk"
 [[ -f "$ARTIFACT" ]] || revert "build output not found"
 
