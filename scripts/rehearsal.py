@@ -25,6 +25,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 ANSI = re.compile(r"\x1b\[[0-9;]*[A-Za-z]|\r")
+SERIAL = os.environ.get("DEVICE", "emulator-5554")  # never a real phone: phone_smoke.py wipes the app's data
 
 
 class Rehearsal:
@@ -97,11 +98,11 @@ class Rehearsal:
         lan = self.lan_ip()
         token = self.token()
         self.run("3.1 start again", "make start", answers=[""], expect="already running")
-        self.run("4 phone (USB)", "make phone", expect="Installed on the phone", timeout=2400)
-        self.run("3.2 phone connects + demo question", f"python3 scripts/phone_smoke.py --url http://{lan}:8013 "
+        self.run("4 phone (USB)", "make phone", env={"DEVICE": SERIAL}, expect="Installed on the phone", timeout=2400)
+        self.run("3.2 phone connects + demo question", f"python3 scripts/phone_smoke.py --serial {SERIAL} --url http://{lan}:8013 "
                  f"--token {token} --shots run/rehearsal_shots --expect Stop", expect="answer on the phone: Stop",
                  timeout=600)  # fmt: skip
-        self.run("7 Wi-Fi address changed", f"python3 scripts/phone_smoke.py --url http://10.0.2.2:8013 --token {token}"
+        self.run("7 Wi-Fi address changed", f"python3 scripts/phone_smoke.py --serial {SERIAL} --url http://10.0.2.2:8013 --token {token}"
                  " --keep-data --connect-only", expect="Connected", timeout=300)  # fmt: skip
         self.run("3.3 stop", "make stop", expect="stopped server")
         self.run("3.3 stop again", "make stop", expect="not running|nothing")
@@ -110,7 +111,7 @@ class Rehearsal:
         self.run("7 laptop restarted (power cut)", "kill -9 $(cat run/server.pid); sleep 1; test -f run/server.pid && echo 'stale pid file left behind'",
                  expect="stale pid file")  # fmt: skip
         self.run("7 laptop restarted", "make start", answers=[""], expect="Kanakku is running")
-        self.run("3.2 phone after restart", f"python3 scripts/phone_smoke.py --url http://{lan}:8013 --token {token}"
+        self.run("3.2 phone after restart", f"python3 scripts/phone_smoke.py --serial {SERIAL} --url http://{lan}:8013 --token {token}"
                  " --keep-data --connect-only", expect="Connected", timeout=300)  # fmt: skip
         self.run("6 demo", "make demo", expect="Try these four questions")
         self.run("3.3 stop", "make stop", expect="stopped server")
