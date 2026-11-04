@@ -14,5 +14,5 @@
 | Malayalam and Hindi | PARTLY | answers only, no native review; speech and app text are English |
 | Guardian alerts | TRUE, in-app only | real phone. No push notification: do not say "notifies" |
 | Four council voices | TRUE | four different installed voices assigned and recorded on a real phone |
-| Spoken question | PARTLY | Whisper transcribed recorded speech on the server; the phone's microphone path has not been tried with a real voice |
+| Spoken question | TRUE | a person spoke into a real phone; the transcripts reached the live pipeline through Muse Voice Transcribe |
 | 26,667 complaints | TRUE as secondary reporting | press coverage of the IRDAI Annual Report 2024-25; the report itself was not read |

@@ -113,12 +113,12 @@ The [project guide](docs/PROJECT_GUIDE.md) covers every step, function and setti
 |---|---|---|
 | Live on Meta | All demo cases answered as expected; in the latest run one council call timed out and the answer was flagged | [meta_run](docs/reports/meta_run.md) |
 | Number audit | 22 figures recomputed without our engines, 0 mismatches | [numbers_audit](docs/reports/numbers_audit.md) |
-| Calibration on Meta, 3 runs each | Greens 12/12, reds 21/21, yellows 7 yellow and 5 red: no risky case came out green | [calibration](docs/reports/calibration.md) |
+| Calibration on Meta, 3 runs each | Greens 12/12, reds 21/21, yellows 6 yellow and 6 red, no degraded run: no risky case came out green | [calibration](docs/reports/calibration.md) |
 | Reliability on Meta, 5 cases × 3 | 15 of 15 as expected, 1 run degraded | [reliability](docs/reports/reliability_meta.md) |
 | Framing on Meta, 3 framings × 2 | Never green; one framing gave yellow, not red | [framing](docs/reports/reliability_framing_meta.md) |
-| Prompt injection in a brochure | Never green; the text is treated as data | [QA report](docs/reports/qa_final.md) |
-| Automated tests | 534 server and 66 app tests | `make test`, `make app-test` |
-| Real phone | Samsung A73, Android 16: install, asks, uploads, guardian note, voices recorded | [QA report](docs/reports/qa_final.md) |
+| Prompt injection in a brochure | Red 3 of 3; the text is treated as data | [QA report](docs/reports/qa_final.md) |
+| Automated tests | 535 server and 70 app tests | `make test`, `make app-test` |
+| Real phone | Samsung A73, Android 16: spoken questions, uploads, guardian note, voices, five asks in a row, phone lock, app kill, server loss | [QA report](docs/reports/qa_final.md) |
 
 Every claim is listed with its status in the [claims audit](docs/reports/claims_audit.md). Early reactions, on the local
 models, are in [user feedback](docs/user_feedback.md).
@@ -179,8 +179,8 @@ app text, and reaching families through co-operative banks.
 
 ## Known limits
 
-- Speech is English only, and the phone's microphone path has not been tried with a real voice. Transcription can repeat a
-  word or digit ("7.5 5 lakh" in one test).
+- Speech is English only. Transcription can repeat a word or digit ("7.5 5 lakh" in one test); an empty result gets a second
+  try on Whisper.
 - Answers can be in Malayalam and Hindi, but the app's own text is English and native review is pending.
 - There are no push notifications: guardian alerts appear when the Alerts tab is opened.
 - A model can vary between runs, so the same case can move between yellow and red.

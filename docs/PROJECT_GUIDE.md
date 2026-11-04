@@ -207,7 +207,7 @@ Text-to-speech runs on the phone. The server only sends the text.
 | `server/app/core/` | `context.py` (request id), `logs.py` (JSON logs, secret redaction) |
 | `server/data/` | `reference_rates.json` (FD, inflation and index assumptions) |
 | `server/demo_assets/` | fictional brochure, `stocks/*.csv` price history, `owner_docs/` (6 sample family papers), `replay/` (recorded Meta replies) |
-| `server/tests/` | 534 offline tests; `fakes/` (scripted LLM, fake Meta server), `fixtures/llm/`, `calibration/` (scenarios, independent oracle, number audit) |
+| `server/tests/` | 535 offline tests; `fakes/` (scripted LLM, fake Meta server), `fixtures/llm/`, `calibration/` (scenarios, independent oracle, number audit) |
 | `server/scripts/` | `reliability.py`, `export_app_fixtures.py`, `meta_key.py`, `meta_live_check.py`, `check_models.py`, `print_qr.py`, `make_demo_assets.py` |
 | `app/lib/` | Flutter app: `core/`, `state/`, `screens/`, `widgets/`, `theme.dart` |
 | `app/test/`, `app/integration_test/` | widget and screenshot tests; on-device tests |
@@ -517,7 +517,7 @@ raises `SpendCapReached`. `SpendGuard` holds the daily count (`calls_today`, `ad
 
 **Speech to text** (`providers/stt.py`). On Meta, `get_stt()` returns `MetaTranscribeSTT`: `to_wav` turns the recording into
 16 kHz mono WAV and `POST /v1/asr/transcribe` sends it with `muse-voice-transcribe-1.0` and the `STT_KEYWORDS` bias list. Any
-failure falls back to `FasterWhisperSTT` (lazy load; `medium`; CUDA if available), which is also the local path. The `ingest`
+failure or empty transcript falls back to `FasterWhisperSTT` (lazy load; `medium`; CUDA if available), which is also the local path. The `ingest`
 trace records `stt: meta` or `stt: whisper (fallback: <reason>)`. `FEATURE_META_STT=false` turns it off. English only for now
 (`STT_LANGUAGE=en`).
 
@@ -727,9 +727,9 @@ reuses the same `Idempotency-Key`. Responses are parsed defensively.
 
 | what | command | notes |
 |---|---|---|
-| server: unit, API, end-to-end (offline) | `make test` | 534 tests; the LLM is scripted by `tests/fixtures/llm/*.json` |
+| server: unit, API, end-to-end (offline) | `make test` | 535 tests; the LLM is scripted by `tests/fixtures/llm/*.json` |
 | lint | `make lint` | ruff, line length 120 |
-| app: analyze, widgets, screenshots | `make app-test` | 66 tests |
+| app: analyze, widgets, screenshots | `make app-test` | 70 tests |
 | app on a device against the real server | `make app-integration` | emulator or USB phone |
 | Meta live proof | `make meta-run` | needs a key; writes [meta_run.md](reports/meta_run.md) |
 | reliability and framing | `make reliability`, `make reliability-framing` | real model, 5 cases × N |
@@ -805,7 +805,7 @@ Run `make start`, then `make demo` in a second terminal. Or `make demo-replay` w
 | Family members, budget and holdings | done, on a real phone |
 | Meta Muse Spark, with vision | done, live |
 | Replay with no key | done, from a fresh clone |
-| Ask by voice | server path done; the phone's microphone has not been tried with a real voice |
+| Ask by voice | done, spoken into a real phone. Press and hold; slide up Private, down Out loud; no slide uses the top-right setting |
 | Malayalam and Hindi | partly: answers and templates; speech and app text are English |
 
 **Other known gaps:** no automatic earphone detection (it is a Settings toggle), no push notifications, and a model can vary
