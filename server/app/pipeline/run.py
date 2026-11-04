@@ -81,10 +81,6 @@ CONTEXT_CUES = re.compile(
     r" is (?:here|sitting|with me)\b|\bsitting (?:here )?with me\b|\bwith me now\b",
     re.I,
 )
-CLARIFY = "Is this about a loan, a policy, an investment or a payment?"  # English form of templates "clarify"
-OUT_OF_SCOPE = (
-    "I help with money questions like loans, insurance, savings and stock tips. What would you like to check?"
-)
 
 
 class AskInput(BaseModel):

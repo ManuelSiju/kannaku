@@ -15,7 +15,6 @@ from pydantic import BaseModel
 from app.pipeline.evidence import Facts, as_fact_map, numbers_in, value_matches
 
 PrivacyMode = Literal["full", "discreet"]
-DEFAULT_MODE: PrivacyMode = "discreet"
 # raw inputs of personal facts that are the family's own money
 PERSONAL_INPUTS = {"monthly_income", "monthly_expenses", "savings", "existing_emi", "regular_commitments"}
 

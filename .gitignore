@@ -41,6 +41,9 @@ key.properties
 .flutter-plugins
 .flutter-plugins-dependencies
 
+# private owner guide (local only)
+docs/PROJECT_GUIDE.md
+
 # editors / OS
 .idea/
 .vscode/

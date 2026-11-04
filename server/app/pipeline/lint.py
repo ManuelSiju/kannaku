@@ -17,16 +17,6 @@ REASON = re.compile(r"\b(because|since|as|so|which|while|but|than|only|if|when)\
 REPEAT = re.compile(r"\b(\w+)\s+\1\b", re.I)
 DANGLING_THAN = re.compile(r"\bthan\s*(?:and\b|,|\.)", re.I)
 DOUBLE_COMPARISON = re.compile(r"\b(more|less|much|even)\s+(higher|lower|better|worse)\s+than\b", re.I)
-RULES = (
-    "too_many_sentences",
-    "sentence_too_long",
-    "too_many_numbers",
-    "jargon",
-    "repeated_word",
-    "double_comparison",
-    "dangling_than",
-    "vague",
-)
 
 
 def sentences(text: str) -> list[str]:

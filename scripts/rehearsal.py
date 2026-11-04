@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Fresh-clone rehearsal of docs/OWNER_GUIDE.md: clones the repository into a NEW folder and uses it as a person would.
+"""Fresh-clone rehearsal of the owner steps: clones the repository into a NEW folder and uses it as a person would.
 make start runs in the foreground in a pseudo-terminal; Ctrl+C is a real Ctrl+C, closing the terminal is a real hang-up.
 After every stop it looks for leftovers (processes running from the clone, adb tunnels). Writes docs/rehearsal_<n>.md.
 
@@ -268,7 +268,7 @@ class Rehearsal:
 
     def report(self) -> Path:
         total = sum(r[3] for r in self.rows)
-        md = [f"# Rehearsal {self.n}: fresh clone, following docs/OWNER_GUIDE.md", "",
+        md = [f"# Rehearsal {self.n}: fresh clone, following the owner steps", "",
               f"Folder: `{self.dir}` (a new `git clone`; nothing copied). {time.strftime('%Y-%m-%d %H:%M')}. "
               f"Total {total / 60:.1f} min. Result: **{'all steps passed' if not self.failed else 'FAILED'}**.", "",
               f"Device: Android emulator `{SERIAL}` standing in for the phone. `sudo` was a stub that refuses (no password "

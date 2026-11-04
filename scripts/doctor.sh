@@ -50,14 +50,14 @@ if (( free_gb >= 10 )); then ok "Disk space" "${free_gb} GB free"; else bad "Dis
 
 # ---------------------------------------------------------------- phone tools
 if command -v flutter >/dev/null; then ok "Flutter" "installed (builds the phone app)"
-else bad "Flutter" "not installed (needed once, to build the phone app)" "see docs/OWNER_GUIDE.md, section 4"; fi
+else bad "Flutter" "not installed (needed once, to build the phone app)" "see the Quick start in README.md"; fi
 if command -v adb >/dev/null; then
   ok "adb" "installed (puts the app on the phone)"
   phones="$(adb devices 2>/dev/null | awk 'NR>1 && $2=="device" {print $1}' | tr '\n' ' ')"
   unauth="$(adb devices 2>/dev/null | awk 'NR>1 && $2=="unauthorized"' | wc -l)"
   if [[ -n "$phones" ]]; then ok "Phone by USB" "connected: $phones"
   elif (( unauth > 0 )); then opt "Phone by USB" "connected but not allowed yet" "unlock the phone and tap Allow on the 'USB debugging' question"
-  else opt "Phone by USB" "none connected (only needed for make phone)" "plug in the phone with USB debugging on (docs/OWNER_GUIDE.md, section 4)"; fi
+  else opt "Phone by USB" "none connected (only needed for make phone)" "plug in the phone with USB debugging on"; fi
 else
   bad "adb" "not installed (puts the app on the phone)" "sudo apt install adb"
 fi

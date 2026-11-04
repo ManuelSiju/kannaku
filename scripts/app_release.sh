@@ -1,23 +1,14 @@
 #!/usr/bin/env bash
-# make app-release / make app-ios: bump version, build, archive to dist/, install on a connected phone.
-#   usage: app_release.sh android|ios   (env: BUMP=build|patch|minor, API_URL=...)
+# make app-release: bump version, build the Android APK, archive to dist/, install on a connected phone.
+#   env: BUMP=build|patch|minor, API_URL=...
 set -uo pipefail
 source "$(dirname "$0")/lib.sh"
 
-TARGET="${1:-android}"
 BUMP="${BUMP:-build}"
 APP="$ROOT/app"
 PUBSPEC="$APP/pubspec.yaml"
 DIST="$ROOT/dist"
 
-if [[ ! -f "$PUBSPEC" ]]; then
-  echo "Flutter app not created yet (phase 5)"
-  exit 0
-fi
-if [[ "$TARGET" == ios && "$(uname)" != Darwin ]]; then
-  echo "iOS builds need a Mac with Xcode and Apple signing; run make app-ios on macOS."
-  exit 0
-fi
 command -v flutter >/dev/null || { echo "✘ flutter not on PATH"; exit 1; }
 
 API_URL="${API_URL:-http://$(lan_ip):$(envget PORT 8013)}"
@@ -45,35 +36,26 @@ cd "$APP" || exit 1
 # The bump changed pubspec.yaml. Refresh packages now: otherwise the build does it itself and keeps the test-only
 # integration_test plugin in the generated plugin list, which does not compile in release mode.
 flutter pub get >/dev/null || revert "flutter pub get failed"
-if [[ "$TARGET" == ios ]]; then
-  flutter build ipa --release --dart-define=API_URL="$API_URL" || revert "flutter build ipa failed"
-  ARTIFACT="$(ls -t build/ios/ipa/*.ipa 2>/dev/null | head -n1)"
-  EXT=ipa
-else
-  if [[ -f android/key.properties ]]; then echo "Signing with android/key.properties"; else echo "Signing: debug key (no android/key.properties)"; fi
-  flutter build apk --release --dart-define=API_URL="$API_URL" || revert "flutter build apk failed"
-  ARTIFACT="build/app/outputs/flutter-apk/app-release.apk"
-  EXT=apk
-fi
+if [[ -f android/key.properties ]]; then echo "Signing with android/key.properties"; else echo "Signing: debug key (no android/key.properties)"; fi
+flutter build apk --release --dart-define=API_URL="$API_URL" || revert "flutter build apk failed"
+ARTIFACT="build/app/outputs/flutter-apk/app-release.apk"
 [[ -f "$ARTIFACT" ]] || revert "build output not found"
 
 # ---------------------------------------------------------------- commit + archive
 git -C "$ROOT" commit -q -m "release: v$VERSION" -- "$PUBSPEC" || revert "could not commit version bump"
 SHA="$(git -C "$ROOT" rev-parse --short HEAD)"
 mkdir -p "$DIST"
-OUT="$DIST/kanakku-v$VERSION-$SHA.$EXT"
+OUT="$DIST/kanakku-v$VERSION-$SHA.apk"
 cp "$ARTIFACT" "$OUT"
 [[ -f "$DIST/RELEASES.md" ]] || printf '# Kanakku releases\n\n| version | date | git sha | platform | API_URL |\n|---|---|---|---|---|\n' >"$DIST/RELEASES.md"
-echo "| v$VERSION | $(date +%F) | $SHA | $TARGET | $API_URL |" >>"$DIST/RELEASES.md"
+echo "| v$VERSION | $(date +%F) | $SHA | android | $API_URL |" >>"$DIST/RELEASES.md"
 echo "✔ $OUT"
 
 # ---------------------------------------------------------------- install
-if [[ "$TARGET" == android ]]; then
-  SERIAL="${DEVICE:-$(adb devices 2>/dev/null | awk 'NR>1 && $2=="device" {print $1}' | grep -v '^emulator-' | head -n1)}"
-  SERIAL="${SERIAL:-$(adb devices 2>/dev/null | awk 'NR>1 && $2=="device" {print $1}' | head -n1)}"
-  if [[ "${NO_INSTALL:-}" != 1 && -n "$SERIAL" ]]; then
-    adb -s "$SERIAL" install -r "$OUT" && echo "✔ installed on $SERIAL" || echo "✘ adb install failed"
-  else
-    echo "No phone connected. Install later with: adb install -r $OUT"
-  fi
+SERIAL="${DEVICE:-$(adb devices 2>/dev/null | awk 'NR>1 && $2=="device" {print $1}' | grep -v '^emulator-' | head -n1)}"
+SERIAL="${SERIAL:-$(adb devices 2>/dev/null | awk 'NR>1 && $2=="device" {print $1}' | head -n1)}"
+if [[ "${NO_INSTALL:-}" != 1 && -n "$SERIAL" ]]; then
+  adb -s "$SERIAL" install -r "$OUT" && echo "✔ installed on $SERIAL" || echo "✘ adb install failed"
+else
+  echo "No phone connected. Install later with: adb install -r $OUT"
 fi

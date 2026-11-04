@@ -24,15 +24,15 @@ LLM_MODEL := qwen2.5:7b-instruct
 endif
 
 .PHONY: help setup-system env doctor run-server health llm-up llm-down llm-pull llm-list \
-        check-models test test-fast smoke lint fmt clean run-mcp seed-demo reset-demo demo-assets run-app demo commit-phase \
-        reliability reliability-framing reliability-vision lan-url firewall-open phone-devices phone-usb phone-usb-off up down status app-release app-ios provider forget-key app-test start stop phone app-fixtures app-goldens app-integration meta-check
+        check-models test test-fast smoke lint fmt clean run-mcp seed-demo reset-demo demo-assets run-app demo \
+        reliability reliability-framing reliability-vision lan-url firewall-open phone-devices phone-usb phone-usb-off up down status app-release provider forget-key app-test start stop phone app-fixtures app-goldens app-integration meta-check
 
 help: ##! Show this list (owner commands first)
-	@echo "Start here (docs/OWNER_GUIDE.md):"
+	@echo "Start here:"
 	@grep -hE '^[a-zA-Z_-]+:.*?##! ' $(MAKEFILE_LIST) | \
 	  awk 'BEGIN {FS = ":.*?##! "}; {printf "  \033[32m%-14s\033[0m %s\n", $$1, $$2}'
 	@echo
-	@echo "Developer commands (docs/GUIDE.md):"
+	@echo "Developer commands:"
 	@grep -hE '^[a-zA-Z_-]+:.*?## ' $(MAKEFILE_LIST) | \
 	  awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-20s\033[0m %s\n", $$1, $$2}'
 
@@ -158,12 +158,9 @@ phone-usb-off: ## Remove the USB tunnel
 
 # ---------------------------------------------------------------- app builds
 app-release: ## Bump build no., build release APK -> dist/, install if phone connected (BUMP=patch|minor, API_URL=)
-	@scripts/app_release.sh android
+	@scripts/app_release.sh
 
-app-ios: ## Same as app-release for iOS (needs macOS + Xcode)
-	@scripts/app_release.sh ios
-
-# ---------------------------------------------------------------- later phases
+# ---------------------------------------------------------------- demo data, MCP, app development
 run-mcp: ## Start the MCP server on stdio (for MCP clients; Ctrl-C to stop)
 	cd $(SERVER) && $(PY) -m app.mcp_server.server
 
@@ -197,9 +194,3 @@ app-integration: ## On-device tests against the real server + screen recording (
 
 meta-check: ## One endowment case against the real Meta API (only if META_API_KEY is set)
 	cd $(SERVER) && $(PY) scripts/meta_live_check.py
-
-# ---------------------------------------------------------------- git
-commit-phase: ## Test, then commit everything: make commit-phase P=2 M="numbers and engines"
-	@test -n "$(P)" || { echo 'usage: make commit-phase P=<n> M="<summary>"'; exit 1; }
-	$(MAKE) test
-	git add -A && git commit -m "phase $(P): $(M)"

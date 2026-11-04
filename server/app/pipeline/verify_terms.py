@@ -115,10 +115,6 @@ def verify_terms(
     return [verify_term(t, evidence, vision_read=vision_read) for t in terms]
 
 
-def term_question(term_name: str) -> str:
-    return f"Can you show me in writing the {TERM_NAMES.get(term_name, term_name.replace('_', ' '))}?"
-
-
 def term_fact(t: VerifiedTerm) -> Fact | None:
     """A verified term as an offer fact (id "term.<name>") so agents may cite it."""
     if not t.verified or t.value is None:
